@@ -47,6 +47,9 @@ public class RequestHandler implements Runnable {
                 line = br.readLine();
                 logger.debug("header : {}", line);
             }
+            logger.debug("Ending Connected IP : {}, Port : {}", connection.getInetAddress(),
+                    connection.getPort());
+            System.out.println("================================================================");
             DataOutputStream dos = new DataOutputStream(out);
 
 
