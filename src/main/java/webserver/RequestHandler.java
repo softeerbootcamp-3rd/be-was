@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static utils.ParsingUtils.combineResources;
+import static util.ParsingUtil.combineResources;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,8 +23,6 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
             //Request header 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
@@ -38,9 +36,7 @@ public class RequestHandler implements Runnable {
             while(!line.equals("")){
                 line = br.readLine();
 
-                if (line == null) break;
-
-                if (line.equals("GET")) {
+                if (line != null && line.equals("GET")) {
                     String[] tokens = line.split(" ");
 
                     url.add(tokens[1]);
