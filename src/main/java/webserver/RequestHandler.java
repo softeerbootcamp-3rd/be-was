@@ -33,7 +33,7 @@ public class RequestHandler implements Runnable {
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            if(requestUrl.equals("/index.html")) {
+            if(requestUrl != null && requestUrl.equals("/index.html")) {
                 byte[] body = Files.readAllBytes(new File("src/main/resources/templates" + requestUrl).toPath());
                 response200Header(dos, body.length);
                 responseBody(dos, body);
