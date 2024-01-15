@@ -2,13 +2,13 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 
+import model.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static util.FileUtil.combineResources;
-import static util.ParsingUtil.getUrls;
+import static util.FileUtil.*;
+
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -20,23 +20,18 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            //Request header 읽어오기
-            ArrayList<String> url = getUrls(in);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
-            //응답
-            byte[] body = combineResources(url);
+            RequestHeader requestHeader = new RequestHeader(br, connection.getPort());
 
-            String contentType = "text/html";
-            if (!url.isEmpty() && url.get(0).endsWith(".css")) {
-                contentType = "text/css";
-            }
-            else if (!url.isEmpty() && url.get(0).endsWith(".js")) {
-                contentType = "application/javascript";
-            }
+            // request line 출력
+            logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
+                    requestHeader.getPort(), requestHeader.getMethod(), requestHeader.getPath(), requestHeader.getHttpVersion());
+
+            byte[] body = getBody(requestHeader.getPath()); // 해당하는 경로의 파일을 읽고 byte[]로 반환
+            String contentType = getContentType(requestHeader.getPath()); // 파일의 확장자에 따라 Content-Type을 결정
 
             DataOutputStream dos = new DataOutputStream(out);
             response200Header(dos, body.length, contentType);
