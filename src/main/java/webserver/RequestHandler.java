@@ -23,6 +23,8 @@ public class RequestHandler implements Runnable {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String requestLine = reader.readLine();
 
+            // TODO: request header class 생성하기
+
             logger.debug("Connection IP : {}, Port : {}, request: {}",
                     connection.getInetAddress(), connection.getPort(), requestLine);
 
