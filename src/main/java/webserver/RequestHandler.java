@@ -38,10 +38,23 @@ public class RequestHandler implements Runnable {
             }
             */
 
+            String url = request.getUrl();
+            String filePath = "src/main/resources/templates/index.html";
+            byte[] body = "Hello World".getBytes();
+
+            if (url.endsWith(".html")) {
+                filePath = "src/main/resources/templates" + url;
+                File file = new File(filePath);
+                body = Files.readAllBytes(file.toPath());
+            } 
+            else if (!url.isEmpty()) {
+                filePath = "src/main/resources/static" + url;
+                File file = new File(filePath);
+                body = Files.readAllBytes(file.toPath());
+            }
             DataOutputStream dos = new DataOutputStream(out);
-//            byte[] body = "Hello World".getBytes();
-            byte[] body = Files.readAllBytes(new File("src/main/resources/templates" + request.getUrl()).toPath());
-            response200Header(dos, body.length);
+
+            response200Header(dos, body.length, filePath);
             responseBody(dos, body);
         } catch (IllegalArgumentException e) {
             logger.error("Invalid request: {}", e.getMessage());
