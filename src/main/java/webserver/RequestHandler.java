@@ -3,6 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +20,10 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {} \n", connection.getInetAddress(),
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String line = br.readLine();
@@ -30,15 +32,20 @@ public class RequestHandler implements Runnable {
                 return;
             }
             logger.debug("# Request Line");
-            logger.debug(line + "\n");
+            logger.debug(line);
             logger.debug("# Request Header");
 
             String[] tokens = line.split(" ");
-            while(!line.equals("")) {
+            final Set<String> printedKey = new HashSet<>(Arrays.asList("Connection",
+                                                                        "Host",
+                                                                        "User-Agent",
+                                                                        "Cookie"));
+            while(true) {
                 line = br.readLine();
-                int index = line.indexOf(':');
-                String key = line.substring(0, index);
-                logger.debug(line);
+                if(line.equals("")) break;
+                String[] keyAndValue = line.split(": ");
+                String key = keyAndValue[0], value = keyAndValue[1];
+                if(printedKey.contains(key)) logger.debug(line);
             }
             logger.debug("\n");
 
