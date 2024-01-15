@@ -1,14 +1,4 @@
-# java-was-2023
-
-Java Web Application Server 2023
-
-## 프로젝트 정보 
-
-이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
-를 참고하여 작성되었습니다.
--------------------------------
-
-## # 웹 서버
+# # 웹 서버
 ### 1. WebServer 클래스
 - 웹 서버를 시작하며, 클라이언트의 요청이 있을 때까지 대기
 - 요청이 들어올 경우 해당 요청을 RequestHandler 클래스에게 위임
@@ -22,7 +12,7 @@ Java Web Application Server 2023
   - 서버에서 클라이언트로 응답을 보낼 때 전달하는 데이터를 담당하는 스트림
 
 -------------------------
-## # STEP 1.
+## STEP 1. index.html 응답
 ### 1. HTTP Request Parsing
 - BufferedReader를 이용하여 Request header를 읽어옴
 - 파일 종류에 따른 HTTP Request 파싱<br>
@@ -37,16 +27,20 @@ Java Web Application Server 2023
 | .ico  |./src/main/resources/static|image/avif|
 
 ### 2. ExecutorService Interface
-- 동시에 여러 요청을 처리해야 하는 경우 매번 새로운 쓰레드를 만드는 것은 비효율적<br>
+- 동시에 여러 요청을 처리해야 하는 경우 매번 새로운 스레드를 만드는 것은 비효율적<br>
 -> Thread 개수 증가 -> CPU 과부하 -> 메모리 사용량 증가
-- Thread Pool: 쓰레드를 미리 만들어두고 재사용
+- Thread Pool: 스레드를 미리 만들어두고 재사용
 - Executor 인터페이스: 등록된 작업의 실행만을 책임짐
 - ExecutorService 인터페이스: 작업의 등록 + 실행을 책임짐
 - submit() vs. execute()
   - 공통점: Thread Pool 객체가 Thread를 실행하고자 할 때 사용
   - 차이점: 
-    - execute(): return 값 없음
-    - submit(): Future 클래스 객체 (비동기 테스크의 결과) 반환
+    1. execute()
+       - return 값 없음
+       - 작업 처리 중 예외 발생 시 스레드 종료 -> 스레드 풀에서 삭제 -> 다른 스레드 생성
+    2. submit()
+       - Future 클래스 객체 (비동기 테스크의 결과) 반환
+       - 작업 처리 중 예외 발생 시 스레드 종료 X -> 다음 작업에서 재사용
 
 ### 3. 기타 사항
 Q. 요청을 한 번만 보냈음에도 추가 요청이 들어오는 이유는?<br>
