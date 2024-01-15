@@ -47,13 +47,31 @@ public class RequestHandler implements Runnable {
 //            byte[] body = "Hello, World!!".getBytes();
             String url = tokens[1];
 
-            Path htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url);
+            String extension = getFileExtension(url);
+
+            Path htmlFilePath;
+            if (extension.equals("html")) {
+                htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url);
+                extension = "text/" + extension;
+            } else if (extension.equals("css")) {
+                htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/static" + url);
+                extension = "text/" + extension;
+            } else if (extension.equals("js")) {
+                htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/static" + url);
+                extension = "text/javascript";
+            } else if (extension.equals("ttf") || extension.equals("woff")) {
+                htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/static" + url);
+                extension = "font/" + extension;
+            } else if (extension.equals("ico")) {
+                htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/static" + url);
+                extension = "image/x-icon";
+            } else {
+                htmlFilePath = Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url);
+            }
 
             byte[] body = Files.readAllBytes(htmlFilePath);
 
-            Path htmlDirectory = htmlFilePath.getParent();
-
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, extension);
             responseBody(dos, body);
 
         } catch (IOException e) {
@@ -61,10 +79,19 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private static String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+            return fileName.substring(lastDotIndex + 1);
+        } else {
+            return ""; // 확장자가 없는 경우
+        }
+    }
+
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String extension) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + extension + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
