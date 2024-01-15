@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +25,16 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            requestHeader(br);
+            String path = requestHeader(br);
+            URL resource = null;
+            System.out.println("path = " + path);
 
-            URL resource = getResource("./templates/index.html");
+            if (path.contains("html")) {
+                resource = getResource("./templates" + path);
+            } else {
+                resource = getResource("./static" + path);
+            }
+            System.out.println("resource = " + resource);
             byte[] body = Files.readAllBytes(new File(resource.getPath()).toPath());
 
             //byte[] body = "Hello World".getBytes();
@@ -40,13 +45,20 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void requestHeader(BufferedReader br) throws IOException {
+    private String requestHeader(BufferedReader br) throws IOException {
         String line = null;
         logger.debug("===== request start ====");
         while (!(line = br.readLine()).equals("")) {
             logger.debug(line);
+            if (line.contains("GET")) {
+                String firstHeader = line.split(" ")[1];
+                String url = firstHeader.split("\\?")[0];
+                return url;
+            }
         }
         logger.debug("===== request end ====");
+
+        return null;
     }
 
     private URL getResource(String path) {
