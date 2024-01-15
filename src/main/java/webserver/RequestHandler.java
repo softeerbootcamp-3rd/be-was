@@ -1,9 +1,6 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 import org.slf4j.Logger;
@@ -22,8 +19,19 @@ public class RequestHandler implements Runnable {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
+        // in-> request, out -> response
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            String line = br.readLine();
+            while(true)
+            {
+                 if(line.isEmpty())
+                     break;
+                 line= br.readLine();
+                 logger.debug(line);
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "이윤수".getBytes();
             response200Header(dos, body.length);
@@ -33,6 +41,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    //응답별 헤더 필요
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
@@ -44,6 +53,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    // resources/templates/index.html을 읽어서 넣기
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
