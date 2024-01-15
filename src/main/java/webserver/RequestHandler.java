@@ -1,21 +1,18 @@
 package webserver;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.StringTokenizer;
-
+import header.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.Socket;
+import java.net.URL;
+import java.nio.file.Files;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final URL RESOURCES_URL = this.getClass().getClassLoader().getResource("./templates");
     private Socket connection;
-
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -29,9 +26,9 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            String uri = parseUri(in);
+            RequestHeader requestHeader = parseHeader(in);
 
-            setResponse(dos, uri);
+            setResponse(dos, requestHeader.getPath());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -84,24 +81,12 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private String parseUri(InputStream in) throws IOException{
+    private RequestHeader parseHeader(InputStream in) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        RequestHeader requestHeader = RequestHeader.parseHeader(br);
 
-        String requestLine = br.readLine();
-        StringTokenizer st = new StringTokenizer(requestLine, " ");
+        logger.debug(requestHeader.toString());
 
-        String method = st.nextToken();
-        String uri = st.nextToken();
-        String httpVersion = st.nextToken();
-
-        logger.debug("----------------------------------------------------------------------------------------------");
-        logger.debug(requestLine);
-
-        while(!(requestLine = br.readLine()).isEmpty()){
-            logger.debug(requestLine);
-        }
-        logger.debug("----------------------------------------------------------------------------------------------");
-
-        return uri;
+        return requestHeader;
     }
 }
