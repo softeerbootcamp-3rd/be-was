@@ -10,7 +10,9 @@ import java.util.Map;
 public class RequestDto {
     private String method;
     private String url;
-    private String type;
+    private String contentType;
+
+    private String location = "/index.html";
     private Map<String,String> requestParam = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -28,8 +30,12 @@ public class RequestDto {
         return url;
     }
 
-    public String getType() {
-        return type;
+    public String getLocation() {
+        return location;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     public void setMethod(String method) {
@@ -40,7 +46,7 @@ public class RequestDto {
         String[] request = string.split("\\?");
         String url = request[0];
         this.url = url;
-        this.setType();
+        this.setContentType();
         if(request.length>1) {
             String[] params = request[1].split("\\&");
 
@@ -52,6 +58,7 @@ public class RequestDto {
     }
 
     public void requestInfo(){
+        logger.debug("contentType : "+this.contentType);
         logger.debug("method : "+this.method);
         logger.debug("url : "+this.url);
         logger.debug("[ requestParams ]");
@@ -62,14 +69,14 @@ public class RequestDto {
         }
     }
 
-    private void setType(){
+    private void setContentType(){
         String fileName = this.url;
         String fileExtension;
         int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-            this.type = fileName.substring(dotIndex + 1);
+            this.contentType = "text/"+fileName.substring(dotIndex + 1);
         } else {
-            this.type =  ""; // 확장자가 없을 경우 빈 문자열 반환
+            this.contentType =  ""; // 확장자가 없을 경우 빈 문자열 반환
         }
     }
 }
