@@ -51,10 +51,10 @@ public class RequestHeader {
         RequestHeader requestHeader = of(method, path, protocol);
 
         while(!(requestLine = br.readLine()).isEmpty()){
-            st = new StringTokenizer(requestLine, ": ");
+            String[] requestLineSplit = requestLine.split(": ");
 
-            String headerName = st.nextToken().replace("-", "");
-            String headerValue = st.nextToken();
+            String headerName = requestLineSplit[0].replace("-", "");
+            String headerValue = requestLineSplit[1];
 
             setHeaderValue(requestHeader, headerName, headerValue);
         }
@@ -75,6 +75,4 @@ public class RequestHeader {
             throw new RuntimeException(e);
         }
     }
-
-
 }
