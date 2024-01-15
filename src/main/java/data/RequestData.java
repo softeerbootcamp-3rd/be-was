@@ -1,13 +1,17 @@
 package data;
 
 public class RequestData {
-    private final String url;
+    private final String method;
+    private final String requestContent;
+    private final String httpVersion;
 
-    public RequestData(String url) {
-        this.url = url;
+    public RequestData(String method, String requestContent, String httpVersion) {
+        this.method = method;
+        this.requestContent = requestContent;
+        this.httpVersion = httpVersion;
     }
 
-    public String getUrl() {
-        return url;
+    public String getRequestContent() {
+        return requestContent;
     }
 }

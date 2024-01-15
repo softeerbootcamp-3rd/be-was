@@ -32,7 +32,7 @@ public class RequestHandler implements Runnable {
 
             RequestData requestData = RequestParserUtil.parseRequest(br);
 
-            String url = requestData.getUrl();
+            String url = requestData.getRequestContent();
 
             DataOutputStream dos = new DataOutputStream(out);
 

@@ -25,8 +25,6 @@ public class RequestParserUtil {
             logger.debug("Header : {}", line);
         }
 
-        String url = tokens[1];
-
-        return new RequestData(url);
+        return new RequestData(tokens[0], tokens[1], tokens[2]);
     }
 }
