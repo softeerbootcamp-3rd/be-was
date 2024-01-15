@@ -26,18 +26,12 @@ public class RequestHandler implements Runnable {
 
             StringBuilder sb = new StringBuilder(requestLine).append("\n");
 
-            String line;
-            while (!(line = reader.readLine()).isEmpty())
-                sb.append(line).append("\n");
-
             logger.debug("Connection IP : {}, Port : {}, request: {}",
-                    connection.getInetAddress(), connection.getPort(), sb);
+                    connection.getInetAddress(), connection.getPort(), requestLine);
 
-            if (requestLine != null) {
-                String[] requestParts = requestLine.split(" ");
-                String requestPath = requestParts[1];
-                responseFile(out, requestPath);
-            }
+            String[] requestParts = requestLine.split(" ");
+            String requestPath = requestParts[1];
+            responseFile(out, requestPath);
         } catch (IOException e) {
             logger.error("Error processing request: {}", e.getMessage());
         }
