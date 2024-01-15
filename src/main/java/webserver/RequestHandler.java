@@ -31,70 +31,47 @@ public class RequestHandler implements Runnable {
                 return;
             // 요청 URL 추출
             String[] tokens = line.split(" ");
-            logger.debug("request: {}", line);
-            // header 전부 출력
+            String url = tokens[1];
+            String accept = "";
+            logger.debug("HTTP Method: {}, Request Target: {}", tokens[0], url);
+            // host, accept 출력
             while(!line.equals("")) {
                 line = br.readLine();
-                logger.debug("header : {}", line);
+                if(line.contains("Host"))
+                    logger.debug(line);
+                else if(line.contains("Accept:")) {
+                    // Accept 추출
+                    accept = line.substring("Accept: ".length());
+                    if(line.contains(","))
+                        accept = accept.substring(0, accept.indexOf(","));
+                    logger.debug("Accept: {}", accept);
+                }
             }
             // 해당 파일을 읽고 응답
             String path = "./src/main/resources";
-            String type = "html";
             // 1. html일 경우
-            if(tokens[1].contains(".html")) {
-                path += "/templates" + tokens[1];
+            if(url.contains(".html")) {
+                path += "/templates" + url;
             }
-            // 2. css일 경우
-            else if(tokens[1].contains(".css")) {
-                path += "/static" + tokens[1];
-                type = "css";
-            }
-            // 3. fonts일 경우
-            else if(tokens[1].contains("halflings-regular")) {
-                path += "/static" + tokens[1];
-                type = "fonts";
-            }
-            // 4. images일 경우
-            else if(tokens[1].contains(".png")) {
-                path += "/static" + tokens[1];
-                type = "images";
-            }
-            // 5. js일 경우
-            else if(tokens[1].contains(".js")) {
-                path += "/static" + tokens[1];
-                type = "js";
-            }
-            // 6. .ico일 경우
+            // 2. css, fonts, images, js, ico일 경우
             else {
-                path += "/static" + tokens[1];
-                type = "ico";
+                path += "/static" + url;
             }
 
             logger.debug("path: {}", path);
             byte[] body = Files.readAllBytes(new File(path).toPath());
 
-            response200Header(dos, body.length, type);
+            response200Header(dos, body.length, accept);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String type) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String accept) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            if(type.equals("html"))
-                dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            else if(type.equals("css"))
-                dos.writeBytes("Content-Type: text/css;charset=utf-8\r\n");
-            else if(type.equals("fonts"))
-                dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
-            else if(type.equals("images"))
-                dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
-            else if(type.equals("js"))
-                dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
-            else
-                dos.writeBytes("Content-Type: image/avif;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + accept + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
