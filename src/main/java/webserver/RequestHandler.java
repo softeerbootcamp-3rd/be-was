@@ -65,9 +65,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void setResponse(DataOutputStream dos, String uri) throws IOException {
+    private void setResponse(DataOutputStream dos, String path) throws IOException {
         try{
-            byte[] body = Files.readAllBytes(new File(RESOURCES_URL.getPath() + uri).toPath());
+            byte[] body = Files.readAllBytes(new File(RESOURCES_URL.getPath() + path).toPath());
 
             response200Header(dos, body.length);
             responseBody(dos, body);
