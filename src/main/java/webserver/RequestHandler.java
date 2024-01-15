@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,9 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+
+    static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    static Lock writeLock = lock.writeLock();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -44,7 +49,9 @@ public class RequestHandler implements Runnable {
     }
 
     private String requestHeader(BufferedReader br) throws IOException {
+        writeLock.lock();
         String line = null;
+
         String url = null;
         logger.debug("===== request start ====");
         while (!(line = br.readLine()).equals("")) {
@@ -55,6 +62,7 @@ public class RequestHandler implements Runnable {
             }
         }
         logger.debug("===== request end ====");
+        writeLock.unlock();
 
         return url;
     }
