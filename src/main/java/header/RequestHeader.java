@@ -1,0 +1,80 @@
+package header;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.StringTokenizer;
+
+public class RequestHeader {
+    private static final Logger logger = LoggerFactory.getLogger(RequestHeader.class);
+
+    private String method;
+    private String path;
+    private String protocol;
+    private String Host;
+    private String UserAgent;
+    private String Connection;
+    private String SecFetchSite;
+    private String SecFetchMode;
+    private String SecFetchDest;
+    private String Accept;
+    private String AcceptEncoding;
+    private String AcceptLanguage;
+    private String Referer;
+    private String UpgradeInsecureRequests;
+
+    private RequestHeader(String method, String path, String protocol){
+        this.method = method;
+        this.path = path;
+        this.protocol = protocol;
+    }
+
+    public String getPath(){
+        return path;
+    }
+
+    public static RequestHeader of(String method, String path, String Host){
+        return new RequestHeader(method, path, Host);
+    }
+
+    public static RequestHeader parseHeader(BufferedReader br) throws IOException {
+        String requestLine = br.readLine();
+        StringTokenizer st = new StringTokenizer(requestLine, " ");
+
+        String method = st.nextToken();
+        String path = st.nextToken();
+        String protocol = st.nextToken();
+
+        RequestHeader requestHeader = of(method, path, protocol);
+
+        while(!(requestLine = br.readLine()).isEmpty()){
+            st = new StringTokenizer(requestLine, ": ");
+
+            String headerName = st.nextToken().replace("-", "");
+            String headerValue = st.nextToken();
+
+            setHeaderValue(requestHeader, headerName, headerValue);
+        }
+
+        return requestHeader;
+    }
+
+    private static void setHeaderValue(RequestHeader requestHeader, String fieldName, String fieldValue){
+        Class<RequestHeader> requestHeaderClass = RequestHeader.class;
+
+        try{
+            Field field = requestHeaderClass.getDeclaredField(fieldName);
+            field.setAccessible(true);
+
+            field.set(requestHeader, fieldValue);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+
+}
