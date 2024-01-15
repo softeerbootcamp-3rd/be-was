@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import static util.ThreadUtil.startServer;
 
 public class WebServer {
-    private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(String args[]) throws Exception {
