@@ -26,7 +26,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            URL resource = getClass().getClassLoader().getResource("./templates/index.html");
+            URL resource = getResource("./templates/index.html");
             byte[] body = Files.readAllBytes(new File(resource.getPath()).toPath());
 
             //byte[] body = "Hello World".getBytes();
@@ -35,6 +35,11 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private URL getResource(String path) {
+        URL resource = getClass().getClassLoader().getResource(path);
+        return resource;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
