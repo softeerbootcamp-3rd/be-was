@@ -1,10 +1,9 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +22,24 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String line = br.readLine();
+            logger.debug("request line : {}", line );
+
+            String[] tokens = line.split(" ");
+            String url = tokens[1];
+            logger.debug("url : {}", url );
+
+            StringBuilder headers = new StringBuilder();
+            String headerLine;
+            while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
+                headers.append(headerLine).append("\n");
+            }
+            logger.debug("All headers:\n{}", headers);
+
             DataOutputStream dos = new DataOutputStream(out);
-            String htmlContent = "<html><body><h1 style='color:gray;'>Hello World!!!</h1></body></html>";
-            byte[] body = htmlContent.getBytes();
+
+            byte[] body = Files.readAllBytes(new File("src/main/resources/templates" + url).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -41,7 +54,7 @@ public class RequestHandler implements Runnable {
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("response 200 Error " + e.getMessage());
         }
     }
 
@@ -50,7 +63,7 @@ public class RequestHandler implements Runnable {
             dos.write(body, 0, body.length);
             dos.flush();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("response Body Error " + e.getMessage());
         }
     }
 }
