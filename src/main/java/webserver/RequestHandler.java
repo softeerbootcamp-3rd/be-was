@@ -48,6 +48,17 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    private void response404Header(DataOutputStream dos, int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 404 NotFound \r\n");
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
@@ -64,6 +75,11 @@ public class RequestHandler implements Runnable {
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e){
+            byte[] body = "404 Not Found".getBytes();
+
+            response404Header(dos, body.length);
+            responseBody(dos, body);
+
             logger.error(e.getMessage());
         }
     }
