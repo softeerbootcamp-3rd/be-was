@@ -1,15 +1,13 @@
 package webserver;
 
 public enum ResponseEnum {
-    HTML("index.html", "src/main/resources/templates", "text/html"),
     CSS("css", "src/main/resources/static", "text/css"),
     JS("js", "src/main/resources/static","application/javascript"),
-    FONTS("fonts", "src/main/resources/static","font/ttf");
+    FONT("fonts", "src/main/resources/static","font/ttf"),
+    IMAGE("images","src/main/resources/static" , "image/");
     private final String extension;
     private final String pathName;
     private final String contentType;
-
-    private static final String NONE = "없음";
 
     ResponseEnum(String extension, String pathName, String contentType) {
         this.extension = extension;
@@ -23,7 +21,7 @@ public enum ResponseEnum {
                 return responseEnum.pathName;
             }
         }
-        return NONE;
+        return "src/main/resources/templates";
     }
 
     public static String getContentType(String extension) {
@@ -32,7 +30,7 @@ public enum ResponseEnum {
                 return responseEnum.contentType;
             }
         }
-        return NONE;
+        return "text/html";
     }
 
 }

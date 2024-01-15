@@ -7,16 +7,15 @@ import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static util.HttpRequestHeaderHelper.getRequestHeader;
+
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-    private Socket connection;
     private static final int PATH_POS = 1;
     private static final int EXTENSION_POS = 1;
-    private static final String END = "";
     private static final String PATH_DELIMITER = " ";
     private static final String EXTENSION_DELIMITER = "/";
-
+    private Socket connection;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
@@ -27,18 +26,15 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String request = br.readLine();
-            logger.debug(request);
+            String requestHeader = getRequestHeader(in);
+            logger.debug(requestHeader);
 
-            String path = request.split(PATH_DELIMITER)[PATH_POS];
+            String path = requestHeader.split(PATH_DELIMITER)[PATH_POS];
             String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
-            System.out.println(extension);
 
-            while(!request.equals(END)){
-                request = br.readLine();
-                logger.debug(request);
-            }
+//            자바 스레드 돌아가는 원리
+//            concurrent 패키지에 뭐가 있는지
+//            virtual thread
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
