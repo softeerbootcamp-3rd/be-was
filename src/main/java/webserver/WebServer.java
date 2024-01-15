@@ -2,6 +2,8 @@ package webserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +24,21 @@ public class WebServer {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
-            // 클라이언트가 연결될때까지 대기한다.
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+
             Socket connection;
+            // concurrent 패키지를 사용한 코드
             while ((connection = listenSocket.accept()) != null) {
-                Thread thread = new Thread(new RequestHandler(connection));
-                thread.start();
+                executorService.submit(new RequestHandler(connection));
             }
+
+            // 클라이언트가 연결될때까지 대기한다.
+            // Thread를 직접 사용한 기존 코드
+//            Socket connection;
+//            while ((connection = listenSocket.accept()) != null) {
+//                Thread thread = new Thread(new RequestHandler(connection));
+//                thread.start();
+//            }
         }
     }
 }
