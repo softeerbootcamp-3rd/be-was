@@ -23,7 +23,7 @@ public class RequestHandler implements Runnable {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String requestLine = reader.readLine();
 
-            StringBuilder sb = new StringBuilder(requestLine);
+            StringBuilder sb = new StringBuilder(requestLine).append("\n");
 
             String line;
             while (!(line = reader.readLine()).isEmpty())
