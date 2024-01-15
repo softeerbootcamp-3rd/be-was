@@ -66,15 +66,33 @@ public class RequestHandler implements Runnable {
         return new Request(method, url);
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String filePath) {
         try {
+            String contentType = getContentType(filePath);
+
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private String getContentType(String filePath) {
+        if (filePath.endsWith(".css")) {
+            return "text/css";
+        }
+        if (filePath.endsWith(".js")) {
+            return "application/javascript";
+        }
+        if (filePath.endsWith(".png")) {
+            return "image/png";
+        }
+        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
+            return "image/jpeg";
+        }
+        return "text/html";
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {
