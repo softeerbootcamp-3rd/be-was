@@ -33,8 +33,6 @@ public class WebServer {
 
                 CompletableFuture.runAsync(new RequestHandler(connection), executorService);
 
-//                Thread thread = new Thread(new RequestHandler(connection));
-//                thread.start();
             }
         }
     }
