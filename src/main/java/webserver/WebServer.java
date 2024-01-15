@@ -12,7 +12,7 @@ public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         int port = 0;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
@@ -20,20 +20,23 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        // `ExecutorService`를 이용하여 스레드 관리한다.
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
-
-            // ExecutorService를 이용하여 스레드 관리한다.
-            ExecutorService executorService = Executors.newFixedThreadPool(20);
 
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 executorService.submit(new RequestHandler(connection));
             }
-
-            // 서버 종료 시 ExecutorService를 종료한다.
+        } catch (Exception e) {
+            // 예외 처리: 예외에 대한 로깅
+            logger.error("Error in WebServer main loop", e);
+        } finally {
+            // 서버 종료 시 `ExecutorService`를 종료한다.
             executorService.shutdown();
         }
     }

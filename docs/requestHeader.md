@@ -34,7 +34,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
 
 ### Upgrade-Insecure-Requests
 
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade-Insecure-Requests
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade-Insecure-Requests<br>
 https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
 
 암호화와 인증에 대한 클라이언트의 선호를 표현하고 CSP 를 성공적으로 처리할 수 있는지 알려주는 헤더입니다.

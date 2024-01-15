@@ -1,4 +1,4 @@
-https://www.baeldung.com/java-threading-models
+https://www.baeldung.com/java-threading-models<br>
 https://e-una.tistory.com/70
 
 자바 스레드 모델은 매핑 방법에 따라 3 가지가 있습니다.

@@ -1,6 +1,6 @@
 ### MIME type
 
-https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Content-Type
+https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Content-Type<br>
 https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types
 
 Content-Type 헤더는 리소스의 media type을 나타내기 위해 사용됩니다.<br>
