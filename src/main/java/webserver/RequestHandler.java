@@ -2,14 +2,12 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Array;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static utils.ParsingUtils.combineResources;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -68,40 +66,6 @@ public class RequestHandler implements Runnable {
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
-        }
-    }
-
-    //url에 해당하는 파일들을 읽어서 하나의 byte[]로 만들어서 반환
-    private byte[] combineResources(ArrayList<String> urls) throws IOException {
-        ByteArrayOutputStream combinedStream = new ByteArrayOutputStream();
-
-        //url에 해당하는 파일을 읽어서 byte[]로 반환
-        for (String url : urls) {
-            byte[] resourceContent = getResource(url);
-            combinedStream.write(resourceContent);
-        }
-
-        return combinedStream.toByteArray();
-    }
-
-
-    //url에 해당하는 파일을 읽어서 byte[]로 반환
-    private byte[] getResource(String path) throws IOException {
-
-        Path filePath;
-
-        //path에 해당하는 파일을 읽어서 byte[]로 반환
-        if (path.endsWith(".html")) {
-            filePath = Paths.get("src/main/resources/templates", path);
-        } else {
-            filePath = Paths.get("src/main/resources/static", path);
-        }
-
-        try {
-            return Files.readAllBytes(filePath);
-        } catch (IOException e) {
-            logger.error("Error reading resource: {}", path);
-            throw e;
         }
     }
 
