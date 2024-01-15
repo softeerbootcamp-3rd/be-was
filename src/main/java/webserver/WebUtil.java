@@ -1,6 +1,7 @@
 package webserver;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class WebUtil {
-    public static HttpRequestParam HttpRequestParse(InputStream request, Logger logger) {
+    private static final Logger logger = LoggerFactory.getLogger(WebUtil.class);
+    public static HttpRequestParam HttpRequestParse(InputStream request) {
         BufferedReader br = new BufferedReader(new InputStreamReader(request));
         String line = null;
         HttpRequestParam parsedRequest = null;
@@ -16,11 +18,6 @@ public class WebUtil {
             line = br.readLine();
             String[] tokens = line.split(" ");
             parsedRequest = new HttpRequestParam(tokens[0], tokens[1]);
-            logger.debug("HTTP Request Header >> " + line);
-//            while (line != null && !line.isEmpty()) {
-//                logger.debug(line);
-//                line = br.readLine();
-//            }
             return parsedRequest;
         } catch (IOException e) {
             logger.error(e.getMessage());

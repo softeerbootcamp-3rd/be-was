@@ -39,4 +39,11 @@ public class HttpRequestParam {
             this.path = "./src/main/resources/static" + this.uri;
         }
     }
+
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("HTTP Method: ").append(this.method)
+                .append("\nHTTP Request URI: ").append(this.uri);
+        return stringBuilder.toString();
+    }
 }

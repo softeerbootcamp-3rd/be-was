@@ -27,18 +27,10 @@ public class WebServer {
             ExecutorService executorService = Executors.newFixedThreadPool(10);
 
             Socket connection;
-            // concurrent 패키지를 사용한 코드
+
             while ((connection = listenSocket.accept()) != null) {
                 executorService.submit(new RequestHandler(connection));
             }
-
-            // 클라이언트가 연결될때까지 대기한다.
-            // Thread를 직접 사용한 기존 코드
-//            Socket connection;
-//            while ((connection = listenSocket.accept()) != null) {
-//                Thread thread = new Thread(new RequestHandler(connection));
-//                thread.start();
-//            }
         }
     }
 }

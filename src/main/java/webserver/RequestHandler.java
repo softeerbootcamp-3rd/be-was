@@ -21,8 +21,9 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            HttpRequestParam request = WebUtil.HttpRequestParse(in, logger);
+            HttpRequestParam request = WebUtil.HttpRequestParse(in);
+            logger.debug("HTTP Request Header >>\n" + request.toString());
+
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = null;
             try {
@@ -31,6 +32,7 @@ public class RequestHandler implements Runnable {
                 logger.error(e.getMessage());
                 body = "<h1>Hello, Suji👋</h1>".getBytes();
             }
+
             response200Header(dos, body.length, "text/" + request.getContentType());
             responseBody(dos, body);
         } catch (IOException e) {
