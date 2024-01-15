@@ -29,6 +29,7 @@ public class WebServer {
                 // STEP-1 [요구 사항 3] Concurrent 패키지를 사용하도록 변경.
                 executor.execute(new RequestHandler(connection));
             }
+            executor.shutdown();
         }
     }
 }
