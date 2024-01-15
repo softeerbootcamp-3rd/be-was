@@ -60,10 +60,11 @@ public class RequestHandler implements Runnable {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
         String request = br.readLine();
+        logger.debug(request);
         String path = request.split(" ")[1];
         while (!request.equals("")) {
             request = br.readLine();
-            logger.info(request);
+            logger.debug(request);
         }
 
         return path;
