@@ -13,12 +13,10 @@ public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    //path에 해당하는 파일을 읽어서 byte[]로 반환
-    public static byte[] getBody(String path) throws IOException {
+    public static byte[] getBody(String path) throws IOException { // path에 해당하는 파일을 읽어서 byte[]로 반환
 
         Path filePath;
 
-        //path에 해당하는 파일을 읽어서 byte[]로 반환
         if (path.endsWith(".html")) {
             filePath = Paths.get("src/main/resources/templates", path);
         } else {
@@ -33,8 +31,7 @@ public class FileUtil {
         }
     }
 
-    //file의 확장자에 따라 Content-Type을 결정
-    public static String getContentType(String file) {
+    public static String getContentType(String file) { // 파일의 확장자에 따라 Content-Type을 결정
         String contentType = "text/html";
         if (file.endsWith(".css")) {
             contentType = "text/css";

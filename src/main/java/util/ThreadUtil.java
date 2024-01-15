@@ -15,8 +15,7 @@ public class ThreadUtil {
     private static final int THREAD_POOL_SIZE = 100;
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    // concurrent package를 이용한 스레드 풀
-    public static void startServer(int port) {
+    public static void startServer(int port) { // 스레드 풀을 생성하고 스레드를 실행
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
         try (ServerSocket listenSocket = new ServerSocket(port)) {
@@ -24,14 +23,12 @@ public class ThreadUtil {
 
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                // 스레드 풀에서 스레드를 가져와서 처리
-                executorService.execute(new RequestHandler(connection));
+                executorService.execute(new RequestHandler(connection)); // 스레드 풀에서 스레드를 가져와서 실행
             }
         } catch (IOException e) {
             logger.error("Error while starting the server: {}", e.getMessage());
         } finally {
-            // 스레드 풀 종료
-            executorService.shutdown();
+            executorService.shutdown(); // 스레드 풀 종료
         }
     }
 }
