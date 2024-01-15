@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.RequestParserUtil;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,19 +29,12 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
-            logger.debug("Request line : {}", line);
 
-            String[] tokens = line.split(" ");
+            RequestData requestData = RequestParserUtil.parseRequest(br);
 
-            while(!line.equals("")) { // 헤더의 끝은 빈 공백 문자열이 들어있다.
-                line = br.readLine();
-                logger.debug("Header : {}", line);
-            }
+            String url = requestData.getUrl();
 
             DataOutputStream dos = new DataOutputStream(out);
-
-            String url = tokens[1];
 
             byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
             response200Header(dos, body.length);
