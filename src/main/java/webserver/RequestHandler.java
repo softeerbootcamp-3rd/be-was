@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import model.MimeType;
 import model.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class RequestHandler implements Runnable {
             byte[] body = handleRequest(request);
             DataOutputStream dos = new DataOutputStream(out);
 
-            response200Header(dos, body.length, request.getUrl());
+            response200Header(dos, body.length, request);
             responseBody(dos, body);
         } catch (IllegalArgumentException e) {
             logger.error("Invalid request: {}", e.getMessage());
@@ -51,15 +52,10 @@ public class RequestHandler implements Runnable {
     }
 
     private byte[] handleRequest(Request request) throws IOException {
-        String url = request.getUrl();
-        String filePath;
+        String filePath = request.getFilePath();
         byte[] body;
 
-        if (url.endsWith(".html")) {
-            filePath = "src/main/resources/templates" + url;
-        } else if (!url.isEmpty()) {
-            filePath = "src/main/resources/static" + url;
-        } else {
+        if (filePath.isEmpty()) {
             return "Hello World".getBytes();
         }
 
@@ -87,9 +83,9 @@ public class RequestHandler implements Runnable {
         return new Request(method, url);
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String filePath) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, Request request) {
         try {
-            String contentType = getContentType(filePath);
+            String contentType = request.getMimeType();
 
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
@@ -101,19 +97,8 @@ public class RequestHandler implements Runnable {
     }
 
     private String getContentType(String filePath) {
-        if (filePath.endsWith(".css")) {
-            return "text/css";
-        }
-        if (filePath.endsWith(".js")) {
-            return "application/javascript";
-        }
-        if (filePath.endsWith(".png")) {
-            return "image/png";
-        }
-        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
-            return "image/jpeg";
-        }
-        return "text/html";
+        String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+        return MimeType.getContentType(extension);
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {

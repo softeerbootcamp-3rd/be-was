@@ -16,4 +16,24 @@ public class Request {
     public String getUrl() {
         return url;
     }
+
+    public String getMimeType() {
+        if (url.endsWith(".css")) {
+            return "text/css";
+        }
+        if (url.endsWith(".js")) {
+            return "application/javascript";
+        }
+        // 기타 확장자 처리
+        return "text/html";
+    }
+
+    public String getFilePath() {
+        if (url.endsWith(".html")) {
+            return "src/main/resources/templates" + url;
+        } else if (!url.isEmpty()) {
+            return "src/main/resources/static" + url;
+        }
+        return "";
+    }
 }
