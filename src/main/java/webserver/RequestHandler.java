@@ -3,7 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
+import model.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,23 +25,34 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
+            // 헤더의 첫 번째 line
             String line = br.readLine();
-//            System.out.println("request : " + line);
             logger.debug("request line : {}", line);
 
+            Request request = getRequest(line);
+
+            // 전체 header 출력
             while(!line.equals("")){
                 line = br.readLine();
-//                System.out.println("request : " + line);
                 logger.debug("header : {}", line);
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+//            byte[] body = "Hello World".getBytes();
+            System.out.println(request.getUrl());
+            byte[] body = Files.readAllBytes(new File("src/main/resources/templates" + request.getUrl()).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static Request getRequest(String line) {
+        String[] tokens = line.split(" ");
+        String method = tokens[0];
+        String url = tokens[1];
+        return new Request(method, url);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
