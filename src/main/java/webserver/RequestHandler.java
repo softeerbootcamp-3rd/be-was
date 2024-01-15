@@ -29,11 +29,12 @@ public class RequestHandler implements Runnable {
             if(line == null) {
                 return;
             }
-            logger.debug("request line : {}", line);
-            logger.debug("http header : \n");
+            logger.debug("# request line");
+            logger.debug(line);
+            logger.debug("# http header");
 
-            String[] tokens = line.split(" "); //  (3)
-            while(!line.equals("")) { // (4)
+            String[] tokens = line.split(" ");
+            while(!line.equals("")) {
                 line = br.readLine();
                 logger.debug(line);
             }
