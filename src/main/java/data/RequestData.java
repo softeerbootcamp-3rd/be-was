@@ -11,7 +11,15 @@ public class RequestData {
         this.httpVersion = httpVersion;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
     public String getRequestContent() {
         return requestContent;
+    }
+
+    public String getHttpVersion() {
+        return httpVersion;
     }
 }
