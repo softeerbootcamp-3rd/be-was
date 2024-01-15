@@ -88,13 +88,13 @@ public class RequestHandler implements Runnable {
             else if(type.equals("css"))
                 dos.writeBytes("Content-Type: text/css;charset=utf-8\r\n");
             else if(type.equals("fonts"))
-                dos.writeBytes("Content-Type: text/fonts;charset=utf-8\r\n");
+                dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
             else if(type.equals("images"))
-                dos.writeBytes("Content-Type: text/png;charset=utf-8\r\n");
+                dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
             else if(type.equals("js"))
-                dos.writeBytes("Content-Type: text/js;charset=utf-8\r\n");
+                dos.writeBytes("Content-Type: */*;charset=utf-8\r\n");
             else
-                dos.writeBytes("Content-Type: text/ico;charset=utf-8\r\n");
+                dos.writeBytes("Content-Type: image/avif;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
