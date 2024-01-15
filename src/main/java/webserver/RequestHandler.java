@@ -31,21 +31,39 @@ public class RequestHandler implements Runnable {
             req.requestInfo();
             DataOutputStream dos = new DataOutputStream(out);
 
-            String type = req.getType();
-            String parentDir = getDir(type);
-            byte[] body = Files.readAllBytes(new File(parentDir+req.getUrl()).toPath());
+            if(!(req.getContentType().isEmpty())) {
+                String parentDir = getDir();
+                byte[] body = Files.readAllBytes(new File(parentDir + req.getUrl()).toPath());
 
-            response200Header(dos, body.length,type);
-            responseBody(dos, body);
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+            }
+            else{
+                byte[] body = new byte[0];
+                response301Header(dos, body.length);
+                responseBody(dos, body);
+            }
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String type) {
+    private void response301Header(DataOutputStream dos, int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 301 OK \r\n");
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("Location: " + req.getLocation() + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/"+type+";charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: "+req.getContentType()+";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -64,8 +82,8 @@ public class RequestHandler implements Runnable {
 
 
 
-    private String getDir(String fileExtension){
-        if(fileExtension.equals("html")){
+    private String getDir(){
+        if(req.getContentType().equals("text/html")){
             return Paths.get(System.getProperty("user.dir"), "src/main/resources/templates").toString();
         }
         else{
@@ -77,9 +95,13 @@ public class RequestHandler implements Runnable {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        //읽어온 값을 req에 추가하기
-        String[] line = bufferedReader.readLine().split(" ");
-        req.setMethod(line[0]);
-        req.setUrl(line[1]);
+        String line = bufferedReader.readLine();
+        req.setMethod(line.split(" ")[0]);
+        req.setUrl(line.split(" ")[1]);
+
+        while (!(line = bufferedReader.readLine()).isEmpty()){
+            System.out.println("line = " + line);
+        }
+
     }
 }
