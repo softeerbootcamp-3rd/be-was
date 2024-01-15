@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +10,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,17 +29,18 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
+            // STEP-1 [요구 사항 1] 서버로 들어오는 HTTP Request의 내용을 읽고 로거(log.debug)를 이용해 출력한다.
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String line = bufferedReader.readLine();
+            String url = line.split(" ")[1];
             while(!line.isEmpty()) {
                 logger.debug("header : {}", line);
                 line = bufferedReader.readLine();
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            // STEP-1 [요구 사항 2] 정적인 html 파일 응답
+            byte[] body = Files.readAllBytes(Paths.get("src/main/resources/templates" + url));
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
