@@ -24,7 +24,7 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = getFileByPath(readRquest(in));
+            byte[] body = getFileByPath(RequestParser.getPath(in));
             if (body == null) { // 해당 경로의 html 파일이 존재하지 않을 때
                 body = "Hello World".getBytes();
             }
@@ -54,20 +54,6 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private String readRquest(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-
-        String request = br.readLine();
-        logger.debug(request);
-        String path = request.split(" ")[1];
-        while (!request.equals("")) {
-            request = br.readLine();
-            logger.debug(request);
-        }
-
-        return path;
     }
 
     private byte[] getFileByPath(String path) throws IOException {
