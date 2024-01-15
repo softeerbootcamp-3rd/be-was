@@ -24,24 +24,22 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String line = br.readLine();
-            logger.debug("request line : {}", line);
+            String requestline = br.readLine();
 
-            String[] tokens = line.split(" ");
-            String requestURL = tokens[1];
-            String url;
+            String requestURL = getRequestURL(requestline);
+            logger.debug("[REQUEST LINE] {}", requestline);
 
-            byte[] body;
-            if(requestURL.equals("/")) {
-                body = "main page".getBytes();
-            } else {
-                url = "src/main/resources/templates" + requestURL;
-                body = Files.readAllBytes(new File(url).toPath());
+            String headerLine;
+            while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
+                logger.debug("[Header] {}", headerLine);
             }
 
-            while (!line.equals("")) {
-                line = br.readLine();
-                logger.debug("header : {}", line);
+            byte[] body;
+            if(requestURL.equals("/index.html")) {
+                String location = "src/main/resources/templates" + requestURL;
+                body = Files.readAllBytes(new File(location).toPath());
+            } else {
+                body = "main page".getBytes();
             }
 
             DataOutputStream dos = new DataOutputStream(out);
@@ -52,9 +50,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private boolean isHTML(String url) {
-        if(url.endsWith(".html")) return true;
-        return false;
+    private String getRequestURL(String requestLine) {
+        String[] tokens = requestLine.split(" ");
+        return tokens[1];
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
