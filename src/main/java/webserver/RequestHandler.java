@@ -36,11 +36,11 @@ public class RequestHandler implements Runnable {
             String[] tokens = line.split(" ");
 
 //            while(line != null) {
-//            while(!line.equals("")) { // 헤더의 끝은 빈 공백 문자열이 들어있다.
-//                line = br.readLine();
-////                System.out.println("Request : " + line);
-//                logger.debug("Header : {}", line);
-//            }
+            while(!line.equals("")) { // 헤더의 끝은 빈 공백 문자열이 들어있다.
+                line = br.readLine();
+//                System.out.println("Request : " + line);
+                logger.debug("Header : {}", line);
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
 //            byte[] body = "Hello World".getBytes();
@@ -51,28 +51,13 @@ public class RequestHandler implements Runnable {
 
             byte[] body = Files.readAllBytes(htmlFilePath);
 
-            Path htmlDirectory = htmlFilePath.getParent().getParent();
+            Path htmlDirectory = htmlFilePath.getParent();
 
             response200Header(dos, body.length);
             responseBody(dos, body);
 
-            // Send related files
-            sendRelatedFile(htmlDirectory, "/static/css/bootstrap.min.css", dos);
-            sendRelatedFile(htmlDirectory, "/static/js/jquery-2.2.0.min.js", dos);
-            sendRelatedFile(htmlDirectory, "/static/js/bootstrap.min.js", dos);
-            sendRelatedFile(htmlDirectory, "/static/js/scripts.js", dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
-        }
-    }
-
-    private void sendRelatedFile(Path baseDirectory, String relativePath, DataOutputStream dos) throws IOException {
-        Path staticFilePath = Paths.get(baseDirectory.toString(), relativePath);
-        logger.debug("static path: "+staticFilePath);
-        if (Files.exists(staticFilePath)) {
-            byte[] fileContent = Files.readAllBytes(staticFilePath);
-            response200Header(dos, fileContent.length);
-            responseBody(dos, fileContent);
         }
     }
 
