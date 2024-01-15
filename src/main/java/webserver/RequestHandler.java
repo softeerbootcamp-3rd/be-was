@@ -4,10 +4,8 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
-import dto.RequestDto;
+import dto.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +13,10 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private RequestDto req;
+    private Request req;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.req = new RequestDto();
+        this.req = new Request();
     }
 
     public void run() {
