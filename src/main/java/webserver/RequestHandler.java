@@ -1,13 +1,12 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Array;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,32 +27,96 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
-            byte[] body = getResource();
+            //Request header 읽어오기
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+
+            String line = br.readLine();
+            logger.debug("request line : {}", line);
+
+            ArrayList<String> url = new ArrayList<>();
+            url.add(line.split(" ")[1]);
+
+            //url 읽어오기
+            while(!line.equals("")){
+                line = br.readLine();
+
+                if (line == null) break;
+
+                if (line.equals("GET")) {
+                    String[] tokens = line.split(" ");
+
+                    url.add(tokens[1]);
+                }
+
+                //header 정보 출력
+                logger.debug("header : {}", line);
+            }
+
+            //응답
+            byte[] body = combineResources(url);
+
+            String contentType = "text/html";
+            if (!url.isEmpty() && url.get(0).endsWith(".css")) {
+                contentType = "text/css";
+            }
+            else if (!url.isEmpty() && url.get(0).endsWith(".js")) {
+                contentType = "application/javascript";
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private byte[] getResource() throws IOException {
-        Path path = Paths.get("src/main/resources/templates", "/index.html");
-        return Files.readAllBytes(path);
+    //url에 해당하는 파일들을 읽어서 하나의 byte[]로 만들어서 반환
+    private byte[] combineResources(ArrayList<String> urls) throws IOException {
+        ByteArrayOutputStream combinedStream = new ByteArrayOutputStream();
+
+        //url에 해당하는 파일을 읽어서 byte[]로 반환
+        for (String url : urls) {
+            byte[] resourceContent = getResource(url);
+            combinedStream.write(resourceContent);
+        }
+
+        return combinedStream.toByteArray();
     }
 
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    //url에 해당하는 파일을 읽어서 byte[]로 반환
+    private byte[] getResource(String path) throws IOException {
+
+        Path filePath;
+
+        //path에 해당하는 파일을 읽어서 byte[]로 반환
+        if (path.endsWith(".html")) {
+            filePath = Paths.get("src/main/resources/templates", path);
+        } else {
+            filePath = Paths.get("src/main/resources/static", path);
+        }
+
+        try {
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            logger.error("Error reading resource: {}", path);
+            throw e;
+        }
+    }
+
+
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
+
 
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
