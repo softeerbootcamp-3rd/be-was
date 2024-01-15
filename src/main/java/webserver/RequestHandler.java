@@ -28,13 +28,19 @@ public class RequestHandler implements Runnable {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String line = br.readLine();
+
             //line: request line GET /index.html HTTP/1.1
+            // 위와 같은 형태이므로 여기서 URL만 추출
             String[] tokens = line.split(" ");
             String url = tokens[1];
-            System.out.println("[[["+url+"]]]");
 
 
-
+            // debug 라인 분석
+            // 첫줄 - 메소드, url, http버전
+            // Host - 서버 주소
+            // Connection: keep-alive -> TCP에서 배운 keep-alive
+            // Cahche-Control: max-age=0 -> 유효기간, 0이된 후 요청하면 새로 요청을 보내지만 그 전에는 메모리에서 가지고 옴
+            // 나머지는 클라이언트의 환경 및 스펙
 
             logger.debug("request line {}",line);
             while(line != null && !line.isEmpty()) {
