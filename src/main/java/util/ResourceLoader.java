@@ -15,6 +15,7 @@ public class ResourceLoader {
         CONTENT_TYPE_MAP.put("jpg", "image/jpeg");
         CONTENT_TYPE_MAP.put("jpeg", "image/jpeg");
         CONTENT_TYPE_MAP.put("gif", "image/gif");
+        CONTENT_TYPE_MAP.put("ico", "image/x-icon");
     }
 
     public static String getContentType(String path) {
