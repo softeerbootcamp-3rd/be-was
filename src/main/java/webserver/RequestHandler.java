@@ -38,29 +38,37 @@ public class RequestHandler implements Runnable {
             }
             */
 
-            String url = request.getUrl();
-            String filePath = "src/main/resources/templates/index.html";
-            byte[] body = "Hello World".getBytes();
-
-            if (url.endsWith(".html")) {
-                filePath = "src/main/resources/templates" + url;
-                File file = new File(filePath);
-                body = Files.readAllBytes(file.toPath());
-            } 
-            else if (!url.isEmpty()) {
-                filePath = "src/main/resources/static" + url;
-                File file = new File(filePath);
-                body = Files.readAllBytes(file.toPath());
-            }
+            byte[] body = handleRequest(request);
             DataOutputStream dos = new DataOutputStream(out);
 
-            response200Header(dos, body.length, filePath);
+            response200Header(dos, body.length, request.getUrl());
             responseBody(dos, body);
         } catch (IllegalArgumentException e) {
             logger.error("Invalid request: {}", e.getMessage());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private byte[] handleRequest(Request request) throws IOException {
+        String url = request.getUrl();
+        String filePath;
+        byte[] body;
+
+        if (url.endsWith(".html")) {
+            filePath = "src/main/resources/templates" + url;
+        } else if (!url.isEmpty()) {
+            filePath = "src/main/resources/static" + url;
+        } else {
+            return "Hello World".getBytes();
+        }
+
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return "File not found".getBytes();
+        }
+
+        return Files.readAllBytes(file.toPath());
     }
 
     private Request getRequest(String line) {
