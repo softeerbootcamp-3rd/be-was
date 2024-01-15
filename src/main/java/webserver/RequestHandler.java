@@ -17,7 +17,7 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
+        logger.debug("New Client Connect! Connected IP : {}, Port : {} \n", connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -29,15 +29,18 @@ public class RequestHandler implements Runnable {
             if(line == null) {
                 return;
             }
-            logger.debug("# request line");
-            logger.debug(line);
-            logger.debug("# http header");
+            logger.debug("# Request Line");
+            logger.debug(line + "\n");
+            logger.debug("# Request Header");
 
             String[] tokens = line.split(" ");
             while(!line.equals("")) {
                 line = br.readLine();
+                int index = line.indexOf(':');
+                String key = line.substring(0, index);
                 logger.debug(line);
             }
+            logger.debug("\n");
 
             byte[] body = Files.readAllBytes(
                     new File("./src/main/resources/templates" + tokens[1]).toPath());
