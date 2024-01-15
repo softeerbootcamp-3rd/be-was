@@ -75,4 +75,17 @@ public class RequestHeader {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public String toString(){
+        return String.format("\n요청 메소드: %s\n" +
+                "요청한 자원의 경로: %s\n" +
+                "프로토콜: %s\n" +
+                "서버의 주소: %s\n" +
+                "콘텐츠 타입: %s\n" +
+                "사용자의 Agent: %s\n" +
+                "연결 설정: %s\n" +
+                "언어: %s\n" +
+                "이전 경로: %s\n", method, path, protocol, Host, Accept, UserAgent, Connection, AcceptLanguage, Referer);
+    }
 }
