@@ -27,7 +27,9 @@ public class RequestHandler implements Runnable {
             InputStreamReader inputStreamReader = new InputStreamReader(in);
             BufferedReader br = new BufferedReader(inputStreamReader);
 
-            String path = br.readLine().split(" ")[1];
+            String path = br.readLine();
+            logger.debug(path);
+            path = path.split(" ")[1];
             StringBuilder sb = new StringBuilder(path);
             String line;
             while (!(line = br.readLine()).isEmpty()) {
