@@ -44,8 +44,18 @@ public class RequestHandler implements Runnable {
             byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
             response200Header(dos, body.length);
             responseBody(dos, body);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private static String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+            return fileName.substring(lastDotIndex + 1);
+        } else {
+            return ""; // 확장자가 없는 경우
         }
     }
 
