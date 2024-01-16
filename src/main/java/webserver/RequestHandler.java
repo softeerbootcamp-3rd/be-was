@@ -24,8 +24,6 @@ public class RequestHandler implements Runnable {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(reader);
 
-            // TODO: request header class 생성하기
-
             logger.debug("Connection IP : {}, Port : {}, request: {}",
                     connection.getInetAddress(), connection.getPort(), request.getURI());
 
