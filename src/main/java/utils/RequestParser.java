@@ -10,14 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public final class RequestParser {
-    private static Map<String, String > headers = new ConcurrentHashMap<String, String>();
+    private static Map<String, String> headers = new ConcurrentHashMap<String, String>();
 
-    public static void setHeaders(InputStream in) throws IOException {
+    public static void parseHeaders(InputStream in) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         //첫 번째 라인에서 메서드, 경로 추출
         String firstLine = reader.readLine();
-        if(firstLine == null || firstLine.isEmpty()){
+        if (firstLine == null || firstLine.isEmpty()) {
             throw new IllegalArgumentException("Invalid HTTP request");
         }
 
@@ -27,33 +27,35 @@ public final class RequestParser {
 
         //다른 헤더 추출
         String line;
-        while((line = reader.readLine())!=null && !line.isEmpty()){
+        while ((line = reader.readLine()) != null && !line.isEmpty()) {
             String[] headerParts = line.split(": ");
-            if(headerParts.length == 2){
+            if (headerParts.length == 2) {
                 headers.put(headerParts[0], headerParts[1]);
             }
         }
     }
-    public static String getMethod(){
+
+    public static String getMethod() {
         return headers.get("Method");
     }
 
-    public static String getHost(){
+    public static String getHost() {
         return headers.get("Host");
     }
 
-    public static String getPath(){
+    public static String getPath() {
         return headers.get("Path");
     }
-    public static String getAccept(){
+
+    public static String getAccept() {
         return headers.get("Accept");
     }
 
-    public static String getUserAgent(){
+    public static String getUserAgent() {
         return headers.get("User-Agent");
     }
 
-    public static String getCookie(){
+    public static String getCookie() {
         return headers.get("Cookie");
     }
 }
