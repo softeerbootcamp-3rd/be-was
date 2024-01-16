@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 
 import model.User;
@@ -32,7 +33,8 @@ public class RequestHandler implements Runnable {
                 return;
             // 요청 URL 추출
             String[] tokens = line.split(" ");
-            String url = tokens[1];
+            // 한글 파라미터 decoding
+            String url = URLDecoder.decode(tokens[1], "UTF-8");
 
             String accept = "";
             logger.debug("HTTP Method: {}, Request Target: {}", tokens[0], url);
@@ -51,21 +53,27 @@ public class RequestHandler implements Runnable {
             }
 
             byte[] body = "".getBytes();     // 초기화
-            // GET으로 회원가입 기능 구현
-            if(url.contains("/user/create?")) {
-                tokens = url.split("\\?");
-                String[] parameters = tokens[1].split("&");
-                String userId = parameters[0].substring(parameters[0].indexOf("=")+1);
-                String password = parameters[1].substring(parameters[1].indexOf("=")+1);
-                String name = parameters[2].substring(parameters[2].indexOf("=")+1);
-                String email = parameters[3].substring(parameters[3].indexOf("=")+1);
-                email = email.replace("%40", "@");
-                // User 객체에 저장
-                User user = new User(userId, password, name, email);
-                logger.debug(user.toString());
-                String welcome = "Hello, " + user.getName() + "!";      // 회원가입 성공 시 뜨는 문구
-                body = welcome.getBytes();
+
+            // 요청에서 Request param 떼어내기
+            String[] requestParams = null;
+            if(url.contains("?")) {
+                requestParams = getRequestParams(url);
+                url = url.substring(0, url.indexOf("?"));
             }
+
+            // 파일 불러오기 외의 요청
+            // 1. 회원가입 처리
+            if(url.equals("/user/create")) {
+                User user = signup(requestParams);
+                if(user == null)
+                    body = "다시 시도해주세요.".getBytes();
+                else {
+                    logger.debug(user.toString());
+                    body = ("Hello, " + user.getName() + "!").getBytes();
+                }
+            }
+
+            // 파일 불러오기 요청
             else {
                 // 해당 파일을 읽고 응답
                 String path = "./src/main/resources";
@@ -81,6 +89,7 @@ public class RequestHandler implements Runnable {
                 logger.debug("path: {}", path);
                 body = Files.readAllBytes(new File(path).toPath());
             }
+
             response200Header(dos, body.length, accept);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -106,5 +115,29 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    // 요청 url에서 Request Param 리스트 가져오기
+    private String[] getRequestParams(String url) {
+        if(url == null)
+            return null;
+        if(!url.contains("?"))
+            return null;
+
+        String[] tokens = url.split("\\?");
+        tokens = tokens[1].split("&");
+        for(int i = 0; i < tokens.length; i++)
+            tokens[i] = tokens[i].substring(tokens[i].indexOf("=")+1);
+
+        return tokens;
+    }
+
+    // 회원가입 처리
+    private User signup(String[] requestParams) {
+        if(requestParams == null || requestParams.length != 4)
+            return null;
+        // User 객체 생성
+        User user = new User(requestParams[0], requestParams[1], requestParams[2], requestParams[3]);
+        return user;
     }
 }
