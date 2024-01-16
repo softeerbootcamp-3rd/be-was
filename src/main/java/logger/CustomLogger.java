@@ -1,7 +1,6 @@
 package logger;
 
-import java.io.IOException;
-import java.io.InputStream;
+import http.request.HttpRequest;
 import java.net.Socket;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +20,11 @@ public class CustomLogger {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
     }
 
-    // header 출력 부
-    public static void printHeader(HttpRequestHeader httpRequestHeader) throws IOException {
-        logger.debug("Headers : \n{}", httpRequestHeader.toString());
+    // request 출력 부
+    public static void printRequest(HttpRequest httpRequest) {
+        logger.debug("StartLines : \n{}", httpRequest.getHttpRequestStartLine().toString());
+        logger.debug("Headers : \n{}", httpRequest.getHttpRequestHeader().toString());
+        logger.debug("Body : \n{}", "Not Implemented");
     }
 
-    // body 출력 부
-    public void printBody() {
-        // TODO: body 출력 부
-    }
 }
