@@ -36,7 +36,7 @@ public class RequestHandler implements Runnable {
             RequestDto requestDto = createRequestDto(in);
             OutputView.printRequestDto(requestDto);
             createResponse(out, requestDto.getPath());
-        } catch (IOException e) {
+        } catch (IOException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }
