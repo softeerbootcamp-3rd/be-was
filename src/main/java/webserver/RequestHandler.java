@@ -62,8 +62,15 @@ public class RequestHandler implements Runnable {
                 String name = params.get("name");
                 String email = params.get("email");
                 User user = new User(userId, password, name, email);
-                Database.addUser(user);
-                logger.debug("새로운 유저 생성! " + user.toString() + "\n");
+
+                String result = verifyUser(user);
+                if(verifyUser(user).equals("성공")) {
+                    Database.addUser(user);
+                    logger.debug("새로운 유저 생성! " + user.toString() + "\n");
+                }
+                else {
+                    logger.debug(result + "\n");
+                }
             } else {
                 byte[] body = Files.readAllBytes(
                         new File("./src/main/resources/templates" + tokens[1]).toPath());
@@ -106,5 +113,14 @@ public class RequestHandler implements Runnable {
             queries.put(key, value);
         }
         return queries;
+    }
+
+    public static String verifyUser(User user) {
+        if(user.getUserId().isEmpty()
+        || user.getEmail().isEmpty()
+        || user.getName().isEmpty()
+        || user.getPassword().isEmpty()) return "입력란에 공백이 존재하면 안됩니다.";
+        else if(Database.findUserById(user.getUserId()) != null) return "중복되는 아이디 입니다.";
+        return "성공";
     }
 }
