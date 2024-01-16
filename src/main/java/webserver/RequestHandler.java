@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,30 +34,26 @@ public class RequestHandler implements Runnable {
             byte[] body = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
 
             Response response = new Response(request, body);
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-    //응답별 헤더 필요
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
+
+            sendResponse(dos, body, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    // resources/templates/index.html을 읽어서 넣기
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
+    private void sendResponse(DataOutputStream dos, byte[] body, Response response) {
+        try{
+            dos.writeBytes(response.getHttpVersion() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n");
+            for (Map.Entry<String, String> entry : response.getResponseHeader().entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                dos.writeBytes(key + ": " + value + "\r\n");
+            }
+
+            dos.writeBytes("\r\n");
             dos.write(body, 0, body.length);
             dos.flush();
-        } catch (IOException e) {
+        }catch (IOException e) {
             logger.error(e.getMessage());
         }
     }

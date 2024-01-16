@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Response {
-
     String httpVersion;
     int statusCode;
     String statusText;
@@ -15,8 +14,31 @@ public class Response {
     //추후 구현할 내용
     HashMap<String, String> responseBody;
 
+    public String getHttpVersion() {
+        return httpVersion;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getStatusText() {
+        return statusText;
+    }
+
+    public HashMap<String, String> getResponseHeader() {
+        return responseHeader;
+    }
+
+    public HashMap<String, String> getResponseBody() {
+        return responseBody;
+    }
+
+
     public Response(Request request, byte[] body) {
         this.httpVersion = request.httpVersion;
+        this.responseHeader = new HashMap<>();
+        this.responseBody = new HashMap<>();
         setStatusCode(request);
         setHeader(body.length);
     }
