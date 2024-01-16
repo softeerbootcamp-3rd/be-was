@@ -54,7 +54,6 @@ public class RequestHandler implements Runnable {
             }
         }
         header.forEach(logger::debug);
-        logger.debug("----------------------구분선----------------------");
         return header;
     }
 
