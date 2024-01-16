@@ -1,18 +1,11 @@
 package frontController;
 
-import dto.Request;
-import dto.Response;
+import http.Request;
+import http.Response;
 import frontController.dispatcher.SimpleRequestDispatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class MyView {
     private String viewPath;

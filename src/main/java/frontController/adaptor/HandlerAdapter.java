@@ -1,7 +1,7 @@
 package frontController.adaptor;
 
-import dto.Request;
-import dto.Response;
+import http.Request;
+import http.Response;
 import frontController.ModelAndView;
 
 import java.io.IOException;

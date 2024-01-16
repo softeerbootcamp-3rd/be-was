@@ -1,8 +1,8 @@
 package frontController.dispatcher;
 
-import dto.HttpStatus;
-import dto.Request;
-import dto.Response;
+import http.HttpStatus;
+import http.Request;
+import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;

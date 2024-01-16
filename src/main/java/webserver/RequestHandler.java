@@ -1,10 +1,7 @@
 package webserver;
 
-import java.awt.*;
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +10,9 @@ import java.util.List;
 import controller.MemberFormController;
 import controller.StaticController;
 import controller.TemplateController;
-import dto.HttpStatus;
-import dto.Request;
-import dto.Response;
+import http.HttpStatus;
+import http.Request;
+import http.Response;
 import frontController.ModelAndView;
 import frontController.MyView;
 import frontController.adaptor.MyHandlerAdapter;
@@ -126,12 +123,11 @@ public class RequestHandler implements Runnable {
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         String line = bufferedReader.readLine();
+        logger.debug("[RequestHandler.getRequest] line : "+line.split(" ")[1]);
         req.setMethod(line.split(" ")[0]);
         req.setUrl(line.split(" ")[1]);
 
-        while (!(line = bufferedReader.readLine()).isEmpty()){
-            System.out.println("line = " + line);
-        }
+        req.requestInfo();
 
     }
 

@@ -1,7 +1,7 @@
 package frontController.dispatcher;
 
-import dto.Request;
-import dto.Response;
+import http.Request;
+import http.Response;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
