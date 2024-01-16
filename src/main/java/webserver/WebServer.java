@@ -22,6 +22,7 @@ public class WebServer {
         }
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
+        //step1-3: thread -> concurrent 패키지 사용하도록 변경
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
             logger.info("Web Application Server started {} port.", port);

@@ -28,9 +28,9 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             String requestHeader = getRequestHeader(in);
-            logger.debug(requestHeader);
+            logger.debug(requestHeader); //step1-1: HTTP request 내용 출력
 
-            String path = requestHeader.split(PATH_DELIMITER)[PATH_POS];
+            String path = requestHeader.split(PATH_DELIMITER)[PATH_POS];//step1-2: request line 에서 path 분리하기
             String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
 
             DataOutputStream dos = new DataOutputStream(out);
