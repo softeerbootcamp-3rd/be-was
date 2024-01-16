@@ -48,12 +48,7 @@ public class RequestHandler implements Runnable {
                 String[] tokens = requestURL.split("\\?");
                 Map<String, String> params = parse(tokens[1]);
 
-                String userId = params.get("userId");
-                String password = params.get("password");
-                String name = params.get("name");
-                String email = params.get("email");
-
-                User user = new User(userId, password, name, email);
+                User user = createUser(params);
                 logger.debug("{}", user);
 
                 body = "LOGIN OK".getBytes();
@@ -67,6 +62,16 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    public static User createUser(Map<String, String> params) {
+        String userId = params.get("userId");
+        String password = params.get("password");
+        String name = params.get("name");
+        String email = params.get("email");
+
+        User user = new User(userId, password, name, email);
+        return user;
+    }
+
     // html 파일을 요청하는지 확인
     boolean isHTML(String requestURL) {
         if (requestURL.endsWith(".html")) {
@@ -76,7 +81,7 @@ public class RequestHandler implements Runnable {
     }
 
     // Request line에서 url만 추출
-    private String getRequestURL(String requestLine) {
+    public String getRequestURL(String requestLine) {
         String[] tokens = requestLine.split(" ");
         return tokens[1];
     }
@@ -102,7 +107,7 @@ public class RequestHandler implements Runnable {
     }
 
     // login url parsing 기능
-    private Map<String, String> parse(String query) {
+    public static Map<String, String> parse(String query) {
         Map<String, String> params = new HashMap<>();
 
         String[] pairs = query.split("&");
