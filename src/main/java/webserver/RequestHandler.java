@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,7 @@ public class RequestHandler implements Runnable {
                 String name = params.get("name");
                 String email = params.get("email");
                 User user = new User(userId, password, name, email);
+                Database.addUser(user);
                 logger.debug("새로운 유저 생성! " + user.toString() + "\n");
             } else {
                 byte[] body = Files.readAllBytes(
