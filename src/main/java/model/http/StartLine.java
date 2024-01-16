@@ -1,16 +1,16 @@
 package model.http;
 
 public class StartLine {
-    private final String method;
+    private final HttpMethod method;
     private final String pathUrl;
     private final String version;
-    public StartLine(String method, String pathUrl, String version) {
+    public StartLine(HttpMethod method, String pathUrl, String version) {
         this.method = method;
         this.pathUrl = pathUrl;
         this.version = version;
     }
     public String getMethod() {
-        return method;
+        return method.getMethod();
     }
 
     public String getPathUrl() {
