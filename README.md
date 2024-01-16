@@ -96,3 +96,50 @@ byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
 - [객체지향 프로그래밍(OOP)과 클린 코딩](https://velog.io/@tin9oo/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8DOOP%EA%B3%BC-%ED%81%B4%EB%A6%B0-%EC%BD%94%EB%94%A9)
 - [좋은 커밋 메시지 작성](https://velog.io/@tin9oo/%EC%A2%8B%EC%9D%80-%EC%BB%A4%EB%B0%8B-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%9E%91%EC%84%B1)
 - [테스트 주도 개발(TDD)](https://velog.io/@tin9oo/%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%A3%BC%EB%8F%84-%EA%B0%9C%EB%B0%9CTDD)
+
+## Step 2 - GET으로 회원가입
+### 학습 목표
+- HTTP GET 프로토콜을 이해한다.
+
+- HTTP GET에서 parameter를 전달하고 처리하는 방법을 학습한다.
+
+- HTTP 클라이언트에서 전달받은 값을 서버에서 처리하는 방법을 학습한다.
+
+### 사전지식
+- Java 프로그래밍
+
+### 기능요구사항
+#### GET으로 회원가입 기능 구현
+- “회원가입” 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시한다.
+
+- 이 폼을 통해서 회원가입을 할 수 있다.
+
+### 프로그래밍 요구사항
+- 회원가입 폼에서 ```가입``` 버튼을 클릭하면 다음과 같은 형태로 사용자가 입력한 값이 서버에 전달된다.
+
+> /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+
+- HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
+
+- 유지보수가 편한 코드가 되도록 코드품질을 개선해 본다.
+
+### 추가 요구 사항
+- Junit을 활용한 단위 테스트를 적용해 본다.
+
+### 추가학습거리
+#### HTTP Request Header 예
+```
+GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Accept: */*
+```
+
+#### Request Parameter 추출하기 힌트
+- Header의 첫 번째 라인에서 요청 URL을 추출한다.
+
+- 요청 URL에서 접근 경로와 이름=값을 추출해 User 클래스에 담는다.
+
+  - 접근 경로(위 예에서는 /user/create)와 패러미터를 분리하는 방법은 String의 split() 메소드를 활용하면 된다.
+
+  - ? 문자는 정규표현식의 예약어이기 때문에 split() 메소드를 사용할 때 "?"이 아닌 "\\?"를 사용해야 한다.
