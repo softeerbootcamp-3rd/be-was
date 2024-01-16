@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 
+import controller.Controller;
+import db.Database;
+import dto.HTTPRequestDto;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,10 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+
+//    private static Controller controller = new Controller();
+    private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+    private String[] requestParams;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -27,73 +34,81 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             // 헤더 값 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            // 요청 라인 읽어오기
-            String line = br.readLine();
-            if(line == null)
-                return;
-            // 요청 URL 추출
-            String[] tokens = line.split(" ");
-            // 한글 파라미터 decoding
-            String url = URLDecoder.decode(tokens[1], "UTF-8");
 
-            String accept = "";
-            logger.debug("HTTP Method: {}, Request Target: {}", tokens[0], url);
-            // host, accept 출력
-            while(!line.equals("")) {
-                line = br.readLine();
-                if(line.contains("Host"))
-                    logger.debug(line);
-                else if(line.contains("Accept:")) {
-                    // Accept 추출
-                    accept = line.substring("Accept: ".length());
-                    if(line.contains(","))
-                        accept = accept.substring(0, accept.indexOf(","));
-                    logger.debug("Accept: {}", accept);
-                }
-            }
+            // HTTP Request 파싱
+            httpRequestParsing(br);
 
             byte[] body = "".getBytes();     // 초기화
 
             // 요청에서 Request param 떼어내기
-            String[] requestParams = null;
-            if(url.contains("?")) {
-                requestParams = getRequestParams(url);
-                url = url.substring(0, url.indexOf("?"));
+            if(httpRequestDto.getRequest_target().contains("?")) {
+                requestParams = getRequestParams(httpRequestDto.getRequest_target());
+                httpRequestDto.setRequest_target(
+                        httpRequestDto.getRequest_target().substring(0, httpRequestDto.getRequest_target().indexOf("?"))
+                );
             }
 
             // 파일 불러오기 외의 요청
             // 1. 회원가입 처리
-            if(url.equals("/user/create")) {
-                User user = signup(requestParams);
+            if(httpRequestDto.getRequest_target().equals("/user/create")) {
+                User user = Controller.signup(requestParams);
                 if(user == null)
                     body = "다시 시도해주세요.".getBytes();
                 else {
-                    logger.debug(user.toString());
                     body = ("Hello, " + user.getName() + "!").getBytes();
+                    logger.debug(Database.findUserById(user.getUserId()).toString());
                 }
             }
 
             // 파일 불러오기 요청
             else {
-                // 해당 파일을 읽고 응답
-                String path = "./src/main/resources";
-                // 1. html일 경우
-                if(url.contains(".html")) {
-                    path += "/templates" + url;
-                }
-                // 2. css, fonts, images, js, ico일 경우
-                else {
-                    path += "/static" + url;
-                }
-
+                String path = Controller.requestFile(httpRequestDto.getRequest_target());
                 logger.debug("path: {}", path);
                 body = Files.readAllBytes(new File(path).toPath());
             }
 
-            response200Header(dos, body.length, accept);
+            response200Header(dos, body.length, httpRequestDto.getAccept());
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    // InputStream을 이용하여 HTTP Request 파싱
+    private void httpRequestParsing(BufferedReader br) throws IOException {
+        // 요청 라인 읽어오기
+        String line = br.readLine();
+        if(line == null)
+            return;
+        // start line 파싱
+        // 한글 파라미터 decoding
+        line = URLDecoder.decode(line, "UTF-8");
+        String[] tokens = line.split(" ");
+
+        httpRequestDto.setHTTP_Method(tokens[0]);
+        httpRequestDto.setRequest_target(tokens[1]);
+        httpRequestDto.setHTTP_version(tokens[2]);
+
+        logger.debug("HTTP Method: {}, Request Target: {}, Version: {}",
+                httpRequestDto.getHTTP_Method(),
+                httpRequestDto.getRequest_target(),
+                httpRequestDto.getHTTP_version());
+
+        // host, accept 출력
+        while(!line.equals("")) {
+            line = br.readLine();
+            if(line.contains("Host:")) {
+                httpRequestDto.setHost(line.substring("Host: ".length()));
+                logger.debug("Host: {}", httpRequestDto.getHost());
+            }
+            else if(line.contains("Accept:")) {
+                // Accept 추출
+                String accept = line.substring("Accept: ".length());
+                if(line.contains(","))
+                    accept = accept.substring(0, accept.indexOf(","));
+                httpRequestDto.setAccept(accept);
+                logger.debug("Accept: {}", httpRequestDto.getAccept());
+            }
         }
     }
 
@@ -132,12 +147,4 @@ public class RequestHandler implements Runnable {
         return tokens;
     }
 
-    // 회원가입 처리
-    private User signup(String[] requestParams) {
-        if(requestParams == null || requestParams.length != 4)
-            return null;
-        // User 객체 생성
-        User user = new User(requestParams[0], requestParams[1], requestParams[2], requestParams[3]);
-        return user;
-    }
 }
