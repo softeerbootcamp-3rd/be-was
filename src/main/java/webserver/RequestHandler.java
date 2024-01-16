@@ -65,12 +65,12 @@ public class RequestHandler implements Runnable {
 
     private void createResponse(OutputStream out, String url) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File(getPath(url) + url).toPath());
+        byte[] body = Files.readAllBytes(new File(getFilePath(url) + url).toPath());
         response200Header(dos, body.length);
         responseBody(dos, body);
     }
 
-    private static String getPath(String url) {
+    private static String getFilePath(String url) {
         String path = RESOURCES_PATH;
         if (url.startsWith("/css") || url.startsWith("/fonts") || url.startsWith("/images") || url.startsWith("/js") || url.equals("/favicon.ico")) {
             path += "static";
