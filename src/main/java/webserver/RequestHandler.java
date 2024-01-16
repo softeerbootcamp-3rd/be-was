@@ -29,35 +29,26 @@ public class RequestHandler implements Runnable {
             RequestHeader requestHeader = new RequestHeader();
             ParsingService parsingService = new ParsingService(br,requestHeader);
 
-            // 경로 추출
+            // 특정 유용한 request header만 추출
             logger.debug("====useful RequestHeader====");
-            logger.debug("General Header : {} ", requestHeader.getGeneralHeader());
-            logger.debug("Accept : {} ", requestHeader.getAccpet());
-            logger.debug("Accept-Encoding : {} ", requestHeader.getAccept_encoding());
-            logger.debug("Accept-Language : {} ", requestHeader.getAccept_language());
-            logger.debug("Accept-Upgrade-insecure-requests : {} ", requestHeader.getUpgrade_insecure_requests());
+            logger.debug("{} ", requestHeader.getGeneralHeader());
+            logger.debug("{} ", requestHeader.getAccpet());
+            logger.debug("{} ", requestHeader.getAccept_encoding());
+            logger.debug("{} ", requestHeader.getAccept_language());
+            logger.debug("{} ", requestHeader.getUpgrade_insecure_requests());
             logger.debug("===========================");
 
-            String[] tokens = requestHeader.getGeneralHeader().split(" ");
-            String path = tokens[1];
+            // Path추출
+            String path = requestHeader.getPath();
+            String HTTP_method = requestHeader.getHTTP_method();
+
+            logger.debug("------>  {} ", requestHeader.getPath());
+            logger.debug("------>  {} ", requestHeader.getHTTP_method());
+
+            // localhost:8080 호출하더라도 index.html로 이어짐
             if(path.equals("/")) path = "/index.html";
 
-            /*
-            //경로 추출
-            String line = br.readLine();
-            String[] tokens = line.split(" ");
-            String path = tokens[1];
-
-            //localhost:8080 입력시에도 index.html load
-
-            logger.debug(">> reqeust url : {}",path);
-
-            logger.debug("request : {}",line);
-            while(!line.equals("")){
-                line = br.readLine();
-                logger.debug("header:{}",line);
-            }*/
-
+            
             //회원 정보 추출
             if(path.contains("/create")){
                 String temp = path.split("\\?")[1];
@@ -79,7 +70,9 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
 
+            //응답헤더
             response200Header(dos, body.length);
+            //본문
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());

@@ -24,7 +24,7 @@ public class ParsingService {
             }
             else if(line.contains("Upgrade-Insecure-Requests")) rh.setUpgrade_insecure_requests(line);
 
-            else logger.debug("request header:{}",line);
+            else logger.debug("request header>>{}",line);
         }
 
     }
