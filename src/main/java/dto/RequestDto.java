@@ -3,7 +3,6 @@ package dto;
 import webserver.RequestHeader;
 
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 public class RequestDto {
 
@@ -28,16 +27,5 @@ public class RequestDto {
 
     public String getPath() {
         return path;
-    }
-
-    public Map<String, String> getValues() {
-        Map<String, String> values = new LinkedHashMap<>();
-        values.put("Method", method);
-        values.put("URL", url);
-        values.put("Host", host);
-        values.put("Connection", connection);
-        values.put("User-Agent", userAgent);
-        values.put("Accept", accept);
-        return values;
     }
 }
