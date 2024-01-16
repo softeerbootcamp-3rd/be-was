@@ -8,9 +8,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import model.http.*;
+import model.http.request.HttpRequest;
+import model.http.request.RequestHeaders;
+import model.http.request.StartLine;
+import model.http.response.HttpResponse;
+import model.http.response.ResponseHeaders;
+import model.http.response.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +49,7 @@ public class RequestHandler implements Runnable {
         StatusLine statusLine = setHeaderStatusOK();
         ResponseHeaders responseHeaders = setResponseHeaders(httpRequest, body.length);
         Body responseBody = setBody(body);
-        HttpResponse  httpResponse = new HttpResponse(statusLine, responseHeaders, responseBody);
+        HttpResponse httpResponse = new HttpResponse(statusLine, responseHeaders, responseBody);
         DataOutputStream dos = new DataOutputStream(out);
         setResponseStatusAndHeader(dos, httpResponse);
         setResponseBody(dos, httpResponse);

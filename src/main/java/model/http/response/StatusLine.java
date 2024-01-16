@@ -1,4 +1,6 @@
-package model.http;
+package model.http.response;
+
+import model.http.Status;
 
 public class StatusLine {
     private final String version;

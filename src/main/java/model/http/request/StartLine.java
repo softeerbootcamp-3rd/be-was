@@ -1,4 +1,6 @@
-package model.http;
+package model.http.request;
+
+import model.http.HttpMethod;
 
 public class StartLine {
     private final HttpMethod method;

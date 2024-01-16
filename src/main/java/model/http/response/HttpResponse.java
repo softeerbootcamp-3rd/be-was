@@ -1,4 +1,6 @@
-package model.http;
+package model.http.response;
+
+import model.http.Body;
 
 public class HttpResponse {
     private final StatusLine statusLine;

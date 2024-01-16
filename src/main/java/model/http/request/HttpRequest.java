@@ -1,4 +1,6 @@
-package model.http;
+package model.http.request;
+
+import model.http.Body;
 
 public class HttpRequest {
     private StartLine startLine;

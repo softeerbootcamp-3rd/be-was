@@ -1,4 +1,4 @@
-package model.http;
+package model.http.request;
 
 import java.util.HashMap;
 
