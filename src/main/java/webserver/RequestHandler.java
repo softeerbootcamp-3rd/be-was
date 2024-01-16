@@ -20,6 +20,7 @@ import view.OutputView;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String RESOURCES_PATH = "src/main/resources/";
 
     private Socket connection;
 
@@ -38,14 +39,7 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            String path = "src/main/resources/";
-            if (url.startsWith("/css") || url.startsWith("/fonts") || url.startsWith("/images") || url.startsWith("/js") || url.equals("/favicon.ico")) {
-                path += "static";
-            } else {
-                path += "templates";
-            }
-
-            byte[] body = Files.readAllBytes(new File(path + url).toPath());
+            byte[] body = Files.readAllBytes(new File(getPath(url) + url).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -73,6 +67,16 @@ public class RequestHandler implements Runnable {
         }
         requestDto.setRequestHeaders(requestHeaders);
         return requestDto;
+    }
+
+    private static String getPath(String url) {
+        String path = RESOURCES_PATH;
+        if (url.startsWith("/css") || url.startsWith("/fonts") || url.startsWith("/images") || url.startsWith("/js") || url.equals("/favicon.ico")) {
+            path += "static";
+        } else {
+            path += "templates";
+        }
+        return path;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
