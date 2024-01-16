@@ -14,7 +14,7 @@ public class UserControllerTest {
 
     @Test
     public void testCreateUser() {
-        String requestPath = "/path?userId=testUser&password=testPassword&name=TestName&email=test@example.com";
+        String requestPath = "GET /path?userId=testUser&password=testPassword&name=TestName&email=test@example.com";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         createUser(outputStream, new HttpRequest(requestPath));

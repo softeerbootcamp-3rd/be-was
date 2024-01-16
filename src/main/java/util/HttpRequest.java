@@ -17,10 +17,11 @@ public class HttpRequest {
     private String acceptLanguage;
 
 
-    public HttpRequest(String URI) {
-        this.method = "GET";
-        this.URI = URIParser.extractPath(URI);
-        this.paramMap = URIParser.parseQueryString(URIParser.extractQuery(URI));
+    public HttpRequest(String requestString) {
+        String[] requestParts = requestString.split(" ");
+        this.method = requestParts[0];
+        this.URI = URIParser.extractPath(requestParts[1]);
+        this.paramMap = URIParser.parseQueryString(URIParser.extractQuery(requestParts[1]));
     }
 
     public HttpRequest(BufferedReader reader) throws IOException {
