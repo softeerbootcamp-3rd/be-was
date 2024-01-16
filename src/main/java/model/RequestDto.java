@@ -26,6 +26,8 @@ public class RequestDto {
 
     public String  getParams() { return params; }
 
+    public String getReferer() { return header.get("Referer"); }
+
     public void addHeader(String key, String value) {
         this.header.put(key, value);
     }

@@ -12,11 +12,15 @@ import java.io.InputStreamReader;
 public class RequestParser {
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
-    public static String getPath(InputStream in) throws IOException {
+    public static RequestDto getRequestDto(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
         String line = br.readLine();
-        RequestDto requestDto = new RequestDto(line.split(" ")[0], line.split(" ")[1]);
+        String[] methodAndPath = line.split(" ");
+        String[] pathWithParams = methodAndPath[1].split("\\?");
+        String params = (pathWithParams.length == 1) ? null : pathWithParams[1];
+
+        RequestDto requestDto = new RequestDto(methodAndPath[0], pathWithParams[0], params);
 
         while ((line = br.readLine()) != null && !line.equals("")) {
             requestDto.addHeader(line.split(": ")[0], line.split(": ")[1]);
@@ -24,6 +28,6 @@ public class RequestParser {
 
         logger.debug(requestDto.getHeader());
 
-        return requestDto.getPath();
+        return requestDto;
     }
 }

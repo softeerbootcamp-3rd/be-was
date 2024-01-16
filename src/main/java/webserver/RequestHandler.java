@@ -27,8 +27,10 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             byte[] body = getFileByPath(requestDto.getPath());
-            if (body == null) { // 해당 경로의 html 파일이 존재하지 않을 때
-                body = "Hello World".getBytes();
+
+            if (body == null) { // 해당 경로의 파일이 존재하지 않을 때
+                Object o = ServletContainer.find(requestDto.getMethod(), requestDto.getPath(), requestDto.getParams());
+                body = o.toString().getBytes();
             }
 
             response200Header(dos, body.length);
@@ -43,6 +45,17 @@ public class RequestHandler implements Runnable {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos, String Referer) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Location: " + Referer + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
