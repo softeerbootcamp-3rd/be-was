@@ -6,10 +6,6 @@
 
 ### 2. RequestHandler 클래스
 - WebServer 클래스로부터 전달받은 Socket을 이용하여 클라이언트의 요청을 처리
-- InputStream:
-  - 클라이언트에서 서버로 요청을 보낼 때 전달되는 데이터를 담당하는 스트림
-- OutputStream:
-  - 서버에서 클라이언트로 응답을 보낼 때 전달하는 데이터를 담당하는 스트림
 
 -------------------------
 ## STEP 1. index.html 응답
@@ -42,7 +38,34 @@
        - Future 클래스 객체 (비동기 테스크의 결과) 반환
        - 작업 처리 중 예외 발생 시 스레드 종료 X -> 다음 작업에서 재사용
 
-### 3. 기타 사항
+### 3. 자바의 Stream
+
+#### 1) byte 기반 Stream
+- InputStream
+  - 바이트 기반 입력 스트림 최상위 추상 클래스
+  - 하위 클래스: XXXInputStream
+  - 클라이언트에서 서버로 요청을 보낼 때 전달되는 데이터를 담당하는 스트림
+  - 입력받은 데이터는 int 형으로 저장되며 이는 10진수의 UTF-16 값으로 저장됨
+  - 1 byte만 읽음
+- OutputStream
+  - 바이트 기반 출력 스트림 최상위 추상 클래스
+  - 하위 클래스: XXXOutputStream
+  - 서버에서 클라이언트로 응답을 보낼 때 전달하는 데이터를 담당하는 스트림
+- DataOutputStream
+  - DataOutputStream(OutputStream out)<br>
+    -> 주어진 OutputStream 인스턴스를 기반스트림으로 하는 DataOutputStream 인스턴스를 생성
+#### 2) 문자 기반 Stream
+- Reader
+  - 문자 기반 입력 스트림 최상위 추상 클래스
+  - 하위 클래스: XXXReader
+- InputStreamReader
+  - InputStream이 저장한 바이트 단위 데이터를 문자 단위(character) 데이터로 변환
+  - char 배열로 데이터를 받을 수 있음
+
+- Writer
+  - 문자 기반 출력 스트림 최상위 추상 클래스
+  - 하위 클래스: XXXWriter
+### * 기타 사항
 Q. 요청을 한 번만 보냈음에도 추가 요청이 들어오는 이유는?<br>
 A. 서버가 웹 페이지를 구성하는 모든 리소스를 한번의 응답으로 보내지 않기 때문<br>
 -> 다른 자원(css, js...)이 포함되어 있을 경우 서버에 해당 자원을 다시 요청<br>

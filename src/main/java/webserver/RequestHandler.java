@@ -50,7 +50,7 @@ public class RequestHandler implements Runnable {
                 }
             }
 
-            byte[] body = new byte[10];     // 초기화
+            byte[] body = "".getBytes();     // 초기화
             // GET으로 회원가입 기능 구현
             if(url.contains("/user/create?")) {
                 tokens = url.split("\\?");
