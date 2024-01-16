@@ -4,7 +4,10 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +45,17 @@ public class RequestHandler implements Runnable {
                 String location = "src/main/resources/templates" + requestURL;
                 body = Files.readAllBytes(new File(location).toPath());
             } else {
+                String[] tokens = requestURL.split("\\?");
+                Map<String, String> params = parse(tokens[1]);
+
+                String userId = params.get("userId");
+                String password = params.get("password");
+                String name = params.get("name");
+                String email = params.get("email");
+
+                User user = new User(userId, password, name, email);
+                logger.debug("{}", user);
+
                 body = "LOGIN OK".getBytes();
             }
 
@@ -85,5 +99,18 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    // login url parsing 기능
+    private Map<String, String> parse(String query) {
+        Map<String, String> params = new HashMap<>();
+
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=");
+            params.put(keyValue[0], keyValue[1]);
+        }
+
+        return params;
     }
 }
