@@ -2,7 +2,7 @@ package utils;
 
 public class Response {
 
-    public String setPath(String filePath, String type) {
+    public String getPath(String filePath, String type) {
         String basePath = "src/main/resources";
         if (type.equals("text/html")) {
             return basePath + "/templates" + filePath;
@@ -11,16 +11,20 @@ public class Response {
     }
 
     public String getContentType(String file) {
-        String type = file.split("/")[1];
-
-        if (type.equals("css")) {
+        if (file.endsWith(".css")) {
             return "text/css";
         }
-        if (type.equals("js")) {
+        if (file.endsWith(".js")) {
             return "text/javascript";
         }
-        if (type.contains(".ico")) {
+        if (file.endsWith(".ico")) {
             return "image/x-icon";
+        }
+        if (file.endsWith(".ttf")) {
+            return "font/ttf";
+        }
+        if (file.endsWith(".woff")) {
+            return "font/woff";
         }
         return "text/html";
     }

@@ -29,16 +29,16 @@ public class Request {
         http = parse[2];
         port = portNumber;
         contentType = response.getContentType(file);
-        filePath = response.setPath(file, contentType);
+        filePath = response.getPath(file, contentType);
 
         logger.debug("port {} || method : {}, http : {}, file : {}", port, method, http, file);
 
         // 나머지 헤더 로깅
-        String line = br.readLine();
-        while (!line.isEmpty()) {
-            line = br.readLine();
-            logger.debug(line);
-        }
+//        String line = br.readLine();
+//        while (!line.isEmpty()) {
+//            line = br.readLine();
+//            logger.debug(line);
+//        }
     }
 
     public String getMethod() {
