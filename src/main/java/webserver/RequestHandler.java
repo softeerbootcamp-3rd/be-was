@@ -1,11 +1,14 @@
 package webserver;
 
 import header.RequestHeader;
+import handler.GetRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import parser.GetRequestParser;
 import parser.RequestHeaderParser;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
@@ -29,7 +32,7 @@ public class RequestHandler implements Runnable {
 
             RequestHeader requestHeader = RequestHeaderParser.parse(in);
 
-            setResponse(dos, requestHeader.getPath());
+            setResponse(dos, requestHeader);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -66,13 +69,29 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void setResponse(DataOutputStream dos, String path) throws IOException {
+    private void setResponse(DataOutputStream dos, RequestHeader requestHeader) throws IOException {
         try{
-            byte[] body = Files.readAllBytes(new File(RESOURCES_URL.getPath() + path).toPath());
+            File file = new File(RESOURCES_URL.getPath() + requestHeader.getPath());
 
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e){
+            if(file.exists()) {
+                byte[] body = Files.readAllBytes(file.toPath());
+
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+
+                return;
+            }
+
+            if(requestHeader.getMethod().equals("GET")){
+                GetRequestHandler.map(GetRequestParser.parse(requestHeader.getPath()));
+
+                byte[] body = "요청 완료".getBytes();
+
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+            }
+
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | IOException e){
             byte[] body = "404 Not Found".getBytes();
 
             response404Header(dos, body.length);
