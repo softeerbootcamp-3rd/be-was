@@ -31,3 +31,7 @@ test {
 repositories {
     mavenCentral()
 }
+
+compileJava {
+    options.compilerArgs = ['-parameters']
+}
