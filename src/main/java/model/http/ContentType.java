@@ -2,7 +2,7 @@ package model.http;
 
 public enum ContentType {
     // TEXT 타입
-    CSS("text/css"), HTML("text/html"), JAVASCRIPT("text/javascript"), PLAIN("text/plain"), XML("text/xml");
+    CSS("text/css"), HTML("text/html"), JAVASCRIPT("text/javascript"), PLAIN("text/plain"), XML("text/xml"), MIME("application/font-sfnt");
 
     private final String type;
 
