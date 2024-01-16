@@ -1,12 +1,15 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import model.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,28 +46,43 @@ public class RequestHandler implements Runnable {
             //byte[] body = "Hello World".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private String requestHeader(BufferedReader br) throws IOException {
+    private String requestHeader(BufferedReader br) throws IOException, ClassNotFoundException {
         writeLock.lock();
-        String line = null;
+        String line = br.readLine();
+        String[] firstHeader = line.split(" ");
+        RequestHeader requestHeader = new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
 
         String url = null;
-        logger.debug("===== request start ====");
-        while (!(line = br.readLine()).equals("")) {
-            logger.debug("header = {}", line);
+        logger.debug("===== request start =====");
+        while ((line = br.readLine()) != null) {
+            if (line.isBlank()) {
+                break;
+            }
+            parseHeader(line, requestHeader);
             if (line.contains("GET")) {
-                String firstHeader = line.split(" ")[1];
-                url = firstHeader.split("\\?")[0];
+                String path = line.split(" ")[1];
+                System.out.println("path = " + path);
+                url = path.split("\\?")[0];
             }
         }
-        logger.debug("===== request end ====");
+        requestHeader.printHeader();
+        logger.debug("===== request end =====");
         writeLock.unlock();
 
         return url;
+    }
+
+    private void parseHeader(String line, RequestHeader requestHeader) {
+        String[] header = line.split(": ");
+        String parseKey = header[0].replace("-", "");
+        String key = parseKey.substring(0, 1).toLowerCase() + parseKey.substring(1);
+        String value = header[1];
+        RequestHeader.setHeader(requestHeader, key, value);
     }
 
     private URL getResource(String path) {
