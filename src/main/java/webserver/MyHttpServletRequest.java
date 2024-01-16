@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 public class MyHttpServletRequest {
   private final Logger logger=LoggerFactory.getLogger(MyHttpServletRequest.class);
@@ -15,6 +16,7 @@ public class MyHttpServletRequest {
   private String Origin;
   private String Referer;
   private String Connection;
+  private final HashMap<String,String> queryParameters = new HashMap<>();
 
   public static MyHttpServletRequest init(String requestLine){
     String[] requests = requestLine.split(" ");
@@ -22,9 +24,31 @@ public class MyHttpServletRequest {
       return null;
     return new MyHttpServletRequest(requests[0],requests[1],requests[2]);
   }
-  public MyHttpServletRequest(String method,String uri,String version){
+  private String parseUri(String fullUri){
+    String queryString = "";
+    String uri = fullUri;
+
+    int questionMarkIndex = fullUri.indexOf("?");
+    if (questionMarkIndex != -1) {
+      queryString = fullUri.substring(questionMarkIndex + 1);
+      uri = fullUri.substring(0, questionMarkIndex);
+    }
+    if(!queryString.isEmpty())
+      setQueryParameters(queryString);
+    return uri;
+  }
+  private void setQueryParameters(String queryString){
+    String[] queries = queryString.split("&");
+    for(String q : queries){
+      String[] queryPair = q.split("=");
+      String key = queryPair[0];
+      String value = queryPair[1];
+      queryParameters.put(key,value);
+    }
+  }
+  public MyHttpServletRequest(String method,String fullUri,String version){
     this.method=method;
-    this.uri=uri;
+    this.uri=parseUri(fullUri);
     this.version=version;
   }
 
@@ -49,5 +73,8 @@ public class MyHttpServletRequest {
   }
   public String getUri(){
     return this.uri;
+  }
+  public String getQueryParameterValue(String parameterName){
+    return queryParameters.get(parameterName);
   }
 }
