@@ -3,6 +3,7 @@ package webserver;
 import header.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import parser.RequestHeaderParser;
 
 import java.io.*;
 import java.net.Socket;
@@ -26,7 +27,7 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            RequestHeader requestHeader = parseHeader(in);
+            RequestHeader requestHeader = RequestHeaderParser.parse(in);
 
             setResponse(dos, requestHeader.getPath());
         } catch (IOException e) {
@@ -79,14 +80,5 @@ public class RequestHandler implements Runnable {
 
             logger.error(e.getMessage());
         }
-    }
-
-    private RequestHeader parseHeader(InputStream in) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        RequestHeader requestHeader = RequestHeader.parseHeader(br);
-
-        logger.debug(requestHeader.toString());
-
-        return requestHeader;
     }
 }
