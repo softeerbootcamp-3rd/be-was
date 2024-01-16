@@ -1,12 +1,15 @@
+package webserver;
+
 import model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import webserver.RequestHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestHandlerTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class RequestHandlerTest {
 
     @Test
     public void parsingTest() {
