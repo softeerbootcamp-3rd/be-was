@@ -9,9 +9,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.net.Socket;
 import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Map;
 
+import dto.RequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.Util;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,21 +31,8 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line = br.readLine();
-
-            String[] token = line.split(" ");
-            String method = token[0];
-            String url = token[1];
-            logger.debug("Request Method : {}", method);
-            logger.debug("Request URL : {}", url);
-
-            while (!line.equals("")) {
-                line = br.readLine();
-                if (line.startsWith("Host") || line.startsWith("Connection") || line.startsWith("Accept:")) {
-                    logger.debug(line);
-                }
-            }
+            RequestDto requestDto = createRequestDto(in);
+            String url = requestDto.getUrl();
 
             DataOutputStream dos = new DataOutputStream(out);
 
@@ -58,6 +49,31 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static RequestDto createRequestDto(InputStream in) throws IOException {
+        RequestDto requestDto = new RequestDto();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String line = br.readLine();
+
+        String[] requestLine = Util.splitRequestLine(line);
+        requestDto.setMethodAndURL(requestLine[0], requestLine[1]);
+
+        Map<RequestHeader, String> requestHeaders = new HashMap<>();
+        while (!line.equals("")) {
+            line = br.readLine();
+            if (line.startsWith("Host") || line.startsWith("Connection") || line.startsWith("Accept:")) {
+                logger.debug(line);
+            }
+            String[] requestHeader = Util.splitRequestHeader(line);
+            RequestHeader property = RequestHeader.findProperty(requestHeader[0]);
+            if (property != RequestHeader.NONE) {
+                requestHeaders.put(property, requestHeader[1]);
+            }
+        }
+        requestDto.setRequestHeaders(requestHeaders);
+        return requestDto;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
