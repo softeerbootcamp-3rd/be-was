@@ -38,7 +38,7 @@ public class RequestHandler implements Runnable {
 
         String line = br.readLine();
         Request request = new Request(line);
-        logger.debug("start line : {}", line);
+        logger.debug("request : {}", request.toString());
 
         while (!line.isEmpty()) {
             line = br.readLine();

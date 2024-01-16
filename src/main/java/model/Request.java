@@ -56,4 +56,9 @@ public class Request {
         return ROOT_PATH + "static" + url;
         // '/'로 오는경우 ??
     }
+
+    @Override
+    public String toString() {
+        return "Request [method=" + method + ", url=" + url + "]";
+    }
 }
