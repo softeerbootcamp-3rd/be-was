@@ -9,32 +9,31 @@ import utils.ResponseBuilder;
 
 public class HomeController {
 
-
-    public void route(String urn, OutputStream out) throws IOException {
-        if (urn.equals("/") || urn.equals("/index.html")) {
-            getIndex(urn, out);
+    public void route(String url, OutputStream out) throws IOException {
+        if (url.equals("/") || url.equals("/index.html")) {
+            getIndex(out);
         } else {
-            getStatic(urn, out);
+            getStatic(url, out);
         }
     }
 
-    private void getIndex(String urn, OutputStream out) throws IOException {
+    private void getIndex(OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        String filePath = "src/main/resources/templates" + urn;
+        String filePath = "src/main/resources/templates/index.html";
 
         byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        ResponseBuilder.response200Header(dos, body.length, urn);
+        ResponseBuilder.response200Header(dos, body.length, filePath);
         ResponseBuilder.responseBody(dos, body);
     }
 
-    private void getStatic(String urn, OutputStream out) throws IOException {
+    private void getStatic(String url, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        String filePath = "src/main/resources/static" + urn;
+        String filePath = "src/main/resources/static" + url;
 
         byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        ResponseBuilder.response200Header(dos, body.length, urn);
+        ResponseBuilder.response200Header(dos, body.length, filePath);
         ResponseBuilder.responseBody(dos, body);
     }
 }
