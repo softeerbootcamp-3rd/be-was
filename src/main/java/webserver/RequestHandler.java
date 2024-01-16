@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import model.RequestHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,20 +26,37 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
+            RequestHeader requestHeader = new RequestHeader();
+            ParsingService parsingService = new ParsingService(br,requestHeader);
+
+            // 경로 추출
+            logger.debug("====useful RequestHeader====");
+            logger.debug("General Header : {} ", requestHeader.getGeneralHeader());
+            logger.debug("Accept : {} ", requestHeader.getAccpet());
+            logger.debug("Accept-Encoding : {} ", requestHeader.getAccept_encoding());
+            logger.debug("Accept-Language : {} ", requestHeader.getAccept_language());
+            logger.debug("Accept-Upgrade-insecure-requests : {} ", requestHeader.getUpgrade_insecure_requests());
+            logger.debug("===========================");
+
+            String[] tokens = requestHeader.getGeneralHeader().split(" ");
+            String path = tokens[1];
+            if(path.equals("/")) path = "/index.html";
+
+            /*
             //경로 추출
             String line = br.readLine();
             String[] tokens = line.split(" ");
             String path = tokens[1];
 
-            logger.debug("reqeust url:{}",path);
-            logger.debug("--header--",path);
-            logger.debug("header:{}",line);
+            //localhost:8080 입력시에도 index.html load
+
+            logger.debug(">> reqeust url : {}",path);
+
+            logger.debug("request : {}",line);
             while(!line.equals("")){
                 line = br.readLine();
                 logger.debug("header:{}",line);
-            }
-            logger.debug("---------",path);
-
+            }*/
 
             //회원 정보 추출
             if(path.contains("/create")){
@@ -51,8 +69,9 @@ public class RequestHandler implements Runnable {
                     imformation[i] = temp2[i].split("=")[1];
                 }
                 User user = new User(imformation[0],imformation[1],imformation[2],imformation[3]);
-                logger.debug("user : {} ", user);
+                logger.debug(">> user : {} ", user);
 
+                // 메인페이지로 이어지도록 설정
                 path = "/index.html";
             }
 

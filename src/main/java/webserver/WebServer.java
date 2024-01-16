@@ -29,11 +29,11 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-
                 // 스레드 풀을 이용하여 작업 스케줄링
                 executorService.execute(new RequestHandler(connection));
-
             }
         }
     }
 }
+
+
