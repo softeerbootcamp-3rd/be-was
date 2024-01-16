@@ -3,7 +3,9 @@ package http.request;
 public enum StaticResourceExtension {
     HTML(".html"),
     CSS(".css"),
-    JS(".js");
+    JS(".js"),
+    ICO(".ico")
+    ;
 
     private String extension;
 
