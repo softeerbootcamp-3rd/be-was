@@ -1,9 +1,6 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 import org.slf4j.Logger;
@@ -26,6 +23,10 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "Hello World".getBytes();
+
+            HttpRequestInformation request = getHttpRequest(in);
+            printHttpRequestInformation(request);
+
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -51,5 +52,38 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private HttpRequestInformation getHttpRequest(InputStream inputStream) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+
+        HttpRequestInformation httpRequestInformation = new HttpRequestInformation();
+
+        String line = br.readLine();
+        String[] lines = line.split(" ");
+        httpRequestInformation.setMethod(lines[0]);
+        httpRequestInformation.setUrl(lines[1]);
+        httpRequestInformation.setHttpVersion(lines[2]);
+
+        while (!line.equals("")) {
+            line=br.readLine();
+            if (line.startsWith("Accept:")) {
+                httpRequestInformation.setAccept(line);
+            } else if (line.startsWith("Connection")) {
+                httpRequestInformation.setConnection(line);
+            } else if (line.startsWith("Host:")) {
+                httpRequestInformation.setHost(line);
+            }
+        }
+
+        return httpRequestInformation;
+    }
+
+    private void printHttpRequestInformation(HttpRequestInformation requestInformation) {
+        logger.debug("= = HTTP REQUEST INFORMATION = =");
+        logger.debug(requestInformation.getMethod() + " " + requestInformation.getUrl() + " " + requestInformation.getHttpVersion());
+        logger.debug(requestInformation.getHost());
+        logger.debug(requestInformation.getConnection());
+        logger.debug(requestInformation.getAccept());
     }
 }
