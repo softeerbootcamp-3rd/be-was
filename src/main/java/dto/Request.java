@@ -42,11 +42,21 @@ public class Request {
         this.method = method;
     }
 
+    public Map<String, String> getRequestParam() {
+        return requestParam;
+    }
+
     public void setUrl(String string){
         String[] request = string.split("\\?");
         String url = request[0];
         this.url = url;
         this.setContentType();
+        if(url.endsWith(".html")){
+            requestParam.put("template",url);
+        }
+        else if(url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/")){
+            requestParam.put("static",url);
+        }
         if(request.length>1) {
             String[] params = request[1].split("\\&");
 
