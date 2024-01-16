@@ -2,31 +2,31 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
-import controller.UserController;
 import request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.SingletonUtil;
 
 import static util.FileUtil.*;
+import static util.SingletonUtil.getUserController;
 
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
     public void run() {
-
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            DataOutputStream dos = new DataOutputStream(out);
 
             HttpRequest httpRequest = new HttpRequest(br, connection.getPort());
-            String response = SingletonUtil.getUserController().route(httpRequest.getPath());
+            String response = getUserController().route(httpRequest.getPath());
 
             String status = response.split(" ")[0];
             String route = response.split(" ")[1];
@@ -35,12 +35,9 @@ public class RequestHandler implements Runnable {
             logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
                     httpRequest.getPort(), httpRequest.getMethod(), httpRequest.getPath(), httpRequest.getHttpVersion());
 
-            byte[] body = getBody(route); // 해당하는 경로의 파일을 읽고 byte[]로 반환
-            String contentType = getContentType(route); // 파일의 확장자에 따라 Content-Type을 결정
-
-            DataOutputStream dos = new DataOutputStream(out);
-
             if (status.equals("200")) {
+                byte[] body = getBody(route); // 해당하는 경로의 파일을 읽고 byte[]로 반환
+                String contentType = getContentType(route); // 파일의 확장자에 따라 Content-Type을 결정
                 response200Header(dos, body.length, contentType);
                 responseBody(dos, body);
             }

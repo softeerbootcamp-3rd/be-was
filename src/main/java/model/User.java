@@ -3,7 +3,7 @@ package model;
 import request.SignUpRequest;
 
 public class User {
-    private String userdId;
+    private String userId;
     private String password;
     private String name;
     private String email;
