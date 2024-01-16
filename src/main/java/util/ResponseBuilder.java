@@ -23,48 +23,51 @@ public class ResponseBuilder {
 
         if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
             byte[] content = Files.readAllBytes(filePath);
-            ResponseBuilder.sendResponse(out, ResourceLoader.getContentType(request.getURI()), content, HttpStatus.OK);
+            ResponseBuilder.sendData(out, ResourceLoader.getContentType(request.getURI()),
+                    new HttpResponse(HttpStatus.OK, content));
         } else {
-            ResponseBuilder.send404(out);
+            ResponseBuilder.sendData(out, "text/plain", new HttpResponse(HttpStatus.NOT_FOUND));
         }
     }
 
-    public static void sendResponse(OutputStream out, String contentType, byte[] body, HttpStatus status) {
+    public static void sendResponse(OutputStream out, HttpResponse response) {
+        switch (response.getStatus()) {
+            case OK:
+                sendData(out, "application/json", response);
+                break;
+            case FOUND:
+                sendRedirect(out, response);
+                break;
+            case NOT_FOUND:
+
+                break;
+        }
+    }
+
+    private static void sendData(OutputStream out, String contentType, HttpResponse response) {
         try {
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes("HTTP/1.1 " + status.getFullMessage() + " \r\n");
+            dos.writeBytes("HTTP/1.1 " + response.getStatus().getFullMessage() + " \r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + body.length + "\r\n");
+            dos.writeBytes("Content-Length: " + response.getData().length + "\r\n");
             dos.writeBytes("\r\n");
 
-            dos.write(body, 0, body.length);
+            dos.write(response.getData(), 0, response.getData().length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    public static void sendRedirect(OutputStream out, String redirectUrl) {
+    private static void sendRedirect(OutputStream out, HttpResponse response) {
         try {
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes("HTTP/1.1 302 Found\r\n");
-            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("Location: " + new String(response.getData()) + "\r\n");
             dos.writeBytes("\r\n");
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    public static void send404(OutputStream out) throws IOException {
-        String errorMessage = "404 Not Found";
-        byte[] errorBody = errorMessage.getBytes();
-        DataOutputStream dos = new DataOutputStream(out);
-        dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
-        dos.writeBytes("Content-Type: text/plain;charset=utf-8\r\n");
-        dos.writeBytes("Content-Length: " + errorBody.length + "\r\n");
-        dos.writeBytes("\r\n");
-        dos.write(errorBody, 0, errorBody.length);
-        dos.flush();
     }
 }
