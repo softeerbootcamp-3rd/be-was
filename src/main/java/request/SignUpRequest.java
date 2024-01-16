@@ -6,11 +6,15 @@ public class SignUpRequest {
     private String name;
     private String email;
 
-    public SignUpRequest(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+    // 회원가입 요청 객체 생성
+    public SignUpRequest(String request) {
+
+        String[] userInfo = request.split("&");
+
+        this.userId = userInfo[0].split("=")[1];
+        this.password = userInfo[1].split("=")[1];
+        this.name = userInfo[2].split("=")[1];
+        this.email = userInfo[3].split("=")[1];
     }
 
     public String getUserId() {
@@ -27,15 +31,5 @@ public class SignUpRequest {
 
     public String getEmail() {
         return email;
-    }
-
-    public static SignUpRequest parseSignUpRequest(String request) {
-        String[] split = request.split("&");
-        String userId = split[0].split("=")[1];
-        String password = split[1].split("=")[1];
-        String name = split[2].split("=")[1];
-        String email = split[3].split("=")[1];
-
-        return new SignUpRequest(userId, password, name, email);
     }
 }
