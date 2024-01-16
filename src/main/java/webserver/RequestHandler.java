@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import controller.MainController;
 import db.Database;
 import model.User;
 import org.slf4j.Logger;
@@ -35,63 +36,59 @@ public class RequestHandler implements Runnable {
             if(line == null) {
                 return;
             }
-            logger.debug("--------------[Request Line]--------------" + line);
+            logger.debug("--------------[Request Line]--------------");
+            logger.debug(line);
             logger.debug("-------------[Request Header]-------------");
 
             String[] tokens = line.split(" ");
+            String method = tokens[0];
             String url = tokens[1];
+            HashMap<String, String> headers = new HashMap<>();
             final Set<String> printedKey = new HashSet<>(Arrays.asList("Accept",
                                                                         "Host",
                                                                         "User-Agent",
                                                                         "Cookie"));
+            String mimeType = "";
             while(true) {
                 line = br.readLine();
                 if(line.isEmpty()) break;
                 String[] keyAndValue = line.split(": ");
                 String key = keyAndValue[0], value = keyAndValue[1];
                 if(printedKey.contains(key)) logger.debug(line);
+                headers.put(key, value);
+                if(key.equals("Accept")) {
+                    String[] types = value.split(",");
+                    if(types.length == 0) continue;
+                    mimeType = types[0];
+                }
             }
 
-            if(url.startsWith("/user/create")) {
-                int index = url.indexOf("?");
+            int index = url.indexOf("?");
+            MainController controller;
+            if(index != -1) { // 파라미터가 존재
                 String queryString = url.substring(index + 1);
                 HashMap<String, String> params = queryStringParsing(queryString);
-                String userId = params.get("userId");
-                String password = params.get("password");
-                String name = params.get("name");
-                String email = params.get("email");
-                User user = new User(userId, password, name, email);
 
-                String result = User.verifyUser(user);
-                if(result.equals("성공")) {
-                    Database.addUser(user);
-                    logger.debug("새로운 유저 생성!  " + user.toString() + "\n");
-                    byte[] body = (user.getName() + "님 안녕하세요!").getBytes();
-                    response200Header(dos, body.length);
-                    responseBody(dos, body);
-                }
-                else {
-                    logger.debug("유저 생성 실패!  " + result + "\n");
-                    byte[] body = "회원가입 실패!!".getBytes();
-                    response200Header(dos, body.length);
-                    responseBody(dos, body);
-                }
-            } else {
-                byte[] body = Files.readAllBytes(
-                        new File("./src/main/resources/templates" + url).toPath());
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+                controller = new MainController(method, url.substring(0, index), headers, params);
             }
+            else {
+                controller = new MainController(method, url, headers);
+            }
+            byte[] body = controller.control();
+            response200Header(dos, mimeType, body.length);
+            responseBody(dos, body);
             logger.debug("\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos,
+                                   String mimeType,
+                                   int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
