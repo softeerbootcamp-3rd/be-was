@@ -22,15 +22,10 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             Request request = getRequest(in);
-
             byte[] body = handleRequest(request);
-            DataOutputStream dos = new DataOutputStream(out);
-
-            response200Header(dos, body.length, request);
-            responseBody(dos, body);
+            extracted(out, body, request);
         } catch (IllegalArgumentException e) {
             logger.error("Invalid request: {}", e.getMessage());
         } catch (IOException e) {
@@ -62,6 +57,12 @@ public class RequestHandler implements Runnable {
         }
 
         return Files.readAllBytes(file.toPath());
+    }
+
+    private void extracted(OutputStream out, byte[] body, Request request) {
+        DataOutputStream dos = new DataOutputStream(out);
+        response200Header(dos, body.length, request);
+        responseBody(dos, body);
     }
 
 
