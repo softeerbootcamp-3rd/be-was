@@ -1,10 +1,11 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,33 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String line = br.readLine();
+
+            if(line == null) {
+                return;
+            }
+            logger.debug("# Request Line");
+            logger.debug(line);
+            logger.debug("# Request Header");
+
+            String[] tokens = line.split(" ");
+            final Set<String> printedKey = new HashSet<>(Arrays.asList("Connection",
+                                                                        "Host",
+                                                                        "User-Agent",
+                                                                        "Cookie"));
+            while(true) {
+                line = br.readLine();
+                if(line.equals("")) break;
+                String[] keyAndValue = line.split(": ");
+                String key = keyAndValue[0], value = keyAndValue[1];
+                if(printedKey.contains(key)) logger.debug(line);
+            }
+            logger.debug("\n");
+
+            byte[] body = Files.readAllBytes(
+                    new File("./src/main/resources/templates" + tokens[1]).toPath());
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
