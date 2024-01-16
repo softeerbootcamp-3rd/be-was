@@ -15,18 +15,6 @@ public class ResponseHeaders {
         this.contentLength = contentLength;
         this.charSet = "utf-8";
     }
-
-    public ResponseHeaders(Integer contentLength) {
-        Date = LocalDateTime.now();
-        this.contentType = ContentType.HTML;
-        this.charSet = "uft-8";;
-        this.contentLength = contentLength;
-    }
-
-    public LocalDateTime getDate() {
-        return Date;
-    }
-
     public String getContentType() {
         return "Content-Type: " + contentType.getType() + ";" + charSet + " \r\n";
     }

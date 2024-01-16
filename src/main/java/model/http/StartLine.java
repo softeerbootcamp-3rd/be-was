@@ -9,18 +9,10 @@ public class StartLine {
         this.pathUrl = pathUrl;
         this.version = version;
     }
-    public String getMethod() {
-        return method.getMethod();
-    }
 
     public String getPathUrl() {
         return pathUrl;
     }
-
-    public String getVersion() {
-        return version;
-    }
-
     @Override
     public String toString() {
         return "{" +

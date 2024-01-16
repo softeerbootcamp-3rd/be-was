@@ -9,14 +9,6 @@ public class StatusLine {
         this.status = status;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
     @Override
     public String toString() {
         return version + " " + status.getStatusCode() + " " + status.getStatusText() + " \r\n";
