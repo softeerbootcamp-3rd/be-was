@@ -1,7 +1,9 @@
 package webserver;
 
+import handler.RequestHandler;
 import handler.ResponseHandler;
 import http.request.HttpRequest;
+import http.request.HttpRequestBody;
 import http.request.HttpRequestHeader;
 import http.request.HttpRequestStartLine;
 import java.io.BufferedReader;
@@ -11,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import logger.CustomLogger;
 
@@ -32,12 +35,13 @@ public class HttpProcessor implements Runnable {
             CustomLogger.printRequest(httpRequest);
 
             // HTTP Request Handler
-            // TODO: HTTP Request Handler 구현
+            RequestHandler requestHandler = RequestHandler.getInstance();
+            byte[] body = requestHandler.dispatcher(httpRequest);
 
             // HTTP Response Handler
-            ResponseHandler responseHandler = ResponseHandler.initBuilder(true, out, httpRequest.getHttpRequestHeader().getSpecificHeader("path"));
-            responseHandler.process();
-        } catch (IOException e) {
+            ResponseHandler responseHandler = ResponseHandler.getInstance();
+            responseHandler.process(out, body);
+        } catch (Exception e) {
             CustomLogger.printError(e);
         }
     }
@@ -57,7 +61,8 @@ public class HttpProcessor implements Runnable {
         HttpRequestHeader httpRequestHeader = new HttpRequestHeader(headers);
 
         // TODO: HTTP Request Body Parser 구현
-        return new HttpRequest(httpRequestStartLine, httpRequestHeader, null);
+        HttpRequestBody httpRequestBody = new HttpRequestBody(new HashMap<>());
+        return new HttpRequest(httpRequestStartLine, httpRequestHeader, httpRequestBody);
     }
 
     private HttpRequestStartLine parsingStringLine(String startLine) {
