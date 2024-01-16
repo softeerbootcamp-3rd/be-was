@@ -8,15 +8,15 @@ import java.util.LinkedHashMap;
 public class RequestDto {
 
     private String method;
-    private String url;
+    private String path;
     private String host;
     private String connection;
     private String userAgent;
     private String accept;
 
-    public void setMethodAndURL(String method, String url) {
+    public void setMethodAndPath(String method, String path) {
         this.method = method;
-        this.url = url;
+        this.path = path;
     }
 
     public void setRequestHeaders(Map<RequestHeader, String> requestHeaders) {
@@ -26,8 +26,8 @@ public class RequestDto {
         this.accept = requestHeaders.get(RequestHeader.ACCEPT);
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
     public Map<String, String> getValues() {
