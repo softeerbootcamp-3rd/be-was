@@ -15,19 +15,23 @@ public class ResponseHeaders {
         this.contentLength = contentLength;
         this.charSet = "utf-8";
     }
+
+    public ResponseHeaders(Integer contentLength) {
+        Date = LocalDateTime.now();
+        this.contentType = ContentType.HTML;
+        this.charSet = "uft-8";;
+        this.contentLength = contentLength;
+    }
+
     public LocalDateTime getDate() {
         return Date;
     }
 
     public String getContentType() {
-        return contentType + ";" + charSet;
+        return "Content-Type: " + contentType.getType() + ";" + charSet + " \r\n";
     }
 
-    public String getCharSet() {
-        return charSet;
-    }
-
-    public Integer getContentLength() {
-        return contentLength;
+    public String getContentLength() {
+        return "Content-Length: " + contentLength + "\r\n";
     }
 }
