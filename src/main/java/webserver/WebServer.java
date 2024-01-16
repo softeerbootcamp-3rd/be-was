@@ -19,7 +19,7 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
         // ExecutorService를 이용한 스레드 풀 생성
-        ExecutorService threadPool =  new ThreadPoolExecutor(20, 100, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        ExecutorService threadPool =  new ThreadPoolExecutor(5, 20, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {

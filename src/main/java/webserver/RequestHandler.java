@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import db.Database;
 import model.RequestHeader;
 import model.User;
 import org.slf4j.Logger;
@@ -28,8 +29,10 @@ public class RequestHandler implements Runnable {
 
             RequestHeader requestHeader = new RequestHeader();
             ParsingService parsingService = new ParsingService(br,requestHeader);
+            Database database = new Database();
 
-            // 특정 유용한 request header만 추출
+
+            // 특정 유용한 request header만 출력
             logger.debug("====useful RequestHeader====");
             logger.debug("{} ", requestHeader.getGeneralHeader());
             logger.debug("{} ", requestHeader.getAccpet());
@@ -38,29 +41,20 @@ public class RequestHandler implements Runnable {
             logger.debug("{} ", requestHeader.getUpgrade_insecure_requests());
             logger.debug("===========================");
 
-            // Path추출
+            // URL처리
             String path = requestHeader.getPath();
             String HTTP_method = requestHeader.getHTTP_method();
 
             logger.debug("------>  {} ", requestHeader.getPath());
             logger.debug("------>  {} ", requestHeader.getHTTP_method());
 
-            // localhost:8080 호출하더라도 index.html로 이어짐
-            if(path.equals("/")) path = "/index.html";
-
-
-            //회원 정보 추출
+            //회원가입처리
             if(path.contains("/create")){
-                String temp = path.split("\\?")[1];
-                String[] temp2 = temp.split("&");
+                CreateUserService createUserService = new CreateUserService(path);
 
-                String[] imformation = new String[4];
+                logger.debug(createUserService.user.toString());
 
-                for(int i=0; i< temp2.length; i++){
-                    imformation[i] = temp2[i].split("=")[1];
-                }
-                User user = new User(imformation[0],imformation[1],imformation[2],imformation[3]);
-                logger.debug(">> user : {} ", user);
+                database.addUser(createUserService.user);
 
                 // 메인페이지로 이어지도록 설정
                 path = "/index.html";
