@@ -7,6 +7,8 @@ import webserver.RequestHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RequestParserUtil {
 
@@ -16,7 +18,7 @@ public class RequestParserUtil {
 
     public static RequestData parseRequest(BufferedReader br) throws IOException {
         String line = br.readLine();
-        logger.debug("Request line : {}", line);
+//        logger.debug("Request line : {}", line);
 
         if (line == null) {
             throw new IOException("Invalid HTTP request: Request line is null");
@@ -24,11 +26,26 @@ public class RequestParserUtil {
 
         String[] tokens = line.split(" ");
 
-        while(!line.equals("")) { // 헤더의 끝은 빈 공백 문자열이 들어있다.
-            line = br.readLine();
-            logger.debug("Header : {}", line);
-        }
+        Map<String, String> headers = parseHeaders(br);
 
-        return new RequestData(tokens[0], tokens[1], tokens[2]);
+        return new RequestData(tokens[0], tokens[1], tokens[2], headers);
+    }
+
+    private static Map<String, String> parseHeaders(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+
+        String line = br.readLine();
+
+        while (!line.equals("")) {
+//            logger.debug("Header: {}", line);
+            String[] headerTokens = line.split(": ");
+            if (headerTokens.length == 2) {
+                headers.put(headerTokens[0], headerTokens[1]);
+            }
+            line = br.readLine();
+        }
+        System.out.println();
+
+        return headers;
     }
 }

@@ -30,7 +30,12 @@ public class RequestHandler implements Runnable {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
+            // HTTP 요청을 파싱한다.
             RequestData requestData = RequestParserUtil.parseRequest(br);
+
+            // 파싱한 요청의 세부 내용 출력
+            logger.debug(requestData.formatForOutput());
+            System.out.println();
 
             String url = requestData.getRequestContent();
 
