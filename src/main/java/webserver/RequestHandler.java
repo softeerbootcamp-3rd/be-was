@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -94,11 +93,14 @@ public class RequestHandler implements Runnable {
     }
 
     private void printHttpRequestInformation(HttpRequestInformation requestInformation) {
-        logger.debug("= = HTTP REQUEST INFORMATION = =");
-        logger.debug(requestInformation.getMethod() + " " + requestInformation.getUrl() + " " + requestInformation.getHttpVersion());
-        logger.debug(requestInformation.getHost());
-        logger.debug(requestInformation.getConnection());
-        logger.debug(requestInformation.getAccept());
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n= = HTTP REQUEST INFORMATION = =");
+        sb.append("\n"+requestInformation.getMethod() + " " + requestInformation.getUrl() + " " + requestInformation.getHttpVersion());
+        sb.append("\n"+requestInformation.getHost());
+        sb.append("\n" + requestInformation.getConnection());
+        sb.append("\n" + requestInformation.getAccept()+"\n");
+
+        logger.debug(sb.toString());
     }
 
     private void respond404(DataOutputStream dos) {
