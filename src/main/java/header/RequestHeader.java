@@ -34,6 +34,10 @@ public class RequestHeader {
         return path;
     }
 
+    public String getMethod(){
+        return method;
+    }
+
     public static RequestHeader of(String method, String path, String Host){
         return new RequestHeader(method, path, Host);
     }
