@@ -72,4 +72,8 @@ Java Web Application Server 2023
   >- Green Thread 개념
   >- Native Thread 개념
   >- Virtual Thread 개념
-- 학습 내용 정리: https://velog.io/@taegon1998/Thread
+  >- 학습 내용 정리: https://velog.io/@taegon1998/Thread
+- HTTP Request, Response header에 대한 학습
+  >- HTTP Request, Response header 구조
+  >- HTTP Request, Response header에 포함되는 정보
+  >- 학습 내용 정리: https://velog.io/@taegon1998/HTTP-Header
