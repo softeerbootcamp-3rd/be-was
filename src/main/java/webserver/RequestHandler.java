@@ -36,6 +36,13 @@ public class RequestHandler implements Runnable {
             logger.debug("Request Method : {}", method);
             logger.debug("Request URL : {}", url);
 
+            while (!line.equals("")) {
+                line = br.readLine();
+                if (line.startsWith("Host") || line.startsWith("Connection") || line.startsWith("Accept:")) {
+                    logger.debug(line);
+                }
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
 
             String path = "src/main/resources/";
