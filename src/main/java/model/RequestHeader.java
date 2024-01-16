@@ -24,6 +24,10 @@ public class RequestHeader {
         this.protocol = protocol;
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public static void setHeader(RequestHeader requestHeader, String key, String value) {
         Class<RequestHeader> requestHeaderClazz = RequestHeader.class;
         try {

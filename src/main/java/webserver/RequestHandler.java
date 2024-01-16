@@ -1,11 +1,9 @@
 package webserver;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -33,7 +31,8 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String path = requestHeader(br);
+            RequestHeader requestHeader = requestHeader(br);
+            String path = requestHeader.getPath();
             URL resource = null;
 
             if (path.contains("html")) {
@@ -41,6 +40,7 @@ public class RequestHandler implements Runnable {
             } else {
                 resource = getResource("./static" + path);
             }
+
             byte[] body = Files.readAllBytes(new File(resource.getPath()).toPath());
 
             //byte[] body = "Hello World".getBytes();
@@ -51,30 +51,30 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private String requestHeader(BufferedReader br) throws IOException, ClassNotFoundException {
+    private RequestHeader requestHeader(BufferedReader br) throws IOException, ClassNotFoundException {
         writeLock.lock();
-        String line = br.readLine();
-        String[] firstHeader = line.split(" ");
-        RequestHeader requestHeader = new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
+        RequestHeader requestHeader = getRequestUrl(br);
+        String line;
 
-        String url = null;
         logger.debug("===== request start =====");
         while ((line = br.readLine()) != null) {
             if (line.isBlank()) {
                 break;
             }
             parseHeader(line, requestHeader);
-            if (line.contains("GET")) {
-                String path = line.split(" ")[1];
-                System.out.println("path = " + path);
-                url = path.split("\\?")[0];
-            }
         }
         requestHeader.printHeader();
         logger.debug("===== request end =====");
         writeLock.unlock();
 
-        return url;
+        return requestHeader;
+    }
+
+    private static RequestHeader getRequestUrl(BufferedReader br) throws IOException {
+        String line = br.readLine();
+        String[] firstHeader = line.split(" ");
+        RequestHeader requestHeader = new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
+        return requestHeader;
     }
 
     private void parseHeader(String line, RequestHeader requestHeader) {
