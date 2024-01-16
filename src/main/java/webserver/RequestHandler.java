@@ -98,6 +98,9 @@ public class RequestHandler implements Runnable {
 
     private static Path getFilePath(HttpRequest header) {
         String filePath = header.getStartLine().getPathUrl();
+        if(filePath.equals("/")){
+            filePath += "index.html";
+        }
         if (filePath.contains("html")) {
             return new File(TEMPLATES_RESOURCE + filePath).toPath();
         }
