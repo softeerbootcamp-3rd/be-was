@@ -16,9 +16,10 @@ import dto.RequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Util;
+import view.OutputView;
 
 public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
 
@@ -33,6 +34,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             RequestDto requestDto = createRequestDto(in);
             String url = requestDto.getUrl();
+            OutputView.printRequestDto(requestDto);
 
             DataOutputStream dos = new DataOutputStream(out);
 
@@ -63,9 +65,6 @@ public class RequestHandler implements Runnable {
         Map<RequestHeader, String> requestHeaders = new HashMap<>();
         while (!line.equals("")) {
             line = br.readLine();
-            if (line.startsWith("Host") || line.startsWith("Connection") || line.startsWith("Accept:")) {
-                logger.debug(line);
-            }
             String[] requestHeader = Util.splitRequestHeader(line);
             RequestHeader property = RequestHeader.findProperty(requestHeader[0]);
             if (property != RequestHeader.NONE) {
