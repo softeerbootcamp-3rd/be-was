@@ -53,7 +53,7 @@ public class Request {
         if (url.endsWith(".html")) {
             return ROOT_PATH + "templates" + url;
         }
-        return ROOT_PATH+ "static" + url;
+        return ROOT_PATH + "static" + url;
         // '/'로 오는경우 ??
     }
 }

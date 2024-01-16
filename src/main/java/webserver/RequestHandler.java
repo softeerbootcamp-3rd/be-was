@@ -40,7 +40,7 @@ public class RequestHandler implements Runnable {
         Request request = new Request(line);
         logger.debug("start line : {}", line);
 
-        while(!line.isEmpty()){
+        while (!line.isEmpty()) {
             line = br.readLine();
             request.addHeader(line);
         }

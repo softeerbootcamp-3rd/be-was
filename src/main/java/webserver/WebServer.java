@@ -44,8 +44,7 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 executorService.execute(new RequestHandler(connection));
             }
-        }
-        finally{
+        } finally {
             executorService.shutdownNow();
         }
     }
