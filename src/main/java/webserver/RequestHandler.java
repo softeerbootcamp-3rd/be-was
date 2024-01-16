@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import model.User;
 import org.slf4j.Logger;
@@ -53,7 +56,9 @@ public class RequestHandler implements Runnable {
                     connection.getPort());
             System.out.println("================================================================");
             DataOutputStream dos = new DataOutputStream(out);
-            String templateFilePath = "be-was/src/main/resources/templates";
+            //String templateFilePath = "be-was/src/main/resources/templates";
+            String templateFilePath = "/Users/user/Desktop/be-was/src/main/resources/templates";
+
 
             // 1. 입력된 url이 /index.html인경우
             if(url.equals("/index.html")) {
@@ -67,10 +72,10 @@ public class RequestHandler implements Runnable {
                 responseBody(dos, body);
             }
 
-//            for(String s : url.split("/")){
-//                System.out.println("[[[[["+s+"]]]]]");
-//            }
+
+            // 2. 입력된 url이 /user인경우
             else if(url.split("/")[1].equals("user")){
+                // 2-1. /user/form.html 인경우
                 if(url.split("/")[2].equals("form.html")){
                     Path path = new File(templateFilePath+url).toPath();
                     byte[] body = Files.readAllBytes(path);
@@ -78,18 +83,16 @@ public class RequestHandler implements Runnable {
                     response200Header(dos, body.length);
                     responseBody(dos, body);
                 }
+                // 2-2. /user/create? ... 인경우
                 else if(url.split("/")[2].startsWith("create?")){
                     String data =  url.split("/")[2].split("\\?")[1];
-                    System.out.println("[[[[["+data+"]]]]]");
-                    //[[[[[userId=asdf&password=sadf&name=asdf&email=asdf%40asdf]]]]]
-                    String userId = data.split("&")[0].split("=")[1];
-                    String password= data.split("&")[1].split("=")[1];
-                    String name = data.split("&")[2].split("=")[1];
-                    String email = data.split("&")[3].split("=")[1];
-                    User user = new User(userId, password, name, email);
+                    System.out.println("전달 받은 파라미터 원형: "+data);
+                    //userId=asdf&password=sadf&name=asdf&email=asdf%40asdf
+                    Map<String,String> map = querytoMap(data);
+                    User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
                     users.add(user);
                     byte[] body = user.toString().getBytes();
-
+                    System.out.println(user);
                     response200Header(dos, body.length);
                     responseBody(dos, body);
                 }
@@ -122,5 +125,28 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private Map<String,String> querytoMap(String query){
+        Map<String, String> map = new HashMap<>();
+
+        //&를 기준으로 한쌍으로 묶는다.
+        String[] pairs = query.split("&");
+        for(String pair:pairs){
+
+            //url로 온 경우 @를 %40으로 인코딩 돼서 온다.
+            // @는 url에서 의미를 갖기 때문. 따라서 다시 @로 변환해 주어야한다
+            pair = pair.replace("%40","@");
+
+            //=를 기준으로 분리한다
+            String[] values = pair.split("=");
+
+            //value값을 빈값으로 받았을 때는 널값으로 처리
+            if(values.length == 1)
+                map.put(values[0],null);
+            else if(values.length == 2)
+                map.put(values[0], values[1]);
+        }
+        return map;
     }
 }
