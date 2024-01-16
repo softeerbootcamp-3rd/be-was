@@ -15,11 +15,23 @@ public class ResponseHeaders {
         this.contentLength = contentLength;
         this.charSet = "utf-8";
     }
-    public String getContentType() {
+    public String getContentTypeHeader() {
         return "Content-Type: " + contentType.getType() + ";" + charSet + " \r\n";
     }
 
-    public String getContentLength() {
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public String getCharSet() {
+        return charSet;
+    }
+
+    public Integer getContentLength() {
+        return contentLength;
+    }
+
+    public String getContentLengthHeader() {
         return "Content-Length: " + contentLength + "\r\n";
     }
 }

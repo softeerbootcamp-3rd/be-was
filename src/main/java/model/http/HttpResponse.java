@@ -1,9 +1,9 @@
 package model.http;
 
 public class HttpResponse {
-    private StatusLine statusLine;
-    private ResponseHeaders headers;
-    private Body body;
+    private final StatusLine statusLine;
+    private final ResponseHeaders headers;
+    private final Body body;
 
     public HttpResponse(StatusLine statusLine, ResponseHeaders headers, Body body) {
         this.statusLine = statusLine;

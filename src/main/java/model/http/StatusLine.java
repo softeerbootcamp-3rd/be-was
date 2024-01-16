@@ -9,8 +9,7 @@ public class StatusLine {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
+    public String getStatusHeader() {
         return version + " " + status.getStatusCode() + " " + status.getStatusText() + " \r\n";
     }
 }

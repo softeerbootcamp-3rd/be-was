@@ -15,6 +15,10 @@ public class HttpRequest {
         return startLine;
     }
 
+    public RequestHeaders getHeaders() {
+        return headers;
+    }
+
     public Body getBody() {
         return body;
     }
