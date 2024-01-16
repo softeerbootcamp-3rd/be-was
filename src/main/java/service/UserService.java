@@ -1,5 +1,6 @@
 package service;
 
+import db.Database;
 import dto.UserRequestDto;
 import model.User;
 import org.slf4j.Logger;
@@ -13,6 +14,6 @@ public class UserService {
         User user = new User(userRequestDto.getUserId(), userRequestDto.getPassword(),
                 userRequestDto.getName(), userRequestDto.getEmail());
 
-        logger.debug(user.toString());
+        Database.addUser(user);
     }
 }
