@@ -32,7 +32,7 @@ public class RequestHandler implements Runnable {
 
             byte[] body = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
 
-            Response response = new Response(dos, body);
+            Response response = new Response(request, body);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
