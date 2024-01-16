@@ -21,7 +21,7 @@
     - 브라우저는 응답 Header와 HTML을 읽은 후 웹 자원(js, css, image ..)에 대한 재요청
 
 # HTTP (HyperText Transfer Protocol)
-!https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_Steps.png
+![](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_Steps.png)
 
 ## HTTP
 
@@ -83,8 +83,7 @@ Accept-Language: us-en, fr, cn
 - Request Header는 `name: value` 쌍으로 이루어짐: multiple value 가능
 
 ## HTTP Method
-
-![http-header-functions.jpeg](https://prod-files-secure.s3.us-west-2.amazonaws.com/fa4bb8a9-52ea-47d1-ade5-71658b9b2c74/43050000-77e6-4a8c-9176-e79f7067bac6/http-header-functions.jpeg)
+![http-header-functions (1)](https://github.com/Yoon-Suji/be-was/assets/70956926/67f0d190-550b-4af6-b560-22e8c9997fd5)
 
 ### GET vs. POST
 
