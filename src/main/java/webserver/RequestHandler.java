@@ -26,20 +26,23 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String requestline = br.readLine();
 
+            // HTTP REQEUST LINE 출력
             String requestURL = getRequestURL(requestline);
             logger.debug("[REQUEST LINE] {}", requestline);
 
+            // HTTP HEADER LINE 출력
             String headerLine;
             while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
                 logger.debug("[Header] {}", headerLine);
             }
 
             byte[] body;
-            if(requestURL.equals("/index.html")) {
+
+            if (isHTML(requestURL)) {
                 String location = "src/main/resources/templates" + requestURL;
                 body = Files.readAllBytes(new File(location).toPath());
             } else {
-                body = "main page".getBytes();
+                body = "LOGIN OK".getBytes();
             }
 
             DataOutputStream dos = new DataOutputStream(out);
@@ -50,6 +53,15 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    // html 파일을 요청하는지 확인
+    boolean isHTML(String requestURL) {
+        if (requestURL.endsWith(".html")) {
+            return true;
+        }
+        return false;
+    }
+
+    // Request line에서 url만 추출
     private String getRequestURL(String requestLine) {
         String[] tokens = requestLine.split(" ");
         return tokens[1];
