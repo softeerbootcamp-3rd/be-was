@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import controller.RequestDataController;
 import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,8 @@ public class RequestHandler implements Runnable {
             System.out.println();
 
             String url = requestData.getRequestContent();
+
+            RequestDataController.routeRequest(url, requestData);
 
             DataOutputStream dos = new DataOutputStream(out);
 
