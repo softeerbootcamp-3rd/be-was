@@ -7,7 +7,8 @@ import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static util.HttpRequestHeaderHelper.getRequestHeader;
+import static util.HttpRequestHeader.getRequestHeader;
+
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -31,10 +32,6 @@ public class RequestHandler implements Runnable {
 
             String path = requestHeader.split(PATH_DELIMITER)[PATH_POS];
             String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
-
-//            자바 스레드 돌아가는 원리
-//            concurrent 패키지에 뭐가 있는지
-//            virtual thread
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());

@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.http.HttpHeaders;
-
-public class HttpRequestHeaderHelper {
+public class HttpRequestHeader {
     private static final String END = "";
     private static final String CHARSET_NAME = "UTF-8";
     private static final String HOST = "Host:";
