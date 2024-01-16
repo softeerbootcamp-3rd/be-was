@@ -57,7 +57,8 @@ public class RequestHandler implements Runnable {
             System.out.println("================================================================");
             DataOutputStream dos = new DataOutputStream(out);
             //String templateFilePath = "be-was/src/main/resources/templates";
-            String templateFilePath = "/Users/user/Desktop/be-was/src/main/resources/templates";
+            String templateFilePath = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/templates";
+            //String templateFilePath = "/Users/user/Desktop/be-was/src/main/resources/templates";
 
 
             // 1. 입력된 url이 /index.html인경우
