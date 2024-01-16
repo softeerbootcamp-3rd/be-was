@@ -48,7 +48,7 @@ public class RequestHandler implements Runnable {
             // localhost:8080 호출하더라도 index.html로 이어짐
             if(path.equals("/")) path = "/index.html";
 
-            
+
             //회원 정보 추출
             if(path.contains("/create")){
                 String temp = path.split("\\?")[1];
@@ -72,6 +72,7 @@ public class RequestHandler implements Runnable {
 
             //응답헤더
             response200Header(dos, body.length);
+
             //본문
             responseBody(dos, body);
         } catch (IOException e) {
@@ -99,3 +100,24 @@ public class RequestHandler implements Runnable {
         }
     }
 }
+
+/*
+
+        if (path.endsWith(".html")) {
+byte[] body = Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
+response200Header(dos, body.length, "text/html;charset=utf-8");
+responseBody(dos, body);
+        }
+                // CSS 파일인 경우
+                else if (path.endsWith(".css")) {
+byte[] body = Files.readAllBytes(new File("./src/main/resources/css" + path).toPath());
+response200Header(dos, body.length, "text/css;charset=utf-8");
+responseBody(dos, body);
+        }
+                // 다른 파일 형식 처리도 추가 가능
+                else {
+                // 기타 파일 형식에 대한 처리
+                dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
+            dos.flush();
+        }
+                */
