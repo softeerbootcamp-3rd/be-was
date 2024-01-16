@@ -28,6 +28,10 @@ public class Request {
         parseRequestBody();
     }
 
+    public String getRequestTarget() {
+        return requestTarget;
+    }
+
     private void parseRequestHeader() {
         for(int i = 1;i < headerContent.size();i++) {
             if(headerContent.get(i).isEmpty())
