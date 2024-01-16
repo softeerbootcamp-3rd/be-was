@@ -24,20 +24,7 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-
-            // 헤더의 첫 번째 line
-            String line = br.readLine();
-            logger.debug("request line : {}", line);
-
-            Request request = getRequest(line);
-
-            /* 전체 header 출력
-            while(!line.equals("")){        // 공백을 만나기 전까지 반복
-                line = br.readLine();
-                logger.debug("header : {}", line);
-            }
-            */
+            Request request = getRequest(in);
 
             byte[] body = handleRequest(request);
             DataOutputStream dos = new DataOutputStream(out);
@@ -49,6 +36,22 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static Request getRequest(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+
+        // 헤더의 첫 번째 line
+        String line = br.readLine();
+        Request request = new Request(line);
+        logger.debug("start line : {}", line);
+
+        // 전체 header 출력
+        while(!line.isEmpty()){        // blank Line 을 만나기 전까지 반복
+            line = br.readLine();
+            request.addHeader(line);
+        }
+        return request;
     }
 
     private byte[] handleRequest(Request request) throws IOException {
@@ -67,21 +70,6 @@ public class RequestHandler implements Runnable {
         return Files.readAllBytes(file.toPath());
     }
 
-    private Request getRequest(String line) {
-        if (line == null || line.trim().isEmpty()) {
-            throw new IllegalArgumentException("Request line is null or empty");
-        }
-
-        String[] tokens = line.split(" ");
-
-        if (tokens.length < 2) {
-            throw new IllegalArgumentException("Invalid request line: " + line);
-        }
-
-        String method = tokens[0];
-        String url = tokens[1];
-        return new Request(method, url);
-    }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, Request request) {
         try {
