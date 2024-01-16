@@ -6,11 +6,13 @@ import java.util.Map;
 public class RequestDto {
     private String method;
     private String path;
+    private String params;
     private Map<String, String> header;
 
-    public RequestDto(String method, String path) {
+    public RequestDto(String method, String path, String params) {
         this.method = method;
         this.path = path;
+        this.params = params;
         this.header = new HashMap<>();
     }
 
@@ -21,6 +23,8 @@ public class RequestDto {
     public String getPath() {
         return path;
     }
+
+    public String  getParams() { return params; }
 
     public void addHeader(String key, String value) {
         this.header.put(key, value);

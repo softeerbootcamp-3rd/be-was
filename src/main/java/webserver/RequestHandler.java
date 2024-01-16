@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import model.RequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,10 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            RequestDto requestDto = RequestParser.getRequestDto(in);
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = getFileByPath(RequestParser.getPath(in));
+            byte[] body = getFileByPath(requestDto.getPath());
             if (body == null) { // 해당 경로의 html 파일이 존재하지 않을 때
                 body = "Hello World".getBytes();
             }
