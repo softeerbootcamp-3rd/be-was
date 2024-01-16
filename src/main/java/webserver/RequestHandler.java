@@ -41,13 +41,11 @@ public class RequestHandler implements Runnable {
     private static Request getRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-        // 헤더의 첫 번째 line
         String line = br.readLine();
         Request request = new Request(line);
         logger.debug("start line : {}", line);
 
-        // 전체 header 출력
-        while(!line.isEmpty()){        // blank Line 을 만나기 전까지 반복
+        while(!line.isEmpty()){
             line = br.readLine();
             request.addHeader(line);
         }
@@ -57,14 +55,10 @@ public class RequestHandler implements Runnable {
     private byte[] handleRequest(Request request) throws IOException {
         String filePath = request.getFilePath();
         byte[] body;
-
-        if (filePath.isEmpty()) {
-            return "Hello World".getBytes();
-        }
-
+        // url 에서 예외 처리 되는 부분 생각
         File file = new File(filePath);
         if (!file.exists()) {
-            return "File not found".getBytes();
+            return "404 File Not Found".getBytes();
         }
 
         return Files.readAllBytes(file.toPath());

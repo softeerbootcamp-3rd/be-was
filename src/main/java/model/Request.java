@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Request {
+    private final String ROOT_PATH = "src/main/resources/";
+
     private String method;
     private String url;
     private String version;
@@ -29,7 +31,6 @@ public class Request {
         return split;
     }
 
-
     public void addHeader(String headerLine) {
         List<String> parts = List.of(headerLine.split(": "));
         if (parts.size() == 2) {
@@ -50,10 +51,9 @@ public class Request {
 
     public String getFilePath() {
         if (url.endsWith(".html")) {
-            return "src/main/resources/templates" + url;
-        } else if (!url.isEmpty()) {
-            return "src/main/resources/static" + url;
+            return ROOT_PATH + "templates" + url;
         }
-        return "";
+        return ROOT_PATH+ "static" + url;
+        // '/'로 오는경우 ??
     }
 }
