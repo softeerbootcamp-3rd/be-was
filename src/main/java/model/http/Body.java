@@ -1,20 +1,22 @@
 package model.http;
 
-public class Body {
-    private final String content;
+import java.util.Arrays;
 
-    public Body(String content) {
+public class Body {
+    private final byte[] content;
+
+    public Body(byte[] content) {
         this.content = content;
     }
 
-    public String getContent() {
+    public byte[] getContent() {
         return content;
     }
 
     @Override
     public String toString() {
-        return "{" +
-                "content='" + content + '\'' +
-                '}' + "\n";
+        return "Body{" +
+                "content=" + new String(content) +
+                '}';
     }
 }

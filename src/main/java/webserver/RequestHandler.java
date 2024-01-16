@@ -57,7 +57,7 @@ public class RequestHandler implements Runnable {
 
     private void setResponseBody(DataOutputStream dos, HttpResponse httpResponse) {
         try {
-            dos.write(httpResponse.getBody().getContent().getBytes(), 0, httpResponse.getBody().getContent().getBytes().length);
+            dos.write(httpResponse.getBody().getContent(), 0, httpResponse.getBody().getContent().length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -76,7 +76,7 @@ public class RequestHandler implements Runnable {
     }
 
     private Body setBody(byte[] body) {
-        return new Body(new String(body));
+        return new Body(body);
     }
 
     private ResponseHeaders setResponseHeaders(HttpRequest httpRequest, int length) {

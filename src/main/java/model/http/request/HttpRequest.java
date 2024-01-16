@@ -3,9 +3,9 @@ package model.http.request;
 import model.http.Body;
 
 public class HttpRequest {
-    private StartLine startLine;
-    private RequestHeaders headers;
-    private Body body;
+    private final StartLine startLine;
+    private final RequestHeaders headers;
+    private final Body body;
 
     public HttpRequest(StartLine startLine, RequestHeaders headers, Body body) {
         this.startLine = startLine;
