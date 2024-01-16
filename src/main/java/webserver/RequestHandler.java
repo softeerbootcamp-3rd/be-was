@@ -2,9 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.Request;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -23,14 +25,14 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            String line = br.readLine();
-            while(true)
-            {
-                 if(line.isEmpty())
-                     break;
-                 line= br.readLine();
-                 logger.debug(line);
+            //request헤더를 읽어서 줄별로 Array로 변환
+            ArrayList<String> requestContent = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                requestContent.add(line);
             }
+
+            Request request = new Request(requestContent);
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "이윤수".getBytes();
