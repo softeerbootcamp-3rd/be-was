@@ -4,9 +4,11 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +22,8 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}",
+                connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -49,10 +52,23 @@ public class RequestHandler implements Runnable {
             }
             logger.debug("\n");
 
-            byte[] body = Files.readAllBytes(
-                    new File("./src/main/resources/templates" + tokens[1]).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            String url = tokens[1];
+            if(url.startsWith("/user/create")) {
+                int index = url.indexOf("?");
+                String queryString = url.substring(index + 1);
+                HashMap<String, String> params = queryStringParsing(queryString);
+                String userId = params.get("userId");
+                String password = params.get("password");
+                String name = params.get("name");
+                String email = params.get("email");
+                User user = new User(userId, password, name, email);
+                logger.debug(user.toString());
+            } else {
+                byte[] body = Files.readAllBytes(
+                        new File("./src/main/resources/templates" + tokens[1]).toPath());
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+            }
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -76,5 +92,18 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private HashMap<String, String> queryStringParsing(String queryString) {
+        HashMap<String, String> queries = new HashMap<>();
+
+        String[] keyAndValue = queryString.split("&");
+        for(String keyValue : keyAndValue) {
+            int indexOfEqual = keyValue.indexOf("=");
+            String key = keyValue.substring(0, indexOfEqual);
+            String value = keyValue.substring(indexOfEqual+1);
+            queries.put(key, value);
+        }
+        return queries;
     }
 }
