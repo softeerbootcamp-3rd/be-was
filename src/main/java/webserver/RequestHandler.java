@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequest;
 import util.ResponseBuilder;
 import util.URLMapper;
 
@@ -21,22 +22,20 @@ public class RequestHandler implements Runnable {
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String requestLine = reader.readLine();
+            HttpRequest request = new HttpRequest(reader);
 
             // TODO: request header class 생성하기
 
             logger.debug("Connection IP : {}, Port : {}, request: {}",
-                    connection.getInetAddress(), connection.getPort(), requestLine);
+                    connection.getInetAddress(), connection.getPort(), request.getURI());
 
-            String[] requestParts = requestLine.split(" ");
-            String requestMethod = requestParts[0];
-            String requestPath = requestParts[1];
-
-            BiConsumer<OutputStream, String> handler = URLMapper.getMethod(requestMethod, requestPath);
+            BiConsumer<OutputStream, HttpRequest> handler = URLMapper.getMethod(request);
             if (handler != null) {
-                handler.accept(out, requestPath);
+                handler.accept(out, request);
+            } else if (request.getMethod().equals("GET")) {
+                ResponseBuilder.responseFile(out, request);
             } else {
-                ResponseBuilder.responseFile(out, requestPath);
+                ResponseBuilder.send404(out);
             }
         } catch (IOException e) {
             logger.error("Error processing request: {}", e.getMessage());
