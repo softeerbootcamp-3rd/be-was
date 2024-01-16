@@ -4,14 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Request {
     String httpMethod;
     String requestTarget;
     String httpVersion;
     Float httpVersionNum;
-    private ArrayList<String> headerContent;
-    private ArrayList<String> bodyContent;
+    private final ArrayList<String> headerContent;
+    private final ArrayList<String> bodyContent;
     HashMap<String, String> requestHeader;
     HashMap<String, String> requestBody;
 
@@ -22,10 +23,36 @@ public class Request {
         requestHeader = new HashMap<>();
         requestBody = new HashMap<>();
 
-        ParseRequestStartLine(headerContent.get(0));
+        parseRequestStartLine(headerContent.get(0));
+        parseRequestHeader();
+        parseRequestBody();
     }
 
-    private void ParseRequestStartLine(String startLine) {
+    private void parseRequestHeader() {
+        for(int i = 1;i < headerContent.size();i++) {
+            if(headerContent.get(i).isEmpty())
+                break;
+
+            String[] keyValue = headerContent.get(i).split(" ");
+            String key = keyValue[0].substring(0, keyValue[0].length() - 1);
+            String val = keyValue[1];
+            requestHeader.put(key, val);
+        }
+    }
+    private void parseRequestBody() {
+        for(int i = 0;i < bodyContent.size();i++) {
+            if(bodyContent.get(i).isEmpty())
+                break;
+
+            String[] keyValue = bodyContent.get(i).split(" ");
+            String key = keyValue[0].substring(0, keyValue[0].length() - 1);
+            String val = keyValue[1];
+            requestBody.put(key, val);
+        }
+    }
+
+
+    private void parseRequestStartLine(String startLine) {
         String[] requestStartLine = startLine.split(" ");
         this.httpMethod = requestStartLine[0];
         this.requestTarget = requestStartLine[1];
@@ -59,17 +86,23 @@ public class Request {
         }
     }
 
-    public void Print()
+    public void print()
     {
+        System.out.println("*******************************************");
         System.out.println("httpMethod : " + this.httpMethod);
         System.out.println("requestTarget : " + this.requestTarget);
         System.out.println("httpVersion : " + this.httpVersion);
-        System.out.println("httpVersionNum : " + String.valueOf(this.httpVersionNum));
+        System.out.println("httpVersionNum : " + this.httpVersionNum);
 
-        for(String it : headerContent)
-            System.out.println(it);
-        for(String it : bodyContent)
-            System.out.println(it);
+        System.out.println("requestHeader : ");
+        for (Map.Entry<String, String> entry : requestHeader.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        System.out.println("requestBody : ");
+        for (Map.Entry<String, String> entry : requestBody.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+        System.out.println("*******************************************");
     }
 
 }
