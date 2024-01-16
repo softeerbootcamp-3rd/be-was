@@ -51,17 +51,22 @@ public class RequestHandler implements Runnable {
     }
 
     private void requestLogging(HttpRequest httpRequest){
-        logger.debug("========== HTTP Request ==========");
-        logger.debug("Method: " + httpRequest.getMethod());
-        logger.debug("Path: " + httpRequest.getPath());
-        logger.debug("Protocol Version: " + httpRequest.getProtocolVersion());
+        StringBuilder logMessage = new StringBuilder();
+
+        logMessage.append("\n========== HTTP Request ==========\n");
+        logMessage.append("Method: ").append(httpRequest.getMethod()).append("\n");
+        logMessage.append("Path: ").append(httpRequest.getPath()).append("\n");
+        logMessage.append("Protocol Version: ").append(httpRequest.getProtocolVersion()).append("\n");
         if (httpRequest.getHeaders() != null) {
-            httpRequest.getHeaders().forEach((key, value) -> logger.debug("Header: {} = {}", key, value));
+            httpRequest.getHeaders().forEach((key, value) ->
+                    logMessage.append("Header: ").append(key).append(" = ").append(value).append("\n"));
         }
         if (!httpRequest.getBody().isEmpty()) {
-            logger.debug("Body: " + httpRequest.getBody());
+            logMessage.append("Body: ").append(httpRequest.getBody()).append("\n");
         }
-        logger.debug("==================================");
+        logMessage.append("==================================");
+
+        logger.debug(logMessage.toString());
     }
 
 }
