@@ -20,54 +20,20 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String requestLine = br.readLine();
-
-            String[] requestParts = requestLine.split(" ");
-            String method = requestParts[0];
-            String path = requestParts[1];
-            String protocolVersion = requestParts[2];
-
-            Map<String, String> headers = new HashMap<>();
-            while (!(requestLine = br.readLine()).isEmpty()) {
-                String[] header = requestLine.split(": ");
-                headers.put(header[0], header[1]);
-            }
-
-            StringBuilder requestBody = new StringBuilder();
-            if (headers.containsKey("Content-Length")) {
-                int contentLength = Integer.parseInt(headers.get("Content-Length"));
-                for (int i = 0; i < contentLength; i++) {
-                    requestBody.append((char) br.read());
-                }
-            }
-
-            HttpRequest httpRequest = new HttpRequest();
-            httpRequest.setHttpRequest(method, path, protocolVersion, headers, requestBody.toString());
-
-            logger.debug("========== HTTP Request ==========");
-            logger.debug("Method: " + httpRequest.getMethod());
-            logger.debug("Path: " + httpRequest.getPath());
-            logger.debug("Protocol Version: " + httpRequest.getProtocolVersion());
-            if (httpRequest.getHeaders() != null) {
-                httpRequest.getHeaders().forEach((key, value) -> logger.debug("Header: {} = {}", key, value));
-            }
-            if (!httpRequest.getBody().isEmpty()) {
-                logger.debug("Body: " + httpRequest.getBody());
-            }
-            logger.debug("==================================");
+            HttpRequestParser httpRequestParser = new HttpRequestParser();
+            HttpRequest httpRequest = httpRequestParser.parse(in);
+            requestLogging(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
-            File file = new File("./src/main/resources/templates" + path);
+            File file = new File("./src/main/resources/templates" + httpRequest.getPath());
             byte[] body;
 
             body = "Valid page is not found".getBytes(StandardCharsets.UTF_8);
-            if (file.exists() && !"/".equals(path)) {
+            if (file.exists() && !"/".equals(httpRequest.getPath())) {
                 body = Files.readAllBytes(file.toPath());
             }
 
@@ -76,6 +42,20 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private void requestLogging(HttpRequest httpRequest){
+        logger.debug("========== HTTP Request ==========");
+        logger.debug("Method: " + httpRequest.getMethod());
+        logger.debug("Path: " + httpRequest.getPath());
+        logger.debug("Protocol Version: " + httpRequest.getProtocolVersion());
+        if (httpRequest.getHeaders() != null) {
+            httpRequest.getHeaders().forEach((key, value) -> logger.debug("Header: {} = {}", key, value));
+        }
+        if (!httpRequest.getBody().isEmpty()) {
+            logger.debug("Body: " + httpRequest.getBody());
+        }
+        logger.debug("==================================");
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {

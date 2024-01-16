@@ -10,7 +10,7 @@ public class HttpRequest {
 
     private String body;
 
-    public void setHttpRequest(String method, String path, String protocolVersion, Map<String, String> headers, String body) {
+    public HttpRequest(String method, String path, String protocolVersion, Map<String, String> headers, String body) {
         this.method = method;
         this.path = path;
         this.protocolVersion = protocolVersion;
