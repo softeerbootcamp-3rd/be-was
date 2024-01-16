@@ -34,14 +34,8 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             RequestDto requestDto = createRequestDto(in);
-            String url = requestDto.getUrl();
             OutputView.printRequestDto(requestDto);
-
-            DataOutputStream dos = new DataOutputStream(out);
-
-            byte[] body = Files.readAllBytes(new File(getPath(url) + url).toPath());
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            createResponse(out, requestDto.getUrl());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -67,6 +61,13 @@ public class RequestHandler implements Runnable {
         }
         requestDto.setRequestHeaders(requestHeaders);
         return requestDto;
+    }
+
+    private void createResponse(OutputStream out, String url) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        byte[] body = Files.readAllBytes(new File(getPath(url) + url).toPath());
+        response200Header(dos, body.length);
+        responseBody(dos, body);
     }
 
     private static String getPath(String url) {
