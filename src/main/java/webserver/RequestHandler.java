@@ -48,7 +48,6 @@ public class RequestHandler implements Runnable {
                                                                         "Host",
                                                                         "User-Agent",
                                                                         "Cookie"));
-            String mimeType = "";
             while(true) {
                 line = br.readLine();
                 if(line.isEmpty()) break;
@@ -56,13 +55,9 @@ public class RequestHandler implements Runnable {
                 String key = keyAndValue[0], value = keyAndValue[1];
                 if(printedKey.contains(key)) logger.debug(line);
                 headers.put(key, value);
-                if(key.equals("Accept")) {
-                    String[] types = value.split(",");
-                    if(types.length == 0) continue;
-                    mimeType = types[0];
-                }
             }
-
+            String types[] = headers.get("Accept").split(",");
+            String mimeType = types[0];
             int index = url.indexOf("?");
             MainController controller;
             if(index != -1) { // 파라미터가 존재
