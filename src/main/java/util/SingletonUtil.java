@@ -5,25 +5,25 @@ import db.Database;
 import service.UserService;
 
 public class SingletonUtil {
-    private static final SingletonUtil instance = new SingletonUtil();
-    private final UserController userController;
-    private final UserService userService;
-    private final Database database;
-    private SingletonUtil() {
-        this.userController = new UserController();
-        this.userService = new UserService();
-        this.database = new Database();
+    private static final UserController userController;
+    private static final UserService userService;
+    private static final Database database;
+
+    static {
+        userController = new UserController();
+        userService = new UserService();
+        database = new Database();
     }
 
     public static UserController getUserController() {
-        return instance.userController;
+        return userController;
     }
 
     public static UserService getUserService() {
-        return instance.userService;
+        return userService;
     }
 
     public static Database getDatabase() {
-        return instance.database;
+        return database;
     }
 }
