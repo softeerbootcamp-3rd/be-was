@@ -16,4 +16,9 @@ public class StatusLine {
     public Status getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return version + " " + status.getStatusCode() + " " + status.getStatusText() + " \r\n";
+    }
 }
