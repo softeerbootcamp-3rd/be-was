@@ -1,11 +1,24 @@
 package webserver;
 
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
+import controller.MemberFormController;
+import controller.StaticController;
+import controller.TemplateController;
+import dto.HttpStatus;
 import dto.Request;
+import dto.Response;
+import frontController.ModelAndView;
+import frontController.MyView;
+import frontController.adaptor.MyHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +27,24 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
     private Request req;
+
+    private final Map<String, Object> handlerMappingMap = new HashMap<>();
+    private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.req = new Request();
+        initHandlerMappingMap();
+        initHandlerAdapters();
+    }
+
+    private void initHandlerAdapters() {
+        handlerAdapters.add(new MyHandlerAdapter());
+    }
+
+    private void initHandlerMappingMap() {
+        handlerMappingMap.put("/user/create", new MemberFormController());
+        handlerMappingMap.put("/*.html",new TemplateController());
+        handlerMappingMap.put("/static/*",new StaticController());
     }
 
     public void run() {
@@ -27,65 +55,69 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             getRequest(in);
             req.requestInfo();
+            Response res = new Response();
             DataOutputStream dos = new DataOutputStream(out);
 
-            if(!(req.getContentType().isEmpty())) {
-                String parentDir = getDir();
-                byte[] body = Files.readAllBytes(new File(parentDir + req.getUrl()).toPath());
+            //handler mapping
+            Object handler = getHandler(req);
 
-                response200Header(dos, body.length);
-                responseBody(dos, body);
-            }
-            else{
+            if (handler == null) {
+                logger.debug("[RequestHandler.run] handler Not found");
                 byte[] body = new byte[0];
-                response301Header(dos, body.length);
-                responseBody(dos, body);
+                res.setStatus(HttpStatus.NOT_FOUND);
+                res.send(dos,body,req);
+                return;
             }
+            logger.debug("[RequestHandler.run] handler found : "+handler.getClass());
+            MyHandlerAdapter adapter = getHandlerAdapter(handler);
+            logger.debug("[RequestHandler.run] adapter found : "+adapter.getClass());
+            ModelAndView mv = adapter.handle(req, res, handler);
+            logger.debug("[RequestHandler.run] MV returned : "+mv);
+            MyView view = viewResolver(mv.getViewName());
+            logger.debug("[RequestHandler.run] view returned : "+view.getViewPath());
+            view.render(dos, req, res);
+
+
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response301Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 301 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("Location: " + req.getLocation() + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+    private MyView viewResolver(String viewName) {
+        if(isTemplate(viewName)||isStatic(viewName)){
+            return new MyView(viewName);
         }
+
+        return new MyView(viewName + ".html");
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: "+req.getContentType()+";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+    private MyHandlerAdapter getHandlerAdapter(Object handler) {
+        for (MyHandlerAdapter adapter : handlerAdapters) {
+            if (adapter.supports(handler)) {
+                return adapter;
+            }
         }
+        throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private Object getHandler(Request req) {
+        String requestURI = req.getUrl();
+        String normalizedURI = normalizeURI(requestURI);
+        return handlerMappingMap.get(normalizedURI);
     }
 
-
-
-    private String getDir(){
-        if(req.getContentType().equals("text/html")){
-            return Paths.get(System.getProperty("user.dir"), "src/main/resources/templates").toString();
+    private String normalizeURI(String url) {
+        // / 로 시작하고 .html 로 끝나는 경우만 처리
+        if (isTemplate(url)) {
+            return "/*.html";
         }
-        else{
-            return Paths.get(System.getProperty("user.dir"), "src/main/resources/static").toString();
+        else if(isStatic(url)){
+            return "/static/*";
+        }
+        else {
+            // 그 외의 경우는 그대로 반환
+            return url;
         }
     }
 
@@ -101,5 +133,12 @@ public class RequestHandler implements Runnable {
             System.out.println("line = " + line);
         }
 
+    }
+
+    private Boolean isTemplate(String url){
+        return url.endsWith(".html");
+    }
+    private Boolean isStatic(String url){
+        return url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/");
     }
 }
