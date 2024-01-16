@@ -14,10 +14,10 @@ public class UserControllerTest {
 
     @Test
     public void testCreateUser() {
-        String requestPath = "/path?userId=testUser&password=testPassword&name=TestName&email=test@example.com";
+        String request = "GET /path?userId=testUser&password=testPassword&name=TestName&email=test@example.com";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        createUser(outputStream, new HttpRequest(requestPath));
+        createUser(outputStream, new HttpRequest(request));
 
         User expectedUser = new User("testUser", "testPassword", "TestName", "test@example.com");
         assertEquals(expectedUser, Database.findUserById("testUser"));
