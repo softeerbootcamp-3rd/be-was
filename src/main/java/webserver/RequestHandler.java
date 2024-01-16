@@ -1,16 +1,17 @@
 package webserver;
 
+import controller.HomeController;
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
-import model.Request;
+import model.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final HomeController homeController = new HomeController();
 
     private final Socket connection;
 
@@ -20,36 +21,21 @@ public class RequestHandler implements Runnable {
 
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request request = new Request(in, connection.getPort(), logger);
+            RequestHeader requestHeader = new RequestHeader(in, connection.getPort());
 
-            DataOutputStream dos = new DataOutputStream(out);
-            // Content-Type, filePath 설정
-            byte[] body = Files.readAllBytes(new File(request.getFilePath()).toPath());
-            response200Header(dos, body.length, request.getContentType());
-            responseBody(dos, body);
+            logger.debug("port {} || method : {}, http : {}, urn : {}", requestHeader.getPort(),
+                    requestHeader.getMethod(), requestHeader.getHttp(), requestHeader.getUrn());
+
+            String urn = requestHeader.getUrn();
+            if (urn.startsWith("/user")) {
+                // todo : user 컨트롤러, 서비스 개발
+            } else if (urn.startsWith("/qna")) {
+                // todo : qna 컨트롤러, 서비스 개발
+            } else {
+                homeController.route(urn, out);
+            }
         } catch (Exception e) {
             logger.error("error in run", e);
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent,
-        String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
     }
 }
