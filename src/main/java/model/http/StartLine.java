@@ -20,4 +20,13 @@ public class StartLine {
     public String getVersion() {
         return version;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "method=" + method + "\n" +
+                ", pathUrl='" + pathUrl + '\n' +
+                ", version='" + version +
+                '}' + "\n";
+    }
 }
