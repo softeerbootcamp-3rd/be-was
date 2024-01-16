@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import utils.RequestParser;
-import org.assertj.core.api.Assertions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,13 +35,13 @@ public class RequestParserTest {
                 "Cookie: Idea-69015365=c84b7ca8-76bc-4946-8364-2ed31c35b3d4";
 
         InputStream validRequestStream = new ByteArrayInputStream(validRequest.getBytes());
-        RequestParser.setHeaders(validRequestStream);
+        RequestParser.parseHeaders(validRequestStream);
     }
 
     void makeInvalidRequest() throws IOException {
         String invalidRequest = "";
         InputStream invalidRequestStream = new ByteArrayInputStream(invalidRequest.getBytes());
-        RequestParser.setHeaders(invalidRequestStream);
+        RequestParser.parseHeaders(invalidRequestStream);
     }
 
     @Test
