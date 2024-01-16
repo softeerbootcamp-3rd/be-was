@@ -25,7 +25,7 @@ public class WebServer {
         // Concurrent 패키지 사용
         // newSingleThreadExecutor : 한번에 하나의 작업만 수행, 스레드 1개로 구성된 스레드 풀 생성
         // newFixedThreadPool : n개의 작업을 동시에 실행, 스레드 n개로 구성된 스레드 풀 셍성
-        ExecutorService executor = Executors.newFixedThreadPool(MAX_THREAD);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
@@ -34,8 +34,6 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-//                Thread thread = new Thread(new RequestHandler(connection));
-//                thread.start();
                 executor.execute(new RequestHandler(connection));
             }
         } catch (IOException e) {
