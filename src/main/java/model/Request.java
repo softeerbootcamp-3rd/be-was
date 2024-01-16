@@ -49,6 +49,10 @@ public class Request {
         return "text/html";
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     public String getFilePath() {
         if (url.endsWith(".html")) {
             return ROOT_PATH + "templates" + url;
