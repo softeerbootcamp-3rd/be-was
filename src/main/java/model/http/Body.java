@@ -1,7 +1,7 @@
 package model.http;
 
 public class Body {
-    private String content;
+    private final String content;
 
     public Body(String content) {
         this.content = content;
@@ -9,10 +9,6 @@ public class Body {
 
     public String getContent() {
         return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     @Override
