@@ -35,7 +35,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             RequestDto requestDto = createRequestDto(in);
             OutputView.printRequestDto(requestDto);
-            createResponse(out, requestDto.getUrl());
+            createResponse(out, requestDto.getPath());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -48,7 +48,7 @@ public class RequestHandler implements Runnable {
         String line = br.readLine();
 
         String[] requestLine = Util.splitRequestLine(line);
-        requestDto.setMethodAndURL(requestLine[0], requestLine[1]);
+        requestDto.setMethodAndPath(requestLine[0], requestLine[1]);
 
         Map<RequestHeader, String> requestHeaders = new HashMap<>();
         while (!line.equals("")) {
