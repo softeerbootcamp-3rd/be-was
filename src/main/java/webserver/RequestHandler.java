@@ -3,12 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 
 import controller.Controller;
-import db.Database;
 import dto.HTTPRequestDto;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +17,7 @@ public class RequestHandler implements Runnable {
 //    private static Controller controller = new Controller();
     private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
     private String[] requestParams;
+    private byte[] body;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -38,8 +36,6 @@ public class RequestHandler implements Runnable {
             // HTTP Request 파싱
             httpRequestParsing(br);
 
-            byte[] body = "".getBytes();     // 초기화
-
             // 요청에서 Request param 떼어내기
             if(httpRequestDto.getRequest_target().contains("?")) {
                 requestParams = getRequestParams(httpRequestDto.getRequest_target());
@@ -48,24 +44,8 @@ public class RequestHandler implements Runnable {
                 );
             }
 
-            // 파일 불러오기 외의 요청
-            // 1. 회원가입 처리
-            if(httpRequestDto.getRequest_target().equals("/user/create")) {
-                User user = Controller.signup(requestParams);
-                if(user == null)
-                    body = "다시 시도해주세요.".getBytes();
-                else {
-                    body = ("Hello, " + user.getName() + "!").getBytes();
-                    logger.debug(Database.findUserById(user.getUserId()).toString());
-                }
-            }
-
-            // 파일 불러오기 요청
-            else {
-                String path = Controller.requestFile(httpRequestDto.getRequest_target());
-                logger.debug("path: {}", path);
-                body = Files.readAllBytes(new File(path).toPath());
-            }
+            // 요청 처리
+            body = Controller.doRequest(httpRequestDto, requestParams);
 
             response200Header(dos, body.length, httpRequestDto.getAccept());
             responseBody(dos, body);
