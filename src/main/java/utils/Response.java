@@ -10,7 +10,9 @@ public class Response {
         return basePath + "/static" + filePath;
     }
 
-    public String setContentType(String type) {
+    public String getContentType(String file) {
+        String type = file.split("/")[1];
+
         if (type.equals("css")) {
             return "text/css";
         }
