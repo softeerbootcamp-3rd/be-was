@@ -24,6 +24,7 @@ public class WebServer {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
+            // 최대 10개의 쓰레드를 갖는 쓰레드 풀 생성
             ExecutorService executorService = Executors.newFixedThreadPool(10);
 
             Socket connection;
@@ -31,6 +32,9 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 executorService.submit(new RequestHandler(connection));
             }
+
+            // 서버 종료 시 쓰레드 풀 종료
+            executorService.shutdown();
         }
     }
 }
