@@ -4,16 +4,19 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+
+import model.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -25,36 +28,60 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            List<String> header = getHeaderRequestInfo(inBufferedReader);
-            Optional<String> path = getPath(header);
-            if(path.isPresent() && path.get().equals("/index.html")){
-                byte[] body = Files.readAllBytes(new File("src/main/resources/templates" + path.get()).toPath());
-                DataOutputStream dos = new DataOutputStream(out);
-                response200Header(dos, body.length);
-                responseBody(dos, body);
-            }
+            HttpRequest header = getRequestHeader(inBufferedReader);
+            logger.debug(header.toString());
+            byte[] body = Files.readAllBytes(getFilePath(header));
+            DataOutputStream dos = new DataOutputStream(out);
+            response200Header(dos, body.length);
+            responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private Optional<String> getPath(List<String> header) {
-        if(header.isEmpty()){
-            return Optional.empty();
+    private static Path getFilePath(HttpRequest header) {
+        String filePath = header.getStartLine().getPathUrl();
+        if (filePath.contains("html")) {
+            return new File("src/main/resources/templates" + filePath).toPath();
         }
-        return Optional.ofNullable(header.get(0).split(" ")[1]);
+        return new File("src/main/resources/static" + filePath).toPath();
+
     }
 
-    private List<String> getHeaderRequestInfo(BufferedReader inBufferedReader) throws IOException {
-        List<String> header = new ArrayList<>();
+    private HttpRequest getRequestHeader(BufferedReader inBufferedReader) throws IOException {
+        List<String> httpRequest = new ArrayList<>();
         String temp;
-        if(inBufferedReader.ready()){
-            while (!(temp = inBufferedReader.readLine()).isEmpty()){
-                header.add(temp);
-            }
+        while (!(temp = inBufferedReader.readLine()).isEmpty()){
+            httpRequest.add(temp);
         }
-        header.forEach(logger::debug);
-        return header;
+        StartLine startLine = parseStartLine(httpRequest);
+        RequestHeaders requestHeaders = parseRequestHeaders(httpRequest);
+        Body body = parseRequestBody(httpRequest);
+        return new HttpRequest(startLine, requestHeaders, body);
+    }
+
+    private Body parseRequestBody(List<String> httpRequest) {
+        return null;
+    }
+
+    private RequestHeaders parseRequestHeaders(List<String> httpRequest) {
+        HashMap<String, String> header = new HashMap<>();
+        for (int i=1; i<httpRequest.size(); i++) {
+            String[] strings = httpRequest.get(i).split(": ");
+            header.put(strings[0], strings[1]);
+        }
+        String host = header.get("Host");
+        String userAgent = header.get("User-Agent");
+        String accept = header.get("Accept");
+        header.remove("Host");
+        header.remove("User-Agent");
+        header.remove("Accept");
+        return new RequestHeaders(host, userAgent, accept, header);
+    }
+
+    private StartLine parseStartLine(List<String> content) {
+        String[] startLine = content.get(0).split(" ");
+        return new StartLine(HttpMethod.valueOf(startLine[0]),startLine[1], startLine[2]);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
