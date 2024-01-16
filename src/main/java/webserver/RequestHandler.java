@@ -31,12 +31,51 @@ public class RequestHandler implements Runnable {
             HttpRequest header = getRequestHeader(inBufferedReader);
             logger.debug(header.toString());
             byte[] body = Files.readAllBytes(getFilePath(header));
-            DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            setHttpResponse(out, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+    private void setHttpResponse(OutputStream out, byte[] body) {
+        StatusLine statusLine = set200Header();
+        ResponseHeaders responseHeaders = setResponseHeaders(body.length);
+        Body responseBody = setBody(body);
+        HttpResponse  httpResponse = new HttpResponse(statusLine, responseHeaders, responseBody);
+        DataOutputStream dos = new DataOutputStream(out);
+        setResponseStatusAndHeader(dos, httpResponse);
+        setResponseBody(dos, httpResponse);
+    }
+
+    private void setResponseBody(DataOutputStream dos, HttpResponse httpResponse) {
+        try {
+            dos.write(httpResponse.getBody().getContent().getBytes(), 0, httpResponse.getBody().getContent().length());
+            dos.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void setResponseStatusAndHeader(DataOutputStream dos, HttpResponse httpResponse) {
+        try {
+            dos.writeBytes(httpResponse.getStatusLine().toString());
+            dos.writeBytes(httpResponse.getHeaders().getContentType());
+            dos.writeBytes(httpResponse.getHeaders().getContentLength());
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private Body setBody(byte[] body) {
+        return new Body(new String(body));
+    }
+
+    private ResponseHeaders setResponseHeaders(int length) {
+        return new ResponseHeaders(ContentType.HTML, length);
+    }
+
+    private StatusLine set200Header() {
+        return new StatusLine("HTTP/1.1", Status.OK);
     }
 
     private static Path getFilePath(HttpRequest header) {
@@ -51,7 +90,7 @@ public class RequestHandler implements Runnable {
     private HttpRequest getRequestHeader(BufferedReader inBufferedReader) throws IOException {
         List<String> httpRequest = new ArrayList<>();
         String temp;
-        while (!(temp = inBufferedReader.readLine()).isEmpty()){
+        while (inBufferedReader != null && !(temp = inBufferedReader.readLine()).isEmpty()){
             httpRequest.add(temp);
         }
         StartLine startLine = parseStartLine(httpRequest);
@@ -82,25 +121,5 @@ public class RequestHandler implements Runnable {
     private StartLine parseStartLine(List<String> content) {
         String[] startLine = content.get(0).split(" ");
         return new StartLine(HttpMethod.valueOf(startLine[0]),startLine[1], startLine[2]);
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 }
