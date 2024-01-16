@@ -85,7 +85,7 @@ public class RequestHandler implements Runnable {
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, Request request) {
         try {
-            String contentType = request.getMimeType();
+            String contentType = getContentType(request.getFilePath());
 
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
