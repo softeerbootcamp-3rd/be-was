@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
 public class UserService {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public void createUser(String userId, String password, String name, String email){
         User user = new User.Builder()

@@ -6,7 +6,7 @@ import service.UserService;
 import webserver.RequestHandler;
 
 public class UserController {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService = new UserService();
 
     public void createUser(String userId, String password, String name, String email){
