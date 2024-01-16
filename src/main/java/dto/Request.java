@@ -7,7 +7,7 @@ import webserver.RequestHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestDto {
+public class Request {
     private String method;
     private String url;
     private String type;
@@ -16,10 +16,10 @@ public class RequestDto {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
 
-    public RequestDto() {
+    public Request() {
     }
 
-    public RequestDto(String method, String url) {
+    public Request(String method, String url) {
         this.method = method;
         this.url = url;
     }
@@ -30,6 +30,10 @@ public class RequestDto {
 
     public String getType() {
         return type;
+    }
+
+    public Map<String, String> getRequestParam() {
+        return requestParam;
     }
 
     public void setMethod(String method) {
