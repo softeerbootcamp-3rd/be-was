@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.Map;
 
 import dto.UserCreateRequestDto;
@@ -15,9 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 
+import static util.DecoderUtil.parseQueryString;
+
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final String USER_PATH = "/user";
+    private static final String USER_CREATE = "/create";
     private static final UserService userService = new UserService();
 
     private Socket connection;
@@ -29,11 +31,11 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            DataOutputStream dos = new DataOutputStream(out); // dos 초기화
+            DataOutputStream dos = new DataOutputStream(out);
             Request request = getRequest(in);
             byte[] body = handleRequest(request, dos);
             if (body.length > 0) {
-                sendResponse(body, request, dos); // 응답 보내기
+                sendResponse(body, request, dos);
             }
         } catch (IllegalArgumentException | IOException e) {
             logger.error(e.getMessage());
@@ -61,14 +63,12 @@ public class RequestHandler implements Runnable {
     private byte[] handleRequest(Request request, DataOutputStream dos) throws IOException {
         // 요청인 경우
         String url = request.getUrl();
-        if (request.getUrl().startsWith(USER_PATH)) {
-            String remainingPath = request.getUrl().substring(USER_PATH.length());
-            if (url.startsWith(USER_PATH + "/create")) {
+        if (url.startsWith(USER_PATH)) {
+            String remainingPath = url.substring(USER_PATH.length());
+            if (remainingPath.startsWith(USER_CREATE)) {
                 return handleUser(remainingPath, dos);
             }
         }
-
-        // 정적 리소스 처리
         return serveStaticResource(request);
     }
 
@@ -116,19 +116,6 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private Map<String, String> parseQueryString(String queryString) throws UnsupportedEncodingException {
-        Map<String, String> queryParams = new HashMap<>();
-        for (String param : queryString.split("&")) {
-            String[] keyValue = param.split("=");
-            if (keyValue.length > 1) {
-                String key = keyValue[0];
-                String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
-                queryParams.put(key, value);
-            }
-        }
-        return queryParams;
-    }
-
     private void response200Header(int lengthOfBodyContent, Request request, DataOutputStream dos) {
         try {
             String contentType = getContentType(request.getFilePath());
@@ -144,7 +131,7 @@ public class RequestHandler implements Runnable {
     private void responseBody(byte[] body, DataOutputStream dos) {
         try {
             dos.write(body, 0, body.length);
-            dos.flush(); // 스트림을 플러시
+            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
