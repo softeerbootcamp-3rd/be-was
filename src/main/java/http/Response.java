@@ -1,4 +1,4 @@
-package dto;
+package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,6 @@ import webserver.RequestHandler;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);

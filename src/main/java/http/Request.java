@@ -1,9 +1,10 @@
-package dto;
+package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +63,13 @@ public class Request {
 
             for (String param : params) {
                 String[] data = param.split("\\=");
-                this.requestParam.put(data[0], data[1]);
+                if(data.length!=2){
+                    this.requestParam.put(data[0], "");
+                }
+                else{
+                    this.requestParam.put(data[0], data[1]);
+                }
+
             }
         }
     }
