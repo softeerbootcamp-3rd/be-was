@@ -24,15 +24,8 @@ public class RequestHandler implements Runnable {
         // in-> request, out -> response
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            //request헤더를 읽어서 줄별로 Array로 변환
-            ArrayList<String> requestContent = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                requestContent.add(line);
-            }
-
-            Request request = new Request(requestContent);
+            Request request = new Request(br);
+            request.Print();
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "이윤수".getBytes();
