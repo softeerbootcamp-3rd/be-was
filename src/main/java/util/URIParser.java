@@ -36,10 +36,10 @@ public class URIParser {
     }
 
     public static Map<String, String> parseQueryString(String queryString) {
-        queryString = decodeUrl(queryString);
         Map<String, String> paramMap = new HashMap<>();
 
         if (queryString != null && !queryString.isEmpty()) {
+            queryString = decodeUrl(queryString);
             String[] params = queryString.split("&");
 
             for (String param : params) {

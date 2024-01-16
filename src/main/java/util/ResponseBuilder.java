@@ -13,17 +13,17 @@ import java.nio.file.Paths;
 public class ResponseBuilder {
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static void responseFile(OutputStream out, String requestPath) throws IOException {
+    public static void responseFile(OutputStream out, HttpRequest request) throws IOException {
         String basePath = "src/main/resources/templates";
-        if (requestPath.startsWith("/css/") || requestPath.startsWith("/fonts/")
-                || requestPath.startsWith("/images/") || requestPath.startsWith("/js/"))
+        if (request.getURI().startsWith("/css/") || request.getURI().startsWith("/fonts/")
+                || request.getURI().startsWith("/images/") || request.getURI().startsWith("/js/"))
             basePath = "src/main/resources/static";
 
-        Path filePath = Paths.get(basePath + requestPath);
+        Path filePath = Paths.get(basePath + request.getURI());
 
         if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
             byte[] content = Files.readAllBytes(filePath);
-            ResponseBuilder.sendResponse(out, ResourceLoader.getContentType(requestPath), content, HttpStatus.OK);
+            ResponseBuilder.sendResponse(out, ResourceLoader.getContentType(request.getURI()), content, HttpStatus.OK);
         } else {
             ResponseBuilder.send404(out);
         }
