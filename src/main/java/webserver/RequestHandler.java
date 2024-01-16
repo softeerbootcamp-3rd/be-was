@@ -50,7 +50,6 @@ public class RequestHandler implements Runnable {
                 String key = keyAndValue[0], value = keyAndValue[1];
                 if(printedKey.contains(key)) logger.debug(line);
             }
-            logger.debug("\n");
 
             String url = tokens[1];
             if(url.startsWith("/user/create")) {
@@ -62,7 +61,7 @@ public class RequestHandler implements Runnable {
                 String name = params.get("name");
                 String email = params.get("email");
                 User user = new User(userId, password, name, email);
-                logger.debug(user.toString());
+                logger.debug("새로운 유저 생성! " + user.toString() + "\n");
             } else {
                 byte[] body = Files.readAllBytes(
                         new File("./src/main/resources/templates" + tokens[1]).toPath());
@@ -94,7 +93,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private HashMap<String, String> queryStringParsing(String queryString) {
+    public static HashMap<String, String> queryStringParsing(String queryString) {
         HashMap<String, String> queries = new HashMap<>();
 
         String[] keyAndValue = queryString.split("&");
