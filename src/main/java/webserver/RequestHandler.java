@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import model.http.*;
 import org.slf4j.Logger;
@@ -31,17 +32,17 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            HttpRequest header = getRequestHeader(inBufferedReader);
-            logger.debug(header.toString());
-            byte[] body = Files.readAllBytes(getFilePath(header));
-            setHttpResponse(out, body);
+            HttpRequest httpRequest = getRequestHeader(inBufferedReader);
+            logger.debug(httpRequest.toString());
+            byte[] body = Files.readAllBytes(getFilePath(httpRequest));
+            setHttpResponse(httpRequest, out, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    private void setHttpResponse(OutputStream out, byte[] body) {
+    private void setHttpResponse(HttpRequest httpRequest, OutputStream out, byte[] body) {
         StatusLine statusLine = setHeaderStatusOK();
-        ResponseHeaders responseHeaders = setResponseHeaders(body.length);
+        ResponseHeaders responseHeaders = setResponseHeaders(httpRequest, body.length);
         Body responseBody = setBody(body);
         HttpResponse  httpResponse = new HttpResponse(statusLine, responseHeaders, responseBody);
         DataOutputStream dos = new DataOutputStream(out);
@@ -51,7 +52,7 @@ public class RequestHandler implements Runnable {
 
     private void setResponseBody(DataOutputStream dos, HttpResponse httpResponse) {
         try {
-            dos.write(httpResponse.getBody().getContent().getBytes(), 0, httpResponse.getBody().getContent().length());
+            dos.write(httpResponse.getBody().getContent().getBytes(), 0, httpResponse.getBody().getContent().getBytes().length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -60,9 +61,9 @@ public class RequestHandler implements Runnable {
 
     private void setResponseStatusAndHeader(DataOutputStream dos, HttpResponse httpResponse) {
         try {
-            dos.writeBytes(httpResponse.getStatusLine().toString());
-            dos.writeBytes(httpResponse.getHeaders().getContentType());
-            dos.writeBytes(httpResponse.getHeaders().getContentLength());
+            dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
+            dos.writeBytes(httpResponse.getHeaders().getContentTypeHeader());
+            dos.writeBytes(httpResponse.getHeaders().getContentLengthHeader());
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -73,8 +74,17 @@ public class RequestHandler implements Runnable {
         return new Body(new String(body));
     }
 
-    private ResponseHeaders setResponseHeaders(int length) {
-        return new ResponseHeaders(ContentType.HTML, length);
+    private ResponseHeaders setResponseHeaders(HttpRequest httpRequest, int length) {
+        if(httpRequest.getHeaders().getAccept().contains("css")){
+            return new ResponseHeaders(ContentType.CSS, length);
+        }
+        if(httpRequest.getHeaders().getAccept().contains("js")){
+            return new ResponseHeaders(ContentType.JAVASCRIPT, length);
+        }
+        if(httpRequest.getHeaders().getAccept().contains("html")){
+            return new ResponseHeaders(ContentType.HTML, length);
+        }
+        return new ResponseHeaders(ContentType.MIME, length);
     }
 
     private StatusLine setHeaderStatusOK() {
