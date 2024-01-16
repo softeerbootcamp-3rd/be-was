@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Request {
-    private final String ROOT_PATH = "src/main/resources/";
+    private static final String ROOT_PATH = "src/main/resources/";
+    private static final String DEFAULT_PAGE = "/index.html";
 
     private String method;
     private String url;
@@ -38,17 +39,6 @@ public class Request {
         }
     }
 
-    public String getMimeType() {
-        if (url.endsWith(".css")) {
-            return "text/css";
-        }
-        if (url.endsWith(".js")) {
-            return "application/javascript";
-        }
-        // 기타 확장자 처리
-        return "text/html";
-    }
-
     public String getUrl() {
         return url;
     }
@@ -57,8 +47,10 @@ public class Request {
         if (url.endsWith(".html")) {
             return ROOT_PATH + "templates" + url;
         }
-        return ROOT_PATH + "static" + url;
-        // '/'로 오는경우 ??
+        if (url.endsWith(".js") || url.endsWith(".css")) {
+            return ROOT_PATH + "static" + url;
+        }
+        return ROOT_PATH + "templates" + DEFAULT_PAGE;
     }
 
     @Override

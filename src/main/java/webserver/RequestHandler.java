@@ -11,7 +11,6 @@ import java.util.Map;
 import dto.UserCreateRequestDto;
 import model.MimeType;
 import model.Request;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -28,19 +27,23 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            DataOutputStream dos = new DataOutputStream(out); // dos 초기화
             Request request = getRequest(in);
-            byte[] body = handleRequest(request);
-            extracted(out, body, request);
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid request: {}", e.getMessage());
-        } catch (IOException e) {
+            byte[] body = handleRequest(request, dos);
+            if (body.length > 0) {
+                sendResponse(body, request, dos); // 응답 보내기
+            }
+        } catch (IllegalArgumentException | IOException e) {
             logger.error(e.getMessage());
         }
     }
 
+    private void sendResponse(byte[] body, Request request, DataOutputStream dos) {
+        response200Header(body.length, request, dos); // 수정된 메서드 호출
+        responseBody(body, dos);
+    }
     private static Request getRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
@@ -55,24 +58,30 @@ public class RequestHandler implements Runnable {
         return request;
     }
 
-    private byte[] handleRequest(Request request) throws IOException {
-        String filePath = request.getFilePath();
-        System.out.println("filePath : " + filePath);
+    private byte[] handleRequest(Request request, DataOutputStream dos) throws IOException {
+        // 요청인 경우
+        String url = request.getUrl();
         if (request.getUrl().startsWith(USER_PATH)) {
             String remainingPath = request.getUrl().substring(USER_PATH.length());
-            handleUser(remainingPath);
+            if (url.startsWith(USER_PATH + "/create")) {
+                return handleUser(remainingPath, dos);
+            }
         }
 
-        // url 에서 예외 처리 되는 부분 생각
+        // 정적 리소스 처리
+        return serveStaticResource(request);
+    }
+
+    private byte[] serveStaticResource(Request request) throws IOException {
+        String filePath = request.getFilePath();
         File file = new File(filePath);
         if (!file.exists()) {
             return "404 File Not Found".getBytes();
         }
-
         return Files.readAllBytes(file.toPath());
     }
 
-    private void handleUser(String path) throws UnsupportedEncodingException {
+    private byte[] handleUser(String path, DataOutputStream dos) throws UnsupportedEncodingException {
         System.out.println("path : " + path);
         if (path.startsWith("/create")) {
             logger.debug("등록 !!!!! ");
@@ -89,7 +98,21 @@ public class RequestHandler implements Runnable {
 
                 // DTO 사용
                 userService.create(userCreateRequestDto);
+                responseRedirectHeader(dos, "/index.html");
+                return new byte[0];
             }
+        }
+        responseRedirectHeader(dos, "/index.html");
+        return new byte[0];
+    }
+
+    private void responseRedirectHeader(DataOutputStream dos, String redirectUrl) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
+            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 
@@ -99,27 +122,29 @@ public class RequestHandler implements Runnable {
             String[] keyValue = param.split("=");
             if (keyValue.length > 1) {
                 String key = keyValue[0];
-                String value = URLDecoder.decode(keyValue[1], "UTF-8");
+                String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
                 queryParams.put(key, value);
             }
         }
         return queryParams;
     }
-    private void extracted(OutputStream out, byte[] body, Request request) {
-        DataOutputStream dos = new DataOutputStream(out);
-        response200Header(dos, body.length, request);
-        responseBody(dos, body);
-    }
 
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, Request request) {
+    private void response200Header(int lengthOfBodyContent, Request request, DataOutputStream dos) {
         try {
             String contentType = getContentType(request.getFilePath());
-
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void responseBody(byte[] body, DataOutputStream dos) {
+        try {
+            dos.write(body, 0, body.length);
+            dos.flush(); // 스트림을 플러시
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -130,12 +155,4 @@ public class RequestHandler implements Runnable {
         return MimeType.getContentType(extension);
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
 }
