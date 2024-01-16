@@ -1,7 +1,8 @@
-package webserver;
+package test;
 
 import model.User;
 import org.junit.Test;
+import webserver.RequestHandler;
 
 import java.net.Socket;
 import java.util.HashMap;
@@ -21,14 +22,5 @@ public class RequestHandlerTest {
                 "&" +
                 "email=javajigi%40slipp.net");
         assertNotNull(result);
-    }
-
-    @Test
-    public void verifyUserTest() {
-        String result = RequestHandler.verifyUser(new User("userId",
-                "",
-                "name",
-                "email@gmail.com"));
-        assertEquals(result, "입력란에 공백이 존재하면 안됩니다.");
     }
 }

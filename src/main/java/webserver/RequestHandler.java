@@ -35,24 +35,23 @@ public class RequestHandler implements Runnable {
             if(line == null) {
                 return;
             }
-            logger.debug("# Request Line");
-            logger.debug(line);
-            logger.debug("# Request Header");
+            logger.debug("--------------[Request Line]--------------" + line);
+            logger.debug("-------------[Request Header]-------------");
 
             String[] tokens = line.split(" ");
-            final Set<String> printedKey = new HashSet<>(Arrays.asList("Connection",
+            String url = tokens[1];
+            final Set<String> printedKey = new HashSet<>(Arrays.asList("Accept",
                                                                         "Host",
                                                                         "User-Agent",
                                                                         "Cookie"));
             while(true) {
                 line = br.readLine();
-                if(line.equals("")) break;
+                if(line.isEmpty()) break;
                 String[] keyAndValue = line.split(": ");
                 String key = keyAndValue[0], value = keyAndValue[1];
                 if(printedKey.contains(key)) logger.debug(line);
             }
 
-            String url = tokens[1];
             if(url.startsWith("/user/create")) {
                 int index = url.indexOf("?");
                 String queryString = url.substring(index + 1);
@@ -63,20 +62,27 @@ public class RequestHandler implements Runnable {
                 String email = params.get("email");
                 User user = new User(userId, password, name, email);
 
-                String result = verifyUser(user);
-                if(verifyUser(user).equals("성공")) {
+                String result = User.verifyUser(user);
+                if(result.equals("성공")) {
                     Database.addUser(user);
-                    logger.debug("새로운 유저 생성! " + user.toString() + "\n");
+                    logger.debug("새로운 유저 생성!  " + user.toString() + "\n");
+                    byte[] body = (user.getName() + "님 안녕하세요!").getBytes();
+                    response200Header(dos, body.length);
+                    responseBody(dos, body);
                 }
                 else {
-                    logger.debug(result + "\n");
+                    logger.debug("유저 생성 실패!  " + result + "\n");
+                    byte[] body = "회원가입 실패!!".getBytes();
+                    response200Header(dos, body.length);
+                    responseBody(dos, body);
                 }
             } else {
                 byte[] body = Files.readAllBytes(
-                        new File("./src/main/resources/templates" + tokens[1]).toPath());
+                        new File("./src/main/resources/templates" + url).toPath());
                 response200Header(dos, body.length);
                 responseBody(dos, body);
             }
+            logger.debug("\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -113,14 +119,5 @@ public class RequestHandler implements Runnable {
             queries.put(key, value);
         }
         return queries;
-    }
-
-    public static String verifyUser(User user) {
-        if(user.getUserId().isEmpty()
-        || user.getEmail().isEmpty()
-        || user.getName().isEmpty()
-        || user.getPassword().isEmpty()) return "입력란에 공백이 존재하면 안됩니다.";
-        else if(Database.findUserById(user.getUserId()) != null) return "중복되는 아이디 입니다.";
-        return "성공";
     }
 }
