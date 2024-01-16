@@ -7,6 +7,7 @@ public enum RequestHeader {
     HOST("Host"),
     CONNECTION("Connection"),
     ACCEPT("Accept"),
+    USER_AGENT("User-Agent"),
     NONE("");
 
     private final String name;

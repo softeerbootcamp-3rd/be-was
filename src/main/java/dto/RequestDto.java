@@ -11,6 +11,7 @@ public class RequestDto {
     private String url;
     private String host;
     private String connection;
+    private String userAgent;
     private String accept;
 
     public void setMethodAndURL(String method, String url) {
@@ -21,6 +22,7 @@ public class RequestDto {
     public void setRequestHeaders(Map<RequestHeader, String> requestHeaders) {
         this.host = requestHeaders.get(RequestHeader.HOST);
         this.connection = requestHeaders.get(RequestHeader.CONNECTION);
+        this.userAgent = requestHeaders.get(RequestHeader.USER_AGENT);
         this.accept = requestHeaders.get(RequestHeader.ACCEPT);
     }
 
@@ -34,6 +36,7 @@ public class RequestDto {
         values.put("URL", url);
         values.put("Host", host);
         values.put("Connection", connection);
+        values.put("User-Agent", userAgent);
         values.put("Accept", accept);
         return values;
     }
