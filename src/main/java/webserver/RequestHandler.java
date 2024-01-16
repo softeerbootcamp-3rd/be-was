@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    public static final String TEMPLATES_RESOURCE = "src/main/resources/templates";
+    public static final String STATIC_RESOURCES = "src/main/resources/static";
+    public static final String HTTP_VERSION = "HTTP/1.1";
 
     private final Socket connection;
 
@@ -37,7 +40,7 @@ public class RequestHandler implements Runnable {
         }
     }
     private void setHttpResponse(OutputStream out, byte[] body) {
-        StatusLine statusLine = set200Header();
+        StatusLine statusLine = setHeaderStatusOK();
         ResponseHeaders responseHeaders = setResponseHeaders(body.length);
         Body responseBody = setBody(body);
         HttpResponse  httpResponse = new HttpResponse(statusLine, responseHeaders, responseBody);
@@ -74,16 +77,16 @@ public class RequestHandler implements Runnable {
         return new ResponseHeaders(ContentType.HTML, length);
     }
 
-    private StatusLine set200Header() {
-        return new StatusLine("HTTP/1.1", Status.OK);
+    private StatusLine setHeaderStatusOK() {
+        return new StatusLine(HTTP_VERSION, Status.OK);
     }
 
     private static Path getFilePath(HttpRequest header) {
         String filePath = header.getStartLine().getPathUrl();
         if (filePath.contains("html")) {
-            return new File("src/main/resources/templates" + filePath).toPath();
+            return new File(TEMPLATES_RESOURCE + filePath).toPath();
         }
-        return new File("src/main/resources/static" + filePath).toPath();
+        return new File(STATIC_RESOURCES + filePath).toPath();
 
     }
 
@@ -104,18 +107,24 @@ public class RequestHandler implements Runnable {
     }
 
     private RequestHeaders parseRequestHeaders(List<String> httpRequest) {
+        HashMap<String, String> header = parseHeaderFields(httpRequest);
+
+        String host = header.remove("Host");
+        String userAgent = header.remove("User-Agent");
+        String accept = header.remove("Accept");
+
+        return new RequestHeaders(host, userAgent, accept, header);
+    }
+
+    private HashMap<String, String> parseHeaderFields(List<String> httpRequest) {
         HashMap<String, String> header = new HashMap<>();
-        for (int i=1; i<httpRequest.size(); i++) {
+
+        for (int i = 1; i < httpRequest.size(); i++) {
             String[] strings = httpRequest.get(i).split(": ");
             header.put(strings[0], strings[1]);
         }
-        String host = header.get("Host");
-        String userAgent = header.get("User-Agent");
-        String accept = header.get("Accept");
-        header.remove("Host");
-        header.remove("User-Agent");
-        header.remove("Accept");
-        return new RequestHeaders(host, userAgent, accept, header);
+
+        return header;
     }
 
     private StartLine parseStartLine(List<String> content) {
