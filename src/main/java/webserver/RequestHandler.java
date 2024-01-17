@@ -9,9 +9,12 @@ import java.nio.file.Paths;
 
 import controller.RequestDataController;
 import data.RequestData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import util.RequestParserUtil;
+import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -53,14 +56,14 @@ public class RequestHandler implements Runnable {
                 DataOutputStream dos = new DataOutputStream(out);
 
                 byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+                ResponseBuilder.response200Header(dos, body.length);
+                ResponseBuilder.responseBody(dos, body);
             } else {
                 DataOutputStream dos = new DataOutputStream(out);
 
                 byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + redirectPath));
-                response302Header(dos, "http://localhost:8080/index.html");
-                responseBody(dos, body);
+                ResponseBuilder.response302Header(dos, "http://localhost:8080/index.html");
+                ResponseBuilder.responseBody(dos, body);
             }
 
         } catch (IOException e) {
@@ -74,36 +77,6 @@ public class RequestHandler implements Runnable {
             return fileName.substring(lastDotIndex + 1);
         } else {
             return ""; // 확장자가 없는 경우
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String redirectLocation) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found\r\n");
-            dos.writeBytes("Location: " + redirectLocation + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
     }
 }
