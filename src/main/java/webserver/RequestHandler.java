@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,13 +41,23 @@ public class RequestHandler implements Runnable {
 
             String url = requestData.getRequestContent();
 
-            RequestDataController.routeRequest(url, requestData);
+            String redirectPath = RequestDataController.routeRequest(url, requestData);
 
-            DataOutputStream dos = new DataOutputStream(out);
+            logger.debug(redirectPath);
 
-            byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            if (redirectPath == null) {
+                DataOutputStream dos = new DataOutputStream(out);
+
+                byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
+                response200Header(dos, body.length);
+                responseBody(dos, body);
+            } else {
+                DataOutputStream dos = new DataOutputStream(out);
+
+                byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + redirectPath));
+                response302Header(dos, "http://localhost:8080/index.html");
+                responseBody(dos, body);
+            }
 
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -67,6 +78,16 @@ public class RequestHandler implements Runnable {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos, String redirectLocation) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
+            dos.writeBytes("Location: " + redirectLocation + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
