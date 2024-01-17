@@ -10,7 +10,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public void createUser(String userId, String password, String name, String email){
-        User user = new User.Builder()
+        User user = User.builder()
                 .userId(userId)
                 .password(password)
                 .name(name)

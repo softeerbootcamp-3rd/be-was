@@ -6,7 +6,7 @@ public class User {
     private String name;
     private String email;
 
-    public User(String userId, String password, String name, String email) {
+    private User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -18,6 +18,10 @@ public class User {
         this.password = builder.password;
         this.name = builder.name;
         this.email = builder.email;
+    }
+
+    public static Builder builder(){
+        return new Builder();
     }
 
     public String getUserId() {
