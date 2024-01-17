@@ -1,32 +1,31 @@
 package service;
 
 import java.io.*;
+import model.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import model.RequestHeader;
-import webserver.RequestHandler;
+import webserver.WebServer;
 
 import java.io.BufferedReader;
 
 public class ParsingService {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-
     public ParsingService(BufferedReader br, RequestHeader rh) throws IOException {
+        final Logger logger = LoggerFactory.getLogger(WebServer.class);
         String line = br.readLine();
+
+        //logger.debug(line);
         rh.setGeneralHeader(line);
-        while(!line.equals("")){
+        while(!line.isEmpty()){
             line = br.readLine();
+            //logger.debug(line);
 
             if(line.contains("Accept")) {
-                if (line.contains("Language")) rh.setAccept_language(line);
-                else if(line.contains("Encoding")) rh.setAccept_encoding(line);
+                if (line.contains("Language")) rh.setAcceptLanguage(line);
+                else if(line.contains("Encoding")) rh.setAcceptEncoding(line);
                 else rh.setAccpet(line);
             }
-            else if(line.contains("Upgrade-Insecure-Requests")) rh.setUpgrade_insecure_requests(line);
 
-            //else logger.debug("request header>>{}",line);
+            else if(line.contains("Upgrade-Insecure-Requests")) rh.setUpgrade_insecure_requests(line);
         }
 
     }

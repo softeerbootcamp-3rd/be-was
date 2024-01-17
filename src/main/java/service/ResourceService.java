@@ -1,9 +1,5 @@
 package service;
-
-import java.io.File;
-import java.nio.file.Files;
-
-public class FileService {
+public class ResourceService {
 
 
     public String getPath(String file_extension, String path) {

@@ -19,13 +19,22 @@ public class RequestHeader {
 //User-Agent: 클라이언트의 사용자 에이전트, 브라우저나 애플리케이션의 정보를 나타냄
 
     private String generalHeader;
-    private String HTTP_method;
+    private String httpMethod;
     private String path;
     private String accpet;
-    private String accept_encoding;
-    private String accept_language;
+    private String acceptEncoding;
+    private String acceptLanguage;
     private String upgrade_insecure_requests;
 
+    public String getPath(){
+
+        String[] tokens = this.generalHeader.split(" ");
+        this.path = tokens[1];
+        this.httpMethod = tokens[0];
+        // localhost:8080 호출하더라도 index.html로 이어짐
+        if(this.path.equals("/")) this.path = "/index.html";
+        return this.path;
+    }
     public void setGeneralHeader(String generalHeader) {
         this.generalHeader = generalHeader;
     }
@@ -33,28 +42,28 @@ public class RequestHeader {
     public void setAccpet(String accpet) {
         this.accpet = accpet;
     }
-    public void setAccept_encoding(String accept_encoding) {
-        this.accept_encoding = accept_encoding;
+    public void setAcceptEncoding(String acceptEncoding) {
+        this.acceptEncoding = acceptEncoding;
     }
 
-    public void setAccept_language(String accept_language) {
-        this.accept_language = accept_language;
+    public void setAcceptLanguage(String acceptLanguage) {
+        this.acceptLanguage = acceptLanguage;
     }
 
     public void setUpgrade_insecure_requests(String upgrade_insecure_requests) {
         this.upgrade_insecure_requests = upgrade_insecure_requests;
     }
 
-    public String getAccept_encoding() {
-        return accept_encoding;
+    public String getAcceptEncoding() {
+        return acceptEncoding;
     }
 
     public String getGeneralHeader() {
         return generalHeader;
     }
 
-    public String getAccept_language() {
-        return accept_language;
+    public String getAcceptLanguage() {
+        return acceptLanguage;
     }
 
     public String getAccpet() {
@@ -65,17 +74,8 @@ public class RequestHeader {
         return upgrade_insecure_requests;
     }
 
-    public String getPath(){
 
-        String[] tokens = this.generalHeader.split(" ");
-        this.path = tokens[1];
-        this.HTTP_method = tokens[0];
-        // localhost:8080 호출하더라도 index.html로 이어짐
-        if(this.path.equals("/")) this.path = "/index.html";
-        return this.path;
-    }
-
-    public String getHTTP_method() {
-        return HTTP_method;
+    public String getHttpMethod() {
+        return httpMethod;
     }
 }
