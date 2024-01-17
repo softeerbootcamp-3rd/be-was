@@ -1,9 +1,6 @@
 package webserver;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,6 +10,8 @@ import java.util.Map;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import request.HttpRequest;
+import response.HttpResponse;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -32,11 +31,10 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest request = new HttpRequest();
-
             setRequestLine(br, request);
             setHeaders(br, request);
 
-            HttpResponse response = new HttpResponse(out);
+            HttpResponse response = new HttpResponse();
             if (isHTML(request.getUrl())) {
                 String url = "src/main/resources/templates" + request.getUrl();
                 File file = new File(url);
@@ -44,6 +42,8 @@ public class RequestHandler implements Runnable {
                     byte[] body = Files.readAllBytes(new File(url).toPath());
                     setResponse(response, body);
                     response.send();
+                } else {
+
                 }
             }
 
@@ -78,6 +78,9 @@ public class RequestHandler implements Runnable {
         response.setVersion("HTTP/1.1");
         response.setStatusCode("200");
         response.setStatusMessage("OK");
+        response.getHeaders().put("Content-Type", "text/html;charset=utf-8\n");
+        response.getHeaders().put("Content-Length", String.valueOf(body.length));
+
         response.setBody(body);
     }
 
