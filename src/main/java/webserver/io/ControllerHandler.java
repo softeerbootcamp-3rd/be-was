@@ -1,5 +1,7 @@
 package webserver.io;
 
+import webserver.MyHttpServletResponse;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -8,16 +10,10 @@ public class ControllerHandler {
   private Method method;
   private Object[] args;
 
-  public String handleController() {
-    String resourcePath="";
-    try {
-      resourcePath = (String) method.invoke(controllerInstance,args);
-    }catch (InvocationTargetException te){
-
-    }catch (IllegalAccessException ae){
-
-    }
-    return resourcePath;
+  public MyHttpServletResponse handleController() throws InvocationTargetException, IllegalAccessException {
+    String controllerReturnValue="";
+    controllerReturnValue = (String) method.invoke(controllerInstance, args);
+    return new MyHttpServletResponse(controllerReturnValue);
   }
 
   public void setByControllerMapper(Object controllerInstance,Method method){
