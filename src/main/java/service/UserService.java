@@ -17,12 +17,9 @@ public class UserService {
         for (String key: paramMap.keySet()) {
             User.setUser(user, key, paramMap.get(key));
         }
+        logger.debug("user info = {}", user);
         Database.addUser(user);
-        logger.debug("User Size = {}", Database.findAll());
-        for (User findUser : Database.findAll()) {
-            logger.debug("User name = {}", findUser.getName());
-        }
-
+        logger.debug("DataBase Size = {}", Database.findAll().size());
     }
 
 }
