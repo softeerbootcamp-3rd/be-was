@@ -27,12 +27,16 @@ public class RequestHandler implements Runnable {
 
             Function<HttpRequest, HttpResponse> handler = URLMapper.getMethod(request);
             if (handler != null) {
-                HttpResponse response = handler.apply(request);
-                ResponseBuilder.sendResponse(out, response);
+                handler.apply(request).send(out, logger);
             } else if (request.getMethod().equals("GET")) {
-                ResponseBuilder.responseFile(out, request);
+                ResourceLoader.getFileResponse(request).send(out, logger);
             } else {
-                ResponseBuilder.sendResponse(out, new HttpResponse(HttpStatus.NOT_FOUND));
+                HttpResponse.builder()
+                        .status(HttpStatus.NOT_FOUND)
+                        .addHeader("Content-Type", "text/plain")
+                        .body(HttpStatus.NOT_FOUND.getFullMessage())
+                        .build()
+                        .send(out, logger);
             }
         } catch (IOException e) {
             logger.error("Error processing request: {}", e.getMessage());
