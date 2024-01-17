@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,12 +9,12 @@ import org.slf4j.LoggerFactory;
 import webserver.http.Request;
 import webserver.http.Response;
 
-public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+public class HttpConnectionHandler implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(HttpConnectionHandler.class);
 
     private Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public HttpConnectionHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 

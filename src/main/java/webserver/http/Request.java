@@ -1,5 +1,7 @@
 package webserver.http;
 
+import webserver.HttpConnectionHandler;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,11 +15,12 @@ public class Request {
     String requestTarget;
     String httpVersion;
     Float httpVersionNum;
-    Mime mimeType;
+    Mime responseMimeType;
     private final ArrayList<String> headerContent;
     private final ArrayList<String> bodyContent;
     HashMap<String, String> requestHeader;
     HashMap<String, String> requestBody;
+    RequestHandler requestHandler;
 
     public Request(BufferedReader br) throws IOException {
         headerContent = new ArrayList<>();
@@ -29,6 +32,8 @@ public class Request {
         parseRequestStartLine(headerContent.get(0));
         parseRequestHeader();
         parseRequestBody();
+
+        requestHandler = new RequestHandler(requestTarget);
     }
 
     public String getRequestTarget() {
@@ -66,10 +71,10 @@ public class Request {
         this.httpVersion = requestStartLine[2];
         int lastDotIndex = requestTarget.lastIndexOf('.');
         if (lastDotIndex != -1 && lastDotIndex < requestTarget.length() - 1) {
-            this.mimeType = convertMime(requestTarget.substring(lastDotIndex + 1));
+            this.responseMimeType = convertMime(requestTarget.substring(lastDotIndex + 1));
         } else {
-            //확장자가 없는경우 우선은 주로 API요청으로 판단한여 JSON반환
-            this.mimeType = Mime.APPLICATION_JSON;
+            //확장자가 없는경우 우선은 주로 API요청으로 판단한여 JSON으로 처리
+            this.responseMimeType = Mime.APPLICATION_JSON;
         }
         httpVersionNum = Float.parseFloat(httpVersion.split("/")[1]);
     }
@@ -107,7 +112,7 @@ public class Request {
         System.out.println("requestTarget : " + this.requestTarget);
         System.out.println("httpVersion : " + this.httpVersion);
         System.out.println("httpVersionNum : " + this.httpVersionNum);
-        System.out.println("mime : " + this.mimeType.getMimeType());
+        System.out.println("mime : " + this.responseMimeType.getMimeType());
         System.out.println("[ requestHeader ]");
         for (Map.Entry<String, String> entry : requestHeader.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());

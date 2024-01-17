@@ -2,9 +2,7 @@ package webserver.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Response {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(Response.class);
     private static final String ROOT_DIRECTORY = System.getProperty("user.dir");
     String httpVersion;
     int statusCode;
@@ -61,7 +59,7 @@ public class Response {
 
     void setBody(Request request){
         try{
-            if(request.mimeType.getMimeType().equals("text/html")){
+            if(request.responseMimeType.getMimeType().equals("text/html")){
                 responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
             }
             else{
