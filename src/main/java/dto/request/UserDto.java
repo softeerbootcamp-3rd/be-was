@@ -11,7 +11,10 @@ public class UserDto {
     private String name;
     private String email;
 
-    private UserDto(String userId, String password, String name, String email) {
+    private static final int KEY = 0;
+    private static final int VALUE = 1;
+
+    public UserDto(String userId, String password, String name, String email) {
         this.userId = Objects.requireNonNull(userId, "userId는 필수입니다.");
         this.password = Objects.requireNonNull(password, "password는 필수입니다.");
         this.name = Objects.requireNonNull(name, "name은 필수입니다.");
@@ -22,7 +25,7 @@ public class UserDto {
         Map<String, String> parameters = Arrays.stream(query.split("&"))
                 .map(param -> param.split("="))
                 .filter(pair -> pair.length > 1)
-                .collect(Collectors.toMap(pair -> pair[0], pair -> pair[1]));
+                .collect(Collectors.toMap(pair -> pair[KEY], pair -> pair[VALUE]));
 
         return new UserDto(
                 parameters.get("userId"),

@@ -16,7 +16,7 @@ public class HttpRequest {
     private final String connection;
     private final String accept;
 
-    private HttpRequest(String method, URI uri, String host, String connection, String accept) {
+    public HttpRequest(String method, URI uri, String host, String connection, String accept) {
         this.method = Objects.requireNonNull(method);
         this.uri = Objects.requireNonNull(uri);
         this.host = Objects.requireNonNull(host);

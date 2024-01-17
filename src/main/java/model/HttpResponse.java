@@ -8,79 +8,79 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import static constant.HttpRequestConstant.*;
 
 public class HttpResponse {
     private static final String VERSION = "HTTP/1.1 ";
-    private final HttpRequest httpRequest;
+    private static final String CONTENT_TYPE = "Content-Type: ";
+    private static final String CONTENT_LENGTH = "Content-Length: ";
+    private static final String LOCATION = "Location: ";
+    private static final String ERROR = "Error: ";
+    private static final byte[] NO_BODY = "".getBytes();
     private final HttpStatus httpStatus;
-    private final DataOutputStream dos;
+    private Map<String, String> header;
+    private byte[] body;
 
-    public HttpResponse(HttpRequest httpRequest, HttpStatus httpStatus, OutputStream out) {
-        this.httpRequest = httpRequest;
+    public HttpResponse(HttpStatus httpStatus, Map<String, String> header, byte[] body) {
         this.httpStatus = httpStatus;
-        this.dos = new DataOutputStream(out);
+        this.header = header;
+        this.body = body;
     }
 
-    public void send() {
+    public void send(OutputStream out) {
+        String startLine =  VERSION + httpStatus.getCode() + " " + httpStatus.getStatus() + " \r\n";
+
+        try (DataOutputStream dos = new DataOutputStream(out)){
+            dos.writeBytes(startLine);
+            for (Map.Entry<String, String> header : header.entrySet()) {
+                dos.writeBytes(header.getKey() + header.getValue());
+            }
+            dos.writeBytes("\r\n");
+
+            if(body == NO_BODY){
+                return;
+            }
+            try {
+                dos.write(body, 0, body.length);
+                dos.flush();
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static HttpResponse redirect(HttpStatus httpStatus, String location) {
+        Map<String, String> header = new HashMap<>();
+        header.put(LOCATION, location);
+
+        return new HttpResponse(httpStatus, header, NO_BODY);
+    }
+
+    public static HttpResponse response400(HttpStatus httpStatus, String errorMessage) {
+        Map<String, String> header = new HashMap<>();
+        header.put(CONTENT_TYPE, "text/plain;charset=utf-8\r\n");
+        header.put(ERROR, errorMessage);
+
+        return new HttpResponse(httpStatus, header, NO_BODY);
+    }
+
+    public static HttpResponse response200(HttpRequest httpRequest, HttpStatus httpStatus) throws IOException {
         String path = httpRequest.getUri().getPath();
         String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
 
-        try {
-            byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
-            response200Header(body.length, ResponseEnum.getContentType(extension));
-            responseBody(body);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+        byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
 
-    public void redirect(String location) {
-        String startLine =  VERSION + httpStatus.getCode() + " " + httpStatus.getStatus() + " \r\n";
+        Map<String, String> header = new HashMap<>();
 
-        try {
-            dos.writeBytes(startLine);
-            dos.writeBytes("Location: " + location + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+        header.put(CONTENT_TYPE, ResponseEnum.getContentType(extension)+";charset=utf-8\r\n");
+        header.put(CONTENT_LENGTH, String.valueOf(body.length) + "\r\n");
 
-    public void response400Header(String errorMessage) {
-        String startLine = VERSION + httpStatus.getCode() + " " + httpStatus.getStatus() + " \r\n";
-
-        try {
-            dos.writeBytes(startLine);
-            dos.writeBytes("Content-Type: text/plain;charset=utf-8\r\n");
-            dos.writeBytes("\r\n");
-            dos.writeBytes(new String(errorMessage.getBytes("UTF-8"), "ISO-8859-1"));
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(int lengthOfBodyContent, String contentType) {
-        String startLine =  VERSION + httpStatus.getCode() + " " + httpStatus.getStatus() + " \r\n";
-
-        try {
-            dos.writeBytes(startLine);
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+        return new HttpResponse(httpStatus, header, body);
     }
 
 }
