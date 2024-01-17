@@ -106,7 +106,8 @@ dependencies {
 |형태|설명|
 |---|---|
 |void assertTrue(boolean condition)|condition이 true이면 테스트에 성공한다.|
-|void assertEquals(Object expected, Object actual)|expected 와 actual 의 값이 같으면 테스트에 성공한다.|
+|void assertEquals(Object expected, Object actual)|expected와 actual의 값이 같으면 테스트에 성공한다.|
+|void assertArrayEquals(byte[] expected, byte[] actual)|expected와 actual의 내용이 정확히 같으면 테스트에 성공한다.
 |void assertSame(Object expected, Object actual)|expected와 actual이 같은 레퍼런스이면 테스트에 성공한다.|
 |void assertNull(Object actual)|actual이 null이면 테스트에 성공한다.|
 |void assertAll(Executable... executables)|인자로 들어온 모든 executable들이 예외를 발생시키지 않으면 테스트에 성공한다.|
