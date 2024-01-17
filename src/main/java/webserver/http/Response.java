@@ -1,25 +1,33 @@
 package webserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
+
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 
 public class Response {
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String ROOT_DIRECTORY = System.getProperty("user.dir");
     String httpVersion;
     int statusCode;
     String statusText;
     HashMap<String, String> responseHeader;
-    //추후 구현할 내용
-    HashMap<String, String> responseBody;
+    byte[] responseBody;
 
-    public Response(Request request, byte[] body) {
+    public Response(Request request) {
         this.httpVersion = request.httpVersion;
         this.responseHeader = new HashMap<>();
-        this.responseBody = new HashMap<>();
         setStatusCode(request);
-        setHeader(body.length);
+        setBody(request);
+        setHeader(responseBody.length);
     }
 
     private void setHeader(int bodyLength) {
@@ -51,7 +59,22 @@ public class Response {
         return responseHeader;
     }
 
-    public HashMap<String, String> getResponseBody() {
+    void setBody(Request request){
+        try{
+            if(request.mimeType.getMimeType().equals("text/html")){
+                responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
+            }
+            else{
+                responseBody = new byte[0];
+            }
+        }
+        catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+    }
+
+    public byte[] getResponseBody() {
         return responseBody;
     }
 }
