@@ -48,25 +48,15 @@ public class RequestHandler implements Runnable {
 //                url = "/index.html";
 //            }
 
-            String redirectPath = RequestDataController.routeRequest(url, requestData);
+            String statusCodeUrl = RequestDataController.routeRequest(url, requestData);
+            String[] tokens = statusCodeUrl.split(" ");
 
-            logger.debug(redirectPath);
+            logger.debug(url);
 
-            if (redirectPath == null) {
-                DataOutputStream dos = new DataOutputStream(out);
+            DataOutputStream dos = new DataOutputStream(out);
 
-                byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
-//                ResponseBuilder.response200Header(dos, body.length);
-//                ResponseBuilder.responseBody(dos, body);
-                ResponseBuilder.buildResponse(dos, body.length, body, null, "200");
-            } else {
-                DataOutputStream dos = new DataOutputStream(out);
-
-                byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + redirectPath));
-//                ResponseBuilder.response302Header(dos, "http://localhost:8080/index.html");
-//                ResponseBuilder.responseBody(dos, body);
-                ResponseBuilder.buildResponse(dos, body.length, body, "http://localhost:8080/index.html", "302");
-            }
+            byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + tokens[1]));
+            ResponseBuilder.buildResponse(dos, body.length, body, "http://localhost:8080/index.html", tokens[0]);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
