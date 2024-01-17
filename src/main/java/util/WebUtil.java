@@ -33,7 +33,7 @@ public class WebUtil {
     }
 
     // HTTP Request를 파싱해서 HttpRequestParam 객체로 리턴
-    public static HttpRequestDto HttpRequestParse(InputStream request) {
+    public static HttpRequestDto httpRequestParse(InputStream request) {
         BufferedReader br = new BufferedReader(new InputStreamReader(request));
         HttpRequestDto parsedRequest = null;
 
@@ -86,6 +86,24 @@ public class WebUtil {
 
     public static String getContentType(String uri) {
         String extension = getFileExtension(uri);
-        return MIME_CONTENT_TYPE.getOrDefault(extension, "text/plain");
+        return MIME_CONTENT_TYPE.getOrDefault(extension, "text/html");
+    }
+
+    public static Map<String, String> parseQueryString(String uri) {
+        Map<String, String> parameters = new HashMap<>();
+        try {
+            String queryString = uri.split("\\?")[1];
+            String[] pairs = queryString.split("&");
+            for (String pair: pairs) {
+                String[] keyValue = pair.split("=");
+                if (keyValue.length == 2) {
+                    parameters.put(keyValue[0], keyValue[1]);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return parameters;
     }
 }
