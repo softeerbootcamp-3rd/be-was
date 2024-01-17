@@ -20,7 +20,7 @@ public class Database {
         users.put(user.getUserId(), user);
     }
 
-    public static User findUserById(Long userId) {
+    public static User findUserById(String userId) {
         return users.get(userId);
     }
 
