@@ -3,6 +3,11 @@ package controller;
 
 public class HomeController {
     public String route(String path) {
-        return "200 " + path;
+        if (path.equals("/")) {
+            return "302 /index.html";
+        }
+        else {
+            return "200 " + path;
+        }
     }
 }
