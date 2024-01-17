@@ -2,13 +2,13 @@ package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+import webserver.FrontController;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class Response {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
     private String location;
 
     private HttpStatus status;

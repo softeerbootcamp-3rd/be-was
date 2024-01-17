@@ -4,7 +4,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public class WebServer {
 
                     if (connection != null) {
                         // 스레드 풀에서 작업을 처리
-                        executorService.execute(new RequestHandler(connection));
+                        executorService.execute(new FrontController(connection));
                     }
                 }
             } finally {

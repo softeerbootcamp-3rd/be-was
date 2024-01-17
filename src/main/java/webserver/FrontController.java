@@ -19,15 +19,15 @@ import frontController.adaptor.MyHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+public class FrontController implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
 
     private Socket connection;
     private Request req;
 
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
     private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
-    public RequestHandler(Socket connectionSocket) {
+    public FrontController(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.req = new Request();
         initHandlerMappingMap();

@@ -5,7 +5,7 @@ import http.Request;
 import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+import webserver.FrontController;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SimpleRequestDispatcher implements RequestDispatcher{
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
     @Override
     public void forward(Request request, Response response, String viewPath,DataOutputStream dos) throws IOException {
         logger.debug("[ start forwarding ]");

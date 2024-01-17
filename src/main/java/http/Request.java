@@ -2,9 +2,8 @@ package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+import webserver.FrontController;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class Request {
     private String location = "/index.html";
     private Map<String,String> requestParam = new HashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
 
 
     public Request() {
