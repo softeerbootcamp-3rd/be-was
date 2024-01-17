@@ -3,6 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -69,7 +71,7 @@ public class RequestHandler implements Runnable {
     }
 
     private static RequestHeader getRequestUrl(BufferedReader br) throws IOException {
-        String line = br.readLine();
+        String line = URLDecoder.decode(br.readLine(), StandardCharsets.UTF_8);
         String[] firstHeader = line.split(" ");
         RequestHeader requestHeader = new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
         return requestHeader;
