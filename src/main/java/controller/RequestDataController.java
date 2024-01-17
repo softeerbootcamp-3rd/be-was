@@ -12,7 +12,10 @@ public class RequestDataController {
     }
 
     public static String routeRequest(String url, RequestData requestData) {
-        if (url.startsWith("/user")) {
+
+        if (url.equals("/")) {
+            return "/index.html";
+        } else if (url.startsWith("/user")) {
             String remainUrl = url.substring("/user".length());
 
             if (remainUrl.startsWith("/create")) { // 리다이렉트 경로를 파일로 응답할 뿐이지, 브라우저는 여전히 /user를 현재 경로로 갖는다.
