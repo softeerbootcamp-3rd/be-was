@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static util.ResponseUtil.response;
+import static util.SingletonUtil.getHomeController;
 import static util.SingletonUtil.getUserController;
 
 
@@ -23,9 +24,16 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-
             HttpRequest httpRequest = new HttpRequest(br, connection.getPort());
-            String response = getUserController().route(httpRequest.getPath());
+            String path = httpRequest.getPath();
+            String response = "";
+
+           if (path.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
+                response = getUserController().route(path);
+           }
+           else { // 그 외의 경로는 HomeController에서 처리
+               response = getHomeController().route(path);
+           }
 
             // request line 출력
             logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
