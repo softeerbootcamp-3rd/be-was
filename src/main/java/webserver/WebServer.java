@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
-
+        AppConfig appConfig = new AppConfig();
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
@@ -27,7 +28,7 @@ public class WebServer {
             Socket connection;
             ExecutorService threadPool = Executors.newFixedThreadPool(40);
             while ((connection = listenSocket.accept()) != null) {
-               threadPool.execute(new RequestHandler(connection));
+               threadPool.execute(new RequestHandler(connection, appConfig));
             }
         }
     }
