@@ -32,7 +32,6 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             HttpResponseFactory httpResponseFactory = appConfig.httpResponseFactory();
-            ;
             HttpResponseService httpResponseService = appConfig.httpResponseService();
             HttpRequestFactory httpRequestFactory = appConfig.httpRequestFactory();
             WebServerFileService webServerFileService = appConfig.webServerFileService();
