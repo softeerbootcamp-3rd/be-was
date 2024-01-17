@@ -1,8 +1,8 @@
-package dto;
+package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
+import webserver.FrontController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +10,12 @@ import java.util.Map;
 public class Request {
     private String method;
     private String url;
-    private String type;
+    private String contentType;
+
+    private String location = "/index.html";
     private Map<String,String> requestParam = new HashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
 
 
     public Request() {
@@ -21,41 +23,59 @@ public class Request {
 
     public Request(String method, String url) {
         this.method = method;
-        this.url = url;
+        this.setUrl(url);
     }
 
     public String getUrl() {
         return url;
     }
 
-    public String getType() {
-        return type;
+    public String getLocation() {
+        return location;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public Map<String, String> getRequestParam() {
         return requestParam;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
     public void setUrl(String string){
         String[] request = string.split("\\?");
         String url = request[0];
         this.url = url;
-        this.setType();
+        this.setContentType();
+        if(url.endsWith(".html")){
+            requestParam.put("template",url);
+        }
+        else if(url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/")){
+            requestParam.put("static",url);
+        }
         if(request.length>1) {
             String[] params = request[1].split("\\&");
 
             for (String param : params) {
                 String[] data = param.split("\\=");
-                this.requestParam.put(data[0], data[1]);
+                if(data.length!=2){
+                    this.requestParam.put(data[0], "");
+                }
+                else{
+                    this.requestParam.put(data[0], data[1]);
+                }
+
             }
         }
     }
 
     public void requestInfo(){
+        logger.debug("contentType : "+this.contentType);
         logger.debug("method : "+this.method);
         logger.debug("url : "+this.url);
         logger.debug("[ requestParams ]");
@@ -66,14 +86,14 @@ public class Request {
         }
     }
 
-    private void setType(){
+    private void setContentType(){
         String fileName = this.url;
         String fileExtension;
         int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-            this.type = fileName.substring(dotIndex + 1);
+            this.contentType = "text/"+fileName.substring(dotIndex + 1);
         } else {
-            this.type =  ""; // 확장자가 없을 경우 빈 문자열 반환
+            this.contentType =  ""; // 확장자가 없을 경우 빈 문자열 반환
         }
     }
 }
