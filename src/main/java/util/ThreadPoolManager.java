@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public final class ThreadUtil {
+public final class ThreadPoolManager {
 
     private static final int THREAD_POOL_SIZE = 100;
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
