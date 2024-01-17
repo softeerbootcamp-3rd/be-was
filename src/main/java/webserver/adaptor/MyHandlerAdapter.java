@@ -19,10 +19,9 @@ public class MyHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(Request req, Response res, Object handler) throws IOException {
         Controller controller = (Controller) handler;
 
-        Map<String, String> paramMap = req.getRequestParam();
         Map<String, Object> model = new HashMap<>();
 
-        String viewName = controller.process(paramMap,model);
+        String viewName = controller.process(req,model);
 
         ModelAndView mv = new ModelAndView(viewName);
         mv.setModel(model);
