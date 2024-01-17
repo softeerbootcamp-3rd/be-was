@@ -8,15 +8,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class HttpResponseServiceImpl implements HttpResponseService {
+public class HttpResponseSenderImpl implements HttpResponseSender {
     private static class HttpResponseServiceHolder{
-        private static final HttpResponseService INSTANCE = new HttpResponseServiceImpl();
+        private static final HttpResponseSender INSTANCE = new HttpResponseSenderImpl();
     }
 
-    private static HttpResponseService getInstance(){
+    public static HttpResponseSender getInstance(){
         return HttpResponseServiceHolder.INSTANCE;
     }
-    private static final Logger logger = LoggerFactory.getLogger(HttpResponseService.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpResponseSender.class);
     @Override
     public void sendHttpResponse(OutputStream out, HttpResponse httpResponse){
         DataOutputStream dos = new DataOutputStream(out);
