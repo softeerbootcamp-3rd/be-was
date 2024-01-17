@@ -18,6 +18,8 @@ public class RequestHandler implements Runnable {
     static final int BUFFER_SIZE = 4096;
 
     private Socket connection;
+    static final String DEFAULT_STATIC_PATH = "./src/main/resources/templates";
+
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -129,7 +131,6 @@ public class RequestHandler implements Runnable {
     private static String getKey(String[] keyValue) {
         return keyValue[0];
     }
-
 
 }
 
