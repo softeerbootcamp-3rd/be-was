@@ -29,11 +29,11 @@ public class HttpResponse {
     }
 
     public Map<String, String> getHeader() {
-        return header;
+        return this.header;
     }
 
     public byte[] getBody() {
-        return body;
+        return this.body;
     }
 
     public static class HttpResponseBuilder {
