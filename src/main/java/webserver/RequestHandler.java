@@ -32,7 +32,7 @@ public class RequestHandler implements Runnable {
             printHttpRequestInformation(request); //http request 정보 출력
 
             byte[] body = null;
-            if (request.getUrl() != null && request.getUrl().equals("/index.html")) {
+            if (request.getUrl() != null && request.getAccept().startsWith("text/html")) {
                 Path filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
                 body = Files.readAllBytes(filePath);
                 response200Header(dos, body.length);
@@ -81,11 +81,11 @@ public class RequestHandler implements Runnable {
             while (!line.equals("")) {
                 line = br.readLine();
                 if (line.startsWith("Accept:")) {
-                    httpRequestInformation.setAccept(line);
+                    httpRequestInformation.setAccept(line.substring("Accept: ".length()));
                 } else if (line.startsWith("Connection")) {
-                    httpRequestInformation.setConnection(line);
+                    httpRequestInformation.setConnection(line.substring("Connection: ".length()));
                 } else if (line.startsWith("Host:")) {
-                    httpRequestInformation.setHost(line);
+                    httpRequestInformation.setHost(line.substring("Host: ".length()));
                 }
             }
         }
@@ -96,9 +96,9 @@ public class RequestHandler implements Runnable {
         StringBuilder sb = new StringBuilder();
         sb.append("\n= = HTTP REQUEST INFORMATION = =");
         sb.append("\n"+requestInformation.getMethod() + " " + requestInformation.getUrl() + " " + requestInformation.getHttpVersion());
-        sb.append("\n"+requestInformation.getHost());
-        sb.append("\n" + requestInformation.getConnection());
-        sb.append("\n" + requestInformation.getAccept()+"\n");
+        sb.append("\nHost: "+requestInformation.getHost());
+        sb.append("\nConection: " + requestInformation.getConnection());
+        sb.append("\nAccept: " + requestInformation.getAccept()+"\n");
 
         logger.debug(sb.toString());
     }
@@ -112,3 +112,4 @@ public class RequestHandler implements Runnable {
         }
     }
 }
+
