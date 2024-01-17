@@ -18,7 +18,9 @@ public class UserService {
             User.setUser(user, key, paramMap.get(key));
         }
         logger.debug("user info = {}", user);
-        Database.addUser(user);
+        if (Database.findUserById(user.getUserId()) == null) {
+            Database.addUser(user);
+        }
         logger.debug("DataBase Size = {}", Database.findAll().size());
     }
 

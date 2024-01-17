@@ -13,6 +13,7 @@ public class PathHandler {
                 String[] splits = path.split("\\?");
                 QueryParams queryParams = QueryParams.from(splits[1]);
                 controller.process(queryParams);
+                return ClassLoader.getSystemClassLoader().getResource("./templates" + "/index.html");
             } else if (method.equals("GET") && path.contains(".html")) {
                 return ClassLoader.getSystemClassLoader().getResource("./templates" + path);
             }
