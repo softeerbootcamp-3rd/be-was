@@ -8,9 +8,9 @@ import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.DynamicResponseBuilder;
 import service.HttpResponseSender;
 import service.StaticResponseBuilder;
-import webApplicationServer.Servlet;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,29 +21,27 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final List<String> staticElements = List.of("/user/create?");
     private final Socket connection;
-    private final AppConfig appConfig;
-    public RequestHandler(Socket connectionSocket, AppConfig appConfig) {
+    public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.appConfig = appConfig;
     }
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            HttpResponseFactory httpResponseFactory = appConfig.httpResponseFactory();
-            HttpResponseSender httpResponseService = appConfig.httpResponseService();
-            HttpRequestFactory httpRequestFactory = appConfig.httpRequestFactory();
-            StaticResponseBuilder staticResponseBuilder = appConfig.staticResponseBuilder();
-
-            HttpRequest httpRequest = httpRequestFactory.create(inBufferedReader); // httpRequest init 생성
+            HttpResponseFactory httpResponseFactory = AppConfig.httpResponseFactory();
+            HttpResponseSender httpResponseService = AppConfig.httpResponseService();
+            HttpRequestFactory httpRequestFactory = AppConfig.httpRequestFactory();
+            StaticResponseBuilder staticResponseBuilder = AppConfig.staticResponseBuilder();
+            DynamicResponseBuilder dynamicResponseBuilder = AppConfig.dynamicResponseBuilder();
+            HttpRequest httpRequest = httpRequestFactory.create(inBufferedReader);
             HttpResponseDto httpResponseDto = new HttpResponseDto();
             logger.debug(httpRequest.toString());
 
             boolean isDynamic = staticElements.stream().anyMatch(httpRequest.getStartLine().getPathUrl()::startsWith);
             if (isDynamic) {
                 logger.debug("동적인 response 전달");
-                Servlet servlet = new Servlet();
+                dynamicResponseBuilder.build(httpRequest, httpResponseDto);
             } else {
                 logger.debug("정적인 response 전달");
                 staticResponseBuilder.build(httpRequest, httpResponseDto);
