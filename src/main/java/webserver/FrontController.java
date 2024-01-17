@@ -15,7 +15,7 @@ import http.Request;
 import http.Response;
 import frontController.ModelAndView;
 import frontController.MyView;
-import frontController.adaptor.MyHandlerAdapter;
+import webserver.adaptor.MyHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

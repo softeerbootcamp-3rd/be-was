@@ -1,4 +1,4 @@
-package frontController.adaptor;
+package webserver.adaptor;
 
 import http.Request;
 import http.Response;
