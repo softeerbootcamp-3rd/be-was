@@ -2,7 +2,6 @@ package model.http.response;
 
 import model.http.ContentType;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class ResponseHeaders {

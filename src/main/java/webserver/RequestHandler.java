@@ -1,12 +1,11 @@
 package webserver;
 
 import config.AppConfig;
+import dto.HttpResponseDto;
 import factory.HttpRequestFactory;
 import factory.HttpResponseFactory;
-import model.http.Status;
 import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
-import dto.HttpResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.HttpResponseSender;

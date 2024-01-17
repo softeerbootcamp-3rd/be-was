@@ -1,10 +1,7 @@
 package dto;
 
-import model.http.Body;
 import model.http.ContentType;
 import model.http.Status;
-
-import java.time.LocalDateTime;
 
 public class HttpResponseDto {
     public static final String HTTP_VERSION = "HTTP/1.1";
