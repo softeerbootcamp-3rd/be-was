@@ -1,6 +1,9 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,40 +30,78 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String requestline = br.readLine();
 
-            // HTTP REQEUST LINE 출력
-            String requestURL = getRequestURL(requestline);
-            logger.debug("[REQUEST LINE] {}", requestline);
+            HttpRequest request = new HttpRequest();
 
-            // HTTP HEADER LINE 출력
-            String headerLine;
-            while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
-                logger.debug("[Header] {}", headerLine);
+            setRequestLine(br, request);
+            setHeaders(br, request);
+
+            HttpResponse response = new HttpResponse(out);
+            if (isHTML(request.getUrl())) {
+                String url = "src/main/resources/templates" + request.getUrl();
+                File file = new File(url);
+                if (file.isFile()) {
+                    byte[] body = Files.readAllBytes(new File(url).toPath());
+                    setResponse(response, body);
+                    response.send();
+                }
             }
 
-            byte[] body;
-
-            if (isHTML(requestURL)) {
-                String location = "src/main/resources/templates" + requestURL;
-                body = Files.readAllBytes(new File(location).toPath());
-            } else {
-                String[] tokens = requestURL.split("\\?");
-                Map<String, String> params = parse(tokens[1]);
-
-                User user = createUser(params);
-                logger.debug("{}", user);
-
-                body = "LOGIN OK".getBytes();
-            }
-
-            DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+//            byte[] body;
+//
+//            if (isHTML(request.getUrl())) {
+//                String location = "src/main/resources/templates" + request.getUrl();
+//                File file = new File(location);
+//                if (file.isFile()) {
+//                    HttpResponse response = new HttpResponse(out);
+//                }
+//                body = Files.readAllBytes(new File(location).toPath());
+//            } else {
+//                String[] tokens = requestURL.split("\\?");
+//                Map<String, String> params = parse(tokens[1]);
+//
+//                User user = createUser(params);
+//                logger.debug("{}", user);
+//
+//                body = "LOGIN OK".getBytes();
+//            }
+//
+//            DataOutputStream dos = new DataOutputStream(out);
+//            response200Header(dos, body.length);
+//            responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
+
+    private static void setResponse(HttpResponse response, byte[] body) {
+        response.setVersion("HTTP/1.1");
+        response.setStatusCode("200");
+        response.setStatusMessage("OK");
+        response.setBody(body);
+    }
+
+    private static void setRequestLine(BufferedReader br, HttpRequest request) throws IOException {
+        String requestLine = br.readLine();
+        String[] values = requestLine.split(" ");
+        request.setMethod(values[0]);
+        request.setUrl(values[1]);
+        request.setVersion(values[2]);
+    }
+
+    private static void setHeaders(BufferedReader br, HttpRequest request) throws IOException {
+        String headerLine;
+        while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
+//                logger.debug("[Header] {}", headerLine);
+            String[] pair = headerLine.split(":");
+            if (pair.length == 2) {
+                String fieldName = pair[0].trim();
+                String value = pair[1].trim();
+                request.getHeaders().put(fieldName, value);
+            }
+        }
+    }
+
 
     public static User createUser(Map<String, String> params) {
         String userId = params.get("userId");
@@ -118,4 +159,6 @@ public class RequestHandler implements Runnable {
 
         return params;
     }
+
+
 }
