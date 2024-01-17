@@ -3,9 +3,9 @@ package controller;
 import db.Database;
 import dto.CreateUserDto;
 import model.User;
-import util.HttpRequest;
-import util.HttpResponse;
-import util.HttpStatus;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
+import webserver.HttpStatus;
 
 public class UserController {
 

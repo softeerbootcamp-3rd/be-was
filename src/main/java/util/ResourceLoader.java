@@ -1,8 +1,10 @@
 package util;
 
+import webserver.HttpStatus;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

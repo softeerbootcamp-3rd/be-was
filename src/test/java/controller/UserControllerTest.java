@@ -3,9 +3,8 @@ package controller;
 import model.User;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
 import db.Database;
-import util.HttpRequest;
+import webserver.HttpRequest;
 
 import static controller.UserController.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
