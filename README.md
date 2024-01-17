@@ -51,6 +51,7 @@
   - 바이트 기반 출력 스트림 최상위 추상 클래스
   - 하위 클래스: XXXOutputStream
   - 서버에서 클라이언트로 응답을 보낼 때 전달하는 데이터를 담당하는 스트림
+  - flush(): 버퍼에 남은 데이터를 모두 출력시키고 버퍼를 비우는 역할
 - DataOutputStream
   - DataOutputStream(OutputStream out)<br>
     -> 주어진 OutputStream 인스턴스를 기반스트림으로 하는 DataOutputStream 인스턴스를 생성

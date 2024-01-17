@@ -1,13 +1,15 @@
 package service;
 
+import db.Database;
 import dto.HTTPRequestDto;
+import dto.HTTPResponseDto;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceTest {
@@ -16,11 +18,12 @@ class ServiceTest {
     @Test
     void testSignUpNullParams() {
         try {
-            // 기댓값
-            byte[] answer = "다시 시도해주세요.".getBytes();
-            // 실행값
-            byte[] result = Service.signup(null, null);
-            assertArrayEquals(answer, result);
+            // given
+            HTTPResponseDto expected = new HTTPResponseDto(404, "다시 시도해주세요.".getBytes());
+            // when
+            HTTPResponseDto actual = Service.signup(null);
+            // then
+            assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
         catch(IOException e) {
             fail();
@@ -31,13 +34,14 @@ class ServiceTest {
     @Test
     void testSignUpInvalidParams() {
         try {
-            // 기댓값
-            byte[] answer = "다시 시도해주세요.".getBytes();
-            // 실행값
+            // given
+            HTTPResponseDto expected = new HTTPResponseDto(404, "다시 시도해주세요.".getBytes());
+            // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
-            HashMap<String, String> map = new HashMap<>();
-            byte[] result = Service.signup(httpRequestDto, map);
-            assertArrayEquals(answer, result);
+            httpRequestDto.addRequestParam("hello", "world");
+            HTTPResponseDto actual = Service.signup(httpRequestDto);
+            // then
+            assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
         catch(IOException e) {
             fail();
@@ -48,16 +52,18 @@ class ServiceTest {
     @Test
     void testSignUpValidParams() {
         try {
+            // given
+            HTTPResponseDto expected = new HTTPResponseDto(200, "Hello, 장보경!".getBytes());
+            // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/user/create",
                     "HTTP/1.1", "localhost:8080", "text/html");
-            HashMap<String, String> requestParams = new HashMap<>();
-            requestParams.put("userId", "bonnie");
-            requestParams.put("password", "1111");
-            requestParams.put("name", "장보경");
-            requestParams.put("email", "bonnie@gmail.com");
-            // 기댓값
-            byte[] answer = "Hello, 장보경!".getBytes();
-            assertArrayEquals(answer, Service.signup(httpRequestDto, requestParams));
+            httpRequestDto.addRequestParam("userId", "bonnie1");
+            httpRequestDto.addRequestParam("password", "1111");
+            httpRequestDto.addRequestParam("name", "장보경");
+            httpRequestDto.addRequestParam("email", "bonnie@gmail.com");
+            HTTPResponseDto actual = Service.signup(httpRequestDto);
+            // then
+            assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
         catch(IOException e) {
             fail();
@@ -68,10 +74,13 @@ class ServiceTest {
     @Test
     void testRequestNullFile() {
         try {
-            // 기댓값
-            byte[] answer = "다시 시도해주세요.".getBytes();
+            // given
+            HTTPResponseDto expected = new HTTPResponseDto(404, "다시 시도해주세요.".getBytes());
+            // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
-            assertArrayEquals(answer, Service.requestFile(httpRequestDto));
+            HTTPResponseDto actual = Service.requestFile(httpRequestDto);
+            // then
+            assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
         catch(IOException e) {
             fail();
@@ -82,14 +91,15 @@ class ServiceTest {
     @Test
     void testRequestIndexHtml() {
         try {
-            // 기댓값
+            // given
             String path = "./src/main/resources/templates/index.html";
-            byte[] answer = Files.readAllBytes(new File(path).toPath());
-            // 실행값
+            HTTPResponseDto expected = new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
+            // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/index.html",
                     "HTTP/1.1", "localhost:8080", "text/html");
-            byte[] result = Service.requestFile(httpRequestDto);
-            assertArrayEquals(answer, result);
+            HTTPResponseDto actual = Service.requestFile(httpRequestDto);
+            // then
+            assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
         catch(IOException e) {
             fail();
@@ -100,14 +110,15 @@ class ServiceTest {
     @Test
     void testRequestStyleCss() {
         try {
-            // 기댓값
+            // given
             String path = "./src/main/resources/static/css/styles.css";
-            byte[] answer = Files.readAllBytes(new File(path).toPath());
-            // 실행값
+            HTTPResponseDto expected = new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
+            // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/css/styles.css",
                     "HTTP/1.1", "localhost:8080", "text/css");
-            byte[] result = Service.requestFile(httpRequestDto);
-            assertArrayEquals(answer, result);
+            HTTPResponseDto actual = Service.requestFile(httpRequestDto);
+            // then
+            assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
         catch(IOException e) {
             fail();

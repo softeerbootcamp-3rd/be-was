@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import controller.Controller;
 import dto.HTTPRequestDto;
+import dto.HTTPResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,6 @@ public class RequestHandler implements Runnable {
     private Socket connection;
 
     private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
-    private HashMap<String, String> requestParams = new HashMap<>();
     private byte[] body;
 
     public RequestHandler(Socket connectionSocket) {
@@ -36,19 +36,23 @@ public class RequestHandler implements Runnable {
             // HTTP Request 파싱
             httpRequestParsing(br);
 
-            // 요청에서 Request param 떼어내기
-            if(httpRequestDto.getRequest_target().contains("?")) {
-                getRequestParams(httpRequestDto.getRequest_target());
-                httpRequestDto.setRequest_target(
-                        httpRequestDto.getRequest_target().substring(0, httpRequestDto.getRequest_target().indexOf("?"))
+            if(httpRequestDto.getRequestTarget().contains("?")) {
+                // request param 맵에 저장
+                getRequestParams(httpRequestDto.getRequestTarget());
+                // 요청에서 쿼리 스트링 떼어내기
+                httpRequestDto.setRequestTarget(
+                        httpRequestDto.getRequestTarget().substring(0, httpRequestDto.getRequestTarget().indexOf("?"))
                 );
             }
 
             // 요청 처리
-            body = Controller.doRequest(httpRequestDto, requestParams);
+            HTTPResponseDto response = Controller.doRequest(httpRequestDto);
 
-            response200Header(dos, body.length, httpRequestDto.getAccept());
-            responseBody(dos, body);
+            // status code에 따른 분기 처리 - response
+
+            response200Header(dos, response.getContents().length, httpRequestDto.getAccept());
+            responseBody(dos, response.getContents());
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -65,14 +69,14 @@ public class RequestHandler implements Runnable {
         line = URLDecoder.decode(line, "UTF-8");
         String[] tokens = line.split(" ");
 
-        httpRequestDto.setHTTP_Method(tokens[0]);
-        httpRequestDto.setRequest_target(tokens[1]);
-        httpRequestDto.setHTTP_version(tokens[2]);
+        httpRequestDto.setHTTPMethod(tokens[0]);
+        httpRequestDto.setRequestTarget(tokens[1]);
+        httpRequestDto.setHTTPVersion(tokens[2]);
 
         logger.debug("HTTP Method: {}, Request Target: {}, Version: {}",
-                httpRequestDto.getHTTP_Method(),
-                httpRequestDto.getRequest_target(),
-                httpRequestDto.getHTTP_version());
+                httpRequestDto.getHTTPMethod(),
+                httpRequestDto.getRequestTarget(),
+                httpRequestDto.getHTTPVersion());
 
         // host, accept 출력
         while(!line.equals("")) {
@@ -124,7 +128,7 @@ public class RequestHandler implements Runnable {
         for(int i = 0; i < tokens.length; i++) {
             String key = tokens[i].substring(0, tokens[i].indexOf("="));
             String value = tokens[i].substring(tokens[i].indexOf("=")+1);
-            requestParams.put(key, value);
+            httpRequestDto.addRequestParam(key, value);
         }
     }
 

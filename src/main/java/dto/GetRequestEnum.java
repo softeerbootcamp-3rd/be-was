@@ -2,6 +2,7 @@ package dto;
 
 import service.Service;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,15 +10,14 @@ import java.util.HashMap;
 public enum GetRequestEnum {
     SIGNUP("/user/create") {
         @Override
-        public byte[] doRequest(HTTPRequestDto httpRequestDto, HashMap<String, String> requestParams) throws IOException {
-            return Service.signup(httpRequestDto, requestParams);
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+            return Service.signup(httpRequestDto);
         }
     },
     FILE("file") {
         @Override
-        public byte[] doRequest(HTTPRequestDto httpRequestDto, HashMap<String, String> requestParams) throws IOException {
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
             return Service.requestFile(httpRequestDto);
-
         }
     };
 
@@ -34,6 +34,6 @@ public enum GetRequestEnum {
                 .orElse(FILE);
     }
 
-    public abstract byte[] doRequest(HTTPRequestDto httpRequestDto, HashMap<String, String> requestParams) throws IOException;
+    public abstract HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException;
 
 }
