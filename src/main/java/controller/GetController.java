@@ -31,12 +31,19 @@ public class GetController {
             String contentType = "text/html;charset=utf-8";
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
 
-            return new ResponseBuilder(HttpStatus.OK, contentType, body);
+            return new ResponseBuilder.Builder()
+                    .httpStatus(HttpStatus.OK)
+                    .contentType(contentType)
+                    .body(body)
+                    .build();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseBuilder.Builder()
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
     }
 
     private static ResponseBuilder getStaticFile(String requestPath) {
@@ -51,12 +58,19 @@ public class GetController {
 
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
 
-            return new ResponseBuilder(HttpStatus.OK, contentType, body);
+            return new ResponseBuilder.Builder()
+                    .httpStatus(HttpStatus.OK)
+                    .contentType(contentType)
+                    .body(body)
+                    .build();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseBuilder.Builder()
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
     }
 
     private static ResponseBuilder signup(String requestPath) {
@@ -69,7 +83,10 @@ public class GetController {
         User user = new User(userId, password, name, email);
         Database.addUser(user);
 
-        return new ResponseBuilder(HttpStatus.FOUND, null, "/index.html");
+        return new ResponseBuilder.Builder()
+                .httpStatus(HttpStatus.FOUND)
+                .body("/index.html")
+                .build();
     }
 
 }
