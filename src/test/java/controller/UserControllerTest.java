@@ -4,9 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static util.SingletonUtil.getUserController;
 
 class UserControllerTest {
+
+    private final UserController userController = UserController.getInstance();
 
     @Test
     @DisplayName("요청 URI에 따라 해당하는 컨트롤러를 선택하는지 확인")
@@ -20,12 +21,12 @@ class UserControllerTest {
         String pathUserCreate = "/user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
 
         // when
-        String resultUserForm = getUserController().route(pathUserForm);
-        String resultUserList = getUserController().route(pathUserList);
-        String resultUserLogin = getUserController().route(pathUserLogin);
-        String resultUserLoginFailed = getUserController().route(pathUserLoginFailed);
-        String resultUserProfile = getUserController().route(pathUserProfile);
-        String resultUserCreate = getUserController().route(pathUserCreate);
+        String resultUserForm = userController.route(pathUserForm);
+        String resultUserList = userController.route(pathUserList);
+        String resultUserLogin = userController.route(pathUserLogin);
+        String resultUserLoginFailed = userController.route(pathUserLoginFailed);
+        String resultUserProfile = userController.route(pathUserProfile);
+        String resultUserCreate = userController.route(pathUserCreate);
 
         // then
         assertThat(resultUserForm).isEqualTo("200 " + pathUserForm);

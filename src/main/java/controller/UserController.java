@@ -1,10 +1,23 @@
 package controller;
 
 import request.SignUpRequest;
-
-import static util.SingletonUtil.getUserService;
+import service.UserService;
 
 public class UserController {
+
+    private static UserController instance = new UserController();
+
+    private UserController() {
+    }
+
+    public static UserController getInstance() {
+        if (instance == null) {
+            instance = new UserController();
+        }
+        return instance;
+    }
+
+    private final UserService userService = UserService.getInstance();
 
     // 요청 URI에 따라 요청을 처리할 컨트롤러를 선택하는 역할
     public String route(String path) {
@@ -35,6 +48,6 @@ public class UserController {
     // 회원가입 요청 처리
     private void signUp(String request) {
         SignUpRequest signUpRequest = new SignUpRequest(request); // 회원가입 요청 객체 생성
-        getUserService().signUp(signUpRequest); // 회원가입 요청 처리
+        userService.signUp(signUpRequest); // 회원가입 요청 처리
     }
 }

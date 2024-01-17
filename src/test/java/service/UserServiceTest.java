@@ -1,23 +1,22 @@
 package service;
 
 import model.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import request.SignUpRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static util.SingletonUtil.getUserService;
 
 class UserServiceTest {
 
+    private final UserService userService = UserService.getInstance();
     SignUpRequest signUpRequest;
 
     @BeforeEach
     void init() {
         signUpRequest = new SignUpRequest("userId=test1&password=1234&name=test1&email=test1@test.com");
-        getUserService().signUp(signUpRequest);
+        userService.signUp(signUpRequest);
     }
 
     @Test
@@ -27,18 +26,18 @@ class UserServiceTest {
         SignUpRequest request = new SignUpRequest("userId=test2&password=1234&name=test2&email=test2@test.com");
 
         // when
-        getUserService().signUp(request);
-        User findUser = getUserService().findUserById("test2");
+        userService.signUp(request);
+        User findUser = userService.findUser("test2");
 
         // then
         assertThat(findUser).isNotNull();
     }
 
     @Test
-    @DisplayName("회원정보가 정상적으로 조회되는지 확인")
-    void findByUserId() {
+    @DisplayName("회원정보 단건 조회")
+    void findUser() {
         // when
-        User findUser = getUserService().findUserById("test1");
+        User findUser = userService.findUser("test1");
 
         // then
         assertThat(findUser.getUserId()).isEqualTo("test1");
@@ -48,14 +47,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("모든 회원정보가 정상적으로 조회되는지 확인")
-    void findAll() {
+    @DisplayName("회원정보 전체 조회")
+    void findUsers() {
         // given
         SignUpRequest request = new SignUpRequest("userId=test2&password=1234&name=test2&email=test2@test.com");
 
         // when
-        getUserService().signUp(request);
-        int userCount = getUserService().findAll().size();
+        userService.signUp(request);
+        int userCount = userService.findUsers().size();
 
         // then
         assertThat(userCount).isEqualTo(2);

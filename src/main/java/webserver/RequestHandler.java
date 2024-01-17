@@ -4,18 +4,20 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import controller.HomeController;
+import controller.UserController;
 import request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static util.ResponseUtil.response;
-import static util.SingletonUtil.getHomeController;
-import static util.SingletonUtil.getUserController;
-
+import static util.ResponseBuilder.response;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
+    private final HomeController homeController = HomeController.getInstance();
+    private final UserController userController = UserController.getInstance();
+
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
@@ -29,10 +31,10 @@ public class RequestHandler implements Runnable {
             String response = "";
 
            if (path.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
-                response = getUserController().route(path);
+                response = userController.route(path);
            }
            else { // 그 외의 경로는 HomeController에서 처리
-               response = getHomeController().route(path);
+               response = homeController.route(path);
            }
 
             // request line 출력
