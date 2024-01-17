@@ -4,7 +4,7 @@ import db.Database;
 import dto.RequestDto;
 import dto.ResponseDto;
 import model.User;
-import util.HttpStatus;
+import webserver.HttpStatus;
 import util.ResourceLoader;
 
 import java.io.File;
@@ -16,27 +16,16 @@ public class GetController {
     public static ResponseDto getMethod(RequestDto requestDto) {
         String requestPath = requestDto.getPath();
 
-        if (requestPath.equals("/")) {
+        if (requestPath.equals("/") || requestPath.equals("/index.html")) {
             return getIndexHtml("/index.html");
-        } else if (requestPath.equals("/index.html")) {
-            return getIndexHtml(requestPath);
-        }
-        else if (requestPath.startsWith("/user/create")) {
+        } else if (requestPath.startsWith("/user/create")) {
             return signup(requestPath);
-        }
-        else {
+        } else {
             return getStaticFile(requestPath);
         }
     }
 
-    private static ResponseDto getMain() {
-        byte[] body = "Hello World!".getBytes();
-
-        return new ResponseDto(HttpStatus.OK, "text/html;charset=utf-8", body);
-    }
-
     private static ResponseDto getIndexHtml(String requestPath) {
-
         try {
             String filePath = "src/main/resources/templates";
             String contentType = "text/html;charset=utf-8";
@@ -80,7 +69,7 @@ public class GetController {
         User user = new User(userId, password, name, email);
         Database.addUser(user);
 
-        return new ResponseDto<>(HttpStatus.FOUND, "application/json;charset=utf-8", "/index.html");
+        return new ResponseDto<>(HttpStatus.FOUND, null, "/index.html");
     }
 
 }

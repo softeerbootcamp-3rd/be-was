@@ -1,4 +1,4 @@
-package util;
+package webserver;
 
 import dto.ResponseDto;
 import org.slf4j.Logger;
@@ -70,6 +70,7 @@ public class ResponseBuilder {
             String redirectUrl = new String(body);
             String s1 = "HTTP/1.1 302 Found";
             String s2 = "Location: " + redirectUrl;
+
             dos.writeBytes(s1 + "\r\n");
             dos.writeBytes(s2 + "\r\n");
             dos.writeBytes("\r\n");

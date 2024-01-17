@@ -1,7 +1,5 @@
 package dto;
 
-import util.HttpStatus;
-
 public class RequestDto<T> {
 
     private String path;

@@ -10,9 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import util.ControllerMapper;
-import util.HttpStatus;
-import util.RequestBuilder;
-import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -41,7 +38,6 @@ public class RequestHandler implements Runnable {
             if (controller != null) {
                 ResponseDto responseDto = controller.apply(requestDto);
                 ResponseBuilder.response(dos, responseDto);
-
             } else {
                 ResponseBuilder.response(dos, HttpStatus.INTERNAL_SERVER_ERROR);
             }

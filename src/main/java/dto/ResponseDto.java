@@ -1,6 +1,6 @@
 package dto;
 
-import util.HttpStatus;
+import webserver.HttpStatus;
 
 public class ResponseDto<T> {
 
@@ -22,7 +22,7 @@ public class ResponseDto<T> {
 
     public ResponseDto(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
-        this.contentType = "application/json;charset=utf-8";
+        this.contentType = null;
         this.body = null;
     }
 
