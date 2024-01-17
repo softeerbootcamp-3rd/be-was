@@ -1,12 +1,10 @@
 package util;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UrlParser {
-    public static Map<String, String> parseQueryString(String queryString){
+    public static Map<String, String> parseQueryString(String queryString) {
         Map<String, String> queryParams = new HashMap<>();
         for (String param : queryString.split("&")) {
             String[] keyValue = param.split("=");

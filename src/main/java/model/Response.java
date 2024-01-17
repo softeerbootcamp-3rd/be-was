@@ -8,7 +8,7 @@ public class Response {
     public Response(int statusCode, byte[] body) {
         this.statusCode = statusCode;
         this.body = body;
-        this.redirectUrl = null;
+        this.redirectUrl = "/";
     }
 
     public Response(int statusCode, byte[] body, String redirectUrl) {
