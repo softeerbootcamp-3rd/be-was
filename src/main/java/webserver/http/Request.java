@@ -33,7 +33,7 @@ public class Request {
         parseRequestHeader();
         parseRequestBody();
 
-        requestHandler = new RequestHandler(requestTarget);
+        requestHandler = new RequestHandler();
     }
 
     public String getRequestTarget() {
