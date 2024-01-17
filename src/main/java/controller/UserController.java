@@ -1,12 +1,15 @@
 package controller;
 
+import db.Database;
 import dto.UserCreateRequestDto;
-import service.UserService;
+import model.User;
 
 public class UserController {
-    private static final UserService userservice = new UserService();
 
-    void create(UserCreateRequestDto userRequestDto){
-        userservice.create(userRequestDto);
+    public void create(UserCreateRequestDto userRequestDto) {
+        User user = new User(userRequestDto.getUserId(), userRequestDto.getPassword(),
+                userRequestDto.getName(), userRequestDto.getEmail());
+
+        Database.addUser(user);
     }
 }

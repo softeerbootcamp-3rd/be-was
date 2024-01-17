@@ -1,18 +1,16 @@
 # Step-1
 
 ## HTTP
-
----
 ### HTTP 메세지
 1. 시작줄(start-line): 수행할 요청(Request), 혹은 요청된 수행에 대한 성공/실패(Response)를 기록함
 2. Http Header 세트: 요청에 대한 설명, 메세지 본문에 대한 설명
 3. 빈 줄(‘blank line’): 모든 메타 정보의 전송 완료를 알림
 4. Body: 요청과 관련된 내용이나 응답과 관련된 문서
+
+
 <img width="716" alt="스크린샷 2024-01-16 오전 10 23 58" src="https://github.com/ddrongy/be-was/assets/97080154/5ccc8382-ea08-454f-8c75-50d4317fb099">
 
 ## Http Request
-
---- 
 ### Request 시작 줄
 - 서버가 특정 동작을 취하게 끔 만들기 위해 클라이언트에서 전송하는 메세지
 1. Http Method: 영어 동사(GET, PUT, POST) 혹은 명사 (HEAD, OPTIONS)를 사용해 서버가 수행할 동작을 나타냄
@@ -34,6 +32,7 @@
 - 대소문자 구분없는 문자열 다음에 콜론(:)이 붙고, 그 뒤에 오는 값은 헤더에 따라 달라짐
 - User-Agent(en-US), Accept 과 같은 Request 헤더는 요청의 내용을 좀 더 구체화 시킴
 - 메세지 데이터의 원래 형식과 적용된 인코딩을 설명하는 Content-Type과 같은 Representation 헤더는 메세지 본문이 있는 경우에만 존재함
+
 <img width="626" alt="스크린샷 2024-01-16 오전 10 43 58" src="https://github.com/ddrongy/be-was/assets/97080154/cb9accc6-9b33-4cf3-ac7b-d7a00ba5933f">
 
 ### Request Body

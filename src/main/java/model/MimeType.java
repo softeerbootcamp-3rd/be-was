@@ -18,7 +18,9 @@ public class MimeType {
         mimeTypes.put("woff2", "font/woff2");
     }
 
-    public static String getContentType(String extension) {
+    public static String getContentType(String filePath) {
+        String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
         return mimeTypes.getOrDefault(extension, "text/html");
     }
+
 }

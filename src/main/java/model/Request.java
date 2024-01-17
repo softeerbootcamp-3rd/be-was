@@ -8,10 +8,10 @@ public class Request {
     private static final String ROOT_PATH = "src/main/resources/";
     private static final String DEFAULT_PAGE = "/index.html";
 
-    private String method;
-    private String url;
-    private String version;
-    private Map<String, String> headers;
+    private final String method;
+    private final String url;
+    private final String version;
+    private final Map<String, String> headers;
 
     public Request(String line) {
         List<String> startLine = parseStartLine(line);
@@ -43,6 +43,10 @@ public class Request {
         return url;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
     public String getFilePath() {
         if (url.endsWith(".html")) {
             return ROOT_PATH + "templates" + url;
@@ -50,7 +54,8 @@ public class Request {
         if (url.endsWith(".js") || url.endsWith(".css")) {
             return ROOT_PATH + "static" + url;
         }
-        return ROOT_PATH + "templates" + DEFAULT_PAGE;
+        //return ROOT_PATH + "templates" + DEFAULT_PAGE;
+        return ROOT_PATH + "static" + url;
     }
 
     @Override
