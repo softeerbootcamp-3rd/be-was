@@ -1,5 +1,4 @@
-https://www.baeldung.com/java-threading-models<br>
-https://e-una.tistory.com/70
+## Java Thread Model
 
 자바 스레드 모델은 매핑 방법에 따라 3 가지가 있습니다.
 
@@ -32,3 +31,9 @@ Java 의 초기 버전의 스레드 모델인 Green Thread 가 이 모델을 사
 그에 상응하는 커널 스레드가 병렬로 수행될 수 있습니다.<br>
 또한 가장 높은 정확도의 동시성 처리를 제공하는 모델로, 하나의 스레드가 blocking 되었을 경우 커널은
 다른 스레드의 작업을 수행할 수 있습니다.
+
+## Reference
+
+[Baeldung - Java Threading Model](https://www.baeldung.com/java-threading-models)
+
+[Java Thread Model 정리 글](https://e-una.tistory.com/70)

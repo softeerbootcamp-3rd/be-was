@@ -1,8 +1,5 @@
 ## Object Oriented Programming (객체 지향 프로그래밍)
 
-https://docs.oracle.com/javase/tutorial/java/concepts/<br>
-https://codestates.com/blog/content/객체-지향-프로그래밍-특징
-
 컴퓨터 프로그램을 어떤 데이터를 입력받아 순서대로 처리하고 결과를 도출하는 명령어들의 목록으로 보는 시각에서 벗어나<br>
 객체들의 유기적인 협력과 결합으로 파악하고자 하는 컴퓨터 프로그래밍의 패러다임을 의미합니다.
 
@@ -25,8 +22,6 @@ https://codestates.com/blog/content/객체-지향-프로그래밍-특징
 
 자바에서 추상화를 구현할 수 있는 문법 요소로는 추상 클래스(abstract class)와 인터페이스(interface)가 있으며,<br>
 사용 목적에 큰 차이가 있습니다.
-
-https://inpa.tistory.com/entry/JAVA-%E2%98%95-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-vs-%EC%B6%94%EC%83%81%ED%81%B4%EB%9E%98%EC%8A%A4-%EC%B0%A8%EC%9D%B4%EC%A0%90-%EC%99%84%EB%B2%BD-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0
 
 - 인터페이스는 `implements`라는 키워드처럼 인터페이스에 정의된 메서드를 각 클래스의 목적에 맞게 기능을 구현하는 것이 주된 용도입니다.
 - 추상 클래스는 `extends` 키워드를 사용해서 자신의 기능들을 하위 클래스로 확장시키는 것이 주된 용도입니다.
@@ -69,3 +64,9 @@ https://inpa.tistory.com/entry/JAVA-%E2%98%95-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%
 각 객체 고유의 독립성과 책임 영역을 안전하게 지키고자 하는 것이 주 목적입니다.
 
 구현 방법에는 접근제어자 활용, getter/setter 메서드 활용이 있습니다.
+
+## Reference
+
+[Oracle - Object-Oriented Programming Concepts](https://docs.oracle.com/javase/tutorial/java/concepts/)
+
+[객체 지향 프로그래밍의 특징 정리 글](https://codestates.com/blog/content/객체-지향-프로그래밍-특징)
