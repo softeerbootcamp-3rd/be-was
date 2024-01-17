@@ -2,7 +2,7 @@ name: "PR merge on time v3.1 by honux"
 
 on:
   schedule:
-    - cron: "0 2 * * 1-6"
+    - cron: "0,30 0,1 * * *"
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
