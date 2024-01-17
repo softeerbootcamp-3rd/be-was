@@ -35,6 +35,8 @@ public class Service {
 
     // 파일 불러오기 요청
     public static byte[] requestFile(HTTPRequestDto httpRequestDto) throws IOException {
+        if(httpRequestDto.getRequest_target() == null)
+            return "다시 시도해주세요.".getBytes();
         // 해당 파일을 읽고 응답
         String path = "./src/main/resources";
         // 1. html일 경우
