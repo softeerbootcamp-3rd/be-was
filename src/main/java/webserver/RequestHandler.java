@@ -67,15 +67,14 @@ public class RequestHandler implements Runnable {
 
     private Response handleUserPath(String url, Request request, DataOutputStream dos) throws IOException {
         if (url.startsWith("/create")) {
-            return handleUserCreation(url.substring("/create".length()), dos);
+            return handleUserCreation(request, url.substring("/create".length()), dos);
         }
         return new Response(200, serveStaticResource(request));
     }
 
-    private Response handleUserCreation(String query, DataOutputStream dos) throws IOException {
+    private Response handleUserCreation(Request request, String query, DataOutputStream dos) {
         try {
             if (!query.startsWith("?")) {
-                responseBadRequest(dos, "잘못된 쿼리 문자열");
                 return new Response(400, "잘못된 쿼리 문자열".getBytes());
             }
 
@@ -86,12 +85,10 @@ public class RequestHandler implements Runnable {
                     queryParams.get("name"),
                     queryParams.get("email"));
             userController.create(userCreateRequestDto);
-            responseRedirectHeader(dos, "/index.html");
-            return new Response(302, new byte[0]);
+            return new Response(302, new byte[0], "/index.html");
 
         } catch (Exception e) {
             logger.error("User creation failed : " + e.getMessage(), e);
-            responseInternalServerError(dos, "서버 내부 오류");
             return new Response(500, "서버 내부 오류".getBytes());
         }
     }
@@ -107,27 +104,29 @@ public class RequestHandler implements Runnable {
     }
 
     private void sendResponse(Request request, Response response, DataOutputStream dos) throws IOException {
-        switch (response.getStatusCode()) {
-            case 200:
-                response200Header(response.getBody().length, request, dos);
-                break;
-            case 302:
-                // Redirect URL이 Response 객체에 포함되어 있다고 가정
-                responseRedirectHeader(dos, new String(response.getBody(), StandardCharsets.UTF_8));
-                break;
-            case 400:
-                // BadRequest 응답에 포함된 메시지를 사용
-                responseBadRequest(dos, new String(response.getBody(), StandardCharsets.UTF_8));
-                break;
-            case 500:
-                // InternalServerError 응답에 포함된 메시지를 사용
-                responseInternalServerError(dos, new String(response.getBody(), StandardCharsets.UTF_8));
-                break;
-            // 다른 상태 코드에 대한 처리 추가
+        if (response.getStatusCode() == 302) {
+            responseRedirectHeader(dos, request, response.getRedirectUrl());
+        } else {
+            sendGeneralResponse(response.getStatusCode(), response.getBody(), request, dos);
         }
         responseBody(response.getBody(), dos);
     }
 
+    private void sendGeneralResponse(int statusCode, byte[] body, Request request, DataOutputStream dos) throws IOException {
+        // 상태 코드에 따른 헤더 설정
+        switch (statusCode) {
+            case 200:
+                response200Header(dos, request, body.length);
+                break;
+            case 400:
+                responseBadRequest(dos, request, new String(body, StandardCharsets.UTF_8));
+                break;
+            case 500:
+                responseInternalServerError(dos, request, new String(body, StandardCharsets.UTF_8));
+                break;
+            // 다른 상태 코드 처리
+        }
+    }
     private void responseBody(byte[] body, DataOutputStream dos) {
         try {
             dos.write(body, 0, body.length);
