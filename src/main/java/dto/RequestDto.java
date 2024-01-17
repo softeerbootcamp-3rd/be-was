@@ -25,7 +25,15 @@ public class RequestDto {
         this.accept = requestHeaders.get(RequestHeader.ACCEPT);
     }
 
+    public String getMethod() {
+        return method;
+    }
+
     public String getPath() {
         return path;
+    }
+
+    public String getHost() {
+        return host;
     }
 }

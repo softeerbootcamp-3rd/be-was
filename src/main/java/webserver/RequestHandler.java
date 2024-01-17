@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Util;
 import view.OutputView;
+
+import static config.WebServerConfig.userController;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -35,8 +39,18 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             RequestDto requestDto = createRequestDto(in);
             OutputView.printRequestDto(requestDto);
-            createResponse(out, requestDto.getPath());
-        } catch (IOException | IllegalAccessException e) {
+            String path = requestDto.getPath();
+            String method = requestDto.getMethod();
+
+            URI uri = new URI("http://" + requestDto.getHost() + path);
+            if (uri.getQuery() == null) {
+                createResponse(out, requestDto.getPath());
+            }
+            if (method.equals("GET") && path.startsWith("/user/create")) {
+                userController.create(uri);
+                redirect(out);
+            }
+        } catch (IOException | URISyntaxException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }
@@ -70,6 +84,11 @@ public class RequestHandler implements Runnable {
         responseBody(dos, body);
     }
 
+    private void redirect(OutputStream out) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        response302Header(dos);
+    }
+
     private static String getFilePath(String url) {
         String path = RESOURCES_PATH;
         if (url.startsWith("/css") || url.startsWith("/fonts") || url.startsWith("/images") || url.startsWith("/js") || url.equals("/favicon.ico")) {
@@ -85,6 +104,17 @@ public class RequestHandler implements Runnable {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void response302Header(DataOutputStream dos) {
+        String location = "/index.html";
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + location);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
