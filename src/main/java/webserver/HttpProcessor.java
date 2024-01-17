@@ -6,16 +6,13 @@ import http.request.HttpRequest;
 import http.request.HttpRequestBody;
 import http.request.HttpRequestHeader;
 import http.request.HttpRequestStartLine;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import logger.CustomLogger;
+
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import logger.CustomLogger;
 
 public class HttpProcessor implements Runnable {
 
@@ -40,7 +37,7 @@ public class HttpProcessor implements Runnable {
 
             // HTTP Response Handler
             ResponseHandler responseHandler = ResponseHandler.getInstance();
-            responseHandler.process(out, body);
+            responseHandler.process(out, body, httpRequest);
         } catch (Exception e) {
             CustomLogger.printError(e);
         }

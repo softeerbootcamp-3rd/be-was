@@ -5,7 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class StaticResourceHandler {
-    private static final String STATIC_RESOURCE_PATH = "src/main/resources/templates";
+    private static final String STATIC_TEMPLATES_RESOURCE_PATH = "src/main/resources/templates";
+    private static final String STATIC_STATIC_RESOURCE_PATH = "src/main/resources/static";
 
     private StaticResourceHandler() {}
 
@@ -18,6 +19,14 @@ public class StaticResourceHandler {
     }
 
     public byte[] process(String target) throws IOException {
-        return Files.readAllBytes(Paths.get(STATIC_RESOURCE_PATH + target));
+        if (target.lastIndexOf(".html") != -1)
+            return Files.readAllBytes(Paths.get(STATIC_TEMPLATES_RESOURCE_PATH + target));
+        else if (target.lastIndexOf(".css") != -1
+            || target.lastIndexOf(".js") != -1
+            || target.lastIndexOf(".ico") != -1
+        )
+            return Files.readAllBytes(Paths.get(STATIC_STATIC_RESOURCE_PATH + target));
+        else
+            return null;
     }
 }
