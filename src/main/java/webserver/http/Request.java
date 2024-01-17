@@ -34,6 +34,7 @@ public class Request {
         parseRequestBody();
 
         requestHandler = new RequestHandler();
+        requestHandler.handleRequest(this);
     }
 
     public String getRequestTarget() {

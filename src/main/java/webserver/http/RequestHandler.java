@@ -21,7 +21,7 @@ public class RequestHandler {
     }
 
     public void handleRequest(Request request) {
-        String requestTarget = request.getRequestTarget();
+        String requestTarget = request.getRequestTarget().split("\\?")[0];
         if (routeHandlers.containsKey(requestTarget)) {
             routeHandlers.get(requestTarget).accept(request);
         } else {
