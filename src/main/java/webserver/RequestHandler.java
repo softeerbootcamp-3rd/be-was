@@ -35,13 +35,14 @@ public class RequestHandler implements Runnable {
 
             RequestHeader requestHeader = RequestHeaderParser.parse(in);
 
-            sendResponse(dos, requestHeader);
+            Response response = handleRequest(requestHeader);
+            sendResponse(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void sendResponse(DataOutputStream dos, RequestHeader requestHeader) {
+    private Response handleRequest(RequestHeader requestHeader) {
         Response response = null;
 
         try{
@@ -63,11 +64,11 @@ public class RequestHandler implements Runnable {
 
             logger.error(e.getMessage());
         } finally {
-            setResponse(dos, response);
+            return response;
         }
     }
 
-    private void setResponse(DataOutputStream dos, Response response) {
+    private void sendResponse(DataOutputStream dos, Response response) {
         try {
             if(response == null){
                 throw new IllegalArgumentException("");
