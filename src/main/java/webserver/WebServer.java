@@ -31,10 +31,7 @@ public class WebServer {
 
             while ((connection = listenSocket.accept()) != null) {
                 CompletableFuture.runAsync(new RequestHandler(connection), executorService);
-            }
 
-            // 스레드풀 종료
-            executorService.shutdown();
         }
     }
 }
