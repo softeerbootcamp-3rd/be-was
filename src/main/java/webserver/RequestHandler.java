@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import parser.GetRequestParser;
 import parser.RequestHeaderParser;
+import webserver.response.Response;
+import webserver.status.HttpStatus;
+import webserver.type.ContentType;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -32,74 +35,59 @@ public class RequestHandler implements Runnable {
 
             RequestHeader requestHeader = RequestHeaderParser.parse(in);
 
-            setResponse(dos, requestHeader);
+            sendResponse(dos, requestHeader);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+    private void sendResponse(DataOutputStream dos, RequestHeader requestHeader) {
+        Response response = null;
 
-    private void response404Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 NotFound \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void setResponse(DataOutputStream dos, RequestHeader requestHeader) throws IOException {
         try{
             File file = new File(RESOURCES_URL.getPath() + requestHeader.getPath());
 
             if(file.exists()) {
-                byte[] body = Files.readAllBytes(file.toPath());
-
-                response200Header(dos, body.length);
-                responseBody(dos, body);
-
-                return;
+                response = Response.onSuccess(ContentType.HTML, Files.readAllBytes(file.toPath()));
             }
 
             if(requestHeader.getMethod().equals("GET")){
-                GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
+                Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
 
-                byte[] body = "요청 완료".getBytes();
-
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+                if(result instanceof Response){
+                    response = (Response) result;
+                }
             }
 
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | IOException e){
-            byte[] body = "404 Not Found".getBytes();
-
-            response404Header(dos, body.length);
-            responseBody(dos, body);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | IOException e){
+            response = Response.onFailure(HttpStatus.NOT_FOUND, ContentType.HTML, "404 Not Found".getBytes());
 
             logger.error(e.getMessage());
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
+        } finally {
+            setResponse(dos, response);
+        }
+    }
+
+    private void setResponse(DataOutputStream dos, Response response) {
+        try {
+            if(response == null){
+                throw new IllegalArgumentException("");
+            }
+
+            HttpStatus httpStatus = response.getHttpStatus();
+            ContentType contentType = response.getContentType();
+            byte[] body = response.getBody();
+
+            dos.writeBytes(String.format("HTTP/1.1 %d %s \r\n", httpStatus.getCode(), httpStatus.getName()));
+            dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", contentType.getValue()));
+            dos.writeBytes(String.format("Content-Length: %d\r\n", body.length));
+            dos.writeBytes("\r\n");
+
+            dos.write(body, 0, body.length);
+
+            dos.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 }
