@@ -36,7 +36,7 @@ public class GetController {
             e.printStackTrace();
         }
 
-        return new ResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static ResponseDto getStaticFile(String requestPath) {
@@ -51,12 +51,12 @@ public class GetController {
 
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
 
-            return new ResponseDto<>(HttpStatus.OK, contentType, body);
+            return new ResponseDto(HttpStatus.OK, contentType, body);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static ResponseDto signup(String requestPath) {
@@ -69,7 +69,7 @@ public class GetController {
         User user = new User(userId, password, name, email);
         Database.addUser(user);
 
-        return new ResponseDto<>(HttpStatus.FOUND, null, "/index.html");
+        return new ResponseDto(HttpStatus.FOUND, null, "/index.html");
     }
 
 }

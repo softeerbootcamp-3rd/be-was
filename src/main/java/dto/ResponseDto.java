@@ -2,7 +2,7 @@ package dto;
 
 import webserver.HttpStatus;
 
-public class ResponseDto<T> {
+public class ResponseDto {
 
     private HttpStatus httpStatus;
     private String contentType;
