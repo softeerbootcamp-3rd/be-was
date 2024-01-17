@@ -30,10 +30,8 @@ public class WebServer {
             ExecutorService executorService = Executors.newCachedThreadPool();
 
             while ((connection = listenSocket.accept()) != null) {
-
                 CompletableFuture.runAsync(new RequestHandler(connection), executorService);
 
-            }
         }
     }
 }

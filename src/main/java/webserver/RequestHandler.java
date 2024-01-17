@@ -2,11 +2,14 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ResourceLoader;
+import util.ControllerMapper;
+import util.RequestBuilder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -18,74 +21,50 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
-            InputStreamReader inputStreamReader = new InputStreamReader(in);
-            BufferedReader br = new BufferedReader(inputStreamReader);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String line = br.readLine();
+            Map<String, String> requestMap = new HashMap<>();
+            requestMap.put("ip", connection.getInetAddress().toString());
+            requestMap.put("port", String.valueOf(connection.getPort()));
 
-            String path = br.readLine();
-            logger.debug(path);
-            path = path.split(" ")[1];
-            StringBuilder sb = new StringBuilder(path);
-            String line;
+            String[] array = line.split(" ");
+            requestMap.put("httpMethod", array[0]);
+            requestMap.put("uri", array[1]);
+            requestMap.put("httpVersion", array[2]);
+
             while (!(line = br.readLine()).isEmpty()) {
-                logger.debug(line);
-            }
-            System.out.println();
-
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = {};
-
-            String filePath = "src/main/resources/templates";
-            String contentType = "text/html;charset=utf-8";
-            if (path.equals("/")) {
-                body = "Hello World".getBytes();
-            } else {
-                if (path.startsWith("/css") || path.startsWith("/fonts") || path.startsWith("/images") || path.startsWith("/js")) {
-                    contentType = ResourceLoader.getContentType(path);
-                    filePath = "src/main/resources/static";
-                }
-
-                body = Files.readAllBytes(new File(filePath + path).toPath());
+                String[] components = line.split(":", 2);
+                if (components[1].startsWith(" "))
+                    components[1] = components[1].substring(1);
+                requestMap.put(components[0], components[1]);
             }
 
-            response200Header(dos, body.length, contentType);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+            RequestBuilder requestBuilder = new RequestBuilder(
+                    requestMap.get("ip"),
+                    requestMap.get("port"),
+                    requestMap.get("httpMethod"),
+                    requestMap.get("uri"),
+                    requestMap.get("httpVersion"),
+                    requestMap.get("Host"),
+                    requestMap.get("Connection"),
+                    requestMap.get("User-Agent"),
+                    requestMap.get("Referer"),
+                    requestMap.get("Accept"),
+                    requestMap.get("Accept-Language"),
+                    requestMap.get("Accept-Encoding")
+            );
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+            logger.debug(requestBuilder.toString());
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + "\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+            BiConsumer<OutputStream, String> controller = ControllerMapper.getController(requestBuilder.getHttpMethod());
+            if (controller != null) {
+                controller.accept(out, requestBuilder.getUri());
+            }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
