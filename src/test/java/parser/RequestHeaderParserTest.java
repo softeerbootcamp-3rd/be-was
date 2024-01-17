@@ -32,7 +32,6 @@ class RequestHeaderParserTest {
                 "Sec-Fetch-Dest: script\n" +
                 "Accept-Language: ko-KR,ko;q=0.9";
 
-        InputStream inputStream = new ByteArrayInputStream(originRequestHeader.getBytes());
-        return inputStream;
+        return new ByteArrayInputStream(originRequestHeader.getBytes());
     }
 }

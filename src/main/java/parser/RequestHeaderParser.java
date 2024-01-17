@@ -33,7 +33,7 @@ public class RequestHeaderParser {
 
         RequestHeader requestHeader = RequestHeader.of(method, path, protocol);
 
-        while(br.readLine() != null && !(requestLine = br.readLine()).isEmpty()){
+        while((requestLine = br.readLine()) != null && !requestLine.isEmpty()){
             String[] requestLineSplit = requestLine.split(": ");
 
             String headerName = requestLineSplit[0].replace("-", "");
