@@ -83,7 +83,7 @@ public class RequestHandler implements Runnable {
             }
 
             if(requestHeader.getMethod().equals("GET")){
-                GetRequestHandler.map(GetRequestParser.parse(requestHeader.getPath()));
+                GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
 
                 byte[] body = "요청 완료".getBytes();
 
@@ -98,6 +98,8 @@ public class RequestHandler implements Runnable {
             responseBody(dos, body);
 
             logger.error(e.getMessage());
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
         }
     }
 }
