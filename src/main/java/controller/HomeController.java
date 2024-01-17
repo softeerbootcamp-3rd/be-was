@@ -22,9 +22,7 @@ public class HomeController {
 
         String filePath = "src/main/resources/templates/index.html";
 
-        byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        ResponseBuilder.response200Header(dos, body.length, filePath);
-        ResponseBuilder.responseBody(dos, body);
+        ResponseBuilder.build200(dos, filePath);
     }
 
     private void getStatic(String url, OutputStream out) throws IOException {
@@ -32,8 +30,6 @@ public class HomeController {
 
         String filePath = "src/main/resources/static" + url;
 
-        byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        ResponseBuilder.response200Header(dos, body.length, filePath);
-        ResponseBuilder.responseBody(dos, body);
+        ResponseBuilder.build200(dos, filePath);
     }
 }

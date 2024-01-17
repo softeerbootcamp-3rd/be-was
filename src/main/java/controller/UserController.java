@@ -26,9 +26,7 @@ public class UserController {
 
         String filePath = "src/main/resources/templates" + url;
 
-        byte[] body = Files.readAllBytes(new File(filePath).toPath());
-        ResponseBuilder.response200Header(dos, body.length, filePath);
-        ResponseBuilder.responseBody(dos, body);
+        ResponseBuilder.build200(dos, filePath);
     }
 
     private void createUser(String url, OutputStream out) throws IOException {
@@ -45,6 +43,6 @@ public class UserController {
 
         url = "/";
 
-        ResponseBuilder.response302Header(dos, url);
+        ResponseBuilder.build302(dos, url);
     }
 }
