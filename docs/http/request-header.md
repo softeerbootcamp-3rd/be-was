@@ -1,10 +1,14 @@
+## Request Header
+
+Request 헤더의 각 구성 요소를 정리하는 문서입니다.
+
 ### Host
 
-(가상 호스팅을 위해) 서버의 도메인명과 서버가 리스닝하는 (부가적인) TCP 포트를 특정합니다.<br>
-포트가 주어지지 않으면, 요청된 서버의 기본 포트(예를 들어, HTTP URL은 "80")를 의미합니다.
+(가상 호스팅을 위해) 서버의 도메인명과 서버가 리스닝하는 (부가적인) TCP 포트를 특정합니다.
+<br>포트가 주어지지 않으면, 요청된 서버의 기본 포트(예를 들어, HTTP URL은 "80")를 의미합니다.
 
-Host 헤더의 필드는 모든 HTTP/1.1 요청 메시지 내에 포함되어 전송되어야 합니다.<br>
-Host 헤더 필드가 없거나 한 개 이상의 필드를 포함하는 HTTP/1.1 요청 메시지에 대해서는 400 (Bad Request) 상태 코드가 전송됩니다.
+Host 헤더의 필드는 모든 HTTP/1.1 요청 메시지 내에 포함되어 전송되어야 합니다.
+<br>Host 헤더 필드가 없거나 한 개 이상의 필드를 포함하는 HTTP/1.1 요청 메시지에 대해서는 400 (Bad Request) 상태 코드가 전송됩니다.
 
 ### Connection
 
@@ -51,8 +55,8 @@ CSP : 교차 사이트 스크립팅(XSS)과 데이터 주입 공격을 비롯한
 
 ### Sec-Fetch-Mode
 
-request 의 mode 를 알려주는 헤더입니다.<br>
-서버는 이를 통해 HTML 페이지 내의 이동인지, 이미지 또는 다른 리소스 요청인지 구분할 수 있습니다.
+request 의 mode 를 알려주는 헤더입니다.
+<br>서버는 이를 통해 HTML 페이지 내의 이동인지, 이미지 또는 다른 리소스 요청인지 구분할 수 있습니다.
 
 ### Sec-Fetch-User
 
@@ -63,6 +67,8 @@ request 의 mode 를 알려주는 헤더입니다.<br>
 fetch 된 데이터가 어떻게 사용될지 알려주는 헤더입니다.
 
 ## Reference
+
+[MDN - Request header](https://developer.mozilla.org/en-US/docs/Glossary/Request_header)
 
 [MDN - Header/Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host)
 
