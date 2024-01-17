@@ -1,11 +1,11 @@
 package util;
 
+import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Map;
 
-class UrlParserTest {
+public class UrlParserTest {
     @Test
     @DisplayName("정상적인 query인 경우 동작 확인")
     public void testParseQueryStringWithValidInput() {

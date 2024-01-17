@@ -19,16 +19,20 @@ public class UserHandler {
 
     private static final String HOME = "/index.html";
     private static final String CREATE = "/create";
-    private static final UserController userController = new UserController();
+    private final UserController userController;
 
-    public static Response handleUserPath(String url, Request request, DataOutputStream dos) throws IOException {
+    public UserHandler(UserController userController) {
+        this.userController = userController;
+    }
+
+    public Response handleUserPath(String url, Request request, DataOutputStream dos) throws IOException {
         if (url.startsWith(CREATE)) {
             return handleUserCreation(url.substring(CREATE.length()), dos);
         }
         return new Response(HttpStatus.OK, serveStaticResource(request));
     }
 
-    public static Response handleUserCreation(String query, DataOutputStream dos) {
+    public Response handleUserCreation(String query, DataOutputStream dos) {
         try {
             if (!query.startsWith("?")) {
                 return new Response(HttpStatus.BAD_REQUEST);

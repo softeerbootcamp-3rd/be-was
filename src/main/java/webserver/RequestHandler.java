@@ -13,16 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static util.HttpResponse.*;
-import static webserver.UserHandler.handleUserPath;
 
 public class RequestHandler implements Runnable {
     private static final String USER_PATH = "/user";
     private final Socket connection;
     private static final UserController userController = new UserController();
+    private final UserHandler userHandler;
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        this.userHandler = new UserHandler(userController);
     }
 
     public void run() {
@@ -55,7 +56,7 @@ public class RequestHandler implements Runnable {
     private Response handleRequest(Request request, DataOutputStream dos) throws IOException {
         String url = request.getUrl();
         if (url.startsWith(USER_PATH)) {
-            return handleUserPath(url.substring(USER_PATH.length()), request, dos);
+            return userHandler.handleUserPath(url.substring(USER_PATH.length()), request, dos);
         }
         return new Response(HttpStatus.OK, serveStaticResource(request));
     }
