@@ -13,7 +13,7 @@ import static db.Database.*;
 public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static UserService instance;
+    private volatile static UserService instance;
 
     private UserService() {
     }

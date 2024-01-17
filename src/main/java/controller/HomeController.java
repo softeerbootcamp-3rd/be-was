@@ -2,7 +2,7 @@ package controller;
 
 
 public class HomeController {
-    private static HomeController instance;
+    private volatile static HomeController instance;
 
     private HomeController() {
     }

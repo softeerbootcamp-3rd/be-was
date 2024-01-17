@@ -5,7 +5,7 @@ import service.UserService;
 
 public class UserController {
 
-    private static UserController instance = new UserController();
+    private volatile static UserController instance = new UserController();
 
     private UserController() {
     }
