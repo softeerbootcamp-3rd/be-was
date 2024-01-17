@@ -1,11 +1,11 @@
 package dto;
 
-public class RequestDto<T> {
+public class RequestBuilder<T> {
 
     private String path;
     private T requestBody;
 
-    public RequestDto(String path, T requestBody) {
+    public RequestBuilder(String path, T requestBody) {
         this.path = path;
         this.requestBody = requestBody;
     }

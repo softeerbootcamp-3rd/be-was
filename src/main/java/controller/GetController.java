@@ -1,8 +1,8 @@
 package controller;
 
 import db.Database;
-import dto.RequestDto;
-import dto.ResponseDto;
+import dto.RequestBuilder;
+import dto.ResponseBuilder;
 import model.User;
 import webserver.HttpStatus;
 import util.ResourceLoader;
@@ -13,8 +13,8 @@ import java.nio.file.Files;
 
 public class GetController {
 
-    public static ResponseDto getMethod(RequestDto requestDto) {
-        String requestPath = requestDto.getPath();
+    public static ResponseBuilder getMethod(RequestBuilder requestBuilder) {
+        String requestPath = requestBuilder.getPath();
 
         if (requestPath.equals("/") || requestPath.equals("/index.html")) {
             return getIndexHtml("/index.html");
@@ -25,21 +25,21 @@ public class GetController {
         }
     }
 
-    private static ResponseDto getIndexHtml(String requestPath) {
+    private static ResponseBuilder getIndexHtml(String requestPath) {
         try {
             String filePath = "src/main/resources/templates";
             String contentType = "text/html;charset=utf-8";
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
 
-            return new ResponseDto(HttpStatus.OK, contentType, body);
+            return new ResponseBuilder(HttpStatus.OK, contentType, body);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private static ResponseDto getStaticFile(String requestPath) {
+    private static ResponseBuilder getStaticFile(String requestPath) {
         try {
             String contentType = "text/html;charset=utf-8";
             String filePath = "src/main/resources/templates";
@@ -51,15 +51,15 @@ public class GetController {
 
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
 
-            return new ResponseDto(HttpStatus.OK, contentType, body);
+            return new ResponseBuilder(HttpStatus.OK, contentType, body);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private static ResponseDto signup(String requestPath) {
+    private static ResponseBuilder signup(String requestPath) {
         String[] userArray = requestPath.split("\\?")[1].split("&");
         String userId = userArray[0];
         String password = userArray[1];
@@ -69,7 +69,7 @@ public class GetController {
         User user = new User(userId, password, name, email);
         Database.addUser(user);
 
-        return new ResponseDto(HttpStatus.FOUND, null, "/index.html");
+        return new ResponseBuilder(HttpStatus.FOUND, null, "/index.html");
     }
 
 }

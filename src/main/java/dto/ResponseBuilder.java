@@ -2,25 +2,25 @@ package dto;
 
 import webserver.HttpStatus;
 
-public class ResponseDto {
+public class ResponseBuilder {
 
     private HttpStatus httpStatus;
     private String contentType;
     private byte[] body;
 
-    public ResponseDto(HttpStatus httpStatus, String contentType, String str) {
+    public ResponseBuilder(HttpStatus httpStatus, String contentType, String str) {
         this.httpStatus = httpStatus;
         this.contentType = contentType;
         this.body = str.getBytes();
     }
 
-    public ResponseDto(HttpStatus httpStatus, String contentType, byte[] body) {
+    public ResponseBuilder(HttpStatus httpStatus, String contentType, byte[] body) {
         this.httpStatus = httpStatus;
         this.contentType = contentType;
         this.body = body;
     }
 
-    public ResponseDto(HttpStatus httpStatus) {
+    public ResponseBuilder(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
         this.contentType = null;
         this.body = null;

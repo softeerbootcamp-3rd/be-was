@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestBuilder {
+public class HttpRequest {
 
     private String ip;
     private String port;
@@ -23,7 +23,7 @@ public class RequestBuilder {
     private String acceptLanguage;
     private String acceptEncoding;
 
-    public RequestBuilder(Socket socket, InputStream in) {
+    public HttpRequest(Socket socket, InputStream in) {
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
