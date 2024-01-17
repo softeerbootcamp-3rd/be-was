@@ -3,17 +3,19 @@ package controller;
 import db.Database;
 import dto.CreateUserDto;
 import model.User;
-import util.HttpRequest;
-import util.ResponseBuilder;
-
-import java.io.OutputStream;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
+import webserver.HttpStatus;
 
 public class UserController {
 
-    public static void createUser(OutputStream out, HttpRequest request) {
+    public static HttpResponse createUser(HttpRequest request) {
         CreateUserDto dto = new CreateUserDto(request.getParamMap());
         User user = new User(dto.getUserId(), dto.getPassword(), dto.getName(), dto.getEmail());
         Database.addUser(user);
-        ResponseBuilder.sendRedirect(out, "/index.html");
+        return HttpResponse.builder()
+                .status(HttpStatus.FOUND)
+                .addHeader("Location", "/index.html")
+                .build();
     }
 }

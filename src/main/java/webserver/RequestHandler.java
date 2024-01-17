@@ -2,13 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequest;
-import util.ResponseBuilder;
-import util.URLMapper;
+import util.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -27,13 +25,18 @@ public class RequestHandler implements Runnable {
             logger.debug("Connection IP : {}, Port : {}, request: {}",
                     connection.getInetAddress(), connection.getPort(), request.getURI());
 
-            BiConsumer<OutputStream, HttpRequest> handler = URLMapper.getMethod(request);
+            Function<HttpRequest, HttpResponse> handler = URLMapper.getMethod(request);
             if (handler != null) {
-                handler.accept(out, request);
+                handler.apply(request).send(out, logger);
             } else if (request.getMethod().equals("GET")) {
-                ResponseBuilder.responseFile(out, request);
+                ResourceLoader.getFileResponse(request).send(out, logger);
             } else {
-                ResponseBuilder.send404(out);
+                HttpResponse.builder()
+                        .status(HttpStatus.NOT_FOUND)
+                        .addHeader("Content-Type", "text/plain")
+                        .body(HttpStatus.NOT_FOUND.getFullMessage())
+                        .build()
+                        .send(out, logger);
             }
         } catch (IOException e) {
             logger.error("Error processing request: {}", e.getMessage());

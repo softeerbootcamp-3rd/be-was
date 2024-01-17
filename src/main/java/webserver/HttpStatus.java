@@ -1,7 +1,9 @@
-package util;
+package webserver;
 
 public enum HttpStatus {
     OK("200", "OK"),
+
+    FOUND("302", "Found"),
 
     BAD_REQUEST("400", "Bad Request"),
     NOT_FOUND("404", "Not Found"),
@@ -34,6 +36,6 @@ public enum HttpStatus {
                 return status;
             }
         }
-        return null; // 해당 코드를 가진 상태가 없을 경우
+        return null;
     }
 }
