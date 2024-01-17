@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 public class MyController {
   private final Logger logger = LoggerFactory.getLogger(MyController.class);
   @Controller(uri = "/user/form.html")
-  public String join(String word,int age){
+  public String join(String word,Integer age){
     logger.info("Controller executed word : {}, age :{}",word,age);
     return "/index.html";
   }

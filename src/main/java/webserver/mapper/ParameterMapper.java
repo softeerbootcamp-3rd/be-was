@@ -29,14 +29,17 @@ public class ParameterMapper {
       String parameterTypeName=p.getType().getSimpleName();
       String parameterName=p.getName();
       String parameterValue = request.getQueryParameterValue(parameterName);
-      if(parameterValue==null)
-        throw new ParameterMapperException();
+
+      boolean successParsing=false;
       for (Parser parser : parsers){
         if (parser.canParse(parameterTypeName)){
           mappedParameters.add(parser.parse(parameterValue));
+          successParsing=true;
           break;
         }
       }
+      if(!successParsing)
+        throw new ParameterMapperException();
     }
     handler.setByParameterMapper(mappedParameters.toArray());
   }
