@@ -2,6 +2,7 @@ package controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import util.RequestUrl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,12 +14,12 @@ class UserControllerTest {
     @DisplayName("요청 URI에 따라 해당하는 컨트롤러를 선택하는지 확인")
     void route() {
         // given
-        String pathUserForm = "/user/form";
-        String pathUserList = "/user/list";
-        String pathUserLogin = "/user/login";
-        String pathUserLoginFailed = "/user/login_failed";
-        String pathUserProfile = "/user/profile";
-        String pathUserCreate = "/user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
+        String pathUserForm = RequestUrl.USER_FORM.getUrl();
+        String pathUserList = RequestUrl.USER_LIST.getUrl();
+        String pathUserLogin = RequestUrl.USER_LOGIN.getUrl();
+        String pathUserLoginFailed = RequestUrl.USER_LOGIN_FAILED.getUrl();
+        String pathUserProfile = RequestUrl.USER_PROFILE.getUrl();
+        String pathUserCreate = RequestUrl.USER_CREATE.getUrl() + "?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
 
         // when
         String resultUserForm = userController.route(pathUserForm);
