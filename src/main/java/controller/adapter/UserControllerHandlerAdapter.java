@@ -3,8 +3,6 @@ package controller.adapter;
 import controller.ModelView;
 import controller.user.UserController;
 import model.Request;
-import model.Response;
-
 import java.io.IOException;
 import java.util.Map;
 

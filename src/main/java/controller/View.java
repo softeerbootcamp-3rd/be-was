@@ -1,17 +1,13 @@
 package controller;
 
 import model.Request;
-import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.Map;
 
 public class View {
     private static final Logger logger = LoggerFactory.getLogger(View.class);

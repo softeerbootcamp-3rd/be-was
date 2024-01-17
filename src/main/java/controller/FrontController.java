@@ -5,7 +5,6 @@ import controller.adapter.UserControllerHandlerAdapter;
 import controller.user.UserCreateController;
 import controller.user.UserFormController;
 import model.Request;
-import model.Response;
 
 import java.io.IOException;
 import java.io.OutputStream;
