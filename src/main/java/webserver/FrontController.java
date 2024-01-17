@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import controller.MemberFormController;
+import controller.UserController;
 import controller.StaticController;
 import controller.TemplateController;
 import http.HttpStatus;
@@ -41,7 +40,7 @@ public class FrontController implements Runnable {
 
         handlerMappingMap.put("/*.html",new TemplateController());
         handlerMappingMap.put("/static/*",new StaticController());
-        handlerMappingMap.put("/user/*", new MemberFormController());
+        handlerMappingMap.put("/user/*", new UserController());
     }
 
     public void run() {
@@ -114,9 +113,6 @@ public class FrontController implements Runnable {
     }
 
     private boolean isPatternMatch(String pattern, String path) {
-        if (path.contains(".")){
-
-        }
         pattern = pattern.replace("*",".*");
         return path.matches(pattern);
     }
