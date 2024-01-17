@@ -23,8 +23,8 @@ public class WebServer {
         AppConfig appConfig = new AppConfig();
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
-
             Socket connection;
+
             ExecutorService threadPool = Executors.newFixedThreadPool(40);
             while ((connection = listenSocket.accept()) != null) {
                threadPool.execute(new RequestHandler(connection, appConfig));

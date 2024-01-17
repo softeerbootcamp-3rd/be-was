@@ -44,7 +44,7 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
         }
         return new ResponseHeaders(ContentType.MIME, length);
     }
-    private StatusLine getStatusLine(Status status) {
+    public StatusLine getStatusLine(Status status) {
         return new StatusLine(HTTP_VERSION, status);
     }
 }
