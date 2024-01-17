@@ -4,9 +4,10 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
+import util.RequestUrl;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -22,29 +23,46 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             String line = br.readLine();
-            String url = HttpRequestUtils.getUrl(line);
-            logger.debug(line);
+            RequestUrl url = RequestUrl.of(line);
 
-            while (!(line = br.readLine()).equals("")) {
+            /**
+             * HTTP Request Header 로깅
+             */
+            logger.debug(line);
+            while (!(line = br.readLine()).isEmpty()) {
                 String[] tokens = line.split(" ");
                 if (tokens[0].equals("Host:") || tokens[0].equals("Connection:") || tokens[0].equals("Accept:"))
                     logger.debug(line);
             }
 
-//            byte[] body = "Hello World".getBytes();
-            byte[] body = Files.readAllBytes(new File("./src/main/resources/templates" + url).toPath());
-
+            /**
+             * make response
+             */
+            byte[] body = makeResponseBody(url);
             DataOutputStream dos = new DataOutputStream(out);
-
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private byte[] makeResponseBody(RequestUrl url) throws IOException {
+        String path = url.getPath();
+        byte[] body;
+
+        if (path.startsWith("/user")) {
+            UserController userController = new UserController(url);
+            body = userController.run();
+        } else {
+            if (path.equals("/"))
+                path = "/index.html";
+            body = Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
+        }
+        return body;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {

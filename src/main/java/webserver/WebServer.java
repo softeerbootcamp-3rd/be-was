@@ -31,8 +31,6 @@ public class WebServer {
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 threadPool.submit(new RequestHandler(connection));
-//                Thread thread = new Thread(new RequestHandler(connection));
-//                thread.start();
             }
         }
     }
