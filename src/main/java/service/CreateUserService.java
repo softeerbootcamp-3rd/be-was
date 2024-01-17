@@ -51,17 +51,17 @@ public class CreateUserService {
             }
             else {
                 logger.debug(">>중복된 UserId : {}",userId);
-                this.Url = "/user/login_failed.html";
+                this.Url = "/user/form_failed.html";
             }
         }
         catch (NullPointerException e) {
             // 여기서 NullPointerException 예외를 처리
-            this.Url = "/user/login_failed.html";
+            this.Url = "/user/form_failed.html";
             logger.error("Null value detected in user information", e);
         }
         catch (Exception e) {
             // 기타 예외들에 대한 처리 (NullPointerException 외의 다른 예외들)
-            this.Url = "/user/login_failed.html";
+            this.Url = "/user/form_failed.html";
             logger.error("An unexpected error occurred", e);
         }
     }
