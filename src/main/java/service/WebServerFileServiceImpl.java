@@ -8,9 +8,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class WebServerFileServiceImpl implements WebServerFileService {
+    private volatile static WebServerFileService webServerFileService = null;
+
+    public static WebServerFileService getInstance() {
+        if (webServerFileService == null) {
+            synchronized (WebServerFileService.class) {
+                if (webServerFileService == null) {
+                    webServerFileService = new WebServerFileServiceImpl();
+                }
+            }
+        }
+        return webServerFileService;
+    }
     public static final String TEMPLATES_RESOURCE = "src/main/resources/templates";
     public static final String STATIC_RESOURCES = "src/main/resources/static";
-    public Path getFilePath(HttpRequest header) {
+    private Path getFilePath(HttpRequest header) {
         String filePath = header.getStartLine().getPathUrl();
         if (filePath.contains("html")) {
             return new File(TEMPLATES_RESOURCE + filePath).toPath();

@@ -1,23 +1,22 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-
 import config.AppConfig;
+import factory.HttpRequestFactory;
+import factory.HttpResponseFactory;
 import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import factory.HttpRequestFactory;
 import service.HttpResponseService;
-import factory.HttpResponseFactory;
 import service.WebServerFileService;
+
+import java.io.*;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
-
     private final AppConfig appConfig;
     public RequestHandler(Socket connectionSocket, AppConfig appConfig) {
         this.connection = connectionSocket;

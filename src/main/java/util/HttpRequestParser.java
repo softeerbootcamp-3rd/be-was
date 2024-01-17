@@ -2,20 +2,24 @@ package util;
 
 import model.http.Body;
 import model.http.HttpMethod;
-import model.http.request.HttpRequest;
 import model.http.request.RequestHeaders;
 import model.http.request.StartLine;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class HttpRequestParser {
+    private volatile static HttpRequestParser httpRequestParser = null;
+    public static HttpRequestParser getInstance(){
+        if (httpRequestParser == null) {
+            synchronized (HttpRequestParser.class){
+                if (httpRequestParser == null) {
+                    httpRequestParser = new HttpRequestParser();
+                }
+            }
+        }
+        return httpRequestParser;
+    }
 
     public Body parseRequestBody(List<String> httpRequest) {
         return null;

@@ -9,18 +9,15 @@ import util.HttpRequestParser;
 
 public class AppConfig {
     public HttpResponseService httpResponseService() {
-        return new HttpResponseServiceImpl();
+        return HttpResponseServiceImpl.getInstance();
     }
     public HttpResponseFactory httpResponseFactory(){
-        return new HttpResponseFactoryImpl();
+        return HttpResponseFactoryImpl.getInstance();
     }
     public HttpRequestFactory httpRequestFactory(){
-        return new HttpRequestFactoryImpl(getHttpRequestParser());
+        return HttpRequestFactoryImpl.getInstance();
     }
     public WebServerFileService webServerFileService(){
-        return new WebServerFileServiceImpl();
-    }
-    private HttpRequestParser getHttpRequestParser() {
-        return new HttpRequestParser();
+        return WebServerFileServiceImpl.getInstance();
     }
 }

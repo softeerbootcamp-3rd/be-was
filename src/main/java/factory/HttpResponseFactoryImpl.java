@@ -9,6 +9,18 @@ import model.http.response.ResponseHeaders;
 import model.http.response.StatusLine;
 
 public class HttpResponseFactoryImpl implements HttpResponseFactory {
+    private volatile static HttpResponseFactory httpResponseFactory = null;
+
+    public static HttpResponseFactory getInstance() {
+        if (httpResponseFactory == null) {
+            synchronized (HttpResponseFactory.class) {
+                if (httpResponseFactory == null) {
+                    httpResponseFactory = new HttpResponseFactoryImpl();
+                }
+            }
+        }
+        return httpResponseFactory;
+    }
     public static final String HTTP_VERSION = "HTTP/1.1";
     @Override
     public HttpResponse create(HttpRequest httpRequest, byte[] body){
@@ -20,7 +32,7 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
     public Body getBody(byte[] body) {
         return new Body(body);
     }
-    public ResponseHeaders getResponseHeaders(HttpRequest httpRequest, int length) {
+    private ResponseHeaders getResponseHeaders(HttpRequest httpRequest, int length) {
         if(httpRequest.getHeaders().getAccept().contains("css")){
             return new ResponseHeaders(ContentType.CSS, length);
         }
@@ -32,7 +44,7 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
         }
         return new ResponseHeaders(ContentType.MIME, length);
     }
-    public StatusLine getStatusLine(Status status) {
+    private StatusLine getStatusLine(Status status) {
         return new StatusLine(HTTP_VERSION, status);
     }
 }
