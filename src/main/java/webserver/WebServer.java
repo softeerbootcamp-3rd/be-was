@@ -21,11 +21,11 @@ public class WebServer {
         // ExecutorService를 이용한 스레드 풀 생성
         ExecutorService threadPool =  new ThreadPoolExecutor(5, 20, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
-        // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
+        // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
-            // 클라이언트가 연결될때까지 대기한다.
+            // 클라이언트가 연결될때까지 대기
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
                 // 스레드 풀을 이용하여 작업 스케줄링
