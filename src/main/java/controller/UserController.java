@@ -6,12 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 import webserver.FrontController;
-import webserver.ModelAndView;
 
 import java.net.URLDecoder;
 import java.util.Map;
 
-public class MemberFormController implements Controller{
+public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
 
