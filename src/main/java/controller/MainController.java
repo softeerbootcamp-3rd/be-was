@@ -1,11 +1,8 @@
 package controller;
 
-import com.sun.tools.javac.Main;
 import db.Database;
+import model.Request;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,51 +10,48 @@ import java.nio.file.Files;
 import java.util.HashMap;
 
 public class MainController {
-    private String method;
-    private String url;
-    private HashMap<String, String> headers;
-    private HashMap<String, String> params;
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public MainController(String method, String url, HashMap<String, String> headers) {
-        this.method = method;
-        this.url = url;
-        this.headers = headers;
-    }
-    public MainController(String method, String url, HashMap<String, String> headers, HashMap<String, String> params) {
-        this(method, url, headers);
-        this.params = params;
-    }
-    public String getMethod() { return this.method;}
-    public String getUrl() { return this.url;}
-    public HashMap<String, String> getHeaders() { return this.headers;}
-    public HashMap<String, String> getParams() { return this.params;}
+    public static HashMap<String, byte[]> control(Request request) throws IOException {
+        byte[] body = ("알 수 없는 요청입니다!!!").getBytes();
+        byte[] statusCode = ("200").getBytes();
+        HashMap<String, byte[]> returnData = new HashMap<>();
 
-    public byte[] control() throws IOException {
-        byte[] rdata = ("알 수 없는 요청입니다!!!").getBytes();
-        if(this.params == null) {
-            String[] types = this.headers.get("Accept").split(",");
-            String mimeType = types[0];
-            if(mimeType.equals("text/html"))
-                url = "./src/main/resources/templates" + url;
-            else
-                url = "./src/main/resources/static" + url;
-            rdata = Files.readAllBytes(new File(url).toPath());
-        }
-        else if(this.url.equals("/user/create")) {
-            String userId = this.params.get("userId");
-            String password = this.params.get("password");
-            String name = this.params.get("name");
-            String email = this.params.get("email");
-            User user = new User(userId, password, name, email);
-            String result = User.verifyUser(user);
-            if(result.equals("성공")) {
-                Database.addUser(user);
-                logger.debug("새로운 유저 생성!  " + user.toString() + "\n");
-                rdata = (user.getName() + "님 안녕하세요!").getBytes();
+        String method = request.getMethod();
+        String url = request.getUrl();
+        String mimeType = request.getMimeType();
+
+        if(method.equals("GET")) {
+            if(url.equals("/")) {
+                body = Files.readAllBytes(new File("./src/main/resources/templates/index.html").toPath());
+                statusCode = ("302").getBytes();
+            }
+            else if(url.equals("/user/create")) {
+                System.out.println("요청이 오긴 하냐????????????/");
+                HashMap<String, String> params = request.getParam();
+                String userId = params.get("userId");
+                String password = params.get("password");
+                String name = params.get("name");
+                String email = params.get("email");
+                User user = new User(userId, password, name, email);
+                String result = User.verifyUser(user);
+                System.out.println(user.toString());
+                if(result.equals("성공")) {
+                    Database.addUser(user);
+                    statusCode = ("302").getBytes();
+                    body = Files.readAllBytes(new File("./src/main/resources/templates/index.html").toPath());
+                }
+            }
+            else {
+                if(mimeType.equals("text/html"))
+                    url = "./src/main/resources/templates" + url;
+                else
+                    url = "./src/main/resources/static" + url;
+                body = Files.readAllBytes(new File(url).toPath());
             }
         }
-
-        return rdata;
+        returnData.put("body", body);
+        returnData.put("statusCode", statusCode);
+        returnData.put("mimeType", request.getMimeType().getBytes());
+        return returnData;
     }
 }
