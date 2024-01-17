@@ -12,6 +12,10 @@ public class GetRequestParser {
     private static final Logger logger = LoggerFactory.getLogger(GetRequestParser.class);
 
     public static GetRequest parse(String path){
+        if(!path.contains("?")){
+            return GetRequest.of(path);
+        }
+
         StringTokenizer st = new StringTokenizer(path, "?");
 
         String requestPath = st.nextToken();
@@ -35,6 +39,6 @@ public class GetRequestParser {
             paramsMap.put(key, value);
         }
 
-        return new GetRequest(requestPath, paramsMap);
+        return GetRequest.of(requestPath, paramsMap);
     }
 }

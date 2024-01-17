@@ -2,6 +2,7 @@ package handler;
 
 import annotation.GetMapping;
 import annotation.RequestParam;
+import controller.TestController;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class GetRequestHandler {
         List<Class<?>> classes = new ArrayList<>();
 
         classes.add(UserController.class);
+        classes.add(TestController.class);
 
         return classes;
     }
