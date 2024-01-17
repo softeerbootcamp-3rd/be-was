@@ -2,11 +2,24 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+<<<<<<< Updated upstream
 import java.nio.file.Files;
+=======
+import java.util.function.Function;
+>>>>>>> Stashed changes
 
+import dto.RequestDto;
+import dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+<<<<<<< Updated upstream
 import util.ResourceLoader;
+=======
+import util.ControllerMapper;
+import util.HttpStatus;
+import util.RequestBuilder;
+import util.ResponseBuilder;
+>>>>>>> Stashed changes
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -24,6 +37,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
+<<<<<<< Updated upstream
             InputStreamReader inputStreamReader = new InputStreamReader(in);
             BufferedReader br = new BufferedReader(inputStreamReader);
 
@@ -51,6 +65,24 @@ public class RequestHandler implements Runnable {
                 }
 
                 body = Files.readAllBytes(new File(filePath + path).toPath());
+=======
+            RequestBuilder requestBuilder = new RequestBuilder(connection, in);
+            logger.debug(requestBuilder.toString());
+            DataOutputStream dos = new DataOutputStream(out);
+
+            // GET만 다루고 있으므로 일단 body는 null로
+            RequestDto requestDto = new RequestDto<>(requestBuilder.getUri(), null);
+
+            Function<RequestDto, ResponseDto> controller =
+                    ControllerMapper.getController(requestBuilder.getHttpMethod());
+
+            if (controller != null) {
+                ResponseDto responseDto = controller.apply(requestDto);
+                ResponseBuilder.response(dos, responseDto);
+
+            } else {
+                ResponseBuilder.response(dos, HttpStatus.INTERNAL_SERVER_ERROR);
+>>>>>>> Stashed changes
             }
 
             response200Header(dos, body.length, contentType);
