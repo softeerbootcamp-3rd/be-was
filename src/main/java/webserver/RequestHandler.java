@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +31,23 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
-            HttpResponse response;
 
-            byte[] body;
+            byte[] body = "Valid page is not found".getBytes(StandardCharsets.UTF_8);
+            HttpResponse response = responseBuilder.createErrorResponse(body);
+
             File file = new File("./src/main/resources/templates" + httpRequest.getPath());
-            if (file.exists() && !"/".equals(httpRequest.getPath())) {
-                body = Files.readAllBytes(file.toPath());
-                response = responseBuilder.createSuccessResponse(body);
-            } else {
-                body = "Valid page is not found".getBytes(StandardCharsets.UTF_8);
-                response = responseBuilder.createErrorResponse(body);
+            if (httpRequest.getMethod().equals("GET")){
+                if(httpRequest.getPath().equals("/user/create")){
+                    UserController userController = new UserController();
+                    String path = userController.signUp(httpRequest.getQueryParams());
+                    body = Files.readAllBytes(new File(path).toPath());
+                    response = responseBuilder.createSuccessResponse(body);
+                } else{
+                    if (file.exists() && !"/".equals(httpRequest.getPath())) {
+                        body = Files.readAllBytes(file.toPath());
+                        response = responseBuilder.createSuccessResponse(body);
+                    }
+                }
             }
 
             HttpResponseSender sender = new HttpResponseSender();
