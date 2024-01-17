@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 import controller.MainController;
 import model.Request;
@@ -51,6 +50,11 @@ public class RequestHandler implements Runnable {
         }
         else if(statusCode.equals("302")) {
             response302Header(dos);
+        }
+        else {
+            byte[] body = byteMap.get("body");
+            response200Header(dos, "text/html", body.length);
+            responseBody(dos, body);
         }
     }
 
