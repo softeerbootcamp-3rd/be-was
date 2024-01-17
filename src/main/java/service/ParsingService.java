@@ -1,10 +1,12 @@
-package webserver;
+package service;
 
 import java.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import model.RequestHeader;
+import webserver.RequestHandler;
+
 import java.io.BufferedReader;
 
 public class ParsingService {
@@ -24,7 +26,7 @@ public class ParsingService {
             }
             else if(line.contains("Upgrade-Insecure-Requests")) rh.setUpgrade_insecure_requests(line);
 
-            else logger.debug("request header>>{}",line);
+            // else logger.debug("request header>>{}",line);
         }
 
     }

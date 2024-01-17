@@ -7,9 +7,11 @@ import java.nio.file.Files;
 
 import db.Database;
 import model.RequestHeader;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.CreateUserService;
+import service.FileService;
+import service.ParsingService;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -50,34 +52,93 @@ public class RequestHandler implements Runnable {
 
             //회원가입처리
             if(path.contains("/create")){
-                CreateUserService createUserService = new CreateUserService(path);
-
-                logger.debug(createUserService.user.toString());
-
-                database.addUser(createUserService.user);
-
-                // 메인페이지로 이어지도록 설정
-                path = "/index.html";
+                CreateUserService createUserService = new CreateUserService(database,path);
+                path = createUserService.getUrl();
             }
 
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            // 파일 처리
+            FileService fileService = new FileService();
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
+            //html 파일 처리
+            if (path.endsWith(".html")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
+                response200Header(dos, body.length, "text/html;charset=utf-8");
+                responseBody(dos, body);
+            }
+            // CSS 파일 처리
+            else if (path.endsWith(".css")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "text/css;charset=utf-8");
+                responseBody(dos, body);
+            }
+            // CSS 파일 처리
+            else if (path.endsWith(".js")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "application/javascript;charset=utf-8");
+                responseBody(dos, body);
+            }
+            else if (path.endsWith(".png")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "image/png");
+                responseBody(dos, body);
+            }
+            else if (path.endsWith(".jpg")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "image/jpg");
+                responseBody(dos, body);
+            }
+            else if (path.endsWith(".ico")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "image/x-icon");
+                responseBody(dos, body);
+            }
 
-            //응답헤더
-            response200Header(dos, body.length);
+            else if (path.endsWith(".eot")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "font/eot");
+                responseBody(dos, body);
+            }
 
-            //본문
-            responseBody(dos, body);
+            else if (path.endsWith(".svg")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "font/svg");
+                responseBody(dos, body);
+            }
+
+            else if (path.endsWith(".ttf")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "font/ttf");
+                responseBody(dos, body);
+            }
+
+            else if (path.endsWith(".woff")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "font/woff");
+                responseBody(dos, body);
+            }
+            else if (path.endsWith(".woff2")) {
+                byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
+                response200Header(dos, body.length, "font/woff2");
+                responseBody(dos, body);
+            }
+
+            // 다른 파일 형식 처리도 추가 가능
+            else {
+                // 기타 파일 형식에 대한 처리
+                dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
+                dos.flush();
+            }
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String type) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: "+type+"\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -94,24 +155,3 @@ public class RequestHandler implements Runnable {
         }
     }
 }
-
-/*
-
-        if (path.endsWith(".html")) {
-byte[] body = Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
-response200Header(dos, body.length, "text/html;charset=utf-8");
-responseBody(dos, body);
-        }
-                // CSS 파일인 경우
-                else if (path.endsWith(".css")) {
-byte[] body = Files.readAllBytes(new File("./src/main/resources/css" + path).toPath());
-response200Header(dos, body.length, "text/css;charset=utf-8");
-responseBody(dos, body);
-        }
-                // 다른 파일 형식 처리도 추가 가능
-                else {
-                // 기타 파일 형식에 대한 처리
-                dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
-            dos.flush();
-        }
-                */
