@@ -56,6 +56,10 @@ public class RequestHandler implements Runnable {
         logMessage.append("\n========== HTTP Request ==========\n");
         logMessage.append("Method: ").append(httpRequest.getMethod()).append("\n");
         logMessage.append("Path: ").append(httpRequest.getPath()).append("\n");
+        if (httpRequest.getQueryParams() != null) {
+            httpRequest.getQueryParams().forEach((key, value) ->
+                    logMessage.append("QueryParam: ").append(key).append(" = ").append(value).append("\n"));
+        }
         logMessage.append("Protocol Version: ").append(httpRequest.getProtocolVersion()).append("\n");
         if (httpRequest.getHeaders() != null) {
             httpRequest.getHeaders().forEach((key, value) ->

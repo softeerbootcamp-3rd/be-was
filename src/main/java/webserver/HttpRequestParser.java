@@ -16,13 +16,29 @@ public class HttpRequestParser {
 
         String[] requestParts = requestLine.split(" ");
         String method = requestParts[0];
-        String path = requestParts[1];
+        String[] pathParts = requestParts[1].split("\\?", 2);
         String protocolVersion = requestParts[2];
 
+        String queryString = pathParts.length > 1 ? pathParts[1] : "";
+        Map<String, String> queryParams = parseQueryParams(queryString);
         Map<String, String> headers = parseHeaders(br);
         String body = parseBody(br, headers);
 
-        return new HttpRequest(method, path, protocolVersion, headers, body);
+        return new HttpRequest(method, pathParts[0], protocolVersion, queryParams, headers, body);
+    }
+
+    private Map<String, String> parseQueryParams(String queryString){
+        Map<String, String> queryParams = new HashMap<>();
+        if (!queryString.isEmpty()) {
+            String[] pairs = queryString.split("&");
+            for (String pair : pairs) {
+                String[] keyValue = pair.split("=", 2);
+                String key = keyValue[0];
+                String value = keyValue.length > 1 ? keyValue[1] : "";
+                queryParams.put(key, value);
+            }
+        }
+        return queryParams;
     }
 
     private Map<String, String> parseHeaders(BufferedReader br) throws IOException {
