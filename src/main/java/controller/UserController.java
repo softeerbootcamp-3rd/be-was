@@ -2,6 +2,7 @@ package controller;
 
 import request.SignUpRequest;
 import service.UserService;
+import util.RequestUrl;
 
 public class UserController {
 
@@ -21,28 +22,26 @@ public class UserController {
 
     // 요청 URI에 따라 요청을 처리할 컨트롤러를 선택하는 역할
     public String route(String path) {
-        if (path.startsWith("/user/form")) { // 회원가입 페이지 요청
+        if (path.startsWith(RequestUrl.USER_FORM.getUrl())) {
             return "200 " + path;
         }
-        else if (path.startsWith("/user/list")) {
+        if (path.startsWith(RequestUrl.USER_LIST.getUrl())) {
             return "200 " + path;
         }
-        else if (path.startsWith("/user/login")) {
+        if (path.startsWith(RequestUrl.USER_LOGIN.getUrl())) {
             return "200 " + path;
         }
-        else if (path.startsWith("/user/login_failed")) {
+        if (path.startsWith(RequestUrl.USER_LOGIN_FAILED.getUrl())) {
             return "200 " + path;
         }
-        else if (path.startsWith("/user/profile")) {
+        if (path.startsWith(RequestUrl.USER_PROFILE.getUrl())) {
             return "200 " + path;
         }
-        else if (path.startsWith("/user/create")) { // 회원가입 요청
-            signUp(path); // 회원가입 요청 처리
+        if (path.startsWith(RequestUrl.USER_CREATE.getUrl())) {
+            signUp(path);
             return "302 /index.html";
         }
-        else {
-            throw new IllegalArgumentException("요청 URI에 해당하는 컨트롤러가 없습니다.");
-        }
+        return "404 Not Found";
     }
 
     // 회원가입 요청 처리

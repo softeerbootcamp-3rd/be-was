@@ -1,6 +1,8 @@
 package controller;
 
 
+import util.RequestUrl;
+
 public class HomeController {
     private volatile static HomeController instance;
 
@@ -15,7 +17,7 @@ public class HomeController {
     }
 
     public String route(String path) {
-        if (path.equals("/")) {
+        if (path.equals(RequestUrl.HOME.getUrl())) {
             return "302 /index.html";
         }
         else {
