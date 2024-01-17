@@ -1,6 +1,5 @@
 package handler;
 
-import annotation.Controller;
 import annotation.GetMapping;
 import annotation.RequestParam;
 import controller.UserController;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Controller
 public class GetRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(GetRequestHandler.class);
 
