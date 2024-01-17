@@ -42,6 +42,10 @@ public class MyHttpServletRequest {
     for(String q : queries){
       String[] queryPair = q.split("=");
       String key = queryPair[0];
+      if(queryPair.length<2){
+        queryParameters.put(key,null);
+        continue;
+      }
       String value = queryPair[1];
       queryParameters.put(key,value);
     }
