@@ -59,11 +59,12 @@ public class RequestHandler implements Runnable {
                     }
                 }
             }
+
+            return response;
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | IOException e){
+            logger.error(e.getMessage());
             response = Response.onFailure(HttpStatus.NOT_FOUND, ContentType.HTML, "404 Not Found".getBytes());
 
-            logger.error(e.getMessage());
-        } finally {
             return response;
         }
     }
