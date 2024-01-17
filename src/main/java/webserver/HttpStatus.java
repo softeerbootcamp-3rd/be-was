@@ -2,10 +2,16 @@ package webserver;
 
 public enum HttpStatus {
   OK(200,"OK"),
-  BAD_REQUEST(400,"BAD_REQUEST");
+  BAD_REQUEST(400,"BAD_REQUEST"),
+  REDIRECT(302,"REDIRECT");
 
-  int value;
-  String message;
+  final int value;
+  final String message;
   HttpStatus(int i,String m) {
+    value=i;
+    message=m;
+  }
+  public int getValue(){
+    return this.value;
   }
 }
