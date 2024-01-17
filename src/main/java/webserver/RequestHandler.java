@@ -8,17 +8,15 @@ import java.util.HashSet;
 
 import controller.MainController;
 import model.Request;
+import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
     private static final HashSet<String> printedKey =  // logger.debug로 출력할 헤더값들
             new HashSet<>(Arrays.asList("Accept", "Host", "User-Agent", "Cookie"));
-
     private Socket connection;
-
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
@@ -33,18 +31,18 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             Request request = readRequest(br);
-            HashMap<String, byte[]> byteMap = MainController.control(request);
-            response(dos, byteMap);
+            Response response = MainController.control(request);
+            responseProcess(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    private void response(DataOutputStream dos,
-                          HashMap<String, byte[]> byteMap) {
-        String statusCode = new String(byteMap.get("statusCode"));
+    private void responseProcess(DataOutputStream dos,
+                          Response response) {
+        String statusCode = response.getStatusCode();
         if(statusCode.equals("200")) {
-            byte[] body = byteMap.get("body");
-            String mimeType = new String(byteMap.get("mimeType"));
+            byte[] body = response.getBody();
+            String mimeType = response.getMimeType();
             response200Header(dos, mimeType, body.length);
             responseBody(dos, body);
         }
@@ -52,7 +50,7 @@ public class RequestHandler implements Runnable {
             response302Header(dos);
         }
         else {
-            byte[] body = byteMap.get("body");
+            byte[] body = response.getBody();
             response200Header(dos, "text/html", body.length);
             responseBody(dos, body);
         }

@@ -2,21 +2,19 @@ package controller;
 
 import db.Database;
 import model.Request;
+import model.Response;
 import model.User;
 import service.UserService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
 
 public class MainController {
 
-    public static HashMap<String, byte[]> control(Request request) throws IOException {
+    public static Response control(Request request) throws IOException {
         byte[] body = Files.readAllBytes(new File("./src/main/resources/templates/404error.html").toPath());
-        byte[] statusCode = ("404").getBytes();
-        HashMap<String, byte[]> returnData = new HashMap<>();
-
+        String statusCode = "404";
         String method = request.getMethod();
         String url = request.getUrl();
         String mimeType = request.getMimeType();
@@ -24,18 +22,16 @@ public class MainController {
         if(method.equals("GET")) {
             if (url.equals("/")) {
                 body = Files.readAllBytes(new File("./src/main/resources/templates/index.html").toPath());
-                statusCode = ("302").getBytes();
+                statusCode = "302";
             } else if (url.equals("/user/create")) {
-                HashMap<String, String> params = request.getParam();
-                User user = UserService.create(params);
+                User user = UserService.create(request.getParam());
                 if (user != null) {
                     Database.addUser(user);
-                    statusCode = ("302").getBytes();
+                    statusCode = "302";
                     body = Files.readAllBytes(new File("./src/main/resources/templates/index.html").toPath());
-                    System.out.println("회원가입 완료!! : " + user.toString());
                 }
                 else {
-                    statusCode = ("200").getBytes();
+                    statusCode = "200";
                     body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
                 }
             } else {
@@ -46,7 +42,7 @@ public class MainController {
                 File searchedFile = new File(url);
                 if(searchedFile.exists()) {
                     body = Files.readAllBytes(new File(url).toPath());
-                    statusCode = ("200").getBytes();
+                    statusCode = "200";
                 }
             }
         }
@@ -62,9 +58,6 @@ public class MainController {
         else if(method.equals("DELETE")) {
             // 추후 작성
         }
-        returnData.put("body", body);
-        returnData.put("statusCode", statusCode);
-        returnData.put("mimeType", request.getMimeType().getBytes());
-        return returnData;
+        return new Response(statusCode, body, mimeType);
     }
 }
