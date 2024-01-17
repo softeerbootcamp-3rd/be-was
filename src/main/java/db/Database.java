@@ -21,4 +21,8 @@ public class Database {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static void deleteUserById(String userId) {
+        users.remove(userId);
+    }
 }
