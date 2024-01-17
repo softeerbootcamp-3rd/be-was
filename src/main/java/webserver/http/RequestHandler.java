@@ -1,5 +1,6 @@
 package webserver.http;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.UserFormDataParser;
@@ -34,11 +35,8 @@ public class RequestHandler {
         String data = request.getRequestTarget().split("\\?")[1];
         UserFormDataParser userFormDataParser = new UserFormDataParser(data);
         HashMap<String,String> formData = userFormDataParser.ParseData();
-        for (Map.Entry<String, String> entry : formData.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            System.out.println("Key: " + key + ", Value: " + value);
-        }
+        User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
+        System.out.println(user.toString());
     }
 
     private void handleNotFound(Request request) {
