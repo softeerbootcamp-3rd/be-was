@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import controller.MemberFormController;
 import controller.StaticController;
@@ -37,9 +38,10 @@ public class FrontController implements Runnable {
     }
 
     private void initHandlerMappingMap() {
-        handlerMappingMap.put("/user/create", new MemberFormController());
+
         handlerMappingMap.put("/*.html",new TemplateController());
         handlerMappingMap.put("/static/*",new StaticController());
+        handlerMappingMap.put("/user/*", new MemberFormController());
     }
 
     public void run() {
@@ -97,23 +99,26 @@ public class FrontController implements Runnable {
     }
 
     private Object getHandler(Request req) {
-        String requestURI = req.getUrl();
-        String normalizedURI = normalizeURI(requestURI);
-        return handlerMappingMap.get(normalizedURI);
+        if (isTemplate(req.getUrl())) {
+            return handlerMappingMap.get("/*.html");
+        }
+        else if(isStatic(req.getUrl())){
+            return handlerMappingMap.get("/static/*");
+        }
+        for (String key : handlerMappingMap.keySet()) {
+            if(isPatternMatch(key,req.getUrl())){
+                return handlerMappingMap.get(key);
+            }
+        }
+        return null;
     }
 
-    private String normalizeURI(String url) {
-        // / 로 시작하고 .html 로 끝나는 경우만 처리
-        if (isTemplate(url)) {
-            return "/*.html";
+    private boolean isPatternMatch(String pattern, String path) {
+        if (path.contains(".")){
+
         }
-        else if(isStatic(url)){
-            return "/static/*";
-        }
-        else {
-            // 그 외의 경우는 그대로 반환
-            return url;
-        }
+        pattern = pattern.replace("*",".*");
+        return path.matches(pattern);
     }
 
     private void getRequest(InputStream inputStream) throws IOException {
