@@ -10,9 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ResponseUtil {
+public final class ResponseBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResponseUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
     public static void response(String status, String route, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
