@@ -45,18 +45,19 @@ public class RequestHandler implements Runnable {
         Response response = null;
 
         try{
-            File file = new File(RESOURCES_URL.getPath() + requestHeader.getPath());
+            if(requestHeader.getMethod().equals("GET")){
+                File file = new File(RESOURCES_URL.getPath() + requestHeader.getPath());
 
-            if(file.exists()) {
-                response = Response.onSuccess(ContentType.HTML, Files.readAllBytes(file.toPath()));
-            } else if(requestHeader.getMethod().equals("GET")){
-                Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
+                if(file.exists()) {
+                    response = Response.onSuccess(ContentType.HTML, Files.readAllBytes(file.toPath()));
+                } else{
+                    Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
 
-                if(result instanceof Response){
-                    response = (Response) result;
+                    if (result instanceof Response) {
+                        response = (Response) result;
+                    }
                 }
             }
-
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | IOException e){
             response = Response.onFailure(HttpStatus.NOT_FOUND, ContentType.HTML, "404 Not Found".getBytes());
 
