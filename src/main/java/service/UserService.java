@@ -21,4 +21,8 @@ public class UserService {
         logger.debug("User 생성 완료");
         logger.debug(user.toString());
     }
+
+    public User findUser(String userId){
+        return Database.findUserById(userId);
+    }
 }
