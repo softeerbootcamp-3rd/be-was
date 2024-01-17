@@ -20,34 +20,20 @@ public class HttpResponse {
         this.header = new HashMap<>();
     }
 
-    public HttpResponse(HttpStatus status, String body) {
-        this.status = status;
-        this.header = new HashMap<>();
-        this.body = body.getBytes();
-    }
-
-    public HttpResponse(HttpStatus status, byte[] body) {
-        this.status = status;
-        this.header = new HashMap<>();
-        this.body = body;
-    }
-
-    public HttpResponse(HttpStatus status) {
-        this.status = status;
-        this.header = new HashMap<>();
-        this.body = new byte[0];
+    public static HttpResponseBuilder builder() {
+        return new HttpResponseBuilder();
     }
 
     public HttpStatus getStatus() {
         return this.status;
     }
 
-    public byte[] getData() {
-        return this.body;
+    public Map<String, String> getHeader() {
+        return header;
     }
 
-    public static HttpResponseBuilder builder() {
-        return new HttpResponseBuilder();
+    public byte[] getBody() {
+        return body;
     }
 
     public static class HttpResponseBuilder {
