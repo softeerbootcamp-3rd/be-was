@@ -39,6 +39,10 @@ public class RequestHandler implements Runnable {
 
             String url = requestData.getRequestContent();
 
+            if (url.equals("/")) {
+                url = "/index.html";
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
 
             byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
