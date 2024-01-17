@@ -20,7 +20,7 @@ public class ResponseBuilder {
             sb.append(response200Header(dos, responseDto));
             responseBody(dos, responseDto);
         } else if (httpStatus == HttpStatus.FOUND) {
-            sb.append(redirect(dos, responseDto.getBody().toString()));
+            sb.append(redirect(dos, responseDto.getBody()));
         } else if (httpStatus == HttpStatus.NOT_FOUND) {
             sb.append(response404Header(dos));
         } else if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -65,8 +65,9 @@ public class ResponseBuilder {
         return null;
     }
 
-    private static String redirect(DataOutputStream dos, String redirectUrl) {
+    private static String redirect(DataOutputStream dos, byte[] body) {
         try {
+            String redirectUrl = new String(body);
             String s1 = "HTTP/1.1 302 Found";
             String s2 = "Location: " + redirectUrl;
             dos.writeBytes(s1 + "\r\n");
