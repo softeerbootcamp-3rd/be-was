@@ -1,20 +1,24 @@
 package service.user;
 
 import db.Database;
-import java.util.Map;
-import logger.CustomLogger;
+import dto.user.request.UserCreateRequestDto;
 import model.User;
 import service.Service;
 
-public class UserCreateService extends Service {
+import java.util.Map;
 
+public class UserCreateService extends Service {
     @Override
     public byte[] execute(String method, Map<String, String> params, Map<String, String> body) {
         validate(method, params, body);
-        User userEntity = createUserEntity(params, body);
-        saveUser(userEntity);
-        CustomLogger.printInfo(userEntity.toString());
-        return userEntity.toString().getBytes();
+
+        UserCreateRequestDto userCreateRequestDto = UserCreateRequestDto.of(params);
+        checkDuplicateUserId(userCreateRequestDto.getUserId());
+
+        User newUser = createUserEntity(userCreateRequestDto);
+        saveUser(newUser);
+
+        return newUser.toString().getBytes();
     }
 
     @Override
@@ -36,18 +40,21 @@ public class UserCreateService extends Service {
         }
     }
 
-    private User createUserEntity(Map<String, String> params, Map<String, String> body) {
-        String userId = params.get("userId");
-        String password = params.get("password");
-        String name = params.get("name");
-        String email = params.get("email");
-        return new User(userId, password, name, email);
+    private User createUserEntity(UserCreateRequestDto userCreateRequestDto) {
+        return new User(
+                userCreateRequestDto.getUserId(),
+                userCreateRequestDto.getPassword(),
+                userCreateRequestDto.getName(),
+                userCreateRequestDto.getEmail());
+    }
+
+    private void checkDuplicateUserId(String userId) {
+        if (Database.findUserById(userId) != null) {
+            throw new IllegalArgumentException("userId is duplicate");
+        }
     }
 
     private void saveUser(User user) {
-        if (Database.findUserById(user.getUserId()) != null) {
-            throw new IllegalArgumentException("user already exists");
-        }
         Database.addUser(user);
     }
 }
