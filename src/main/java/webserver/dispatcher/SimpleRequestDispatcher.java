@@ -1,4 +1,4 @@
-package frontController.dispatcher;
+package webserver.dispatcher;
 
 import http.HttpStatus;
 import http.Request;

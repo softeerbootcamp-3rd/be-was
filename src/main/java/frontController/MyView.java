@@ -2,7 +2,7 @@ package frontController;
 
 import http.Request;
 import http.Response;
-import frontController.dispatcher.SimpleRequestDispatcher;
+import webserver.dispatcher.SimpleRequestDispatcher;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
