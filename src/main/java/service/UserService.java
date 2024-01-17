@@ -4,8 +4,6 @@ import db.Database;
 import dto.UserDto;
 import model.User;
 
-import java.util.Map;
-
 public class UserService {
 
     public void createUser(UserDto userDto) {

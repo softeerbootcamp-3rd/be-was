@@ -2,8 +2,10 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 
+import controller.Controller;
+import controller.DefaultController;
+import controller.UserController;
 import dto.HttpRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,43 +23,27 @@ public class RequestHandler implements Runnable {
     public void run() {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequestDto request = WebUtil.HttpRequestParse(in);
+            HttpRequestDto request = WebUtil.httpRequestParse(in);
             logger.debug("HTTP Request >>\n" + request.toString() + "\n" +
                     "Connected IP: {}, Port: {}", connection.getInetAddress(), connection.getPort() + "\n");
 
+            // Controller mapping
+            Controller controller = mappingController(request);
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = null;
-
-            try {
-                body = Files.readAllBytes(new File(WebUtil.getPath(request.getUri())).toPath());
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                body = "<h1>Hello, Suji👋</h1>".getBytes();
-            }
-            response200Header(dos, body.length, WebUtil.getContentType(request.getUri()));
-            responseBody(dos, body);
+            controller.handleRequest(request, dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+    private Controller mappingController(HttpRequestDto request) {
+        String uri = request.getUri();
+        Controller controller;
+        if (uri.startsWith("/user")) {
+            controller = new UserController();
+        } else {
+            controller = new DefaultController();
         }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+        return controller;
     }
 }
