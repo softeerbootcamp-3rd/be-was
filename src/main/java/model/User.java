@@ -33,4 +33,13 @@ public class User {
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        User user = (User) obj;
+        return (this.userId == user.userId
+                && this.password == user.password
+                && this.name == user.name
+                && this.email == user.email);
+    }
 }

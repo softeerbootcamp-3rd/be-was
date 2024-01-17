@@ -25,4 +25,7 @@ public class UserService {
         throw new AlreadyExistUserException("이미 존재하는 userId입니다.");
     }
 
+    public User findUserById(String userId) {
+        return Database.findUserById(userId);
+    }
 }
