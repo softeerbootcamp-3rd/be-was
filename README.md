@@ -11,6 +11,8 @@ Java Web Application Server 2023
 
 ## 학습 내용
 
+[HTTP - REDIRECT](./docs/http-redirect.md)
+
 [HTTP - GET](./docs/http-get.md)
 
 [OOP](./docs/oop.md)
