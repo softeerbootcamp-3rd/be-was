@@ -7,19 +7,15 @@ import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
 import model.http.response.ResponseHeaders;
 import model.http.response.StatusLine;
+import util.HttpRequestParser;
 
 public class HttpResponseFactoryImpl implements HttpResponseFactory {
-    private volatile static HttpResponseFactory httpResponseFactory = null;
 
     public static HttpResponseFactory getInstance() {
-        if (httpResponseFactory == null) {
-            synchronized (HttpResponseFactory.class) {
-                if (httpResponseFactory == null) {
-                    httpResponseFactory = new HttpResponseFactoryImpl();
-                }
-            }
-        }
-        return httpResponseFactory;
+        return HttpResponseFactoryImpl.HttpResponseFactoryHolder.INSTANCE;
+    }
+    private static class HttpResponseFactoryHolder{
+        private static final HttpResponseFactory INSTANCE = new HttpResponseFactoryImpl();
     }
     public static final String HTTP_VERSION = "HTTP/1.1";
     @Override

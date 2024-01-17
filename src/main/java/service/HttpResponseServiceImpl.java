@@ -9,17 +9,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class HttpResponseServiceImpl implements HttpResponseService {
-    private volatile static HttpResponseService httpResponseService = null;
+    private static class HttpResponseServiceHolder{
+        private static final HttpResponseService INSTANCE = new HttpResponseServiceImpl();
+    }
 
-    public static HttpResponseService getInstance(){
-        if (httpResponseService == null) {
-            synchronized (HttpResponseService.class) {
-                if (httpResponseService == null) {
-                    httpResponseService = new HttpResponseServiceImpl();
-                }
-            }
-        }
-        return httpResponseService;
+    private static HttpResponseService getInstance(){
+        return HttpResponseServiceHolder.INSTANCE;
     }
     private static final Logger logger = LoggerFactory.getLogger(HttpResponseService.class);
     @Override

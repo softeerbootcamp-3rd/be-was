@@ -9,18 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HttpRequestParser {
-    private volatile static HttpRequestParser httpRequestParser = null;
-    public static HttpRequestParser getInstance(){
-        if (httpRequestParser == null) {
-            synchronized (HttpRequestParser.class){
-                if (httpRequestParser == null) {
-                    httpRequestParser = new HttpRequestParser();
-                }
-            }
-        }
-        return httpRequestParser;
-    }
 
+    private static class HttpRequestParserHolder{
+        private static final HttpRequestParser INSTANCE = new HttpRequestParser();
+    }
+    public static HttpRequestParser getInstance() {
+        return HttpRequestParserHolder.INSTANCE;
+    }
     public Body parseRequestBody(List<String> httpRequest) {
         return null;
     }

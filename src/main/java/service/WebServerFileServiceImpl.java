@@ -8,17 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class WebServerFileServiceImpl implements WebServerFileService {
-    private volatile static WebServerFileService webServerFileService = null;
-
-    public static WebServerFileService getInstance() {
-        if (webServerFileService == null) {
-            synchronized (WebServerFileService.class) {
-                if (webServerFileService == null) {
-                    webServerFileService = new WebServerFileServiceImpl();
-                }
-            }
-        }
-        return webServerFileService;
+    private static class WebServerFileServiceHolder{
+        private static final WebServerFileService INSTANCE = new WebServerFileServiceImpl();
+    }
+    private static WebServerFileService getInstance() {
+        return WebServerFileServiceHolder.INSTANCE;
     }
     public static final String TEMPLATES_RESOURCE = "src/main/resources/templates";
     public static final String STATIC_RESOURCES = "src/main/resources/static";

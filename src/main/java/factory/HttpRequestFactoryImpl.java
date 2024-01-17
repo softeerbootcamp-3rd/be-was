@@ -12,17 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpRequestFactoryImpl implements HttpRequestFactory{
-    private volatile static  HttpRequestFactory httpRequestFactory = null;
-
     public static HttpRequestFactory getInstance() {
-        if(httpRequestFactory == null){
-            synchronized (HttpRequestFactory.class){
-                if (httpRequestFactory == null) {
-                    httpRequestFactory = new HttpRequestFactoryImpl(HttpRequestParser.getInstance());
-                }
-            }
-        }
-        return httpRequestFactory;
+        return HttpRequestFactoryHolder.INSTANCE;
+    }
+    private static class HttpRequestFactoryHolder{
+        private static final HttpRequestFactory INSTANCE = new HttpRequestFactoryImpl(HttpRequestParser.getInstance());
     }
     private final HttpRequestParser httpRequestParser;
 
