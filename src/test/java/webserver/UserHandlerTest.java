@@ -3,19 +3,23 @@ package webserver;
 import controller.UserController;
 import model.HttpStatus;
 import model.Response;
+import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import service.UserService;
 
 import java.io.DataOutputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserHandlerTest {
+
     private static final String HOME = "/index.html";
 
     private DataOutputStream dataOutputStream;
-    private static final UserController userController = new UserController();
+    private static final UserService userService = new UserService();
+    private static final UserController userController = new UserController(userService);
     private final UserHandler userHandler = new UserHandler(userController);
 
     @ParameterizedTest

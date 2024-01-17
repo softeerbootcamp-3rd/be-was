@@ -11,20 +11,24 @@ import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import static util.HttpResponse.*;
 
 public class RequestHandler implements Runnable {
     private static final String USER_PATH = "/user";
     private final Socket connection;
-    private static final UserController userController = new UserController();
     private final UserHandler userHandler;
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public RequestHandler(Socket connectionSocket) {
+    private final UserController userController;
+
+    public RequestHandler(Socket connectionSocket, UserService userService) {
         this.connection = connectionSocket;
+        this.userController = new UserController(userService);
         this.userHandler = new UserHandler(userController);
     }
+
 
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
