@@ -25,6 +25,7 @@ public class FrontController implements Runnable {
 
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
     private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final ViewResolver viewResolver = new ViewResolver();
     public FrontController(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.req = new Request();
@@ -64,13 +65,9 @@ public class FrontController implements Runnable {
                 res.send(dos,body,req);
                 return;
             }
-            logger.debug("[RequestHandler.run] handler found : "+handler.getClass());
             MyHandlerAdapter adapter = getHandlerAdapter(handler);
-            logger.debug("[RequestHandler.run] adapter found : "+adapter.getClass());
             ModelAndView mv = adapter.handle(req, res, handler);
-            logger.debug("[RequestHandler.run] MV returned : "+mv);
-            MyView view = viewResolver(mv.getViewName());
-            logger.debug("[RequestHandler.run] view returned : "+view.getViewPath());
+            MyView view = viewResolver.resolve(mv.getViewName());
             view.render(dos, req, res);
 
 
@@ -78,14 +75,6 @@ public class FrontController implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private MyView viewResolver(String viewName) {
-        if(isTemplate(viewName)||isStatic(viewName)){
-            return new MyView(viewName);
-        }
-
-        return new MyView(viewName + ".html");
     }
 
     private MyHandlerAdapter getHandlerAdapter(Object handler) {
@@ -98,10 +87,10 @@ public class FrontController implements Runnable {
     }
 
     private Object getHandler(Request req) {
-        if (isTemplate(req.getUrl())) {
+        if (viewResolver.isTemplate(req.getUrl())) {
             return handlerMappingMap.get("/*.html");
         }
-        else if(isStatic(req.getUrl())){
+        else if(viewResolver.isStatic(req.getUrl())){
             return handlerMappingMap.get("/static/*");
         }
         for (String key : handlerMappingMap.keySet()) {
@@ -130,10 +119,5 @@ public class FrontController implements Runnable {
 
     }
 
-    private Boolean isTemplate(String url){
-        return url.endsWith(".html");
-    }
-    private Boolean isStatic(String url){
-        return url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/");
-    }
+
 }
