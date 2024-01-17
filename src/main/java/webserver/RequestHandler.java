@@ -56,14 +56,16 @@ public class RequestHandler implements Runnable {
                 DataOutputStream dos = new DataOutputStream(out);
 
                 byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
-                ResponseBuilder.response200Header(dos, body.length);
-                ResponseBuilder.responseBody(dos, body);
+//                ResponseBuilder.response200Header(dos, body.length);
+//                ResponseBuilder.responseBody(dos, body);
+                ResponseBuilder.buildResponse(dos, body.length, body, null, "200");
             } else {
                 DataOutputStream dos = new DataOutputStream(out);
 
                 byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + redirectPath));
-                ResponseBuilder.response302Header(dos, "http://localhost:8080/index.html");
-                ResponseBuilder.responseBody(dos, body);
+//                ResponseBuilder.response302Header(dos, "http://localhost:8080/index.html");
+//                ResponseBuilder.responseBody(dos, body);
+                ResponseBuilder.buildResponse(dos, body.length, body, "http://localhost:8080/index.html", "302");
             }
 
         } catch (IOException e) {
