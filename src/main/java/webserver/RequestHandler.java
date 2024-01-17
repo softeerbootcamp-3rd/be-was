@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
 import util.RequestUrl;
 
 public class RequestHandler implements Runnable {
