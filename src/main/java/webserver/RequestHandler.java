@@ -1,6 +1,6 @@
 package webserver;
 
-import header.RequestHeader;
+import webserver.header.RequestHeader;
 import handler.GetRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

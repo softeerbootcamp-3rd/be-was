@@ -6,7 +6,7 @@ import annotation.RequestParam;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.GetRequest;
+import webserver.request.GetRequest;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;

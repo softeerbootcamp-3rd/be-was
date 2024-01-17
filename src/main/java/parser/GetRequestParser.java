@@ -2,8 +2,7 @@ package parser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.GetRequest;
-import webserver.RequestHandler;
+import webserver.request.GetRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

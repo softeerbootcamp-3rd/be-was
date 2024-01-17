@@ -1,12 +1,4 @@
-package header;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.StringTokenizer;
+package webserver.header;
 
 public class RequestHeader {
     private String method;
