@@ -14,16 +14,20 @@ public class ResponseBuilder {
 
     public static void response(DataOutputStream dos, ResponseDto responseDto) {
         HttpStatus httpStatus = responseDto.getHttpStatus();
+        StringBuilder sb = new StringBuilder();
+
         if (httpStatus == HttpStatus.OK) {
-            response200Header(dos, responseDto);
+            sb.append(response200Header(dos, responseDto));
             responseBody(dos, responseDto);
         } else if (httpStatus == HttpStatus.FOUND) {
-            redirect(dos, responseDto.getBody().toString());
+            sb.append(redirect(dos, responseDto.getBody().toString()));
         } else if (httpStatus == HttpStatus.NOT_FOUND) {
-            response404Header(dos);
+            sb.append(response404Header(dos));
         } else if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
-            response500Header(dos);
+            sb.append(response500Header(dos));
         }
+
+        logger.debug("Response [" + sb + "]");
     }
 
     public static void response(DataOutputStream dos, HttpStatus httpStatus) {
@@ -31,55 +35,79 @@ public class ResponseBuilder {
             response500Header(dos);
     }
 
-    private static void response200Header(DataOutputStream dos, ResponseDto responseDto) {
+    private static String response200Header(DataOutputStream dos, ResponseDto responseDto) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + responseDto.getContentType() + "\r\n");
-            dos.writeBytes("Content-Length: " + responseDto.getBody().length+ "\r\n");
+            String s1 = "HTTP/1.1 200 OK";
+            String s2 = "Content-Type: " + responseDto.getContentType();
+            String s3 = "Content-Length: " + responseDto.getBody().length;
+
+            dos.writeBytes(s1+ " \r\n");
+            dos.writeBytes(s2 + "\r\n");
+            dos.writeBytes(s3 + "\r\n");
             dos.writeBytes("\r\n");
+
+            return s1 + ", " + s2 + ", " + s3;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+
+        return null;
     }
 
-    private static void responseBody(DataOutputStream dos, ResponseDto responseDto) {
+    private static String responseBody(DataOutputStream dos, ResponseDto responseDto) {
         try {
             dos.write(responseDto.getBody(), 0, responseDto.getBody().length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+
+        return null;
     }
 
-    private static void redirect(DataOutputStream dos, String redirectUrl) {
+    private static String redirect(DataOutputStream dos, String redirectUrl) {
         try {
-            dos.writeBytes("HTTP/1.1 302 Found\r\n");
-            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            String s1 = "HTTP/1.1 302 Found";
+            String s2 = "Location: " + redirectUrl;
+            dos.writeBytes(s1 + "\r\n");
+            dos.writeBytes(s2 + "\r\n");
             dos.writeBytes("\r\n");
             dos.flush();
+
+            return s1 + ", " + s2;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+
+        return null;
     }
 
-    private static void response404Header(DataOutputStream dos) {
+    private static String response404Header(DataOutputStream dos) {
         try {
             dos.writeBytes("HTTP/1.1 404 Not_Found\r\n");
             dos.writeBytes("\r\n");
             dos.flush();
+
+            return "HTTP/1.1 404 Not_Found";
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+
+        return null;
     }
 
-    private static void response500Header(DataOutputStream dos) {
+    private static String response500Header(DataOutputStream dos) {
         try {
             dos.writeBytes("HTTP/1.1 500 Internal_Server_Error\r\n");
             dos.writeBytes("\r\n");
             dos.flush();
+
+            return "HTTP/1.1 500 Internal_Server_Error";
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+
+        return null;
     }
 
 
