@@ -7,7 +7,8 @@ import java.nio.file.Files;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import model.RequestHeader;
+import controller.FrontController;
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +34,10 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             RequestHeader requestHeader = requestHeader(br);
             String path = requestHeader.getPath();
-            URL resource = null;
+            String method = requestHeader.getMethod();
 
-            if (path.contains("html")) {
-                resource = getResource("./templates" + path);
-            } else {
-                resource = getResource("./static" + path);
-            }
+            UserController controller = FrontController.getController(path);
+            URL resource = PathHandler.responseResource(method, path, controller);
 
             byte[] body = Files.readAllBytes(new File(resource.getPath()).toPath());
 
