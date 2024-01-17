@@ -5,16 +5,27 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class ResponseBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static void buildResponse(DataOutputStream dos, int lengthOfBodyContent, byte[] body, String redirectLocation, String statusCode) {
+    public static void buildResponse(OutputStream out, String StatusCodeUrl) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+
+        String[] tokens = StatusCodeUrl.split(" ");
+        String statusCode = tokens[0];
+        String url = tokens[1];
+
+        byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
+
         if(statusCode.equals("200")) {
-            response200Header(dos, lengthOfBodyContent);
+            response200Header(dos, body.length);
         } else if(statusCode.equals("302")) {
-            response302Header(dos, redirectLocation);
+            response302Header(dos, url);
         }
         responseBody(dos, body);
     }

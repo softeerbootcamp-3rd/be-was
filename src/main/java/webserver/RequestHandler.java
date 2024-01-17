@@ -49,14 +49,8 @@ public class RequestHandler implements Runnable {
 //            }
 
             String statusCodeUrl = RequestDataController.routeRequest(url, requestData);
-            String[] tokens = statusCodeUrl.split(" ");
 
-            logger.debug(url);
-
-            DataOutputStream dos = new DataOutputStream(out);
-
-            byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + tokens[1]));
-            ResponseBuilder.buildResponse(dos, body.length, body, "http://localhost:8080/index.html", tokens[0]);
+            ResponseBuilder.buildResponse(out, statusCodeUrl);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
