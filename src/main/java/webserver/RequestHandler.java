@@ -3,9 +3,12 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.Map;
 
+import db.Database;
 import model.HttpRequest;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,39 +26,106 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            // httpRequest 객체 생성
             HttpRequest httpRequest = getHttpRequest(in);
 
-            if (httpRequest != null) {
-                // httpRequest 출력
-                logger.debug(httpRequest.toString());
+            if (httpRequest == null) {
+                return;
+            }
 
-                // 페이지 연결
-                DataOutputStream dos = new DataOutputStream(out);
+            // httpRequest 출력
+            logger.debug(httpRequest.toString());
 
-                String requestURL = httpRequest.getTarget();
-                String basePath = getBasePath(requestURL);
+            String requestURL = httpRequest.getTarget();
 
-                if (basePath.isEmpty()) {
-                    byte[] body = "Hello World".getBytes();
-                    response200Header(dos, body.length);
-                    responseBody(dos, body);
-                } else{
-                    byte[] body = Files.readAllBytes(new File(basePath + requestURL).toPath());
-                    response200Header(dos, body.length);
-                    responseBody(dos, body);
-                }
+            DataOutputStream dos = new DataOutputStream(out);
+            // 파라미터 처리
+            if (requestURL.contains("?")) {
+                requestURL = runAPI(requestURL);
+                linkPage(requestURL, dos);
+            } else {
+                // 페이지 링크
+                linkPage(requestURL, dos);
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
+    private String runAPI(String requestURL) {
+        String path = requestURL.split("\\?")[0];
+        String params = requestURL.split("\\?")[1];
+
+        // 회원가입
+        if (path.equals("/user/create")) {
+            String[] tokens = params.split("&");
+            Map<String, String> map = new HashMap<>();
+            for (String token : tokens) {
+                map.put(token.split("=")[0], token.split("=")[1]);
+            }
+            createUser(map);
+            path = "/user/form.html";
+        }
+
+        return path;
+    }
+
+    private void createUser(Map<String, String> param) {
+        User user = new User(param.get("userId"), param.get("password"), param.get("name"), param.get("email"));
+
+        if (Database.findUserById(user.getUserId()) == null) {
+            Database.addUser(user);
+        }
+
+        logger.info(Database.findAll().toString());
+    }
+
+    private void linkPage(String requestURL, DataOutputStream dos) throws IOException {
+        String basePath = getBasePath(requestURL);
+
+        byte[] body;
+        if (basePath.isEmpty()) {
+            body = "Hello World".getBytes();
+        } else {
+            body = Files.readAllBytes(new File(basePath + requestURL).toPath());
+        }
+
+        String content = getContent(requestURL);
+        response200Header(dos, body.length, content);
+        responseBody(dos, body);
+
+    }
+
+    private String getContent(String url) {
+        if (url.contains(".html")) {
+            return "text/html";
+        }
+
+        if (url.contains(".css")) {
+            return "text/css";
+        }
+
+        if (url.contains(".js")) {
+            return "application/x-javascript";
+        }
+
+        if (url.contains(".png")) {
+            return "image/png";
+        }
+
+        if (url.contains(".ico")) {
+            return "image/x-icon";
+        }
+
+        return "text/html";
+    }
+
     private String getBasePath(String requestURL) {
-        if (requestURL.contains("html")) {
+        if (requestURL.contains(".html")) {
             return "src/main/resources/templates";
         }
 
-        if(requestURL.contains("css") || requestURL.contains("fonts") || requestURL.contains("images") || requestURL.contains("js"))
+        if(requestURL.contains("/css/") || requestURL.contains("/fonts/") || requestURL.contains("/images/") || requestURL.contains("/js/") || requestURL.contains("favicon.ico"))
             return "src/main/resources/static";
 
         return "";
@@ -65,6 +135,8 @@ public class RequestHandler implements Runnable {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 
         // http request 처리
+
+        // parser -> startline parser, httprequest form, queryparser
         String line;
         if (!(line = bufferedReader.readLine()).isEmpty()) {
             // start line 처리
@@ -83,10 +155,10 @@ public class RequestHandler implements Runnable {
         return null;
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String content) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + content + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
