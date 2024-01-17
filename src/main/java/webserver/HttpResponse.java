@@ -74,6 +74,8 @@ public class HttpResponse {
     }
 
     public void send(OutputStream out, Logger logger) {
+        if (this.status == null)
+            throw new IllegalStateException("Status is required for HttpResponse.");
         try {
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes("HTTP/1.1 " + this.status.getFullMessage() + " \r\n");
