@@ -23,7 +23,7 @@ public class Request {
 
     public Request(String method, String url) {
         this.method = method;
-        this.url = url;
+        this.setUrl(url);
     }
 
     public String getUrl() {
