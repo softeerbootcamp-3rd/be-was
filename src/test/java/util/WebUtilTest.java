@@ -1,4 +1,4 @@
-package webserver;
+package util;
 
 import dto.HttpRequestDto;
 import org.assertj.core.api.Assertions;
