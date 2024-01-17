@@ -1,10 +1,8 @@
-package model;
+package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
-import java.io.BufferedReader;
 import java.lang.reflect.Field;
 
 public class RequestHeader {
@@ -26,6 +24,10 @@ public class RequestHeader {
 
     public String getPath() {
         return path;
+    }
+
+    public String getMethod() {
+        return method;
     }
 
     public static void setHeader(RequestHeader requestHeader, String key, String value) {
