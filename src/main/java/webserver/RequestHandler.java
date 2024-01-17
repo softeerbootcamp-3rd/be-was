@@ -15,8 +15,8 @@ import static util.ResponseBuilder.response;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
-    private final HomeController homeController = HomeController.getInstance();
-    private final UserController userController = UserController.getInstance();
+    private static final HomeController homeController = HomeController.getInstance();
+    private static final UserController userController = UserController.getInstance();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -27,20 +27,11 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = new HttpRequest(br, connection.getPort());
-            String path = httpRequest.getPath();
-            String response = "";
-
-           if (path.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
-                response = userController.route(path);
-           }
-           else { // 그 외의 경로는 HomeController에서 처리
-               response = homeController.route(path);
-           }
-
             // request line 출력
             logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
                     httpRequest.getPort(), httpRequest.getMethod(), httpRequest.getPath(), httpRequest.getHttpVersion());
 
+            String response = getStatusAndRoute(httpRequest.getPath());
             String status = response.split(" ")[0];
             String route = response.split(" ")[1];
 
@@ -48,6 +39,14 @@ public class RequestHandler implements Runnable {
 
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    public static String getStatusAndRoute(String path) {
+        if (path.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
+            return userController.route(path);
+        } else { // 그 외의 경로는 HomeController에서 처리
+            return homeController.route(path);
         }
     }
 }
