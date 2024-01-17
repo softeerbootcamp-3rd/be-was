@@ -11,28 +11,15 @@ public class ResponseHeaders {
     private final String charSet;
     private final Integer contentLength;
 
-    public ResponseHeaders(ContentType contentType, Integer contentLength) {
+    public ResponseHeaders(ContentType contentType, Integer contentLength, String charSet) {
         Date = LocalDateTime.now();
         this.contentType = contentType;
         this.contentLength = contentLength;
-        this.charSet = "utf-8";
+        this.charSet = charSet;
     }
     public String getContentTypeHeader() {
         return "Content-Type: " + contentType.getType() + ";" + charSet + " \r\n";
     }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public String getCharSet() {
-        return charSet;
-    }
-
-    public Integer getContentLength() {
-        return contentLength;
-    }
-
     public String getContentLengthHeader() {
         return "Content-Length: " + contentLength + "\r\n";
     }

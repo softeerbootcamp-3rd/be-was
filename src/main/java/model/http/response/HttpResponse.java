@@ -12,7 +12,6 @@ public class HttpResponse {
         this.headers = headers;
         this.body = body;
     }
-
     public StatusLine getStatusLine() {
         return statusLine;
     }
