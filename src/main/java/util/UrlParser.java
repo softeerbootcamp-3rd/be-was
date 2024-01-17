@@ -8,7 +8,7 @@ public class UrlParser {
         Map<String, String> queryParams = new HashMap<>();
         for (String param : queryString.split("&")) {
             String[] keyValue = param.split("=");
-            if (keyValue.length > 1) {
+            if (keyValue.length == 2) {
                 queryParams.put(keyValue[0], keyValue[1]);
             }
         }

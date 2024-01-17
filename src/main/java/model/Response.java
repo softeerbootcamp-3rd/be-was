@@ -1,24 +1,27 @@
 package model;
 
 public class Response {
-    private final int statusCode;
-    private final byte[] body;
-    private final String redirectUrl;
+    private HttpStatus status;
+    private byte[] body;
+    private String redirectUrl;
 
-    public Response(int statusCode, byte[] body) {
-        this.statusCode = statusCode;
+    public Response(HttpStatus status, byte[] body) {
+        this.status = status;
         this.body = body;
+    }
+
+    public Response(HttpStatus status) {
+        this.status = status;
         this.redirectUrl = "/";
     }
 
-    public Response(int statusCode, byte[] body, String redirectUrl) {
-        this.statusCode = statusCode;
-        this.body = body;
+    public Response(HttpStatus status, String redirectUrl) {
+        this.status = status;
         this.redirectUrl = redirectUrl;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public HttpStatus getStatus() {
+        return status;
     }
 
     public byte[] getBody() {
@@ -29,4 +32,3 @@ public class Response {
         return redirectUrl;
     }
 }
-

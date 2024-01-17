@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import controller.UserController;
+import model.HttpStatus;
 import model.Request;
 import model.Response;
 import org.slf4j.Logger;
@@ -32,8 +33,6 @@ public class RequestHandler implements Runnable {
             Request request = getRequest(in);
             Response response = handleRequest(request, dos);
             sendResponse(request, response, dos);
-
-
         } catch (IllegalArgumentException | IOException e) {
             logger.error(e.getMessage());
         }
@@ -58,7 +57,7 @@ public class RequestHandler implements Runnable {
         if (url.startsWith(USER_PATH)) {
             return handleUserPath(url.substring(USER_PATH.length()), request, dos);
         }
-        return new Response(200, serveStaticResource(request));
+        return new Response(HttpStatus.OK, serveStaticResource(request));
     }
 
     public static byte[] serveStaticResource(Request request) throws IOException {
@@ -71,32 +70,14 @@ public class RequestHandler implements Runnable {
     }
 
     private void sendResponse(Request request, Response response, DataOutputStream dos) throws IOException {
-        if (response.getStatusCode() == 302) {
-            responseRedirectHeader(dos, request, response.getRedirectUrl());
+        if (response.getStatus() == HttpStatus.REDIRECT) {
+            responseRedirectWithoutBody(dos, request, response);
             return;
         }
-        sendGeneralResponse(response.getStatusCode(), response.getBody(), request, dos);
-        responseBody(response.getBody(), dos);
-    }
-
-    private void sendGeneralResponse(int statusCode, byte[] body, Request request, DataOutputStream dos) throws IOException {
-        if (statusCode == 400) {
-            responseBadRequest(dos, request, new String(body, StandardCharsets.UTF_8));
+        if (response.getStatus() == HttpStatus.OK) {
+            responseOKWithBody(dos, request, response);
             return;
         }
-        if (statusCode == 500) {
-            responseInternalServerError(dos, request, new String(body, StandardCharsets.UTF_8));
-            return;
-        }
-        response200Header(dos, request, body.length);
-    }
-
-    private void responseBody(byte[] body, DataOutputStream dos) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+        responseWithoutBody(dos, request, response);
     }
 }

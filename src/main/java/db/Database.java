@@ -15,6 +15,7 @@ public class Database {
     private static Map<String, User> users = Maps.newHashMap();
 
     public static void addUser(User user) {
+        validate(user);
         users.put(user.getUserId(), user);
         logger.debug(user.toString());
     }
@@ -25,5 +26,11 @@ public class Database {
 
     public static Collection<User> findAll() {
         return users.values();
+    }
+
+    private static void validate(User user){
+        if (users.containsKey(user.getUserId())){
+            throw new IllegalArgumentException("User ID already exists: " + user.getUserId());
+        }
     }
 }

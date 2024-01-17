@@ -2,6 +2,7 @@ package webserver;
 
 import controller.UserController;
 import dto.UserCreateRequestDto;
+import model.HttpStatus;
 import model.Request;
 import model.Response;
 
@@ -16,6 +17,7 @@ import static webserver.RequestHandler.serveStaticResource;
 
 public class UserHandler {
 
+    private static final String HOME = "/index.html";
     private static final String CREATE = "/create";
     private static final UserController userController = new UserController();
 
@@ -23,26 +25,24 @@ public class UserHandler {
         if (url.startsWith(CREATE)) {
             return handleUserCreation(url.substring(CREATE.length()), dos);
         }
-        return new Response(200, serveStaticResource(request));
+        return new Response(HttpStatus.OK, serveStaticResource(request));
     }
 
     public static Response handleUserCreation(String query, DataOutputStream dos) {
         try {
             if (!query.startsWith("?")) {
-                return new Response(400, "잘못된 쿼리 문자열".getBytes());
+                return new Response(HttpStatus.BAD_REQUEST);
             }
-
             String decodedQuery = URLDecoder.decode(query.substring(1), StandardCharsets.UTF_8);
             Map<String, String> queryParams = parseQueryString(decodedQuery);
             UserCreateRequestDto userCreateRequestDto = new UserCreateRequestDto(queryParams.get("userId"),
-                    queryParams.get("password"),
-                    queryParams.get("name"),
-                    queryParams.get("email"));
+                    queryParams.get("password"), queryParams.get("name"), queryParams.get("email"));
             userController.create(userCreateRequestDto);
-            return new Response(302, new byte[0], "/index.html");
-
+            return new Response(HttpStatus.REDIRECT, HOME);
+        } catch (IllegalArgumentException e) {
+            return new Response(HttpStatus.REDIRECT, "/user/form_failed.html");
         } catch (Exception e) {
-            return new Response(500, "서버 내부 오류".getBytes());
+            return new Response(HttpStatus.SERVER_ERROR);
         }
     }
 }
