@@ -4,22 +4,29 @@ import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
 import factory.HttpResponseFactory;
 import factory.HttpResponseFactoryImpl;
-import service.HttpResponseSender;
-import service.HttpResponseSenderImpl;
-import service.StaticResponseBuilder;
-import service.StaticResponseBuilderImpl;
+import service.*;
+import webApplicationServer.controller.UserController;
+import webApplicationServer.controller.UserControllerImpl;
 
 public class AppConfig {
-    public HttpResponseSender httpResponseService() {
+    public static HttpResponseSender httpResponseService() {
         return HttpResponseSenderImpl.getInstance();
     }
-    public HttpResponseFactory httpResponseFactory(){
+    public static HttpResponseFactory httpResponseFactory(){
         return HttpResponseFactoryImpl.getInstance();
     }
-    public HttpRequestFactory httpRequestFactory(){
+    public static HttpRequestFactory httpRequestFactory(){
         return HttpRequestFactoryImpl.getInstance();
     }
-    public StaticResponseBuilder staticResponseBuilder(){
+    public static StaticResponseBuilder staticResponseBuilder(){
         return StaticResponseBuilderImpl.getInstance();
+    }
+
+    public static UserController userController() {
+        return UserControllerImpl.getInstance();
+    }
+
+    public static DynamicResponseBuilder dynamicResponseBuilder() {
+        return new DynamicResponseBuilderImpl();
     }
 }
