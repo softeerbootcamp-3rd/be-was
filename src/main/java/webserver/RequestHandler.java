@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
+import java.util.HashMap;
 
 import controller.Controller;
 import dto.HTTPRequestDto;
@@ -14,9 +15,8 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
 
-//    private static Controller controller = new Controller();
     private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
-    private String[] requestParams;
+    private HashMap<String, String> requestParams = new HashMap<>();
     private byte[] body;
 
     public RequestHandler(Socket connectionSocket) {
@@ -38,7 +38,7 @@ public class RequestHandler implements Runnable {
 
             // 요청에서 Request param 떼어내기
             if(httpRequestDto.getRequest_target().contains("?")) {
-                requestParams = getRequestParams(httpRequestDto.getRequest_target());
+                getRequestParams(httpRequestDto.getRequest_target());
                 httpRequestDto.setRequest_target(
                         httpRequestDto.getRequest_target().substring(0, httpRequestDto.getRequest_target().indexOf("?"))
                 );
@@ -54,7 +54,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    // InputStream을 이용하여 HTTP Request 파싱
+    // HTTP Request 파싱
     private void httpRequestParsing(BufferedReader br) throws IOException {
         // 요청 라인 읽어오기
         String line = br.readLine();
@@ -113,18 +113,19 @@ public class RequestHandler implements Runnable {
     }
 
     // 요청 url에서 Request Param 리스트 가져오기
-    private String[] getRequestParams(String url) {
+    private void getRequestParams(String url) {
         if(url == null)
-            return null;
+            return;
         if(!url.contains("?"))
-            return null;
+            return;
 
         String[] tokens = url.split("\\?");
         tokens = tokens[1].split("&");
-        for(int i = 0; i < tokens.length; i++)
-            tokens[i] = tokens[i].substring(tokens[i].indexOf("=")+1);
-
-        return tokens;
+        for(int i = 0; i < tokens.length; i++) {
+            String key = tokens[i].substring(0, tokens[i].indexOf("="));
+            String value = tokens[i].substring(tokens[i].indexOf("=")+1);
+            requestParams.put(key, value);
+        }
     }
 
 }

@@ -7,20 +7,29 @@ import model.User;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 
 
 public class Service {
 
 
     // 회원가입 처리
-    public static byte[] signup(String[] requestParams) {
-        if(requestParams == null || requestParams.length != 4)
+    public static byte[] signup(HTTPRequestDto httpRequestDto, HashMap<String, String> requestParams) throws IOException {
+        if(requestParams == null || requestParams.size() != 4)
             return "다시 시도해주세요.".getBytes();
         // User 객체 생성
-        User user = new User(requestParams[0], requestParams[1], requestParams[2], requestParams[3]);
+        User user = new User(
+                requestParams.get("userId"),
+                requestParams.get("password"),
+                requestParams.get("name"),
+                requestParams.get("email"));
         // 데이터베이스에 저장
         Database.addUser(user);
         System.out.println(user.toString());
+        // /index.html로 리다이렉트
+//        httpRequestDto.setRequest_target("/index.html");
+//        httpRequestDto.setAccept("text/html");
+//        return requestFile(httpRequestDto);
         return ("Hello, " + user.getName() + "!").getBytes();
     }
 

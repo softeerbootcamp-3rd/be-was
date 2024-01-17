@@ -81,3 +81,43 @@ A. 파일 종류에 따라 응답 헤더의 content type을 다르게 지정해�
 - 요청으로 들어오는 URL에 한글이 포함되어 있는 경우, 브라우저에서 인코딩한 상태로 전달
 - 원하는 한글의 모습으로 반환하기 위해 디코딩 과정 필요
 - URLDecoder클래스의 decode 함수를 사용
+
+### 2. Enum을 사용한 분기 처리
+- 요청받은 URL에 따라 다른 함수를 호출해야함
+- if 문을 통한 분기는 요청 URL이 추가될 때마다 조건문을 추가로 작성해야함
+- Enum을 이용하면 요청 URL이 추가될 때마다 Enum 상수만 추가하면 됨
+- 상수별 호출할 메소드를 Service 클래스에 구현
+ 
+### 3. JUnit
+1. given-when-then 패턴
+- given(준비): 어떠한 데이터가 준비되었을 때
+- when(실행): 어떠한 함수를 실행하면
+- then(검증): 어떠한 결과가 나와야 한다
+2. 자바에서 단위테스트를 수행하기 위한 테스트 프레임워크
+3. gradle 프로젝트의 경우 build.gradle에 의존성 추가
+```
+dependencies {
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+```
+4. JUnit 기본 assert 메소드
+
+|형태|설명|
+|---|---|
+|void assertTrue(boolean condition)|condition이 true이면 테스트에 성공한다.|
+|void assertEquals(Object expected, Object actual)|expected 와 actual 의 값이 같으면 테스트에 성공한다.|
+|void assertSame(Object expected, Object actual)|expected와 actual이 같은 레퍼런스이면 테스트에 성공한다.|
+|void assertNull(Object actual)|actual이 null이면 테스트에 성공한다.|
+|void assertAll(Executable... executables)|인자로 들어온 모든 executable들이 예외를 발생시키지 않으면 테스트에 성공한다.|
+
+5. JUnit 기본 어노테이션
+
+|어노테이션| 설명                                            |
+|-------|-----------------------------------------------|
+| @Test| 테스트 메소드를 나타내는 어노테이션, 필수                       |
+|@BeforeEach| 각 테스트 메소드 시작 전에 실행되어야 하는 메소드에 써준다.            |
+|@AfterEach	| 각 테스트 메소드 종류 후에 실행되어야 하는 메소드에 써준다.            |
+|@BeforeAll| 테스트 시작 전에 실행되어야 하는 메소드에 써준다. (static 메소드여야 함) |
+|@AfterAll| 테스트 종료 후에 실행되어야 하는 메소드에 써준다. (static 메소드여야 함) |
+|@Disabled| 실행되지 않아야 하는 테스트 메소드에서 써준다.                    |

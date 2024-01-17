@@ -1,51 +1,28 @@
 package controller;
 
+import dto.GetRequestEnum;
 import dto.HTTPRequestDto;
 import service.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Controller {
 
-    public static byte[] doRequest(HTTPRequestDto httpRequestDto, String[] requestParams) throws IOException {
+    public static byte[] doRequest(HTTPRequestDto httpRequestDto, HashMap<String, String> requestParams) throws IOException {
         // 요청 url에 해당하는 enum 찾기
-        Request request = Request.getRequest(httpRequestDto.getRequest_target());
-        // enum에 따라 함수 실행
-        return request.doRequest(httpRequestDto, requestParams);
-    }
-}
+        byte[] result = "".getBytes();
 
-enum Request {
-
-    SIGNUP("/user/create") {
-        @Override
-        byte[] doRequest(HTTPRequestDto httpRequestDto, String[] requestParams) {
-            return Service.signup(requestParams);
+        // 1. GET 요청
+        if(httpRequestDto.getHTTP_Method().equals("GET")) {
+            GetRequestEnum getRequestEnum = GetRequestEnum.getRequest(httpRequestDto.getRequest_target());
+            // enum에 따라 함수 실행
+            return getRequestEnum.doRequest(httpRequestDto, requestParams);
         }
-    },
-    FILE("file") {
-        @Override
-        byte[] doRequest(HTTPRequestDto httpRequestDto, String[] requestParams) throws IOException {
-            return Service.requestFile(httpRequestDto);
 
-        }
-    };
-
-    private String url;
-
-    Request(String url) {
-        this.url = url;
+        return result;
     }
-
-    static Request getRequest(String url) {
-        return Arrays.stream(Request.values())
-                .filter(request -> request.url.equals(url))
-                .findFirst()
-                .orElse(FILE);
-    }
-
-    abstract byte[] doRequest(HTTPRequestDto httpRequestDto, String[] requestParams) throws IOException;
 }
 
 
