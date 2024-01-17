@@ -10,8 +10,8 @@ public class PathHandler {
     public static URL responseResource(String method, String path, UserController controller) {
         if (controller != null) {
             if (method.equals("GET") && path.contains("?")) {
-                String[] splits = method.split("\\?");
-                QueryParams queryParams = QueryParams.from(splits[0]);
+                String[] splits = path.split("\\?");
+                QueryParams queryParams = QueryParams.from(splits[1]);
                 controller.process(queryParams);
             } else if (method.equals("GET") && path.contains(".html")) {
                 return ClassLoader.getSystemClassLoader().getResource("./templates" + path);
