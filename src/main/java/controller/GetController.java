@@ -47,7 +47,7 @@ public class GetController {
             e.printStackTrace();
         }
 
-        return new ResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR, "application/json;charset=utf-8");
+        return new ResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static ResponseDto getStaticFile(String requestPath) {
@@ -67,7 +67,7 @@ public class GetController {
             e.printStackTrace();
         }
 
-        return new ResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR, "application/json;charset=utf-8");
+        return new ResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static ResponseDto signup(String requestPath) {

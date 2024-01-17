@@ -20,9 +20,9 @@ public class ResponseDto<T> {
         this.body = body;
     }
 
-    public ResponseDto(HttpStatus httpStatus, String contentType) {
+    public ResponseDto(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
-        this.contentType = contentType;
+        this.contentType = "application/json;charset=utf-8";
         this.body = null;
     }
 
