@@ -28,24 +28,20 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            HttpRequest request = makeHttpRequest(in);
 
-            HttpRequest request = new HttpRequest();
-            setRequestLine(br, request);
-            setHeaders(br, request);
-
-            HttpResponse response = new HttpResponse();
-            if (isHTML(request.getUrl())) {
-                String url = "src/main/resources/templates" + request.getUrl();
-                File file = new File(url);
-                if (file.isFile()) {
-                    byte[] body = Files.readAllBytes(new File(url).toPath());
-                    setResponse(response, body);
-                    response.send();
-                } else {
-
-                }
-            }
+//            HttpResponse response = new HttpResponse();
+//            if (isHTML(request.getUrl())) {
+//                String url = "src/main/resources/templates" + request.getUrl();
+//                File file = new File(url);
+//                if (file.isFile()) {
+//                    byte[] body = Files.readAllBytes(new File(url).toPath());
+//                    setResponse(response, body);
+//                    response.send();
+//                } else {
+//
+//                }
+//            }
 
 //            byte[] body;
 //
@@ -74,28 +70,18 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private static void setResponse(HttpResponse response, byte[] body) {
-        response.setVersion("HTTP/1.1");
-        response.setStatusCode("200");
-        response.setStatusMessage("OK");
-        response.getHeaders().put("Content-Type", "text/html;charset=utf-8\n");
-        response.getHeaders().put("Content-Length", String.valueOf(body.length));
+    private static HttpRequest makeHttpRequest(InputStream in) throws IOException {
+        HttpRequest request = new HttpRequest();
 
-        response.setBody(body);
-    }
-
-    private static void setRequestLine(BufferedReader br, HttpRequest request) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String requestLine = br.readLine();
         String[] values = requestLine.split(" ");
         request.setMethod(values[0]);
         request.setUrl(values[1]);
         request.setVersion(values[2]);
-    }
 
-    private static void setHeaders(BufferedReader br, HttpRequest request) throws IOException {
         String headerLine;
         while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
-//                logger.debug("[Header] {}", headerLine);
             String[] pair = headerLine.split(":");
             if (pair.length == 2) {
                 String fieldName = pair[0].trim();
@@ -103,7 +89,20 @@ public class RequestHandler implements Runnable {
                 request.getHeaders().put(fieldName, value);
             }
         }
+        return request;
     }
+
+//    private static void setResponse(HttpResponse response, byte[] body) {
+//        response.setVersion("HTTP/1.1");
+//        response.setStatusCode("200");
+//        response.setStatusMessage("OK");
+//        response.getHeaders().put("Content-Type", "text/html;charset=utf-8\n");
+//        response.getHeaders().put("Content-Length", String.valueOf(body.length));
+//
+//        response.setBody(body);
+//    }
+
+
 
 
     public static User createUser(Map<String, String> params) {
