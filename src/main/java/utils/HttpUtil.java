@@ -1,5 +1,6 @@
 package utils;
 
+import model.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,30 +9,50 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.StringTokenizer;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class HttpHeaderUtil {
-    private static final Logger logger = LoggerFactory.getLogger(HttpHeaderUtil.class);
+public class HttpUtil {
+    private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 
-    public static String[] getHttpMethodAndUrl(BufferedReader bufferedReader) throws IOException {
-        String httpRequest = bufferedReader.readLine().trim();
-        String[] httpRequestTokens = httpRequest.split(" ");
-        String httpMethod = httpRequestTokens[0];
-        String requestUrl = httpRequestTokens[1];
+    public static HttpRequest getHttpRequest(BufferedReader bufferedReader) throws IOException, NullPointerException {
+        String request = bufferedReader.readLine().trim();
+        String[] httpRequestTokens = request.split(" ");
 
-        logger.debug("HTTP Method: " + httpMethod);
-        logger.debug("HTTP Request URL: " + requestUrl);
+        String method = httpRequestTokens[0];
+        String url = httpRequestTokens[1];
+        Map<String, String> queryString = new TreeMap<>();
 
-        logHeaderInfo(bufferedReader);
+        String[] url_split = url.split("\\?");
 
-        return httpRequestTokens;
+        url = url_split[0];
+
+        if (url_split.length > 1) {
+            String[] queryStringArray = url_split[1].split("&");
+
+            for (String queryKeyValue: queryStringArray) {
+                String[] query_split = queryKeyValue.split("=");
+                if (query_split.length != 2 || query_split[1].isBlank())
+                    throw new IOException("Incorrect Query String");
+
+                queryString.put(query_split[0], query_split[1]);
+            }
+        }
+
+        logger.debug("HTTP Method: " + method);
+        logger.debug("HTTP Request URL: " + url);
+
+        logRequestHeaderInfo(bufferedReader);
+
+        return new HttpRequest(method, url, queryString);
     }
 
-    private static void logHeaderInfo(BufferedReader bufferedReader) throws IOException {
+    private static void logRequestHeaderInfo(BufferedReader bufferedReader) throws IOException {
         String requestHeaderLine = "";
         String headerContent = "";
 
-        while (!(requestHeaderLine = bufferedReader.readLine().trim()).isEmpty()) {
+        while ((requestHeaderLine = bufferedReader.readLine()) != null && !requestHeaderLine.isEmpty()) {
+            requestHeaderLine = requestHeaderLine.trim();
             if (requestHeaderLine.startsWith("Host: ")) {
                 headerContent = requestHeaderLine.substring("Host: ".length());
                 logger.debug("요청하는 호스트의 이름과 포트번호: " + headerContent);
@@ -63,21 +84,15 @@ public class HttpHeaderUtil {
         }
     }
 
-
-    public static String getContentType(String requestedUrl) {
+    public static String getContentTypeFromUrl(String requestedUrl) throws IOException {
         Path source = Paths.get(requestedUrl);
-        try {
             String contentType = Files.probeContentType(source);
             if (contentType == null) {
                 if (requestedUrl.endsWith(".woff"))
                     contentType = "font/woff";
                 else
-                    throw new Exception("cannot determine content-type.");
+                    throw new IOException("cannot determine content-type.");
             }
             return contentType;
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return "text/plain";
-        }
     }
 }
