@@ -1,8 +1,8 @@
 package factory;
 
-import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
+import dto.HttpResponseDto;
 
 public interface HttpResponseFactory {
-    HttpResponse create(HttpRequest httpRequest, byte[] body);
+    HttpResponse create(HttpResponseDto httpResponseDto);
 }
