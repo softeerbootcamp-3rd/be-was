@@ -85,7 +85,6 @@ Java Web Application Server 2023
 
 ## 5. 추가로 학습할 내용 👨🏻‍💻
 - Status Code
-  >- Status Code 종류 및 의미
-  >- Status Code에 따른 응답 데이터의 차이
+  >- Status Code 종류
   >- Status Code에 따른 브라우저의 동작 차이
-  >- 학습 내용 정리: https://velog.io/@taegon1998/HTTP-Header
+  >- 학습 내용 정리: https://velog.io/@taegon1998/HTTP-Status-Code
