@@ -49,9 +49,7 @@ public class RequestHandler implements Runnable {
 
             if(file.exists()) {
                 response = Response.onSuccess(ContentType.HTML, Files.readAllBytes(file.toPath()));
-            }
-
-            if(requestHeader.getMethod().equals("GET")){
+            } else if(requestHeader.getMethod().equals("GET")){
                 Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
 
                 if(result instanceof Response){
