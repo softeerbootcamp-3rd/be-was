@@ -2,7 +2,7 @@ package webserver.adaptor;
 
 import http.Request;
 import http.Response;
-import frontController.ModelAndView;
+import webserver.ModelAndView;
 
 import java.io.IOException;
 

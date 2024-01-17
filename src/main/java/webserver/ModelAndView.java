@@ -1,4 +1,4 @@
-package frontController;
+package webserver;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,7 +3,7 @@ package webserver.adaptor;
 import http.Request;
 import http.Response;
 import controller.Controller;
-import frontController.ModelAndView;
+import webserver.ModelAndView;
 
 import java.io.IOException;
 import java.util.HashMap;

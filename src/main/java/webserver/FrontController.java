@@ -13,7 +13,6 @@ import controller.TemplateController;
 import http.HttpStatus;
 import http.Request;
 import http.Response;
-import frontController.ModelAndView;
 import frontController.MyView;
 import webserver.adaptor.MyHandlerAdapter;
 import org.slf4j.Logger;
