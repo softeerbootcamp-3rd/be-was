@@ -41,6 +41,10 @@ public class RequestHandler implements Runnable {
 
             String url = requestData.getRequestContent();
 
+            if (url.equals("/")) {
+                url = "/index.html";
+            }
+
             String redirectPath = RequestDataController.routeRequest(url, requestData);
 
             logger.debug(redirectPath);
