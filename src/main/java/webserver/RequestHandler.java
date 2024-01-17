@@ -4,13 +4,23 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.File;
 import java.net.Socket;
+import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Map;
 
+import dto.RequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.Util;
+import view.OutputView;
 
 public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String RESOURCES_PATH = "src/main/resources/";
 
     private Socket connection;
 
@@ -23,14 +33,51 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
+            RequestDto requestDto = createRequestDto(in);
+            OutputView.printRequestDto(requestDto);
+            createResponse(out, requestDto.getPath());
+        } catch (IOException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static RequestDto createRequestDto(InputStream in) throws IOException {
+        RequestDto requestDto = new RequestDto();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String line = br.readLine();
+
+        String[] requestLine = Util.splitRequestLine(line);
+        requestDto.setMethodAndPath(requestLine[0], requestLine[1]);
+
+        Map<RequestHeader, String> requestHeaders = new HashMap<>();
+        while (!line.equals("")) {
+            line = br.readLine();
+            String[] requestHeader = Util.splitRequestHeader(line);
+            RequestHeader property = RequestHeader.findProperty(requestHeader[0]);
+            if (property != RequestHeader.NONE) {
+                requestHeaders.put(property, requestHeader[1]);
+            }
+        }
+        requestDto.setRequestHeaders(requestHeaders);
+        return requestDto;
+    }
+
+    private void createResponse(OutputStream out, String url) throws IOException {
+        DataOutputStream dos = new DataOutputStream(out);
+        byte[] body = Files.readAllBytes(new File(getFilePath(url) + url).toPath());
+        response200Header(dos, body.length);
+        responseBody(dos, body);
+    }
+
+    private static String getFilePath(String url) {
+        String path = RESOURCES_PATH;
+        if (url.startsWith("/css") || url.startsWith("/fonts") || url.startsWith("/images") || url.startsWith("/js") || url.equals("/favicon.ico")) {
+            path += "static";
+        } else {
+            path += "templates";
+        }
+        return path;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
