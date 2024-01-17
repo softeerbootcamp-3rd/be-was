@@ -2,31 +2,45 @@ package webserver.io;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.HttpStatus;
+import webserver.MyHttpServletResponse;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponseBuilder {
-
-  private static final Logger logger = LoggerFactory.getLogger(HttpResponseBuilder.class);
-  private static final String absoluteRootPath = Paths.get("").toAbsolutePath().toString();
-  private static final String templateResourcePath = "/src/main/resources/templates";
-  private static final String staticResourcePath = "/src/main/resources/static";
-
-  public byte[] getFileBytes(String uri){
-    byte[] body = null;
-    try {
-      body = Files.readAllBytes(buildPath(uri));
-    }catch (IOException ioException){
-      logger.error(ioException.getMessage());
-    }
-    return body;
+  private final Logger logger = LoggerFactory.getLogger(HttpResponseBuilder.class);
+  private final DataOutputStream dos;
+  public HttpResponseBuilder(DataOutputStream outputStream){
+    this.dos=outputStream;
   }
+  public void flushHttpResponse(MyHttpServletResponse httpServletResponse) throws IOException {
+    writeResponseHeader(httpServletResponse);
+    HttpStatus httpStatus = httpServletResponse.getHttpStatus();
 
-  private Path buildPath(String uri){
-    String path = absoluteRootPath+templateResourcePath+uri;
-    return Paths.get(path);
+    if(httpStatus.equals(HttpStatus.OK)){
+      writeResponseBody(httpServletResponse);
+    }
+    dos.flush();
+  }
+  private void writeResponseHeader(MyHttpServletResponse httpServletResponse) {
+    HttpStatus httpStatus = httpServletResponse.getHttpStatus();
+    try {
+      dos.writeBytes("HTTP/1.1 "+httpStatus.getValue()+"\r\n");
+
+      HashMap<String,String> headers = httpServletResponse.getHeaders();
+      for(Map.Entry<String,String> entry : headers.entrySet()){
+        dos.writeBytes(entry.getKey()+": "+entry.getValue()+"\r\n");
+      }
+      dos.writeBytes("\r\n");
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+    }
+  }
+  private void writeResponseBody(MyHttpServletResponse httpServletResponse) throws IOException{
+    byte[] body = httpServletResponse.getBodyBytes();
+    dos.write(body, 0, body.length);
   }
 }
