@@ -15,6 +15,8 @@ public class Request {
     String requestTarget;
     String httpVersion;
     Float httpVersionNum;
+
+
     Mime responseMimeType;
     private final ArrayList<String> headerContent;
     private final ArrayList<String> bodyContent;
@@ -35,10 +37,6 @@ public class Request {
 
         requestHandler = new RequestHandler();
         requestHandler.handleRequest(this);
-    }
-
-    public String getRequestTarget() {
-        return requestTarget;
     }
 
     private void parseRequestHeader() {
@@ -74,8 +72,7 @@ public class Request {
         if (lastDotIndex != -1 && lastDotIndex < requestTarget.length() - 1) {
             this.responseMimeType = convertMime(requestTarget.substring(lastDotIndex + 1));
         } else {
-            //확장자가 없는경우 우선은 주로 API요청으로 판단한여 JSON으로 처리
-            this.responseMimeType = Mime.APPLICATION_JSON;
+            this.responseMimeType = Mime.NONE;
         }
         httpVersionNum = Float.parseFloat(httpVersion.split("/")[1]);
     }
@@ -123,6 +120,14 @@ public class Request {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("*******************************************");
+    }
+
+    public String getRequestTarget() {
+        return requestTarget;
+    }
+
+    public Mime getResponseMimeType() {
+        return responseMimeType;
     }
 
 }

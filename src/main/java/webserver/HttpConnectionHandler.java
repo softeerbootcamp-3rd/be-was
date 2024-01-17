@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.Mime;
 import webserver.http.Request;
 import webserver.http.Response;
 
@@ -32,13 +33,13 @@ public class HttpConnectionHandler implements Runnable {
 
             Response response = new Response(request);
 
-            sendResponse(dos, response);
+            sendResponse(dos,request, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void sendResponse(DataOutputStream dos, Response response) {
+    private void sendResponse(DataOutputStream dos,Request request, Response response) {
         try{
             dos.writeBytes(response.getHttpVersion() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n");
             for (Map.Entry<String, String> entry : response.getResponseHeader().entrySet()) {
@@ -46,8 +47,11 @@ public class HttpConnectionHandler implements Runnable {
                 String value = entry.getValue();
                 dos.writeBytes(key + ": " + value + "\r\n");
             }
-            dos.writeBytes("\r\n");
-            dos.write(response.getResponseBody(), 0, response.getResponseBody().length);
+
+            if(!request.getResponseMimeType().getMimeType().equals(Mime.NONE.getMimeType())){
+                dos.writeBytes("\r\n");
+                dos.write(response.getResponseBody(), 0, response.getResponseBody().length);
+            }
             dos.flush();
         }catch (IOException e) {
             logger.error(e.getMessage());

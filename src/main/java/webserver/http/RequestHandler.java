@@ -30,7 +30,7 @@ public class RequestHandler {
     }
 
     private void handleUserCreate(Request request) {
-        
+
     }
 
     private void handleNotFound(Request request) {
