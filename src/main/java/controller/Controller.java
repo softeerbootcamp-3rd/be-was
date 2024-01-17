@@ -1,7 +1,9 @@
 package controller;
 
+import http.Request;
+
 import java.util.Map;
 
 public interface Controller {
-    String process(Map<String,String> paramMap, Map<String, Object> model);
+    String process(Request request, Map<String, Object> model);
 }
