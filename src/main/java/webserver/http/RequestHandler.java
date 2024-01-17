@@ -2,6 +2,7 @@ package webserver.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.UserFormDataParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,14 @@ public class RequestHandler {
     }
 
     private void handleUserCreate(Request request) {
-
+        String data = request.getRequestTarget().split("\\?")[1];
+        UserFormDataParser userFormDataParser = new UserFormDataParser(data);
+        HashMap<String,String> formData = userFormDataParser.ParseData();
+        for (Map.Entry<String, String> entry : formData.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            System.out.println("Key: " + key + ", Value: " + value);
+        }
     }
 
     private void handleNotFound(Request request) {
