@@ -12,6 +12,7 @@ import java.nio.file.*;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
+import exception.EmptyFormException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.OutputView;
@@ -22,6 +23,7 @@ public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final String RESOURCES_PATH = "src/main/resources/";
     private static final String INDEX_FILE_PATH = "/index.html";
+    private static final String USER_CREATE_FORM_FAIL_FILE_PATH = "/user/form_fail.html";
 
     private Socket connection;
 
@@ -44,8 +46,16 @@ public class RequestHandler implements Runnable {
                 createResponse(out, requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
-                userController.create(requestLineDto.getQueryString());
-                redirect(out);
+                try {
+                    userController.create(requestLineDto.getQueryString());
+                    redirect(out);
+                } catch (EmptyFormException e) {
+                    logger.debug(e.getMessage());
+                    byte[] body = Files.readAllBytes(new File(getFilePath(USER_CREATE_FORM_FAIL_FILE_PATH)).toPath());
+                    DataOutputStream dos = new DataOutputStream(out);
+                    response400Header(dos, body.length);
+                    responseBody(dos, body);
+                }
             }
         } catch (IOException | IllegalAccessException e) {
             logger.error(e.getMessage());
@@ -89,6 +99,17 @@ public class RequestHandler implements Runnable {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + location);
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void response400Header(DataOutputStream dos, int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 400 Bad Request \r\n");
+            dos.writeBytes("Content-Type: text/html; charset=UTF-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
