@@ -1,22 +1,23 @@
 package controller;
 
 import model.User;
-import util.Util;
+import validate.InputValidate;
+import webserver.RequestParser;
 
-import java.net.URI;
 import java.util.Map;
 
 import static config.WebServerConfig.userService;
 
 public class UserController {
 
-    public String create(URI uri) {
-        Map<String, String> parameters = Util.splitParamtersToKeyAndValue(uri.getQuery());
+    public String create(String userInfoQueryString) {
+        InputValidate.validateUserInfo(userInfoQueryString);
+        Map<String, String> userInfo = RequestParser.parseParameters(userInfoQueryString);
         User user = new User(
-                parameters.get("userId"),
-                parameters.get("password"),
-                parameters.get("name"),
-                parameters.get("email"));
+                userInfo.get("userId"),
+                userInfo.get("password"),
+                userInfo.get("name"),
+                userInfo.get("email"));
         return userService.create(user);
     }
 }

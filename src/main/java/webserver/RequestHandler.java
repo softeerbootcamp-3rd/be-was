@@ -8,17 +8,12 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Util;
 import view.OutputView;
 
 import static config.WebServerConfig.userController;
@@ -44,15 +39,15 @@ public class RequestHandler implements Runnable {
             RequestHeaderDto requestHeaderDto = RequestParser.parseRequestHeader(br);
             OutputView.printRequest(requestLineDto, requestHeaderDto);
 
-            URI uri = new URI("http://" + requestDto.getHost() + path);
-            if (uri.getQuery() == null) {
-                createResponse(out, requestDto.getPath());
+            String queryString = requestLineDto.getQueryString();
+            if (queryString == null) {
+                createResponse(out, requestLineDto.getPath());
             }
-            if (method.equals("GET") && path.startsWith("/user/create")) {
-                userController.create(uri);
+            if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
+                userController.create(requestLineDto.getQueryString());
                 redirect(out);
             }
-        } catch (IOException | URISyntaxException | IllegalAccessException e) {
+        } catch (IOException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }
