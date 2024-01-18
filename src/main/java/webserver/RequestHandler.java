@@ -11,6 +11,7 @@ import java.util.Map;
 import config.ControllerHandler;
 import config.HTTPRequest;
 import config.HTTPResponse;
+import config.ResponseCode;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,51 +67,56 @@ public class RequestHandler implements Runnable {
             // 적절한 컨트롤러 핸들러를 찾았을 경우, 해당 핸들러의 메소드 호출
             if (controllerHandler != null) {
                 response = controllerHandler.toController(request);
-            } else {
+                byte[] head = response.getHead();
+                byte[] body = response.getBody();
 
-                //400번대 -> 잘못된 요청
-                response = null;
+                dos.write(head, 0, head.length);
+                dos.writeBytes("\r\n");
+                dos.write(body, 0, body.length);
+                dos.flush();
+            } else {
+                response = new HTTPResponse("HTTP/1.1", ResponseCode.NOT_FOUND.code, ResponseCode.NOT_FOUND.toString());
             }
 
             //////////새로 작성중 끝////////////////////////////
 
 
-
-            // 1. 입력된 url이 /index.html인경우
-            if(url.equals("/index.html")) {
-
-                // 1. File이라는 객체를 templateFilePath + url로 접근
-                // 2. File객체를 Path객체로 변환 후 내용을 body에 저장
-                Path path = new File(templateFilePath + url).toPath();
-                byte[] body = Files.readAllBytes(path);
-                //클라이언트에게 (헤더 + 바디) 응답
-                response200Header(dos, body.length);
-                responseBody(dos, body);
-            }
-            // 2. 입력된 url이 /user인경우
-            else if(url.split("/")[1].equals("user")){
-                // 2-1. /user/form.html 인경우
-                if(url.split("/")[2].equals("form.html")){
-                    Path path = new File(templateFilePath+url).toPath();
-                    byte[] body = Files.readAllBytes(path);
-
-                    response200Header(dos, body.length);
-                    responseBody(dos, body);
-                }
-                // 2-2. /user/create? ... 인경우
-                else if(url.split("/")[2].startsWith("create?")){
-                    String data =  url.split("/")[2].split("\\?")[1];
-                    System.out.println("전달 받은 파라미터 원형: "+data);
-                    //userId=asdf&password=sadf&name=asdf&email=asdf%40asdf
-                    Map<String,String> map = querytoMap(data);
-                    User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
-                    users.add(user);
-                    byte[] body = user.toString().getBytes();
-                    System.out.println(user);
-                    response200Header(dos, body.length);
-                    responseBody(dos, body);
-                }
-            }
+//
+//            // 1. 입력된 url이 /index.html인경우
+//            if(url.equals("/index.html")) {
+//
+//                // 1. File이라는 객체를 templateFilePath + url로 접근
+//                // 2. File객체를 Path객체로 변환 후 내용을 body에 저장
+//                Path path = new File(templateFilePath + url).toPath();
+//                byte[] body = Files.readAllBytes(path);
+//                //클라이언트에게 (헤더 + 바디) 응답
+//                response200Header(dos, body.length);
+//                responseBody(dos, body);
+//            }
+//            // 2. 입력된 url이 /user인경우
+//            else if(url.split("/")[1].equals("user")){
+//                // 2-1. /user/form.html 인경우
+//                if(url.split("/")[2].equals("form.html")){
+//                    Path path = new File(templateFilePath+url).toPath();
+//                    byte[] body = Files.readAllBytes(path);
+//
+//                    response200Header(dos, body.length);
+//                    responseBody(dos, body);
+//                }
+//                // 2-2. /user/create? ... 인경우
+//                else if(url.split("/")[2].startsWith("create?")){
+//                    String data =  url.split("/")[2].split("\\?")[1];
+//                    System.out.println("전달 받은 파라미터 원형: "+data);
+//                    //userId=asdf&password=sadf&name=asdf&email=asdf%40asdf
+//                    Map<String,String> map = querytoMap(data);
+//                    User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+//                    users.add(user);
+//                    byte[] body = user.toString().getBytes();
+//                    System.out.println(user);
+//                    response200Header(dos, body.length);
+//                    responseBody(dos, body);
+//                }
+//            }
 
         } catch (IOException e) {
             logger.error(e.getMessage());

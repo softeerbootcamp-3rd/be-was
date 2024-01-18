@@ -19,41 +19,17 @@ public class HTTPRequest{
     public String getMethod() {
         return method;
     }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
     public String getUrl() {
         return url;
     }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getHTTPType() {
         return HTTPType;
     }
-
-    public void setHTTPType(String HTTPType) {
-        this.HTTPType = HTTPType;
-    }
-
     public HashMap<String, String> getHead() {
         return head;
     }
-
-    public void setHead(HashMap<String, String> head) {
-        this.head = head;
-    }
-
     public HashMap<String, String> getBody() {
         return body;
-    }
-
-    public void setBody(HashMap<String, String> body) {
-        this.body = body;
     }
 
     @Override
