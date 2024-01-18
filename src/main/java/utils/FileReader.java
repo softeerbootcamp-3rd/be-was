@@ -32,8 +32,8 @@ public class FileReader {
 
 
     public static String getBasePath(String requestURL) {
-        if(requestURL.contains("/css/") || requestURL.contains("/fonts/") ||requestURL.contains("/images/") ||
-                requestURL.contains("/js/") || requestURL.contains(".ico"))
+        if(requestURL.startsWith("/css/") || requestURL.startsWith("/fonts/") ||requestURL.startsWith("/images/") ||
+                requestURL.startsWith("/js/") || requestURL.contains(".ico"))
             return STATIC;
 
         return TEMPLATE;
