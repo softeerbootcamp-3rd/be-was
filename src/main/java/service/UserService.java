@@ -1,7 +1,6 @@
 package service;
 
 import db.Database;
-import dto.UserDto;
 import model.User;
 
 import java.util.Optional;
