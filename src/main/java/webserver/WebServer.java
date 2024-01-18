@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -22,14 +23,17 @@ public class WebServer {
         }
 
         ExecutorService executorService = Executors.newFixedThreadPool(50);
+
         UserService userService = new UserService();
+        UserController userController = new UserController(userService);
+        UserHandler userHandler = new UserHandler(userController);
 
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                executorService.execute(new RequestHandler(connection, userService));
+                executorService.execute(new RequestHandler(connection, userHandler));
             }
         } finally {
             executorService.shutdownNow();
