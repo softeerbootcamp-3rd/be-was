@@ -1,8 +1,17 @@
 package service;
+
+import model.RequestHeader;
+
 public class ResourceService {
 
+    private String fileExtension;
 
-    public String getPath(String file_extension, String path) {
+    public String separatedFileExtension(RequestHeader rh){
+        String[] parts = rh.getPath().split("\\.");
+        return parts[parts.length-1];
+    }
+
+    public String getDetailPath(String file_extension, String path) {
         if (file_extension.equals("html")) {
             return "./src/main/resources/templates" + path;
         }

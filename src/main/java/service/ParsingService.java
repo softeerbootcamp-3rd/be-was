@@ -9,25 +9,47 @@ import webserver.WebServer;
 import java.io.BufferedReader;
 
 public class ParsingService {
+
     public ParsingService(BufferedReader br, RequestHeader rh) throws IOException {
         final Logger logger = LoggerFactory.getLogger(WebServer.class);
-        String line = br.readLine();
 
-        //logger.debug(line);
-        rh.setGeneralHeader(line);
-        while(!line.isEmpty()){
-            line = br.readLine();
-            //logger.debug(line);
-
-            if(line.contains("Accept")) {
-                if (line.contains("Language")) rh.setAcceptLanguage(line);
-                else if(line.contains("Encoding")) rh.setAcceptEncoding(line);
-                else rh.setAccpet(line);
-            }
-
-            else if(line.contains("Upgrade-Insecure-Requests")) rh.setUpgrade_insecure_requests(line);
-        }
-
+        headerParsing(br, rh);
+        separatedGeneralHeader(rh);
     }
 
+    public void headerParsing(BufferedReader br, RequestHeader rh) throws IOException {
+        String line = br.readLine();
+        rh.setGeneralHeader(line);
+
+        while(!line.isEmpty()){
+            line = br.readLine();
+            switch(line) {
+                case "Accept-Language":
+                    rh.setAcceptLanguage(line);
+                    break;
+                case "Accept-Encoding":
+                    rh.setAcceptEncoding(line);
+                    break;
+                case "Accept":
+                    rh.setAccpet(line);
+                    break;
+                case "Upgrade-Insecure-Requests":
+                    rh.setUpgradeInsecureRequests(line);
+                    break;
+            }
+        }
+    }
+
+    public void separatedGeneralHeader(RequestHeader rh){
+        String[] tokens = rh.getGeneralHeader().split(" ");
+        String httpMethod = tokens[0];
+        String path = tokens[1];
+
+        if(path.equals("/")) path = "/index.html";
+
+        rh.setHttpMethod(httpMethod);
+        rh.setPath(path);
+    }
 }
+
+

@@ -17,8 +17,7 @@ public class CreateUserService {
 
     public CreateUserService(Database db, String path) {
         try {
-            String partPath = path.split("\\?")[1];
-            String[] userInformation = partPath.split("&");
+            String[] userInformation = path.split("\\?")[1].split("&");
             String[] information = new String[4];
 
             for (int i = 0; i < userInformation.length; i++) {
@@ -68,7 +67,5 @@ public class CreateUserService {
             logger.debug(">>중복된 UserId : {}",userId);
             this.url = "/user/form_failed.html";
         }
-
-
     }
 }
