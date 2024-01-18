@@ -1,9 +1,15 @@
 package service;
 
+import config.AppConfig;
 import dto.HttpResponseDto;
 import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.FileDetector;
+import webApplicationServer.Exception.NotFound;
+import webserver.RequestHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,45 +17,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class StaticResponseBuilderImpl implements StaticResponseBuilder{
+    private final FileDetector fileDetector;
+
+    public StaticResponseBuilderImpl(FileDetector fileDetector) {
+        this.fileDetector = fileDetector;
+    }
 
     private static class StaticResponseBuilderHolder{
-        private static final StaticResponseBuilder INSTANCE = new StaticResponseBuilderImpl();
+        private static final StaticResponseBuilder INSTANCE = new StaticResponseBuilderImpl(AppConfig.fileDetector());
     }
     public static StaticResponseBuilder getInstance(){return StaticResponseBuilderHolder.INSTANCE;}
-    public static final String TEMPLATES_RESOURCE = "src/main/resources/templates";
-    public static final String STATIC_RESOURCES = "src/main/resources/static";
+    private static final Logger logger = LoggerFactory.getLogger(StaticResponseBuilder.class);
     @Override
     public void build(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setContent(getFile(httpRequest));
-        httpResponseDto.setStatus(Status.OK);
-        httpResponseDto.setContentType(getContentType(httpRequest));
-    }
-
-    private ContentType getContentType(HttpRequest request) {
-        if(request.getHeaders().getAccept().contains("css")){
-            return ContentType.CSS;
-        }
-        if(request.getHeaders().getAccept().contains("js")){
-            return ContentType.JAVASCRIPT;
-        }
-        if(request.getHeaders().getAccept().contains("html")){
-            return ContentType.HTML;
-        }
-        return ContentType.MIME;
-    }
-
-    private Path getFilePath(HttpRequest request) {
-        String filePath = request.getStartLine().getPathUrl();
-        if (filePath.contains("html")) {
-            return new File(TEMPLATES_RESOURCE + filePath).toPath();
-        }
-        return new File(STATIC_RESOURCES + filePath).toPath();
-    }
-    public byte[] getFile(HttpRequest request) {
         try {
-            return Files.readAllBytes(getFilePath(request));
-        } catch (IOException e) {
-            return new byte[0];
+            httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
+            httpResponseDto.setStatus(Status.OK);
+            httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept()));
+        } catch (NotFound e) {
+            logger.error("파일을 찾을 수 없습니다." + e.getMessage());
+            httpResponseDto.setStatus(Status.REDIRECT);
+            httpResponseDto.setContentType(ContentType.HTML);
+            httpResponseDto.setLocation("/error/not_found.html");
+            httpResponseDto.setContent(fileDetector.getNotFound());
         }
     }
 }

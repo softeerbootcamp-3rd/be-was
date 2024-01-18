@@ -8,6 +8,7 @@ import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileDetector;
 import webApplicationServer.Exception.BadRequestException;
 import webApplicationServer.Exception.InternalServerError;
 import webApplicationServer.service.UserService;
@@ -16,6 +17,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class UserControllerImpl implements UserController{
+    private static class UserControllerHolder{
+        public static final UserController INSTANCE = new UserControllerImpl(AppConfig.userService());
+    }
+    public static UserController getInstance() {
+        return UserControllerHolder.INSTANCE;
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
@@ -31,6 +39,8 @@ public class UserControllerImpl implements UserController{
                 UserSignUpDto userSignUpDto = getPathParameter(pathUrl);
                 userService.signUp(userSignUpDto);
                 httpResponseDto.setStatus(Status.REDIRECT);
+                httpResponseDto.setLocation("/user/login.html");
+                httpResponseDto.setContentType(ContentType.PLAIN);
             }
         } catch (BadRequestException e) {
             httpResponseDto.setStatus(Status.BAD_REQUEST);
@@ -40,13 +50,6 @@ public class UserControllerImpl implements UserController{
             logger.error("InternalServerError 발생" + e.getMessage());
         }
     }
-    private static class UserControllerHolder{
-        public static final UserController INSTANCE = new UserControllerImpl(AppConfig.userService());
-    }
-    public static UserController getInstance() {
-        return UserControllerHolder.INSTANCE;
-    }
-
     private UserSignUpDto getPathParameter(String pathUrl){
         HashMap<String, String> map = new HashMap<>();
         String[] splitUrl = pathUrl.split("\\?");
