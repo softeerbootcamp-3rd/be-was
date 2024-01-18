@@ -25,6 +25,7 @@ import static config.WebServerConfig.userController;
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final String RESOURCES_PATH = "src/main/resources/";
+    private static final String INDEX_FILE_PATH = "/index.html";
 
     private Socket connection;
 
@@ -86,7 +87,7 @@ public class RequestHandler implements Runnable {
 
     private void redirect(OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        response302Header(dos);
+        response302Header(dos, INDEX_FILE_PATH);
     }
 
     private static String getFilePath(String url) {
@@ -110,8 +111,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void response302Header(DataOutputStream dos) {
-        String location = "/index.html";
+    private void response302Header(DataOutputStream dos, String location) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + location);
