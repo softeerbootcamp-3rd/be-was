@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SimpleRequestDispatcher implements RequestDispatcher{
-    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleRequestDispatcher.class);
     @Override
     public void forward(Request request, Response response, String viewPath,DataOutputStream dos) throws IOException {
         File file = new File(getAbsolutePath(viewPath));

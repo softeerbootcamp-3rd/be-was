@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Request {
     //상수 및 클래스 변수
-    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
+    private static final Logger logger = LoggerFactory.getLogger(Request.class);
     //인스턴스 변수
     private String method;
     private String url;

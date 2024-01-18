@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
-    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Override
     public String process(Request req, Map<String, String> model) {

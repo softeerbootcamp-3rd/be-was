@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Response {
-    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
+    private static final Logger logger = LoggerFactory.getLogger(Response.class);
     private String location;
     private HttpStatus status;
     private String contentType = "";

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpContentType {
-    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpContentType.class);
     private static final Map<String,String> httpContentType = new HashMap<>();
 
     static {
