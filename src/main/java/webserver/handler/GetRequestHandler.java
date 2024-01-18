@@ -1,7 +1,7 @@
 package webserver.handler;
 
-import annotation.GetMapping;
-import annotation.RequestParam;
+import webserver.annotation.GetMapping;
+import webserver.annotation.RequestParam;
 import controller.TestController;
 import controller.UserController;
 import webserver.exception.GeneralException;

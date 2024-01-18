@@ -1,6 +1,6 @@
 package controller;
 
-import annotation.GetMapping;
+import webserver.annotation.GetMapping;
 
 public class TestController {
     @GetMapping(path = "/test")

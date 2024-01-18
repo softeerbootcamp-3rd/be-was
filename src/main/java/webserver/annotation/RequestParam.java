@@ -1,4 +1,4 @@
-package annotation;
+package webserver.annotation;
 
 
 import java.lang.annotation.ElementType;

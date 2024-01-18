@@ -1,7 +1,7 @@
 package controller;
 
-import annotation.GetMapping;
-import annotation.RequestParam;
+import webserver.annotation.GetMapping;
+import webserver.annotation.RequestParam;
 import webserver.exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
