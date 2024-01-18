@@ -1,5 +1,4 @@
-import controller.StaticController;
-import controller.TemplateController;
+import controller.ResourceController;
 import http.HttpStatus;
 import http.Request;
 import http.Response;
@@ -31,7 +30,7 @@ public class StaticTest {
         //given
         Request req = new Request("GET","/css/styles.css");
         Response res = new Response();
-        Object handler = new StaticController();
+        Object handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -47,7 +46,7 @@ public class StaticTest {
         //given
         Request req = new Request("GET","/css/styles1.css");
         Response res = new Response();
-        Object handler = new StaticController();
+        Object handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -63,7 +62,7 @@ public class StaticTest {
         //given
         Request req = new Request("GET","/js/scripts.js");
         Response res = new Response();
-        Object handler = new StaticController();
+        Object handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -79,7 +78,7 @@ public class StaticTest {
         //given
         Request req = new Request("GET","/js/scripts1.js");
         Response res = new Response();
-        Object handler = new StaticController();
+        Object handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);

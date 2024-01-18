@@ -1,4 +1,3 @@
-import controller.TemplateController;
 import controller.UserController;
 import db.Database;
 import http.HttpStatus;
