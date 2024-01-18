@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
+import controller.Controller;
+import controller.ResourceController;
 import controller.UserController;
-import controller.StaticController;
-import controller.TemplateController;
 import http.HttpStatus;
 import http.Request;
 import http.Response;
@@ -23,7 +23,7 @@ public class FrontController implements Runnable {
     private Socket connection;
     private Request req;
 
-    private final Map<String, Object> handlerMappingMap = new HashMap<>();
+    private final Map<String, Controller> handlerMappingMap = new HashMap<>();
     private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
     private final ViewResolver viewResolver = new ViewResolver();
     public FrontController(Socket connectionSocket) {
@@ -38,9 +38,6 @@ public class FrontController implements Runnable {
     }
 
     private void initHandlerMappingMap() {
-
-        handlerMappingMap.put("/*.html",new TemplateController());
-        handlerMappingMap.put("/static/*",new StaticController());
         handlerMappingMap.put("/user/*", new UserController());
     }
 
@@ -56,7 +53,7 @@ public class FrontController implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             //handler mapping
-            Object handler = getHandler(req);
+            Controller handler = getHandler(req);
 
             if (handler == null) {
                 logger.debug("[RequestHandler.run] handler Not found");
@@ -77,7 +74,7 @@ public class FrontController implements Runnable {
         }
     }
 
-    private MyHandlerAdapter getHandlerAdapter(Object handler) {
+    private MyHandlerAdapter getHandlerAdapter(Controller handler) {
         for (MyHandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
                 return adapter;
@@ -86,12 +83,9 @@ public class FrontController implements Runnable {
         throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
     }
 
-    private Object getHandler(Request req) {
-        if (viewResolver.isTemplate(req.getUrl())) {
-            return handlerMappingMap.get("/*.html");
-        }
-        else if(viewResolver.isStatic(req.getUrl())){
-            return handlerMappingMap.get("/static/*");
+    private Controller getHandler(Request req) {
+        if (viewResolver.isTemplate(req.getUrl())||viewResolver.isStatic(req.getUrl())) {
+            return new ResourceController();
         }
         for (String key : handlerMappingMap.keySet()) {
             if(isPatternMatch(key,req.getUrl())){
