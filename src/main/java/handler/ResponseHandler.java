@@ -1,56 +1,52 @@
 package handler;
 
+import http.request.HttpRequest;
+import logger.CustomLogger;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import logger.CustomLogger;
 
 public class ResponseHandler {
-    private boolean isStaticResource;
-    private DataOutputStream dos;
-    private String path;
 
+    private ResponseHandler() {}
 
-    private ResponseHandler(boolean isStaticResource, OutputStream out, String path) {
-        this.isStaticResource = isStaticResource;
-        this.dos = new DataOutputStream(out);
-        this.path = path;
+    private static class SingletonHelper {
+        private static final ResponseHandler SINGLETON = new ResponseHandler();
     }
 
-    public static ResponseHandler initBuilder(boolean isStaticResource, OutputStream out, String path) {
-        return new ResponseHandler(isStaticResource, out, path);
+    public static ResponseHandler getInstance(){
+        return SingletonHelper.SINGLETON;
     }
 
-    public void process() {
-        if (isStaticResource) {
-            staticResponse();
-        } else {
-            dynamicResponse();
-        }
+    public void process(OutputStream out, byte[] body, HttpRequest httpRequest) {
+        DataOutputStream dos = new DataOutputStream(out);
+
+        if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".html") != -1)
+            response200Header(dos, body.length, "text/html");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".css") != -1)
+            response200Header(dos, body.length, "text/css");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".js") != -1)
+            response200Header(dos, body.length,"application/javascript");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".png") != -1)
+            response200Header(dos, body.length,"image/png");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".eot") != -1)
+            response200Header(dos, body.length,"application/vnd.ms-fontobject");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".ttf") != -1)
+            response200Header(dos, body.length,"application/font-sfnt");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".svg") != -1)
+            response200Header(dos, body.length,"image/svg+xml");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".woff") != -1)
+            response200Header(dos, body.length,"font/woff");
+        else if (httpRequest.getHttpRequestStartLine().getRequestTarget().lastIndexOf(".woff2") != -1)
+            response200Header(dos, body.length,"font/woff2");
+        responseBody(dos, body);
     }
 
-    // 정적 처리
-    private void staticResponse() {
-        try {
-            byte[] body = Files.readAllBytes(Paths.get("src/main/resources/templates" + this.path));
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            CustomLogger.printError(e);
-        }
-    }
-
-    // 동적 처리
-    private void dynamicResponse() {
-        // TODO: 동적 처리
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
