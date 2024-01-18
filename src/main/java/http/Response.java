@@ -55,11 +55,11 @@ public class Response {
     }
     private void setResponseHeader(DataOutputStream dos, int lengthOfBodyContent, Request req) {
         try {
-            dos.writeBytes("HTTP/1.1 " + status +"\r\n");
-            dos.writeBytes(getContentTypeString(req));
+            dos.writeBytes(new StringBuilder("HTTP/1.1 ").append(status).append("\r\n").toString());
+            dos.writeBytes(new StringBuilder(getContentTypeString(req)).toString());
             dos.writeBytes("charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("Location : " + location + "\r\n");
+            dos.writeBytes(new StringBuilder("Content-Length: ").append(lengthOfBodyContent).append("\r\n").toString());
+            dos.writeBytes(new StringBuilder("Location : ").append(location).append("\r\n").toString());
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -77,9 +77,9 @@ public class Response {
 
     private String getContentTypeString(Request req){
         if(req.getRequestParam().containsKey("content")) {
-            logger.debug("content = "+req.getRequestParam().get("content"));
+            logger.debug(new StringBuilder("content = ").append(req.getRequestParam().get("content")).toString());
             setContentType(req.getRequestParam().get("content"));
-            return "Content-Type: "+contentType+";";
+            return new StringBuilder("Content-Type: ").append(contentType).append(";").toString();
         }
         return "";
     }

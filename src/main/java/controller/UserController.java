@@ -16,7 +16,7 @@ public class UserController implements Controller{
 
     @Override
     public String process(Request req, Map<String, String> model) {
-        logger.debug("[MemberFormController.process] req.getUrl() : "+req.getUrl());
+        logger.debug(new StringBuilder("[MemberFormController.process] req.getUrl() : ").append(req.getUrl()).toString());
         String subPath = req.getUrl().replace("/user/", "");
         switch (subPath) {
             case "create":

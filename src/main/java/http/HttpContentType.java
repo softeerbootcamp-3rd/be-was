@@ -21,8 +21,8 @@ public class HttpContentType {
     }
 
     public static String getValue(String key){
-        logger.debug("[http.HttpContentType.getValue] key = "+key);
-        logger.debug("[http.HttpContentType.getValue] contentType = "+httpContentType.get(key));
+        logger.debug(new StringBuilder("[http.HttpContentType.getValue] key = ").append(key).toString());
+        logger.debug(new StringBuilder("[http.HttpContentType.getValue] contentType = ").append(httpContentType.get(key)).toString());
         return httpContentType.get(key);
     }
 }

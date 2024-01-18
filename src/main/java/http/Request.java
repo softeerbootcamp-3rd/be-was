@@ -57,8 +57,8 @@ public class Request {
 
     public void requestInfo(){
         logger.debug("method : "+this.method);
-        logger.debug("url : "+this.url);
-        logger.debug("[ requestParams ]");
+        logger.debug(new StringBuilder("url : ").append(url).toString());
+        logger.debug(new StringBuilder("[ requestParams ]").toString());
         for (Map.Entry<String, String> entry : this.requestParam.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
