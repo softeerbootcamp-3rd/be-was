@@ -30,11 +30,6 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                // 기존 Thread를 사용하던 코드
-//                Thread thread = new Thread(new RequestHandler(connection));
-//                thread.start();
-
-
                 // 요청을 처리하는 작업을 Runnable로 생성
                 Runnable requestHandler = new RequestHandler(connection);
                 // ExecutorService를 이용하여 작업을 실행
