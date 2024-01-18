@@ -2,11 +2,18 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.function.BiConsumer;
 
-import model.RequestDto;
+import constant.ErrorCode;
+import constant.HttpStatus;
+import dto.RequestDto;
+import exception.WebServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileManager;
+import util.MethodMapper;
+import util.RequestParser;
+
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -26,57 +33,23 @@ public class RequestHandler implements Runnable {
             RequestDto requestDto = RequestParser.getRequestDto(in);
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = getFileByPath(requestDto.getPath());
+            BiConsumer<DataOutputStream, RequestDto> method;
+            byte[] body;
 
-            if (body == null) { // 해당 경로의 파일이 존재하지 않을 때
-                Object o = ServletContainer.find(requestDto.getMethod(), requestDto.getPath(), requestDto.getParams());
-                body = o.toString().getBytes();
+            if ((method = MethodMapper.getMethod(requestDto.getMethodAndPath())) != null) {
+                try {
+                    method.accept(dos, requestDto);
+                } catch (WebServerException e) {
+                    ResponseHandler.sendError(dos, e.getErrorCode());
+                }
+            } else if (requestDto.getMethod().equals("GET") && (body = FileManager.getFileByPath(requestDto.getPath())) != null) {
+                ResponseHandler.sendBody(dos, HttpStatus.OK, body);
+            } else {
+                ResponseHandler.sendError(dos, ErrorCode.PAGE_NOT_FOUND);
             }
 
-            response200Header(dos, body.length);
-            responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String Referer) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Location: " + Referer + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private byte[] getFileByPath(String path) throws IOException {
-        File file = new File("src/main/resources/templates" + path);
-        if (file.exists()) {
-            return Files.readAllBytes(file.toPath());
-        }
-
-        return null;
     }
 }
