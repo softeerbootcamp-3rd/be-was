@@ -7,6 +7,8 @@ import factory.HttpResponseFactoryImpl;
 import service.*;
 import webApplicationServer.controller.UserController;
 import webApplicationServer.controller.UserControllerImpl;
+import webApplicationServer.service.UserService;
+import webApplicationServer.service.UserServiceImpl;
 
 public class AppConfig {
     public static HttpResponseSender httpResponseService() {
@@ -27,6 +29,10 @@ public class AppConfig {
     }
 
     public static DynamicResponseBuilder dynamicResponseBuilder() {
-        return new DynamicResponseBuilderImpl();
+        return DynamicResponseBuilderImpl.getInstance();
+    }
+
+    public static UserService userService() {
+        return UserServiceImpl.getInstance();
     }
 }
