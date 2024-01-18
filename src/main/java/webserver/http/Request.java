@@ -15,8 +15,6 @@ public class Request {
     String requestTarget;
     String httpVersion;
     Float httpVersionNum;
-
-
     Mime responseMimeType;
     private final ArrayList<String> headerContent;
     private final ArrayList<String> bodyContent;
@@ -37,6 +35,10 @@ public class Request {
 
         requestHandler = new RequestHandler();
         requestHandler.handleRequest(this);
+    }
+
+    public void addRequestHeader(String key, String val){
+        requestHeader.put(key, val);
     }
 
     private void parseRequestHeader() {
@@ -128,6 +130,10 @@ public class Request {
 
     public Mime getResponseMimeType() {
         return responseMimeType;
+    }
+
+    public HashMap<String, String> getRequestHeader() {
+        return requestHeader;
     }
 
 }

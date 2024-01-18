@@ -10,6 +10,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
@@ -25,17 +27,25 @@ public class Response {
         this.responseHeader = new HashMap<>();
         setStatusCode(request);
         setBody(request);
-        setHeader(responseBody.length);
+        setHeader(request);
     }
 
-    private void setHeader(int bodyLength) {
+    private void setHeader(Request request) {
         responseHeader.put("Date",ZonedDateTime.now().format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)));
         responseHeader.put("Server", "MyServer/1.0" );
-        responseHeader.put("Content-Length", Integer.toString(bodyLength));
+        responseHeader.put("Content-Length", Integer.toString(responseBody.length));
         responseHeader.put("Content-Type", "text/html; charset=UTF-8");
+        Optional.ofNullable(request.getRequestHeader().get("Location"))
+                .ifPresent(location -> responseHeader.put("Location", location));
     }
 
     public void setStatusCode(Request request) {
+        if(request.getRequestHeader().get("Location")!=null){
+            this.statusCode = StatusCode.FOUND.getCode();
+            this.statusText = StatusCode.FOUND.name();
+            return;
+        }
+
         this.statusCode = StatusCode.OK.getCode();
         this.statusText = StatusCode.OK.name();
     }

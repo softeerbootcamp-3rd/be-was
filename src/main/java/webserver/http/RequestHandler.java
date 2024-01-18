@@ -37,6 +37,8 @@ public class RequestHandler {
         HashMap<String,String> formData = userFormDataParser.ParseData();
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
         System.out.println(user.toString());
+        //리다이렉션 헤더에 넣기
+        request.addRequestHeader("Location","/user/form.html");
     }
 
     private void handleNotFound(Request request) {
