@@ -2,8 +2,10 @@ package controller;
 
 import dto.HttpResponseDto;
 import dto.UserDto;
+import utils.ContentType;
 import utils.HttpRequest;
 import service.UserService;
+import utils.HttpStatus;
 import utils.Parser;
 
 /**
@@ -36,6 +38,8 @@ public class UserController {
                 case "email":
                     email = value;
                     break;
+                default:
+                    return new HttpResponseDto(HttpStatus.BAD_REQUEST, ContentType.HTML);
             }
         }
 

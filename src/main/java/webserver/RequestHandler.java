@@ -43,7 +43,7 @@ public class RequestHandler implements Runnable {
                 // 정적 자원 처리
                 logger.info("정적 파일 호출");
                 if (requestUrl.equals("/")) {
-                    requestUrl = "index.html";
+                    requestUrl = "/index.html";
                 }
 
                 String basePath = FileReader.getBasePath(requestUrl);
