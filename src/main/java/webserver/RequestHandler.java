@@ -15,10 +15,9 @@ import org.slf4j.LoggerFactory;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final FrontController frontController = new FrontController();
-    static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096;
 
     private Socket connection;
-    static final String DEFAULT_STATIC_PATH = "./src/main/resources/templates";
 
 
     public RequestHandler(Socket connectionSocket) {
