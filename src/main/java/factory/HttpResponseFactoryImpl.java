@@ -19,12 +19,24 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
     @Override
     public HttpResponse create(HttpResponseDto responseDto){
         StatusLine statusLine = getStatusLine(responseDto.getVersion(), responseDto.getStatus());
-        ResponseHeaders responseHeaders = getResponseHeaders(responseDto.getContentType()
-                , responseDto.getContentLength(), responseDto.getCharSet());
-        return new HttpResponse(statusLine, responseHeaders, new Body(responseDto.getContent()));
+        ResponseHeaders responseHeaders = getResponseHeaders(responseDto);
+        Body body = getBody(responseDto);
+        return new HttpResponse(statusLine, responseHeaders, body);
     }
-    private ResponseHeaders getResponseHeaders(ContentType contentType, int contentLength, String charSet) {
-        return new ResponseHeaders(contentType, contentLength, charSet);
+
+    private Body getBody(HttpResponseDto responseDto) {
+        if (responseDto.getContent() == null) {
+            return null;
+        }
+        return new Body(responseDto.getContent());
+    }
+
+    private ResponseHeaders getResponseHeaders(HttpResponseDto dto) {
+        ResponseHeaders responseHeaders = new ResponseHeaders(dto.getContentType(), dto.getContentLength(), dto.getCharSet());
+        if(dto.getLocation() != null){
+            responseHeaders.setLocation(dto.getLocation());
+        }
+        return responseHeaders;
     }
     public StatusLine getStatusLine(String version, Status status) {
         return new StatusLine(version, status);
