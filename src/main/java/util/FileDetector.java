@@ -42,6 +42,9 @@ public class FileDetector {
     }
 
     private Path getFilePath(String filePath) {
+        if(filePath.equals("/")){
+            return new File(TEMPLATES_RESOURCE + "/index.html").toPath();
+        }
         if (filePath.contains("html")) {
             return new File(TEMPLATES_RESOURCE + filePath).toPath();
         }
