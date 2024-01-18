@@ -13,7 +13,7 @@ public class Request {
     //인스턴스 변수
     private String method;
     private String url;
-    private String location = "/index.html";
+    private String location = "";
     private Map<String,String> requestParam = new HashMap<>();
     //생성자
     public Request() {
