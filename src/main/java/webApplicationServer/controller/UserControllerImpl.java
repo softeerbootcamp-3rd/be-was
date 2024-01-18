@@ -51,9 +51,8 @@ public class UserControllerImpl implements UserController {
                 map.put(value[0], value[1]);
             });
             return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
             throw new BadRequestException("Please fill in all the necessary factors", e);
         }
-
     }
 }
