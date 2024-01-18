@@ -48,6 +48,8 @@ public class RequestHandler implements Runnable {
                         .build()
                         .send(out, logger);
             }
+            in.close();
+            out.close();
         } catch (IllegalStateException | IOException e) {
             logger.error("error processing request: {}", e.getMessage());
             HttpResponse.builder()
@@ -56,5 +58,6 @@ public class RequestHandler implements Runnable {
                     .build()
                     .send(out, logger);
         }
+
     }
 }
