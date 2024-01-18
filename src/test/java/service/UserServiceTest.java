@@ -3,27 +3,29 @@ package service;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import request.SignUpRequest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
+@DisplayName("UserServiceTest 클래스")
 class UserServiceTest {
 
-    private final UserService userService = UserService.getInstance();
-    SignUpRequest signUpRequest;
+    private UserService userService;
 
     @BeforeEach
     void init() {
-        signUpRequest = new SignUpRequest("userId=test1&password=1234&name=test1&email=test1@test.com");
-        userService.signUp(signUpRequest);
+        this.userService = UserService.getInstance();
     }
 
-    @Test
-    @DisplayName("회원가입이 정상적으로 처리되는지 확인 ")
-    void signUp() {
-        // given
-        SignUpRequest request = new SignUpRequest("userId=test2&password=1234&name=test2&email=test2@test.com");
+    @ParameterizedTest
+    @MethodSource("validUserParameters")
+    @DisplayName("회원가입이 정상적으로 처리되는지 확인")
+    void sign_up_success(String request) {
 
         // when
         userService.signUp(request);
@@ -33,30 +35,46 @@ class UserServiceTest {
         assertThat(findUser).isNotNull();
     }
 
-    @Test
-    @DisplayName("회원정보 단건 조회")
-    void findUser() {
-        // when
-        User findUser = userService.findUser("test1");
+    @ParameterizedTest
+    @MethodSource("invalidUserParameters")
+    @DisplayName("회원가입 진행 중 매개변수가 유효하지 않으면 예외를 IllegalArgumentException 예외를 발생시키는지 확인")
+    void invalid_param(String request) {
 
-        // then
-        assertThat(findUser.getUserId()).isEqualTo("test1");
-        assertThat(findUser.getPassword()).isEqualTo("1234");
-        assertThat(findUser.getName()).isEqualTo("test1");
-        assertThat(findUser.getEmail()).isEqualTo("test1@test.com");
+        assertThatThrownBy(() -> userService.signUp(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("회원가입에 실패하였습니다.");
     }
 
-    @Test
-    @DisplayName("회원정보 전체 조회")
-    void findUsers() {
-        // given
-        SignUpRequest request = new SignUpRequest("userId=test2&password=1234&name=test2&email=test2@test.com");
+    @ParameterizedTest
+    @MethodSource("invalidMethodParameters")
+    @DisplayName("회원가입 진행 중 요청 메소드가 GET이 아니면 예외를 IllegalArgumentException 예외를 발생시키는지 확인")
+    void invalid_method(String request) {
 
-        // when
-        userService.signUp(request);
-        int userCount = userService.findUsers().size();
+        assertThatThrownBy(() -> userService.signUp(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("회원가입에 실패하였습니다.");
+    }
 
-        // then
-        assertThat(userCount).isEqualTo(2);
+
+    private static Stream<Arguments> validUserParameters() {
+        return Stream.of(
+                Arguments.of("GET userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1")
+        );
+    }
+
+    private static Stream<Arguments> invalidUserParameters() {
+        return Stream.of(
+                Arguments.of("GET userId=test2&password=test2&name=test2 HTTP/1.1"), // email이 없는 경우
+                Arguments.of("GET password=test2&name=test2&email=test2@test.com HTTP/1.1"), // userId가 없는 경우
+                Arguments.of("GET userId=test2&name=test2&email=test2@test.com HTTP/1.1"), // password가 없는 경우
+                Arguments.of("GET userId=test2^password=test2&email=test2@test.com HTTP/1.1") // name이 없는 경우
+        );
+    }
+
+    private static Stream<Arguments> invalidMethodParameters() {
+        return Stream.of(
+                Arguments.of("POST userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1"), // POST 요청인 경우
+                Arguments.of("PUT userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1") // PUT 요청인 경우
+        );
     }
 }
