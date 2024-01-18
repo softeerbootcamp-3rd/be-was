@@ -1,7 +1,7 @@
-package validate;
+package common.validate;
 
-import exception.EmptyFormException;
-import util.Util;
+import common.exception.EmptyFormException;
+import common.util.Util;
 
 public class InputValidate {
 

@@ -1,4 +1,4 @@
-package exception;
+package common.exception;
 
 public class DuplicateUserIdException extends RuntimeException {
 

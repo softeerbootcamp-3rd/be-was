@@ -12,13 +12,13 @@ import java.nio.file.*;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
-import exception.DuplicateUserIdException;
-import exception.EmptyFormException;
+import common.exception.DuplicateUserIdException;
+import common.exception.EmptyFormException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.OutputView;
 
-import static config.WebServerConfig.userController;
+import static common.config.WebServerConfig.userController;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);

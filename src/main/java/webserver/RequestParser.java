@@ -2,7 +2,7 @@ package webserver;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
-import util.Util;
+import common.util.Util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -5,7 +5,7 @@ import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static config.WebServerConfig.userService;
+import static common.config.WebServerConfig.userService;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserServiceTest {

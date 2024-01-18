@@ -1,7 +1,7 @@
 package service;
 
 import db.Database;
-import exception.DuplicateUserIdException;
+import common.exception.DuplicateUserIdException;
 import model.User;
 import java.util.Map;
 

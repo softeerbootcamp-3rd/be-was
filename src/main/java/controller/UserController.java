@@ -1,11 +1,9 @@
 package controller;
 
-import validate.InputValidate;
+import common.validate.InputValidate;
 import webserver.RequestParser;
 
-import java.util.Map;
-
-import static config.WebServerConfig.userService;
+import static common.config.WebServerConfig.userService;
 
 public class UserController {
 

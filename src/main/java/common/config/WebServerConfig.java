@@ -1,4 +1,4 @@
-package config;
+package common.config;
 
 import controller.UserController;
 import service.UserService;

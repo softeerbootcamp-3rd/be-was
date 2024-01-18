@@ -1,4 +1,4 @@
-package view;
+package common.view;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
