@@ -49,7 +49,7 @@ public class Response {
             dos.writeBytes("HTTP/1.1 " + status +"\r\n");
             if(req.getRequestParam().containsKey("content")) {
                 logger.debug("content = "+req.getRequestParam().get("content"));
-                setContentType(req.getUrl());
+                setContentType(req.getRequestParam().get("content"));
                 dos.writeBytes("Content-Type: "+contentType+";");
             }
 
