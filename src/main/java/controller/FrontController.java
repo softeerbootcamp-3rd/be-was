@@ -16,7 +16,7 @@ import java.util.Map;
 public class FrontController {
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-    static String DEFAULT_PAGE = "index";
+    static String DEFAULT_PAGE = "templates/index.html";
 
     public FrontController() {
         initHandlerMappingMap();
@@ -55,7 +55,7 @@ public class FrontController {
     }
 
     private View viewResolver(String viewName) {
-        return new View("./src/main/resources/templates/" + viewName + ".html");
+        return new View("./src/main/resources/" + viewName);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {

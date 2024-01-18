@@ -7,6 +7,6 @@ import java.util.Map;
 public class UserFormController implements UserController {
     @Override
     public ModelView process(Map<String, String> paramMap) {
-        return new ModelView("user/form");
+        return new ModelView("templates/user/form.html");
     }
 }
