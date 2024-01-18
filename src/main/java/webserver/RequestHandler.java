@@ -5,13 +5,11 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import controller.UserController;
 import model.HttpStatus;
 import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.UserService;
 
 import static util.HttpResponse.*;
 
