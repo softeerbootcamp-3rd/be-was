@@ -1,7 +1,7 @@
 package service;
 
 import db.Database;
-import exception.CustomException;
+import exception.WebServerException;
 import model.User;
 
 import java.util.Map;
@@ -16,9 +16,9 @@ public class UserService {
         User newUser = new User(params);
 
         if (Database.findUserById(newUser.getUserId()) != null) {
-            throw new CustomException(USER_ID_DUPLICATED);
+            throw new WebServerException(USER_ID_DUPLICATED);
         } else if (Database.findUserByEmail(newUser.getEmail()) != null) {
-            throw new CustomException(USER_EMAIL_DUPLICATED);
+            throw new WebServerException(USER_EMAIL_DUPLICATED);
         }
 
         Database.addUser(newUser);
