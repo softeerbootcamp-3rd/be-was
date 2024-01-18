@@ -5,7 +5,9 @@ import dto.UserDto;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 import service.UserService;
+import utils.ParamBuilder;
 
 public class UserController implements Controller {
 
@@ -32,14 +34,15 @@ public class UserController implements Controller {
     }
 
     private ResponseDto createUser(String url) {
-        String[] userData = url.split("\\?")[1].split("&");
-        String userId = userData[0].split("=", -1)[1];
-        String password = userData[1].split("=", -1)[1];
-        String name = userData[2].split("=", -1)[1];
-        String email = userData[3].split("=", -1)[1];
+        Map<String, String> params = ParamBuilder.getParams(url);
 
-        UserDto userDto = new UserDto(userId, password, name, email);
-        userService.saveUser(userDto);
+        try {
+            userService.saveUser(params);
+        } catch (NullPointerException e) {
+            return new ResponseDto("", 400, "cannot find parameter.".getBytes());
+        } catch (IllegalArgumentException e) {
+            return new ResponseDto("", 400, "user id already exists.".getBytes());
+        }
 
         String location = "/";
         return new ResponseDto(location, 302, "".getBytes());

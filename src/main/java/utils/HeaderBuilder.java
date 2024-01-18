@@ -5,8 +5,11 @@ import dto.ResponseDto;
 public class HeaderBuilder {
 
     public static String build(ResponseDto responseDto) {
+        if (responseDto.getCode() == 400) {
+            return header400();
+        }
         if (responseDto.getCode() == 404) {
-            return header404(responseDto);
+            return header404();
         }
         if (responseDto.getCode() == 302) {
             return header302(responseDto);
@@ -14,7 +17,12 @@ public class HeaderBuilder {
         return header200(responseDto);
     }
 
-    private static String header404(ResponseDto responseDto) {
+    private static String header400() {
+        return "HTTP/1.1 404 Not Found \r\n"
+                + "\r\n";
+    }
+
+    private static String header404() {
         return "HTTP/1.1 404 Not Found \r\n"
                 + "\r\n";
     }
