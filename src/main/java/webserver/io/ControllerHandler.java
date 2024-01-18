@@ -12,6 +12,7 @@ public class ControllerHandler {
 
   public MyHttpServletResponse handleController() throws InvocationTargetException, IllegalAccessException {
     String controllerReturnValue="";
+    //controller method를 실행하고 string값을 받음 (redirect uri 혹은 resource path)
     controllerReturnValue = (String) method.invoke(controllerInstance, args);
     return new MyHttpServletResponse(controllerReturnValue);
   }

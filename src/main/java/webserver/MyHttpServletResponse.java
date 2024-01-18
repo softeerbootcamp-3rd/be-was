@@ -24,11 +24,13 @@ public class MyHttpServletResponse {
   public MyHttpServletResponse(String controllerReturnValue){
     headers.put("Content-Type","text/html;charset=UTF-8");
     int redirectIndex=controllerReturnValue.indexOf("redirect:");
-    if(redirectIndex!=-1){
+    //redirect 응답일땐 redirectIndex는 0
+    if(redirectIndex==0){
       this.httpStatus=HttpStatus.REDIRECT;
       headers.put("Location",controllerReturnValue.replace("redirect:",""));
       return;
     }
+    //redirect 응답이 아닐 땐 200 응답
     this.httpStatus=HttpStatus.OK;
     setBody(controllerReturnValue);
   }
