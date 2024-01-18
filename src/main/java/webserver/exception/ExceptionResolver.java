@@ -1,7 +1,8 @@
-package webserver;
+package webserver.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.MyHttpServletResponse;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 public class ExceptionResolver {
   private final GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
   private final Logger logger = LoggerFactory.getLogger(ExceptionResolver.class);
-  private HashMap<Class<? extends RuntimeException>, Method> mappedMethod = new HashMap<>();
+  private final HashMap<Class<? extends RuntimeException>, Method> mappedMethod = new HashMap<>();
 
   public ExceptionResolver(){
     Method[] methods = exceptionHandler.getClass().getDeclaredMethods();

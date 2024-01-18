@@ -34,6 +34,9 @@ public class MyHttpServletResponse {
     this.httpStatus=HttpStatus.OK;
     setBody(controllerReturnValue);
   }
+  public MyHttpServletResponse(){
+    httpStatus=HttpStatus.BAD_REQUEST;
+  }
   public HttpStatus getHttpStatus(){
     return this.httpStatus;
   }
