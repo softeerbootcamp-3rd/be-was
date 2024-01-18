@@ -19,7 +19,16 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = connection.getInputStream();
+            out = connection.getOutputStream();
+        } catch (IOException e) {
+            logger.error("error processing request: {}", e.getMessage());
+        }
+
+        try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(reader);
 
@@ -39,8 +48,13 @@ public class RequestHandler implements Runnable {
                         .build()
                         .send(out, logger);
             }
-        } catch (IOException e) {
-            logger.error("Error processing request: {}", e.getMessage());
+        } catch (IllegalStateException | IOException e) {
+            logger.error("error processing request: {}", e.getMessage());
+            HttpResponse.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage())
+                    .build()
+                    .send(out, logger);
         }
     }
 }
