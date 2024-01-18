@@ -26,6 +26,11 @@ public class ResponseBuilder {
             response200Header(dos, body.length);
         } else if(statusCode.equals("302")) {
             response302Header(dos, targetPath);
+        } else if (statusCode.equals("404")) {
+            response404Header(dos);
+        } else {
+            logger.error("지원하지 않는 상태 코드입니다.");
+            return;
         }
         responseBody(dos, body);
     }
@@ -44,6 +49,16 @@ public class ResponseBuilder {
         try {
             dos.writeBytes("HTTP/1.1 302 Found\r\n");
             dos.writeBytes("Location: " + redirectLocation + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private static void response404Header(DataOutputStream dos) {
+        try {
+            dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());

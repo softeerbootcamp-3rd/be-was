@@ -35,7 +35,7 @@ public class RequestDataController {
                 return getFilePath(url);
             } else {
                 logger.debug("유효하지 않은 파일 경로입니다.");
-                return null;
+                return notFound();
             }
         } else if (fileOrApi.equals("API")) {
             if (url.equals("/")) {
@@ -45,10 +45,10 @@ public class RequestDataController {
                 return redirectHome();
             } else {
                 logger.debug("유효하지 않은 API입니다.");
-                return null;
+                return notFound();
             }
         } else {
-            return null;
+            return notFound();
         }
     }
 
@@ -58,5 +58,9 @@ public class RequestDataController {
 
     private static String getFilePath(String filePath) {
         return "200 " + filePath;
+    }
+
+    private static String notFound() {
+        return "404 /notfound.html";
     }
 }
