@@ -1,6 +1,7 @@
 package controller;
 
 
+import request.HttpRequest;
 import util.RequestUrl;
 
 public class HomeController {
@@ -16,7 +17,9 @@ public class HomeController {
         return instance;
     }
 
-    public String route(String path) {
+    public String route(HttpRequest httpRequest) {
+        String path = httpRequest.getPath();
+
         if (path.equals(RequestUrl.HOME.getUrl())) {
             return "302 /index.html";
         }

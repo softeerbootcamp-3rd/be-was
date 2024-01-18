@@ -1,6 +1,6 @@
 package controller;
 
-import request.SignUpRequest;
+import request.HttpRequest;
 import service.UserService;
 import util.RequestUrl;
 
@@ -21,7 +21,10 @@ public class UserController {
     private final UserService userService = UserService.getInstance();
 
     // 요청 URI에 따라 요청을 처리할 컨트롤러를 선택하는 역할
-    public String route(String path) {
+    public String route(HttpRequest httpRequest) {
+
+        String path = httpRequest.getPath();
+
         if (path.startsWith(RequestUrl.USER_FORM.getUrl())) {
             return "200 " + path;
         }
@@ -38,15 +41,15 @@ public class UserController {
             return "200 " + path;
         }
         if (path.startsWith(RequestUrl.USER_CREATE.getUrl())) {
-            signUp(path);
+            signUp(httpRequest);
             return "302 /index.html";
         }
-        return "404 Not Found";
+        throw new IllegalArgumentException("올바르지 않은 요청입니다.");
     }
 
     // 회원가입 요청 처리
-    private void signUp(String request) {
-        SignUpRequest signUpRequest = new SignUpRequest(request); // 회원가입 요청 객체 생성
-        userService.signUp(signUpRequest); // 회원가입 요청 처리
+    private void signUp(HttpRequest httpRequest) {
+        String request = httpRequest.getHttpRequst();
+        userService.signUp(request); // 회원가입 요청 처리
     }
 }
