@@ -16,15 +16,13 @@ public class RequestParser {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
         String line = br.readLine();
-        // 이 부분 스플릿 순서에 대해 다시 생각 -> ? 먼저 하면 나중에 문자열 연산 필요 없음
-        String[] methodAndPath = line.split(" ");
-        String[] pathWithParams = methodAndPath[1].split("\\?");
-        String params = (pathWithParams.length == 1) ? null : pathWithParams[1];
 
-        RequestDto requestDto = new RequestDto(methodAndPath[0], pathWithParams[0]);
+        String[] pathWithParams = line.split("\\?");
 
-        if (params != null) {
-            for (String param : params.split("&")) {
+        RequestDto requestDto = new RequestDto(pathWithParams[0]);
+
+        if (pathWithParams[1] != null) {
+            for (String param : pathWithParams[1].split("&")) {
                 String[] keyAndValue = param.split("=");
                 requestDto.addParam(keyAndValue[0], keyAndValue[1]);
             }

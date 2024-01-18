@@ -1,6 +1,7 @@
 package webserver;
 
 import constant.ErrorCode;
+import constant.FilePath;
 import constant.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,10 @@ import java.io.IOException;
 public class ResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
 
-    public static void sendBody(DataOutputStream dos, HttpStatus httpStatus, byte[] body) {
+    public static void sendBody(DataOutputStream dos, HttpStatus httpStatus, byte[] body, String fileExtension) {
         try {
             dos.writeBytes("HTTP/1.1 " + httpStatus.getStatus() + " \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: text/" + fileExtension + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + body.length + "\r\n");
 
             dos.writeBytes("\r\n");
@@ -29,7 +30,7 @@ public class ResponseHandler {
 
     public static void sendError(DataOutputStream dos, ErrorCode errorCode) {
         byte[] errorMessage = errorCode.getErrorMessage().getBytes();
-        sendBody(dos, errorCode.getHttpStatus(), errorMessage);
+        sendBody(dos, errorCode.getHttpStatus(), errorMessage, "plain");
     }
 
     public static void sendRedirect(DataOutputStream dos, String redirectUrl) {
