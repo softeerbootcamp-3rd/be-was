@@ -66,6 +66,8 @@ request 의 mode 를 알려주는 헤더입니다.
 
 fetch 된 데이터가 어떻게 사용될지 알려주는 헤더입니다.
 
+---
+
 ## Reference
 
 [MDN - Request header](https://developer.mozilla.org/en-US/docs/Glossary/Request_header)

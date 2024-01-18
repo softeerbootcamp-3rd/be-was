@@ -1,5 +1,9 @@
 ## Object Oriented Programming (객체 지향 프로그래밍)
 
+객체 지향 프로그래밍을 정리하는 문서입니다.
+
+### 개요
+
 컴퓨터 프로그램을 어떤 데이터를 입력받아 순서대로 처리하고 결과를 도출하는 명령어들의 목록으로 보는 시각에서 벗어나
 객체들의 유기적인 협력과 결합으로 파악하고자 하는 컴퓨터 프로그래밍의 패러다임을 의미합니다.
 
@@ -10,7 +14,7 @@
 객체 지향 프로그래밍에서는 이와 같은 각각의 객체를 추상화시켜 속성(state)과 기능(behavior)으로 분류한 후에
 이것을 다시 각각 변수(variable)와 함수(function)로 정의하고 있습니다.
 
-## 1. OOP 특징
+---
 
 ### 1. 추상화 (Abstraction)
 
@@ -61,7 +65,9 @@
 
 구현 방법에는 접근제어자 활용, getter/setter 메서드 활용이 있습니다.
 
-## 2. Reference
+---
+
+## Reference
 
 [Oracle - Object-Oriented Programming Concepts](https://docs.oracle.com/javase/tutorial/java/concepts/)
 
