@@ -11,10 +11,10 @@ public class HTTPRequestDto {
     private String accept;
     private HashMap<String, String> requestParams;
 
-    public HTTPRequestDto(String HTTP_Method, String request_target, String HTTP_version, String host, String accept) {
-        this.HTTPMethod = HTTP_Method;
-        this.requestTarget = request_target;
-        this.HTTPVersion = HTTP_version;
+    public HTTPRequestDto(String HTTPMethod, String requestTarget, String HTTPVersion, String host, String accept) {
+        this.HTTPMethod = HTTPMethod;
+        this.requestTarget = requestTarget;
+        this.HTTPVersion = HTTPVersion;
         this.host = host;
         this.accept = accept;
         this.requestParams = new HashMap<>();       // 쿼리 스트링이 들어왔을 경우 저장
