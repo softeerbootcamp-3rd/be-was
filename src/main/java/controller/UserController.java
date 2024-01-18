@@ -1,35 +1,37 @@
 package controller;
 
+import dto.ResponseDto;
 import dto.UserDto;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import service.UserService;
-import utils.ResponseBuilder;
 
 public class UserController {
 
     private static final UserService userService = new UserService();
 
-    public void route(String url, OutputStream out) throws IOException {
+    public ResponseDto route(String url) {
         if (url.startsWith("/user/create")) {
-            createUser(url, out);
+            return createUser(url);
         } else {
-            getPage(url, out);
+            return getPage(url);
         }
     }
 
-    private void getPage(String url, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-
+    private ResponseDto getPage(String url) {
         String filePath = "src/main/resources/templates" + url;
 
-        ResponseBuilder.build200(dos, filePath);
+        try {
+            byte[] body = Files.readAllBytes(new File(filePath).toPath());
+            return new ResponseDto(url, 200, body);
+        } catch (IOException e) {
+            byte[] body = "404 Not Found".getBytes();
+            return new ResponseDto(url, 404, body);
+        }
     }
 
-    private void createUser(String url, OutputStream out) throws IOException {
+    private ResponseDto createUser(String url) {
         String[] userData = url.split("\\?")[1].split("&");
         String userId = userData[0].split("=", -1)[1];
         String password = userData[1].split("=", -1)[1];
@@ -39,10 +41,7 @@ public class UserController {
         UserDto userDto = new UserDto(userId, password, name, email);
         userService.saveUser(userDto);
 
-        DataOutputStream dos = new DataOutputStream(out);
-
-        url = "/";
-
-        ResponseBuilder.build302(dos, url);
+        String location = "/";
+        return new ResponseDto(location, 302, "".getBytes());
     }
 }

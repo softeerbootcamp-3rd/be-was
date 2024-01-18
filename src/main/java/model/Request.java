@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestHeader {
+public class Request {
 
     private final String method;
     private final String urn;
@@ -15,7 +15,7 @@ public class RequestHeader {
     private final int port;
     private final Map<String, String> headers = new HashMap<>();
 
-    public RequestHeader(InputStream in, int portNumber) throws Exception {
+    public Request(InputStream in, int portNumber) throws Exception {
         InputStreamReader inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(inputStreamReader);
         String header = br.readLine();
@@ -44,7 +44,7 @@ public class RequestHeader {
         return port;
     }
 
-    public String getUrn() {
+    public String getUrl() {
         return urn;
     }
 

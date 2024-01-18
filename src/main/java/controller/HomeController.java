@@ -1,35 +1,40 @@
 package controller;
 
-import java.io.DataOutputStream;
+import dto.ResponseDto;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import utils.ResponseBuilder;
 
 public class HomeController {
 
-    public void route(String url, OutputStream out) throws IOException {
+    public ResponseDto route(String url) {
         if (url.equals("/") || url.equals("/index.html")) {
-            getIndex(out);
-        } else {
-            getStatic(url, out);
+            return getIndex(url);
+        }
+        return getStatic(url);
+    }
+
+    private ResponseDto getIndex(String url) {
+        String filePath = "src/main/resources/templates/index.html";
+
+        try {
+            byte[] body = Files.readAllBytes(new File(filePath).toPath());
+            return new ResponseDto(url, 200, body);
+        } catch (IOException e) {
+            byte[] body = "404 Not Found".getBytes();
+            return new ResponseDto(url, 404, body);
         }
     }
 
-    private void getIndex(OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-
-        String filePath = "src/main/resources/templates/index.html";
-
-        ResponseBuilder.build200(dos, filePath);
-    }
-
-    private void getStatic(String url, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-
+    private ResponseDto getStatic(String url) {
         String filePath = "src/main/resources/static" + url;
 
-        ResponseBuilder.build200(dos, filePath);
+        try {
+            byte[] body = Files.readAllBytes(new File(filePath).toPath());
+            return new ResponseDto(url, 200, body);
+        } catch (IOException e) {
+            byte[] body = "404 Not Found".getBytes();
+            return new ResponseDto(url, 404, body);
+        }
     }
 }
