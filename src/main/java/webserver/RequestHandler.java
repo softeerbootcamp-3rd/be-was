@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,9 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequestInformation request = getHttpRequest(in); //http request 정복 가져오기
-            printHttpRequestInformation(request); //http request 정보 출력
+            HttpRequest request = new HttpRequest(in); //http request 정복 가져오기
+            request.print(); //http request 정보 출력
+
 
             byte[] body = null;
             if (request.getUrl() != null && request.getAccept().startsWith("text/html")) {
@@ -64,43 +64,6 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private HttpRequestInformation getHttpRequest(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-        HttpRequestInformation httpRequestInformation = new HttpRequestInformation();
-
-        String line = br.readLine();
-        if (line != null) {
-            String[] lines = line.split(" ");
-            httpRequestInformation.setMethod(lines[0]);
-            httpRequestInformation.setUrl(lines[1]);
-            httpRequestInformation.setHttpVersion(lines[2]);
-
-            while (!line.equals("")) {
-                line = br.readLine();
-                if (line.startsWith("Accept:")) {
-                    httpRequestInformation.setAccept(line.substring("Accept: ".length()));
-                } else if (line.startsWith("Connection")) {
-                    httpRequestInformation.setConnection(line.substring("Connection: ".length()));
-                } else if (line.startsWith("Host:")) {
-                    httpRequestInformation.setHost(line.substring("Host: ".length()));
-                }
-            }
-        }
-        return httpRequestInformation;
-    }
-
-    private void printHttpRequestInformation(HttpRequestInformation requestInformation) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n= = HTTP REQUEST INFORMATION = =");
-        sb.append("\n"+requestInformation.getMethod() + " " + requestInformation.getUrl() + " " + requestInformation.getHttpVersion());
-        sb.append("\nHost: "+requestInformation.getHost());
-        sb.append("\nConection: " + requestInformation.getConnection());
-        sb.append("\nAccept: " + requestInformation.getAccept()+"\n");
-
-        logger.debug(sb.toString());
     }
 
     private void respond404(DataOutputStream dos) {
