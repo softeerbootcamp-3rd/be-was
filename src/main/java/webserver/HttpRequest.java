@@ -3,10 +3,9 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +60,7 @@ public class HttpRequest {
                 String[] params = paramLine.split("&");
                 for (String param : params) {
                     String[] p = param.split("=");
-                    requestParam.put(p[0], p[1]);
+                    requestParam.put(p[0], decode(p[1]));
                 }
             }
             url=lines[1];
@@ -88,5 +87,16 @@ public class HttpRequest {
         sb.append("\nAccept: " + accept+"\n");
 
         logger.debug(sb.toString());
+    }
+
+    private String decode(String encodedString) {
+        try {
+            String decodedString = URLDecoder.decode(encodedString, StandardCharsets.UTF_8.toString());
+            System.out.println("Decoded String: " + decodedString);
+            return decodedString;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "error"; //에러처리 해야함
     }
 }
