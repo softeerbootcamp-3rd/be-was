@@ -46,8 +46,7 @@ public class RequestHandler implements Runnable {
         Request request = new Request(line);
         logger.debug("request : {}", request.toString());
 
-        while (!line.isEmpty()) {
-            line = br.readLine();
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
             request.addHeader(line);
         }
         return request;
