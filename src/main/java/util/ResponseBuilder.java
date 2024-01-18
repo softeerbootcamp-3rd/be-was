@@ -28,6 +28,10 @@ public class ResponseBuilder {
             responseBody(dos, body);
         } else if(statusCode.equals("302")) {
             response302Header(dos, targetPath);
+        } else if (statusCode.equals("400")) {
+            body = ResourceLoader.loadResource(targetPath);
+            response400Header(dos);
+            responseBody(dos, body);
         } else if (statusCode.equals("404")) {
             body = ResourceLoader.loadResource(targetPath);
             response404Header(dos);
@@ -52,6 +56,16 @@ public class ResponseBuilder {
         try {
             dos.writeBytes("HTTP/1.1 302 Found\r\n");
             dos.writeBytes("Location: " + redirectLocation + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private static void response400Header(DataOutputStream dos) {
+        try {
+            dos.writeBytes("HTTP/1.1 400 Bad Request\r\n");
+            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());

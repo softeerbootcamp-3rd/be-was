@@ -24,6 +24,11 @@ public class UserService {
         String name = userProps.get("name");
         String email = userProps.get("email");
 
+        if (userProps.size() != 4) {
+            logger.error("회원가입에 필요한 파라미터의 수가 부족합니다.");
+            throw new IllegalArgumentException("입력 파라미터의 개수가 부적절합니다.");
+        }
+
         // 추출한 데이터로 사용자 생성
         User newUser = new User(userId, password, name, email);
 

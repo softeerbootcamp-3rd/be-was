@@ -26,29 +26,34 @@ public class RequestDataController {
     public static String routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
 
-        File file = new File(ResourceLoader.url + "/templates" + url);
+        try {
+            File file = new File(ResourceLoader.url + "/templates" + url);
 
-        String fileOrApi = getResourceType(url); // URL이 FILE을 나타내는지 API를 나타내는지 문자열로 반환
+            String fileOrApi = getResourceType(url); // URL이 FILE을 나타내는지 API를 나타내는지 문자열로 반환
 
-        if (fileOrApi.equals("FILE")) {
-            if (file.exists() && !file.isDirectory()) {
-                return getFilePath(url);
+            if (fileOrApi.equals("FILE")) {
+                if (file.exists() && !file.isDirectory()) {
+                    return getFilePath(url);
+                } else {
+                    logger.debug("유효하지 않은 파일 경로입니다.");
+                    return notFound();
+                }
+            } else if (fileOrApi.equals("API")) {
+                if (url.equals("/")) {
+                    return redirectHome();
+                } else if (url.startsWith("/user/create?")) {
+                    userService.registerUser(requestData);
+                    return redirectHome();
+                } else {
+                    logger.debug("유효하지 않은 API입니다.");
+                    return notFound();
+                }
             } else {
-                logger.debug("유효하지 않은 파일 경로입니다.");
                 return notFound();
             }
-        } else if (fileOrApi.equals("API")) {
-            if (url.equals("/")) {
-                return redirectHome();
-            } else if (url.startsWith("/user/create?")) {
-                userService.registerUser(requestData);
-                return redirectHome();
-            } else {
-                logger.debug("유효하지 않은 API입니다.");
-                return notFound();
-            }
-        } else {
-            return notFound();
+        } catch (IllegalArgumentException e) {
+            logger.debug("IllegalArgumentException caught: {}", e.getMessage());
+            return badRequest();
         }
     }
 
@@ -61,6 +66,10 @@ public class RequestDataController {
     }
 
     private static String notFound() {
-        return "404 /notfound.html";
+        return "404 /error/notfound.html";
+    }
+
+    private static String badRequest() {
+        return "400 /error/badrequest.html";
     }
 }
