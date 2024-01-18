@@ -1,8 +1,5 @@
 package util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Util {
 
     private static final String REQUEST_LINE_DELIMITER = " ";
@@ -11,7 +8,7 @@ public class Util {
     private static final String PARAMETERS_DELIMITER = "&";
     private static final String PARAMETER_DELIMITER = "=";
 
-    public static String[] splitRequestLine(String input) {
+    public static String[] splitRequestLineToMethodAndURL(String input) {
         return input.split(REQUEST_LINE_DELIMITER);
     }
 
@@ -19,16 +16,15 @@ public class Util {
         return input.split(REQUEST_HEADER_DELIMITER);
     }
 
-    public static String[] splitUrlToPathAndParameters(String url) {
+    public static String[] splitUrlToPathAndQueryString(String url) {
         return url.split(URL_DELIMITER);
     }
 
-    public static Map<String, String> splitParamtersToKeyAndValue(String parameters) throws IllegalArgumentException{
-        Map<String, String> queryParameters = new HashMap<>();
-        for (String parameter: parameters.split(PARAMETERS_DELIMITER)) {
-            String[] token = parameter.split(PARAMETER_DELIMITER);
-            queryParameters.put(token[0], token[1]);
-        }
-        return queryParameters;
+    public static String[] splitParamters(String parameters) {
+        return parameters.split(PARAMETERS_DELIMITER);
+    }
+
+    public static String[] splitParameter(String parameter) {
+        return parameter.split(PARAMETER_DELIMITER);
     }
 }
