@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import config.ControllerHandler;
 import config.HTTPRequest;
+import config.HTTPResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,32 @@ public class RequestHandler implements Runnable {
 
 
             String url = request.getUrl();
+
+
+            ///////새로 작성중 시작//////////////////////////////
+            HTTPResponse response;
+            ControllerHandler controllerHandler = null;
+            String urlFrontPart = url.split("\\?")[0];
+            for (ControllerHandler handler : ControllerHandler.values()) {
+                if (handler.url.equals(urlFrontPart)) {
+                    controllerHandler = handler;
+                    break;
+                }
+            }
+
+            // 적절한 컨트롤러 핸들러를 찾았을 경우, 해당 핸들러의 메소드 호출
+            if (controllerHandler != null) {
+                response = controllerHandler.toController(request);
+            } else {
+
+                //400번대 -> 잘못된 요청
+                response = null;
+            }
+
+            //////////새로 작성중 끝////////////////////////////
+
+
+
             // 1. 입력된 url이 /index.html인경우
             if(url.equals("/index.html")) {
 
@@ -59,8 +87,6 @@ public class RequestHandler implements Runnable {
                 response200Header(dos, body.length);
                 responseBody(dos, body);
             }
-
-
             // 2. 입력된 url이 /user인경우
             else if(url.split("/")[1].equals("user")){
                 // 2-1. /user/form.html 인경우
