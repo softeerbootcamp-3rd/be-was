@@ -18,14 +18,14 @@ public class ResponseBuilder {
 
         String[] tokens = StatusCodeUrl.split(" ");
         String statusCode = tokens[0];
-        String url = tokens[1];
+        String targetPath = tokens[1];
 
-        byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
+        byte[] body = ResourceLoader.loadResource(targetPath);
 
         if(statusCode.equals("200")) {
             response200Header(dos, body.length);
         } else if(statusCode.equals("302")) {
-            response302Header(dos, url);
+            response302Header(dos, targetPath);
         }
         responseBody(dos, body);
     }
