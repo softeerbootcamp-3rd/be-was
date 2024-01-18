@@ -56,7 +56,11 @@ public class GetRequestHandler {
             if(parameter.isAnnotationPresent(requestParam)){
                 RequestParam annotation = (RequestParam) parameter.getAnnotation(requestParam);
 
-                params[index++]= originParams.get(annotation.name());
+                params[index++]= originParams.getOrDefault(annotation.name(), null);
+            }
+
+            if(params[index] == null){
+                throw new GeneralException(ErrorCode.ILLEGAL_ARGUMENT_ERROR);
             }
         }
 
