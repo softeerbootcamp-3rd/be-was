@@ -2,10 +2,20 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
+import java.util.function.BiConsumer;
 
+import constant.ErrorCode;
+import constant.HttpStatus;
+import dto.RequestDto;
+import exception.WebServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileManager;
+import util.MethodMapper;
+import util.RequestParser;
+
+import static constant.FilePath.MAIN_PAGE;
+
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -22,46 +32,30 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            RequestDto requestDto = RequestParser.getRequestDto(in);
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = getFileByPath(RequestParser.getPath(in));
-            if (body == null) { // 해당 경로의 html 파일이 존재하지 않을 때
-                body = "Hello World".getBytes();
+            BiConsumer<DataOutputStream, RequestDto> method;
+            byte[] body;
+
+            if (requestDto.getPath().equals("/")) {
+                requestDto.setPath(MAIN_PAGE.getPath());
             }
 
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            if ((method = MethodMapper.getMethod(requestDto.getMethodAndPath())) != null) {
+                try {
+                    method.accept(dos, requestDto);
+                } catch (WebServerException e) {
+                    ResponseHandler.sendError(dos, e.getErrorCode());
+                }
+            } else if (requestDto.getMethod().equals("GET") && (body = FileManager.getFileByPath(requestDto.getPath())) != null) {
+                ResponseHandler.sendBody(dos, HttpStatus.OK, body);
+            } else {
+                ResponseHandler.sendError(dos, ErrorCode.PAGE_NOT_FOUND);
+            }
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private byte[] getFileByPath(String path) throws IOException {
-        File file = new File("src/main/resources/templates" + path);
-        if (file.exists()) {
-            return Files.readAllBytes(file.toPath());
-        }
-
-        return null;
     }
 }
