@@ -35,7 +35,6 @@ public class RequestHandler implements Runnable {
             Function<HttpRequest, HttpResponseDto> controller = ControllerMapper.getController(httpRequest);
             HttpResponseDto response;
             String requestUrl = httpRequest.getUrl();
-            String basePath = FileReader.getBasePath(requestUrl);
             // 동적 자원 처리
             if (controller != null) {
                 logger.info("controller 호출");
@@ -47,6 +46,7 @@ public class RequestHandler implements Runnable {
                     requestUrl = "index.html";
                 }
 
+                String basePath = FileReader.getBasePath(requestUrl);
                 Path filePath = Path.of(basePath + requestUrl);
                 if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
                     String extension = FileReader.getFileExtension(filePath);
