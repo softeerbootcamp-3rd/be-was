@@ -2,6 +2,7 @@ package builder;
 
 import config.AppConfig;
 import dto.HttpResponseDto;
+import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
@@ -25,10 +26,12 @@ public class DynamicResponseBuilderImpl implements DynamicResponseBuilder {
         userController.doGet(httpRequest, httpResponseDto);
         } catch (BadRequestException e) {
             httpResponseDto.setStatus(Status.BAD_REQUEST);
+            httpResponseDto.setContentType(ContentType.PLAIN);
+            httpResponseDto.setContent(e.getMessage().getBytes());
             logger.error("Bad_Request 발생" + e.getMessage());
         }catch (InternalServerError e){
             httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
-            logger.error("InternalServerError 발생" + e.getMessage());
+            logger.error("InternalServerError 발생, " + e.getMessage());
         }
     }
 }

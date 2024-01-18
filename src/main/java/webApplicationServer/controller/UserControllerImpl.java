@@ -3,6 +3,7 @@ package webApplicationServer.controller;
 import config.AppConfig;
 import dto.HttpResponseDto;
 import dto.UserSignUpDto;
+import exception.BadRequestException;
 import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
@@ -41,13 +42,18 @@ public class UserControllerImpl implements UserController {
     }
 
     private UserSignUpDto getPathParameter(String pathUrl) {
-        HashMap<String, String> map = new HashMap<>();
-        String[] splitUrl = pathUrl.split("\\?");
-        String[] parameter = splitUrl[1].split("&");
-        Arrays.stream(parameter).forEach(param -> {
-            String[] value = param.split("=");
-            map.put(value[0], value[1]);
-        });
-        return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+        try {
+            HashMap<String, String> map = new HashMap<>();
+            String[] splitUrl = pathUrl.split("\\?");
+            String[] parameter = splitUrl[1].split("&");
+            Arrays.stream(parameter).forEach(param -> {
+                String[] value = param.split("=");
+                map.put(value[0], value[1]);
+            });
+            return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+        } catch (IndexOutOfBoundsException e) {
+            throw new BadRequestException("Please fill in all the necessary factors", e);
+        }
+
     }
 }
