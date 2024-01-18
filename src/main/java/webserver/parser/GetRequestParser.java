@@ -1,4 +1,4 @@
-package parser;
+package webserver.parser;
 
 import exception.GeneralException;
 import org.slf4j.Logger;

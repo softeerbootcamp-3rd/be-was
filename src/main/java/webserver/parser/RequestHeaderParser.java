@@ -1,4 +1,4 @@
-package parser;
+package webserver.parser;
 
 import webserver.header.RequestHeader;
 import org.slf4j.Logger;

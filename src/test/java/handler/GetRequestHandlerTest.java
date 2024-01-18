@@ -2,10 +2,9 @@ package handler;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import parser.GetRequestParser;
+import webserver.parser.GetRequestParser;
+import webserver.handler.GetRequestHandler;
 import webserver.request.GetRequest;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,12 +1,10 @@
-package webserver;
+package webserver.handler;
 
-import handler.ExceptionHandler;
 import webserver.header.RequestHeader;
-import handler.GetRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import parser.GetRequestParser;
-import parser.RequestHeaderParser;
+import webserver.parser.GetRequestParser;
+import webserver.parser.RequestHeaderParser;
 import webserver.response.Response;
 import webserver.status.HttpStatus;
 import webserver.type.ContentType;

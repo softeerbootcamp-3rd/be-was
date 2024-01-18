@@ -2,6 +2,7 @@ package parser;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webserver.parser.GetRequestParser;
 import webserver.request.GetRequest;
 
 import java.util.Map;
