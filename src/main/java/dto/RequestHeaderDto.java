@@ -17,4 +17,8 @@ public class RequestHeaderDto {
         this.userAgent = requestHeaders.get(RequestHeader.USER_AGENT);
         this.accept = requestHeaders.get(RequestHeader.ACCEPT);
     }
+
+    public String getHost() {
+        return host;
+    }
 }

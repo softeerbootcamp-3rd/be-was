@@ -14,7 +14,8 @@ import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import dto.RequestDto;
+import dto.RequestHeaderDto;
+import dto.RequestLineDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Util;
@@ -38,10 +39,10 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            RequestDto requestDto = createRequestDto(in);
-            OutputView.printRequestDto(requestDto);
-            String path = requestDto.getPath();
-            String method = requestDto.getMethod();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            RequestLineDto requestLineDto = RequestParser.parseRequestLine(br);
+            RequestHeaderDto requestHeaderDto = RequestParser.parseRequestHeader(br);
+            OutputView.printRequest(requestLineDto, requestHeaderDto);
 
             URI uri = new URI("http://" + requestDto.getHost() + path);
             if (uri.getQuery() == null) {
@@ -54,28 +55,6 @@ public class RequestHandler implements Runnable {
         } catch (IOException | URISyntaxException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private static RequestDto createRequestDto(InputStream in) throws IOException {
-        RequestDto requestDto = new RequestDto();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line = br.readLine();
-
-        String[] requestLine = Util.splitRequestLine(line);
-        requestDto.setMethodAndPath(requestLine[0], requestLine[1]);
-
-        Map<RequestHeader, String> requestHeaders = new HashMap<>();
-        while (!line.equals("")) {
-            line = br.readLine();
-            String[] requestHeader = Util.splitRequestHeader(line);
-            RequestHeader property = RequestHeader.findProperty(requestHeader[0]);
-            if (property != RequestHeader.NONE) {
-                requestHeaders.put(property, requestHeader[1]);
-            }
-        }
-        requestDto.setRequestHeaders(requestHeaders);
-        return requestDto;
     }
 
     private void createResponse(OutputStream out, String url) throws IOException {
