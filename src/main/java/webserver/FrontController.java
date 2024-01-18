@@ -57,9 +57,8 @@ public class FrontController implements Runnable {
 
             if (handler == null) {
                 logger.debug("[RequestHandler.run] handler Not found");
-                byte[] body = new byte[0];
                 res.setStatus(HttpStatus.NOT_FOUND);
-                res.send(dos,body,req);
+                res.send(dos,req);
                 return;
             }
             MyHandlerAdapter adapter = getHandlerAdapter(handler);

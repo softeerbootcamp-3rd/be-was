@@ -35,6 +35,11 @@ public class Response {
         this.status = status;
     }
 
+    public void send(DataOutputStream dos, Request req){
+        byte[] body = new byte[0];
+        setResponseHeader(dos,body.length,req);
+        setResponseBody(dos,body);
+    }
     public void send(DataOutputStream dos,byte[] body, Request req){
         setResponseHeader(dos,body.length,req);
         setResponseBody(dos,body);
