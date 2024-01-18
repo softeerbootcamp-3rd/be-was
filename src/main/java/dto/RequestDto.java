@@ -1,4 +1,4 @@
-package model;
+package dto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,10 +32,6 @@ public class RequestDto {
 
     public Map<String, String> getParams() {
         return params;
-    }
-
-    public String getReferer() {
-        return headers.get("Referer");
     }
 
     public void addParam(String paramKey, String paramValue) {
