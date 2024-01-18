@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMappingHandler {
 
@@ -63,9 +64,10 @@ public class RequestMappingHandler {
 
     // 캐싱
     private static class RequestHandlerRegistry {
-        private static final Map<Class<?>, Method[]> controllerMethodsMap = new HashMap<>();
+        private static final Map<Class<?>, Method[]> controllerMethodsMap = new ConcurrentHashMap<>();
 
-        public static synchronized Method[] getMethodsForController(Class<?> controllerClass) {
+        // synchronized 대신 ConcurrentHashMap 사용
+        public static Method[] getMethodsForController(Class<?> controllerClass) {
             if (!controllerMethodsMap.containsKey(controllerClass)) {
                 // 스캔 및 메서드 정보 저장
                 Method[] methods = controllerClass.getDeclaredMethods();
