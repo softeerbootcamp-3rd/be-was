@@ -1,15 +1,11 @@
 package http;
 
-import jdk.jfr.ContentType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.FrontController;
-import webserver.ViewResolver;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
@@ -55,7 +51,7 @@ public class Response {
     }
     private void setResponseHeader(DataOutputStream dos, int lengthOfBodyContent, Request req) {
         try {
-            dos.writeBytes(new StringBuilder("HTTP/1.1 ").append(status).append("\r\n").toString());
+            dos.writeBytes(new StringBuilder("HTTP/1.1 ").append(status.toString()).append("\r\n").toString());
             dos.writeBytes(new StringBuilder(getContentTypeString(req)).toString());
             dos.writeBytes("charset=utf-8\r\n");
             dos.writeBytes(new StringBuilder("Content-Length: ").append(lengthOfBodyContent).append("\r\n").toString());
