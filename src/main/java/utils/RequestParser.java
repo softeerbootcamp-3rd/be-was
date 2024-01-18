@@ -1,5 +1,7 @@
 package utils;
 
+import dto.UserDTO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,5 +59,19 @@ public final class RequestParser {
 
     public static String getCookie() {
         return headers.get("Cookie");
+    }
+
+    public static UserDTO parseNewUserInfo() {
+        String path = headers.get("Path");
+        String[] pathParts = path.split("\\?");
+        String[] userInfo = pathParts[1].split("&");
+
+        for (String s : userInfo) {
+            String[] details = s.split("=");
+            headers.put(details[0], details[1]);
+        }
+
+        return new UserDTO(headers.get("userId"), headers.get("password"), headers.get("name"), headers.get("email"));
+
     }
 }
