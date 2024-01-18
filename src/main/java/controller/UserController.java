@@ -9,7 +9,7 @@ import java.io.OutputStream;
 
 import static util.ResponseBuilder.response;
 
-public class UserController {
+public class UserController implements Controller{
 
     private volatile static UserController instance = new UserController();
 
@@ -25,7 +25,7 @@ public class UserController {
 
     private final UserService userService = UserService.getInstance();
 
-    // 요청 URI에 따라 요청을 처리할 컨트롤러를 선택하는 역할
+    @Override
     public void route(HttpRequest httpRequest, OutputStream out) throws IOException {
 
         String path = httpRequest.getPath();

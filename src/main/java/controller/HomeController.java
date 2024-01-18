@@ -9,7 +9,7 @@ import java.io.OutputStream;
 
 import static util.ResponseBuilder.response;
 
-public class HomeController {
+public class HomeController implements Controller {
     private volatile static HomeController instance;
 
     private HomeController() {
@@ -22,6 +22,7 @@ public class HomeController {
         return instance;
     }
 
+    @Override
     public void route(HttpRequest httpRequest, OutputStream out) throws IOException {
         String path = httpRequest.getPath();
 
