@@ -37,7 +37,6 @@ public class Request {
         if (parts.size() == 2) {
             headers.put(parts.get(0), parts.get(1));
         }
-        // throw 날리면 왜 오류 날까 ?
     }
 
     public String getUrl() {
