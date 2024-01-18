@@ -44,19 +44,18 @@ public class RequestHandler implements Runnable {
                 // 정적 자원 처리
                 logger.info("정적 파일 호출");
                 if (requestUrl.equals("/")) {
-                    byte[] body = FileReader.readFile("/index.html");
-                    response = HttpResponseDto.of(HttpStatus.OK, ContentType.HTML, body);
+                    requestUrl = "index.html";
+                }
+
+                Path filePath = Path.of(basePath + requestUrl);
+                if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
+                    String extension = FileReader.getFileExtension(filePath);
+                    byte[] body = FileReader.readFile(requestUrl);
+                    response = HttpResponseDto.of(HttpStatus.OK, ContentType.getContentType(extension), body);
                 } else {
-                    Path filePath = Path.of(basePath + requestUrl);
-                    if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
-                        String extension = FileReader.getFileExtension(filePath);
-                        byte[] body = FileReader.readFile(requestUrl);
-                        response = HttpResponseDto.of(HttpStatus.OK, ContentType.getContentType(extension), body);
-                    } else {
-                        logger.info("404 not found");
-                        byte[] body = FileReader.readFile("/404.html");
-                        response = HttpResponseDto.of(HttpStatus.NOT_FOUND, ContentType.HTML, body);
-                    }
+                    logger.info("404 not found");
+                    byte[] body = FileReader.readFile("/404.html");
+                    response = HttpResponseDto.of(HttpStatus.NOT_FOUND, ContentType.HTML, body);
                 }
             }
 
