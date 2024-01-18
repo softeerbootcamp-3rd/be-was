@@ -33,6 +33,6 @@ public enum MimeType {
                 return mimeType.getContentType();
             }
         }
-        return "text/html"; // Default Content Type
+        return "text/html";
     }
 }
