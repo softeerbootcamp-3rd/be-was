@@ -11,9 +11,9 @@ public enum HttpStatus {
     private Integer code;
     private String message;
 
-    HttpStatus(Integer code, String status) {
+    HttpStatus(Integer code, String message) {
         this.code = code;
-        this.message = status;
+        this.message = message;
     }
 
     public Integer getCode() {
@@ -22,5 +22,10 @@ public enum HttpStatus {
 
     public String getMessage() {
         return message;
+    }
+
+    @Override
+    public String toString() {
+        return code + " " + message;
     }
 }

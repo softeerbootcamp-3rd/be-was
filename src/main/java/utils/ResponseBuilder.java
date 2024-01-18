@@ -18,7 +18,7 @@ public class ResponseBuilder {
     public static void send(DataOutputStream dos, HttpResponseDto response) {
         HttpStatus status = response.getStatus();
         try {
-            dos.writeBytes("HTTP/1.1" + status.getCode() + " " + status.getMessage() + "\r\n");
+            dos.writeBytes("HTTP/1.1 " + status + "\r\n");
             dos.writeBytes("Content-Type: " + response.getContent().getType() + ";charset=utf-8\r\n");
 
             byte[] body = response.getBody();
