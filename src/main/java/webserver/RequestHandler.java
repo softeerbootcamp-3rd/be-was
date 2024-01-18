@@ -62,7 +62,7 @@ public class RequestHandler implements Runnable {
                     createResponse(out, CONFLICT, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
-        } catch (IOException | IllegalAccessException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }

@@ -3,16 +3,14 @@ package service;
 import db.Database;
 import common.exception.DuplicateUserIdException;
 import model.User;
-import java.util.Map;
 
 public class UserService {
 
-    public String create(Map<String, String> userInfo) {
-        String userId = userInfo.get("userId");
+    public String create(User user) {
+        String userId = user.getUserId();
         if (Database.findUserById(userId) != null) {
             throw new DuplicateUserIdException();
         }
-        User user = new User(userInfo.get("userId"), userInfo.get("password"), userInfo.get("name"), userInfo.get("email"));
         Database.addUser(user);
         return user.getUserId();
     }

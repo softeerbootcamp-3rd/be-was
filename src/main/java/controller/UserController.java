@@ -1,15 +1,16 @@
 package controller;
 
 import common.validate.InputValidate;
-import webserver.RequestParser;
+import model.User;
 
+import static common.binder.Binder.bindQueryStringToObject;
 import static common.config.WebServerConfig.userService;
 
 public class UserController {
 
-    public String create(String userInfoQueryString) {
+    public String create(String userInfoQueryString) throws Exception {
         InputValidate.validateUserInfo(userInfoQueryString);
-        Map<String, String> userInfo = RequestParser.parseParameters(userInfoQueryString);
-        return userService.create(userInfo);
+        User user = bindQueryStringToObject(userInfoQueryString, User.class);
+        return userService.create(user);
     }
 }
