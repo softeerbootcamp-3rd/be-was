@@ -20,7 +20,9 @@ public class ResponseHeaders {
         this.contentLength = contentLength;
     }
 
-    public String getDate() { return "Date: " + date + "\r\n";}
+    public String getDate() {
+        return "Date: " + date + "\r\n";
+    }
 
     public String getLocation() {
         return location;
@@ -29,11 +31,16 @@ public class ResponseHeaders {
     public void setLocation(String location) {
         this.location = location;
     }
+
     public String getContentTypeHeader() {
         return "Content-Type: " + contentType.getType() + ";" + charSet + " \r\n";
     }
+
     public String getContentLengthHeader() {
         return "Content-Length: " + contentLength + "\r\n";
     }
-    public String getLocationTypeHeader(){return "Location: " + location + "\r\n";}
+
+    public String getLocationTypeHeader() {
+        return "Location: " + location + "\r\n";
+    }
 }

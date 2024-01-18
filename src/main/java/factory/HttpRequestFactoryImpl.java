@@ -11,18 +11,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HttpRequestFactoryImpl implements HttpRequestFactory{
+public class HttpRequestFactoryImpl implements HttpRequestFactory {
     public static HttpRequestFactory getInstance() {
         return HttpRequestFactoryHolder.INSTANCE;
     }
-    private static class HttpRequestFactoryHolder{
+
+    private static class HttpRequestFactoryHolder {
         private static final HttpRequestFactory INSTANCE = new HttpRequestFactoryImpl(HttpRequestParser.getInstance());
     }
+
     private final HttpRequestParser httpRequestParser;
 
     public HttpRequestFactoryImpl(HttpRequestParser httpRequestParser) {
         this.httpRequestParser = httpRequestParser;
     }
+
     @Override
     public HttpRequest create(BufferedReader bufferedReader) throws IOException {
         List<String> httpRequest = getRequest(bufferedReader);

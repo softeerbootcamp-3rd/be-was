@@ -22,7 +22,4 @@ public class UserSignUpDto {
     public String getName() {
         return name;
     }
-    public User userMapping(){
-        return new User(id, password, name, email);
-    }
 }

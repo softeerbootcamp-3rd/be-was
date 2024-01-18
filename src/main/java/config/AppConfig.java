@@ -12,26 +12,35 @@ import webApplicationServer.service.UserService;
 import webApplicationServer.service.UserServiceImpl;
 
 public class AppConfig {
-    public static HttpResponseSender httpResponseService() {
+    public static HttpResponseSender httpResponseSender() {
         return HttpResponseSenderImpl.getInstance();
     }
-    public static HttpResponseFactory httpResponseFactory(){
+
+    public static HttpResponseFactory httpResponseFactory() {
         return HttpResponseFactoryImpl.getInstance();
     }
-    public static HttpRequestFactory httpRequestFactory(){
+
+    public static HttpRequestFactory httpRequestFactory() {
         return HttpRequestFactoryImpl.getInstance();
     }
-    public static StaticResponseBuilder staticResponseBuilder(){
+
+    public static StaticResponseBuilder staticResponseBuilder() {
         return StaticResponseBuilderImpl.getInstance();
     }
+
     public static UserController userController() {
         return UserControllerImpl.getInstance();
     }
+
     public static DynamicResponseBuilder dynamicResponseBuilder() {
         return DynamicResponseBuilderImpl.getInstance();
     }
+
     public static UserService userService() {
         return UserServiceImpl.getInstance();
     }
-    public static FileDetector fileDetector(){return FileDetector.getInstance();}
+
+    public static FileDetector fileDetector() {
+        return FileDetector.getInstance();
+    }
 }

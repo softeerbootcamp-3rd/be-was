@@ -14,6 +14,7 @@ public class RequestHeaders {
         this.accept = accept;
         this.etc = etc;
     }
+
     public String getAccept() {
         return accept;
     }

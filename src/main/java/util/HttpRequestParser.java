@@ -10,15 +10,18 @@ import java.util.List;
 
 public class HttpRequestParser {
 
-    private static class HttpRequestParserHolder{
+    private static class HttpRequestParserHolder {
         private static final HttpRequestParser INSTANCE = new HttpRequestParser();
     }
+
     public static HttpRequestParser getInstance() {
         return HttpRequestParserHolder.INSTANCE;
     }
+
     public Body parseRequestBody(List<String> httpRequest) {
         return null;
     }
+
     public RequestHeaders parseRequestHeaders(List<String> httpRequest) {
         HashMap<String, String> header = parseHeaderFields(httpRequest);
 
@@ -28,6 +31,7 @@ public class HttpRequestParser {
 
         return new RequestHeaders(host, userAgent, accept, header);
     }
+
     public HashMap<String, String> parseHeaderFields(List<String> httpRequest) {
         HashMap<String, String> header = new HashMap<>();
 
@@ -38,8 +42,9 @@ public class HttpRequestParser {
 
         return header;
     }
+
     public StartLine parseStartLine(List<String> content) {
         String[] startLine = content.get(0).split(" ");
-        return new StartLine(HttpMethod.valueOf(startLine[0]),startLine[1], startLine[2]);
+        return new StartLine(HttpMethod.valueOf(startLine[0]), startLine[1], startLine[2]);
     }
 }

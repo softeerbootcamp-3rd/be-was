@@ -13,11 +13,13 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
     public static HttpResponseFactory getInstance() {
         return HttpResponseFactoryHolder.INSTANCE;
     }
-    private static class HttpResponseFactoryHolder{
+
+    private static class HttpResponseFactoryHolder {
         private static final HttpResponseFactory INSTANCE = new HttpResponseFactoryImpl();
     }
+
     @Override
-    public HttpResponse create(HttpResponseDto responseDto){
+    public HttpResponse create(HttpResponseDto responseDto) {
         StatusLine statusLine = getStatusLine(responseDto.getVersion(), responseDto.getStatus());
         ResponseHeaders responseHeaders = getResponseHeaders(responseDto);
         Body body = getBody(responseDto);
@@ -33,11 +35,12 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
 
     private ResponseHeaders getResponseHeaders(HttpResponseDto dto) {
         ResponseHeaders responseHeaders = new ResponseHeaders(dto.getContentType(), dto.getContentLength(), dto.getCharSet());
-        if(dto.getLocation() != null){
+        if (dto.getLocation() != null) {
             responseHeaders.setLocation(dto.getLocation());
         }
         return responseHeaders;
     }
+
     public StatusLine getStatusLine(String version, Status status) {
         return new StatusLine(version, status);
     }

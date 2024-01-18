@@ -13,13 +13,15 @@ import webApplicationServer.service.UserService;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class UserControllerImpl implements UserController{
-    private static class UserControllerHolder{
+public class UserControllerImpl implements UserController {
+    private static class UserControllerHolder {
         public static final UserController INSTANCE = new UserControllerImpl(AppConfig.userService());
     }
+
     public static UserController getInstance() {
         return UserControllerHolder.INSTANCE;
     }
+
     private final UserService userService;
 
     public UserControllerImpl(UserService userService) {
@@ -29,19 +31,20 @@ public class UserControllerImpl implements UserController{
     @Override
     public void doGet(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         String pathUrl = httpRequest.getStartLine().getPathUrl();
-            if (pathUrl.startsWith("/user/create")) {
-                UserSignUpDto userSignUpDto = getPathParameter(pathUrl);
-                userService.signUp(userSignUpDto);
-                httpResponseDto.setStatus(Status.REDIRECT);
-                httpResponseDto.setLocation("/user/login.html");
-                httpResponseDto.setContentType(ContentType.PLAIN);
-            }
+        if (pathUrl.startsWith("/user/create")) {
+            UserSignUpDto userSignUpDto = getPathParameter(pathUrl);
+            userService.signUp(userSignUpDto);
+            httpResponseDto.setStatus(Status.REDIRECT);
+            httpResponseDto.setLocation("/user/login.html");
+            httpResponseDto.setContentType(ContentType.PLAIN);
+        }
     }
-    private UserSignUpDto getPathParameter(String pathUrl){
+
+    private UserSignUpDto getPathParameter(String pathUrl) {
         HashMap<String, String> map = new HashMap<>();
         String[] splitUrl = pathUrl.split("\\?");
         String[] parameter = splitUrl[1].split("&");
-        Arrays.stream(parameter).forEach(param->{
+        Arrays.stream(parameter).forEach(param -> {
             String[] value = param.split("=");
             map.put(value[0], value[1]);
         });
