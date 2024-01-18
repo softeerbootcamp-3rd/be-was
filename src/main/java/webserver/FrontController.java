@@ -7,9 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
+import controller.ResourceController;
 import controller.UserController;
-import controller.StaticController;
-import controller.TemplateController;
 import http.HttpStatus;
 import http.Request;
 import http.Response;
@@ -38,9 +37,6 @@ public class FrontController implements Runnable {
     }
 
     private void initHandlerMappingMap() {
-
-        handlerMappingMap.put("/*.html",new TemplateController());
-        handlerMappingMap.put("/static/*",new StaticController());
         handlerMappingMap.put("/user/*", new UserController());
     }
 
@@ -87,11 +83,8 @@ public class FrontController implements Runnable {
     }
 
     private Object getHandler(Request req) {
-        if (viewResolver.isTemplate(req.getUrl())) {
-            return handlerMappingMap.get("/*.html");
-        }
-        else if(viewResolver.isStatic(req.getUrl())){
-            return handlerMappingMap.get("/static/*");
+        if (viewResolver.isTemplate(req.getUrl())||viewResolver.isStatic(req.getUrl())) {
+            return new ResourceController();
         }
         for (String key : handlerMappingMap.keySet()) {
             if(isPatternMatch(key,req.getUrl())){
