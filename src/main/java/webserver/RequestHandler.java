@@ -80,7 +80,7 @@ public class RequestHandler implements Runnable {
 
     private void createResponse(OutputStream out, String url) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File(getFilePath(url) + url).toPath());
+        byte[] body = Files.readAllBytes(new File(getFilePath(url)).toPath());
         response200Header(dos, body.length);
         responseBody(dos, body);
     }
@@ -97,7 +97,7 @@ public class RequestHandler implements Runnable {
         } else {
             path += "templates";
         }
-        return path;
+        return path + url;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
