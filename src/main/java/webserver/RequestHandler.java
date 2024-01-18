@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import view.OutputView;
 
 import static common.config.WebServerConfig.userController;
+import static common.response.Status.*;
+import static common.response.Response.createResponse;;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -45,101 +47,22 @@ public class RequestHandler implements Runnable {
 
             String queryString = requestLineDto.getQueryString();
             if (queryString == null) {
-                createResponse(out, requestLineDto.getPath());
+                createResponse(out, SUCCESS, requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
                 try {
                     userController.create(requestLineDto.getQueryString());
-                    redirect(out);
+                    createResponse(out, REDIRECT, INDEX_FILE_PATH);
                 } catch (EmptyFormException e) {
                     logger.debug(e.getMessage());
-                    byte[] body = Files.readAllBytes(new File(getFilePath(USER_CREATE_FORM_FAIL_FILE_PATH)).toPath());
-                    DataOutputStream dos = new DataOutputStream(out);
-                    response400Header(dos, body.length);
-                    responseBody(dos, body);
-                } catch (DuplicateUserIdException e) {
+                    createResponse(out, BAD_REQUEST, USER_CREATE_FORM_FAIL_FILE_PATH);
+                }
+                catch (DuplicateUserIdException e) {
                     logger.debug(e.getMessage());
-                    byte[] body = Files.readAllBytes(new File(getFilePath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH)).toPath());
-                    DataOutputStream dos = new DataOutputStream(out);
-                    response409Header(dos, body.length);
-                    responseBody(dos, body);
+                    createResponse(out, CONFLICT, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
         } catch (IOException | IllegalAccessException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void createResponse(OutputStream out, String url) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File(getFilePath(url)).toPath());
-        response200Header(dos, body.length);
-        responseBody(dos, body);
-    }
-
-    private void redirect(OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-        response302Header(dos, INDEX_FILE_PATH);
-    }
-
-    private static String getFilePath(String url) {
-        String path = RESOURCES_PATH;
-        if (url.startsWith("/css") || url.startsWith("/fonts") || url.startsWith("/images") || url.startsWith("/js") || url.equals("/favicon.ico")) {
-            path += "static";
-        } else {
-            path += "templates";
-        }
-        return path + url;
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String location) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location);
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response400Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 400 Bad Request \r\n");
-            dos.writeBytes("Content-Type: text/html; charset=UTF-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response409Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 409 Conflict \r\n");
-            dos.writeBytes("Content-Type: text/html; charset=UTF-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
