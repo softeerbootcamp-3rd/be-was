@@ -34,11 +34,10 @@ public class Request {
 
     public void addHeader(String headerLine) {
         List<String> parts = List.of(headerLine.split(": "));
-        if (parts.size() != 2) {
-            throw new IllegalArgumentException("Invalid header line");
+        if (parts.size() == 2) {
+            headers.put(parts.get(0), parts.get(1));
         }
-        headers.put(parts.get(0), parts.get(1));
-
+        // throw 날리면 왜 오류 날까 ?
     }
 
     public String getUrl() {
