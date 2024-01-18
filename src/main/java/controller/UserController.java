@@ -1,7 +1,6 @@
 package controller;
 
 import dto.RequestDto;
-import exception.CustomException;
 import service.UserService;
 import webserver.ResponseHandler;
 
