@@ -14,9 +14,14 @@ import webserver.http.request.HttpRequestParser;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
 import webserver.http.response.HttpResponseSender;
+import webserver.http.response.HttpStatus;
+import webserver.routing.DynamicRoutingManager;
+import webserver.routing.StaticRoutingManager;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+
+    private static final byte[] METHOD_NOT_FOUND = "Method Not Found".getBytes(StandardCharsets.UTF_8);
 
     private Socket connection;
 
@@ -29,33 +34,25 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            HttpRequestParser httpRequestParser = new HttpRequestParser();
-            HttpRequest httpRequest = httpRequestParser.parse(in);
+            HttpRequest httpRequest = new HttpRequestParser().parse(in);
             requestLogging(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
-            HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
-            HttpResponse httpResponse = responseBuilder.createErrorResponse("Invalid path or file not found".getBytes(StandardCharsets.UTF_8));
+            HttpResponse httpResponse;
 
+            // GET 메소드
             if (httpRequest.getMethod() == HttpMethod.GET){
-                if(httpRequest.getPath().equals("/user/create")){
-                    UserController userController = new UserController();
-                    String path = userController.signUp(httpRequest.getQueryParams());
-                    byte[] body = FileUtil.getFileContents(path);
-                    if(body != null){
-                        httpResponse = responseBuilder.createSuccessResponse(body);
-                    }
-                } else{
-                    byte[] body = FileUtil.getFileContents(httpRequest.getPath());
-                    if(body != null){
-                        httpResponse = responseBuilder.createSuccessResponse(body);
-                    }
+                // 정적 로직 라우팅
+                httpResponse = StaticRoutingManager.handleRequest(httpRequest);
+                // 동적 로직 라우팅
+                if(httpResponse == null){
+                    httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
                 }
+            } else {
+                httpResponse = new HttpResponseBuilder().createErrorResponse(HttpStatus.BAD_REQUEST, METHOD_NOT_FOUND);
             }
 
-            HttpResponseSender sender = new HttpResponseSender();
-            sender.sendResponse(httpResponse, dos);
-
+            new HttpResponseSender().sendResponse(httpResponse, dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
