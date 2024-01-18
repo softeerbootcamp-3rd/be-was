@@ -4,5 +4,5 @@ import request.HttpRequest;
 import response.HttpResponse;
 
 public interface Controller {
-    public void process(HttpRequest request, HttpResponse response);
+    void process(HttpRequest request, HttpResponse response);
 }

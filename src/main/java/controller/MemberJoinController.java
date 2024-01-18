@@ -1,20 +1,25 @@
 package controller;
 
 import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import response.HttpResponse;
+import webserver.RequestHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MemberJoinController implements Controller {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     @Override
     public void process(HttpRequest request, HttpResponse response) {
         String fullUrl = request.getUrl();
         String queryString = fullUrl.substring(fullUrl.indexOf("?") + 1);
         Map<String, String> params = parse(queryString);
         User user = createUser(params);
-        System.out.println(user);
+        logger.debug("User : {}", user);
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Location", "/index.html");
