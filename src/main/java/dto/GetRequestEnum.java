@@ -8,6 +8,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public enum GetRequestEnum {
+    DEFAULT("/") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+            return Service.showIndex(httpRequestDto);
+        }
+    },
     SIGNUP("/user/create") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {

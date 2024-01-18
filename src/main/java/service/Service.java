@@ -13,7 +13,7 @@ public class Service {
 
 
     // 회원가입 처리
-    public static HTTPResponseDto signup(HTTPRequestDto httpRequestDto) throws IOException {
+    public static HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
 
         if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getRequestParams().size() != 4)
             return new HTTPResponseDto(404, "Bad Request".getBytes());
@@ -60,5 +60,10 @@ public class Service {
         }
         System.out.println("file path: " + path);
         return new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
+    }
+
+    // GET method, url 요청으로는 "/" 가 왔을 경우 (localhost:8080) index.html 띄우기
+    public static HTTPResponseDto showIndex(HTTPRequestDto httpRequestDto) {
+        return new HTTPResponseDto(303, "/index.html".getBytes());
     }
 }

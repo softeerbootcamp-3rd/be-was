@@ -3,12 +3,7 @@ package controller;
 import dto.GetRequestEnum;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
-import service.Service;
-
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class Controller {
 
