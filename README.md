@@ -7,88 +7,128 @@ Java Web Application Server 2023
 이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
 를 참고하여 작성되었습니다.
 
-## Step 1 - index.html 응답
-### 학습 목표
+---
+<details>
+    <summary><b>Step 1 - index.html 응답</b></summary>
+
+### 1. 학습 목표
 - HTTP를 학습하고 학습 지식을 기반으로 웹 서버를 구현한다.
-
 - Java 멀티스레드 프로그래밍을 경험한다.
-
 - 유지보수에 좋은 구조에 대해 고민하고 코드를 개선해 본다.
 
-### 사전지식
-자바 프로그래밍
+### 2. 기능요구사항
+- 정적인 html 파일 응답
+- HTTP Request 내용 출력
+-  Concurrent 패키지를 사용하도록구조 변경
 
-### 기능요구사항
-#### 정적인 html 파일 응답
-- http://localhost:8080/index.html 로 접속했을 때 ```src/main/resources/templates``` 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
+### 3. 학습 내용
+#### 1. HTTP Request Header
 
-#### HTTP Request 내용 출력
-- 서버로 들어오는 HTTP Request의 내용을 읽고 적절하게 파싱해서 로거(log.debug)를 이용해 출력한다.
+- HTTP 요청 구조
+>![img_2.png](doc/img_2.png)
+> - 첫줄(Request Line)이 큰 의미를 지닌다.
+> - 첫 줄은 공백을 기준으로 3개의 부분으로 나뉘며 각각 Metho, path, HTTP version이다.
+> - path의 ? 뒷부분을 query string이라 한다.
 
-### 프로그래밍 요구사항
-#### 개발환경
-- JDK Version: 11 또는 17
+- Method
+> ![img.png](doc/img.png)
+> - GET은 Select적인 성향을 갖습니다. CRUD의 R에 해당합니다.
+> - POST는 서버의 값이나 상태를 바꾸기 위해 사용합니다. CRUD의 C에 해당합니다.
 
-- IntelliJ를 사용
+#### 2. WAS 생애주기
 
-#### 프로젝트 분석
-- 단순히 요구사항 구현이 목표가 아니라 프로젝트의 동작 원리에 대해 파악한다.
+- connection
+> 1. WebServer 클래스에서 지정된 포트 번호로 ServerSocket을 생성한다.
+> 2. accept()로 클라이언트의 요청이 들어올 때 까지 대기하고, 연결 요청이 오면 클라이언트와의 통신을 위한 소켓을 생성한다.
+> 3. 클라이언트 요청이 들어오면, RequestHandler 클래스에 처리를 위임한다.
+> 4. connection으로부터 InputStream, OutputStream을 생성하여 입출력 스트림을 생한다.
+> 5. `try-with-resources` 구문을 통해 try 구문을 빠져나갈 때 자동으로 `AutoCloseable` 인터페이스를 구현한 리소스를 닫아준다.
+>   - 해당 구문으로 인해 입출력 스트림도 함께 닫힌다.
+>   - 입출력 스트림이 닫힐 때 자동으로 소켓도 함께 닫힌다. 
 
-#### 구조 변경
-- 자바 스레드 모델에 대해 학습한다. 버전별로 어떤 변경점이 있었는지와 향후 지향점에 대해서도 학습해 본다.
+- dos
+> 1. DataStream에 매개변수로 OutputStream을 전달하여 객체 생성한다.
+> 2. writeBytes() 메서드로 헤더와 바디의 내용을 담는다.
+> 3. flush() 메서드로 출력 스트림 버퍼의 내용을 내보내고 버퍼를 비운다.
+> 4. `try-with-resources` 구문을 통해 try 구문을 빠져나갈 때 자동으로 out의 close()를 호출하고 dos가 자동으로 닫힌다.
 
-- 자바 Concurrent 패키지에 대해 학습한다.
+#### 3. HTTP Response Header (200)
+- HTTP 응답 구조
+> ![img_3.png](doc/img_3.png)
+> - 첫줄(Status Line)에 중요한 내용을 담는다.
+> - 상태코드를 통해 브라우저에게 요청에대한 응답의 상태를 알려준다.
 
-- 기존의 프로젝트는 Java Thread 기반으로 작성되어 있다. 이를 Concurrent 패키지를 사용하도록 변경한다.
+- Status Code 대역 별 특징
+> - 1xx (정보): 요청을 받았으며 프로세스를 계속한다
+> - 2xx (성공): 요청을 성공적으로 받았으며 인식했고 수용하였다
+> - 3xx (리다이렉션): 요청 완료를 위해 추가 작업 조치가 필요하다
+> - 4xx (클라이언트 오류): 요청의 문법이 잘못되었거나 요청을 처리할 수 없다
+> - 5xx (서버 오류): 서버가 명백히 유효한 요청에 대해 충족을 실패했다
 
-#### OOP와 클린 코딩
-- 주어진 소스코드를 기반으로 기능요구사항을 만족하는 코드를 작성한다.
+- 대표적인 Status Code
+> - 200 - OK
+> - 201 - Created
+> - 302 - Found(HTTP 1.0)
+> - 304 - Not Modified
+> - 401 - Unauthorized
+> - 404 - Not Found
+> - 500 - Internal Server Error
+> - 503 - Service Unavailable
 
-- 유지보수에 좋은 구조에 대해 고민하고 코드를 개선해 본다.
+- Post-redirect-Get(PRG) 패턴
+> - 멱등성: 동일한 요청을 여러번 보낼 때 한번 보낸 것과 결과가 같은것을 의미한다.
+> - POST가 멱등성을 만족하지 않는다.
+> - 예) POST로 게시글 작성 요청을 처리하고 일반 사용자가 보는 화면으로 redirection 시켜서 중복 POST되지 않도록 한다.
 
-- 웹 리소스 파일은 제공된 파일을 수정해서 사용한다. (직접 작성해도 무방하다.)
+#### 4. 좋은 커밋 메시지
 
-### 추가 요구 사항
-#### 학습 정리
-- 학습한 내용을 README.md와 GitHub 위키를 이용해서 기록한다.
+- 기본 규칙
+> - 커밋의 타입을 명시 (Feat, Fix, Refactor, Test, ...)
+> - 제목과 본문을 빈 행으로 구분
+> - 명령문 사용
+> - 본문에 변경사항과 이유를 설명하라
 
-### 추가학습거리
-#### HTTP Request Header 예
-```
-GET /index.html HTTP/1.1
-Host: localhost:8080
-Connection: keep-alive
-Accept: */*
-```
+- 내가 중요하다고 생각한 규칙
+> 검토자가 히스토리를 이해하고있을 것이라 단정하지 마라
 
-#### 모든 Request Header 출력하기 힌트
-- InputStream => InputStreamReader => BufferedReader
+#### 5. TDD
+- JUnit
+> - 단위 테스트를 위해 사용하는 프레임워크
+> - 어노테이션(@)을 통해 테스트 메서드의 동작을 제어 가능
+> - 핵심 기능에 중점을 두고있어서 간단하고 직관적이다
 
-- BufferedReader.readLine() 메소드 활용해 라인별로 http header 읽는다.
+- AssertJ
+> - 다양한 Assert 문법을 제공하여 테스트 코드의 가독성을 높이고 유지보수를 용이하게 한다
+> - 메서드 체이닝을 통해 말하듯이 이해할 수 있다
+> - 실패 시 생성되는 에러 메시지를 커스텀할 수 있다
 
-- http header 전체를 출력한다.
+#### 6. OOP와 클린코드
+- OOP 지향점
+> - 한 클래스는 하나의 책임만 가져야한다
+> - 확장에는 열려있고 수정에는 닫혀있어야한다
+> - 상속 관계에서 하위 클래스가 상위 클래스의 기능을 믿고 사용할 수 있어야한다
+> - 인터페이스는 너무 광범위하거나 많은 기능을 가져서는 안되며, 인터페이스를 사용하는 객체 기준으로 잘게 나누어야한다
+> - 객체는 구체적인 객체가 아닌 추상화에 의존해야한다
+>   - -> 자신보다 변하기 쉬운 것에 의존하면 안된다
+>   - -> 다른 객체를 참조해야한다면 대상 객체 상위 요소를 참조해야한다
 
-> 힌트를 통해 어떻게 접근해야 할지 모르겠다면 다음 동영상을 통해 모든 Request Header를 출력하는 과정을 볼 수 있다. 동영상을 통해 힌트를 얻은 후 다음 단계 실습을 진행한다.
+- 클린코드 지향점
+> - 메서드를 분리해서 들여쓰기를 줄이자
+> - 들여쓰기가 2 이상이면 메서드를 분리하는 방법을 찾자
+> - 메서드 라인이 10을 넘어가면 메서드를 분리하자
+> - else를 사용하지 않으려면 if 절에서 값을 반환하여 메서드를 종료하자
 
-[웹 서버 구현 실습 시작하기 힌트 영상](https://www.youtube.com/watch?v=4kb448OJ7Mw)
+### 4. Trouble Shooting
+- HTTP를 처음 접해서 /index.html에 접속 후 css 등의 부가 파일을 직접 보내줘야하는 줄 알았다
+> 1. 처음 `/index.html`로 접속하면 스타일이 적용되지 않은 페이지가 출력됨을 알 수 있다
+> 2. 개발자 도구를 보면 css, js 등의 연결되는 파일이 없어서 그런 것임을 알 수 있다
+> 3. 연결 파일을 직접 보내줘야하는 줄 알고 RequestHandler에서 직접 보내는 코드를 작성하려했다
+>   - (WAS에 대한 이해가 부족한 시점...)
+> 4. 하지만, 개발자 도구를 보면 브라우저가 "연결 파일"을 자동으로 요청하고 있음을 확인했다
+> 5. 요청에 대한 경로와 응답의 Content-Type만 제대로 설정하면 "연결 파일"이 정상적으로 클라이언트에 도착함을 확인했다
+>   - (Step3의 내용이었는데, 궁금해서 먼저 해결해버렸다.. 코드에는 반영 안함)
 
-#### Request Line에서 path 분리하기 힌트
-- Header의 첫 번째 라인에서 요청 URL(위 예제의 경우 /index.html)을 추출한다.
-
-  - String[] tokens = line.split(" "); 활용해 문자열을 분리할 수 있다.
-
-- 구현은 별도의 유틸 클래스를 만들고 단위 테스트를 만들어 진행할 수 있다.
-
-#### path에 해당하는 파일 읽어 응답하기 힌트
-- 요청 URL에 해당하는 파일을 webapp 디렉토리에서 읽어 전달하면 된다.
-
-- 구글에서 “java files readallbytes”로 검색해 파일 데이터를 byte[]로 읽는다.
-
-```
-byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-```
-
-### Step-1 추가 학습 내용
+### 5. 추가 학습 내용 ( 작성중... )
 - [WAS 동작원리](https://velog.io/@tin9oo/WAS-%EB%8F%99%EC%9E%91%EC%9B%90%EB%A6%AC)
 - [HTTP Request & Response](https://velog.io/@tin9oo/HTTP-Request-Response)
 - [자바 멀티스레드 프로그래밍](https://velog.io/@tin9oo/%EC%9E%90%EB%B0%94-%EB%A9%80%ED%8B%B0%EC%8A%A4%EB%A0%88%EB%93%9C-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D)
@@ -97,49 +137,113 @@ byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
 - [좋은 커밋 메시지 작성](https://velog.io/@tin9oo/%EC%A2%8B%EC%9D%80-%EC%BB%A4%EB%B0%8B-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%9E%91%EC%84%B1)
 - [테스트 주도 개발(TDD)](https://velog.io/@tin9oo/%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%A3%BC%EB%8F%84-%EA%B0%9C%EB%B0%9CTDD)
 
-## Step 2 - GET으로 회원가입
-### 학습 목표
+</details>
+
+---
+
+<details>
+    <summary><b>Step 2 - GET으로 회원가입</b></summary>
+
+### 1. 학습 목표
 - HTTP GET 프로토콜을 이해한다.
-
 - HTTP GET에서 parameter를 전달하고 처리하는 방법을 학습한다.
-
 - HTTP 클라이언트에서 전달받은 값을 서버에서 처리하는 방법을 학습한다.
 
-### 사전지식
-- Java 프로그래밍
-
-### 기능요구사항
-#### GET으로 회원가입 기능 구현
-- “회원가입” 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시한다.
-
-- 이 폼을 통해서 회원가입을 할 수 있다.
-
-### 프로그래밍 요구사항
-- 회원가입 폼에서 ```가입``` 버튼을 클릭하면 다음과 같은 형태로 사용자가 입력한 값이 서버에 전달된다.
-
-> /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
-
-- HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
-
-- 유지보수가 편한 코드가 되도록 코드품질을 개선해 본다.
-
-### 추가 요구 사항
+### 2. 기능요구사항
+- GET으로 회원가입 기능 구현
 - Junit을 활용한 단위 테스트를 적용해 본다.
 
-### 추가학습거리
-#### HTTP Request Header 예
+### 3. 학습 내용
+#### 1. HTTP 응답 상태코드 : 302, 404
+- 302 Found
+> 요청한 리소스가 다른 위치에 있어 리다이렉션이 필요할 때 사용
+> - 보통 접근을 막거나 사용자의 동작을 제어하기 위해 사용한다
+> - `Location` 헤더에 목적지 경로를 포함하여 응답한다
+
+```http request
+HTTP/1.1 302 Found
+Content-Type: text/html; charset=iso-8859-1
+Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
 ```
-GET /user/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net HTTP/1.1
-Host: localhost:8080
-Connection: keep-alive
-Accept: */*
+
+- 404 Not Found
+> 리소스를 찾을 수 없을 때 사용
+> - 잘못된 URL을 입력하거나, 존재하지 않는 페이지에 접근하려 할 때 사용한다
+> - 사용자 편의를 위해 "Page fault" 페이지를 출력하기도 한다
+
+```http request
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=iso-8859-1
 ```
 
-#### Request Parameter 추출하기 힌트
-- Header의 첫 번째 라인에서 요청 URL을 추출한다.
+#### 2. ParameterizedTest
+- ParameterizedTest란?
+> - JUnit 프레임워크에서 제공하는 기능이다
+> - 동일한 테스트에 대해 여러 값을 시험해보고 싶을 때 유용하다
+> - 코드의 중복을 피할 수 있다
 
-- 요청 URL에서 접근 경로와 이름=값을 추출해 User 클래스에 담는다.
+- 간단 사용법
+> - 테스트의 매개변수로 사용할 입력값(`input`)과 예측값(`expect`)을 `Object[]`로 `Stream`에 저장한다
+> - 테스트 메서드에 `@ParameterizedTest`, `@MethodSource("매개변수 메서드 이름")` 어노테이션을 붙인다
+> - 테스트 메서드의 매개변수로 `intput`과 `expect`를 입력한다
+> - 테스트 코드 구조는 기존과 동일하나 `input`과 `expect`를 한번씩만 적어도 좋다
+> - 테스트를 실행하면 설정한 매개변수를 순서대로 입력하며 테스트를 실행해준다
 
-  - 접근 경로(위 예에서는 /user/create)와 패러미터를 분리하는 방법은 String의 split() 메소드를 활용하면 된다.
+#### 3. `try-with-resources` 구문
+- 특징
+> - JAVA7 부터 도입
+> - 자원 사용 후 자동으로 close() 호출하여 자원을 안전하게 해제
+> - 간결한 코드 작성을 도움
 
-  - ? 문자는 정규표현식의 예약어이기 때문에 split() 메소드를 사용할 때 "?"이 아닌 "\\?"를 사용해야 한다.
+- 사용
+> - 파일이나 네트워크 같이 명시적인 `close()`가 필요한 경우 유용함
+> - `Closeable` 혹은 `AutoCloseable` 인터페이스를 구현한 객체를 구문에 사용하면 try 구문의 종료와 함께 close() 메서드를 호출함
+
+### 4. Trouble Shooting
+- redirect - 1
+> 1. 회원가입 버튼 클릭하면 요청을 처리하고 응답을 받지 못해 페이지를 찾을 수 없다는 오류가 발생한다
+> 2. Request 메시지의 `Referer` 헤더의 직전 경로로 접근하게 만들어서 잘못된 페이지로 접근하지 않도록 한다
+> 3. 버튼을 처음 누를 때는 `/user/form.html`에서 `/user/create?~`로 이동해서 `Referer`인 `/user/form.html`로 돌아갈 수 있다
+> 4. 그런데, 버튼을 다시 누르면 `/user/create?~`가 `Referer`가 되어서 빈 페이지로 접근하게되어 의도한 동작을 하지 않게되는 문제가 있다
+
+- redirect - 2
+> 1. 위의 문제로 인해 `Referer`페이지를 응답으로 넘기지 않고 `/index.html`의 파일을 상태코드 200으로 보낸다
+> 2. 이 방식은 홈으로 돌아가는 방식이기 때문에 위의 문제를 고려하지 않아도 된다
+> 3. 이때, `/user/create?~`후에 `/index.html`의 페이지를 출력했지만 여전히 URL은 `/user/create?~`이다
+> 4. `/index.html`은 상대경로로 파일을 호출하기 때문에 브라우저 입장에서 현재경로인 `/user`를 시작으로 파일을 불러오는 문제가 생긴다
+> 5. 결국, `/user/user/form.html`과 같은 경로로 요청을 보내게 되어 빈 페이지를 출력하게 되는 문제가 발생한다
+
+- redirect - 3
+> 1. 팀 회고에서 앞의 내용을 공유했고 동일한 문제를 겪는 팀원이 있었다
+> 2. 팀원이 학습한 내용 중 `redirection`에 관한 내용이 있었다
+> 3. 상태코드 302로 응답을 보내면 `Location` 헤더의 경로로 `GET` 요청을 다시 보낸다는 내용이었다
+> 4. 이 방식이 문제 상황에 핏한 해결책이라고 판단하여 바로 302에 대해 학습한 후 코드로 적용하여 문제를 해결했다
+
+- 서비스 아키텍처 결정
+> - `RequestHandler`를 `Handler`, 라우팅을 `Controller`, 응답 생성/전송을 `Response`라고 간단히 명명했을 때, 서비스를 처리하는 아키텍처는 다음의 두 가지로 나뉜다
+>   1. `Handler` -> `Controller` -> `Response`
+>   2. `Handler` -> `Controller`, `Handler` -> `Response`
+> - 1번은 `Handler`가 `Controller`를 호출하고 `Controller`가 `Response`를 출력하는 순차적인 아키텍처다
+> - 2번은 `Handler`각 `Controller`, `Response`를 각각 호출하는 중앙 집중식 아키텍처다
+> - 2번의 중앙 집중식 아키텍처가 좋다고 판단했다
+>   - `Controller`는 이미 라우팅이라는 책임을 가지고 있는데 그 안에서 `Response`도 호출하는 것은 과도한 책임이기 때문
+>   - 테스트하기 좋은 코드가 결국 OOP의 원칙을 잘 지킨 코드라는 내용을 팀원이 얘기해줬고 2번이 테스트하기 좋은 코드라고 판단했다
+
+- 라우팅 방식
+> - 페이지의 수가 많지 않아서 조건문으로 하나하나 매핑해서 라우팅해도 좋다고 생각했다
+> - 위 방식은 `유지보수`와 `확장성`에 문제가 있다고 판단했다
+> - 다음의 과정으로 라우팅 방식을 변경했다
+>   1. 요청 경로가 `file` 요청인지 `api` 요청인지 판단
+>   2. `file`이면 a, `api`면 `b`를 실행
+>      1. 해당 경로에 해당하는 `200 응답`을 생성하도록 요청한다
+>      2. 지정된 api 기능을 수행하고 `302 응답`을 생성하도록 요청한다
+
+### 5. 추가 학습 내용
+- [Spring 아키텍처](https://velog.io/@tin9oo/Spring-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98)
+- [DTO](https://velog.io/@tin9oo/DTO)
+- [CI/CD](https://velog.io/@tin9oo/CICD)
+
+</details>
+
+---
+
