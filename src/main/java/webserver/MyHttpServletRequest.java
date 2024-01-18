@@ -56,16 +56,21 @@ public class MyHttpServletRequest {
     this.version=version;
   }
 
+  /**
+   * http 정보 파싱 후 Reflection API 사용해서 특정 field에 주입
+   */
   public void setFieldByName(String line){
     String[] strs = line.split(": ");
     String name=strs[0];
     String value=strs[1];
+    //key이름과 일치하는 필드가 있을 때에는 field.set을 통해 주입, 없을 때에는 null로 남겨두기.
     try {
       Field field = this.getClass().getDeclaredField(name);
       field.setAccessible(true);
       field.set(this,value);
       field.setAccessible(false);
     }catch (NoSuchFieldException | IllegalAccessException e){
+      //MyHttpServletRequest에 헤더의 key 이름과 똑같은 이름을 가진 필드가 없을 때는 NoSuchFieldException 발생
       logger.error(e.getMessage());
     }
   }
