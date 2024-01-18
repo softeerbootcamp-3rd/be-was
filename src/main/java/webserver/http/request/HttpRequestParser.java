@@ -17,7 +17,7 @@ public class HttpRequestParser {
         String requestLine = br.readLine();
 
         String[] requestParts = requestLine.split(" ");
-        String method = requestParts[0];
+        HttpMethod method = HttpMethod.valueOf(requestParts[0].toUpperCase());
         String[] pathParts = requestParts[1].split("\\?", 2);
         String protocolVersion = requestParts[2];
 

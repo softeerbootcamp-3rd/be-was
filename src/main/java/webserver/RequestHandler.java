@@ -8,6 +8,7 @@ import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.FileUtil;
+import webserver.http.request.HttpMethod;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestParser;
 import webserver.http.response.HttpResponse;
@@ -36,7 +37,7 @@ public class RequestHandler implements Runnable {
             HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
             HttpResponse httpResponse = responseBuilder.createErrorResponse("Invalid path or file not found".getBytes(StandardCharsets.UTF_8));
 
-            if (httpRequest.getMethod().equals("GET")){
+            if (httpRequest.getMethod() == HttpMethod.GET){
                 if(httpRequest.getPath().equals("/user/create")){
                     UserController userController = new UserController();
                     String path = userController.signUp(httpRequest.getQueryParams());
