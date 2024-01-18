@@ -17,7 +17,7 @@ public class HTTPRequestDto {
         this.HTTPVersion = HTTP_version;
         this.host = host;
         this.accept = accept;
-        this.requestParams = new HashMap<>();
+        this.requestParams = new HashMap<>();       // 쿼리 스트링이 들어왔을 경우 저장
     }
     public HTTPRequestDto() {
         this.requestParams = new HashMap<>();

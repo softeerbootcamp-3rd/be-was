@@ -28,7 +28,7 @@ public class Service {
         // 필요한 정보가 제대로 들어오지 않았을 경우
         // 네가지 정보 모두 기입해야 회원가입 가능
         if(!(!user.getUserId().equals("") && !user.getPassword().equals("") && !user.getName().equals("") && !user.getEmail().equals("")))
-            return new HTTPResponseDto(200, "모든 정보를 기입해주세요.".getBytes());
+            return new HTTPResponseDto(404, "모든 정보를 기입해주세요.".getBytes());
 
         // 중복 아이디 처리
         if(Database.findUserById(user.getUserId()) != null)
