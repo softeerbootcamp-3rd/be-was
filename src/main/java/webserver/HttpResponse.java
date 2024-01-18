@@ -12,7 +12,7 @@ public class HttpResponse {
     // 로그 찍을 때 어떤 클래스인지 표시하는 용도
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
-    public static void response(DataOutputStream dos, ResponseBuilder responseBuilder) {
+    public static void response(DataOutputStream dos, ResponseBuilder responseBuilder) throws IOException {
         HttpStatus httpStatus = responseBuilder.getHttpStatus();
         StringBuilder sb = new StringBuilder();
 
@@ -27,6 +27,8 @@ public class HttpResponse {
             sb.append(response500Header(dos));
         }
 
+        dos.close();
+        
         logger.debug("Response [" + sb + "]");
     }
 
