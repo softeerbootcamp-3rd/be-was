@@ -25,13 +25,14 @@ public class RequestHandler implements Runnable {
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String requestline = br.readLine();
 
-            HttpRequest httpRequest = new HttpRequest(br, connection.getPort());
+            HttpRequest httpRequest = new HttpRequest(requestline);
             // request line 출력
             logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
-                    httpRequest.getPort(), httpRequest.getMethod(), httpRequest.getPath(), httpRequest.getHttpVersion());
+                    httpRequest.getMethod(), httpRequest.getPath(), httpRequest.getHttpVersion());
 
-            String response = getStatusAndRoute(httpRequest.getPath());
+            String response = getStatusAndRoute(httpRequest);
             String status = response.split(" ")[0];
             String route = response.split(" ")[1];
 
@@ -42,11 +43,11 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    public static String getStatusAndRoute(String path) {
-        if (path.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
-            return userController.route(path);
+    public static String getStatusAndRoute(HttpRequest httpRequest) {
+        if (httpRequest.getPath().startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
+            return userController.route(httpRequest);
         } else { // 그 외의 경로는 HomeController에서 처리
-            return homeController.route(path);
+            return homeController.route(httpRequest);
         }
     }
 }
