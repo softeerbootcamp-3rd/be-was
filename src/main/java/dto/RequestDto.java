@@ -10,10 +10,11 @@ public class RequestDto {
     private Map<String, String> params;
     private Map<String, String> headers;
 
-    public RequestDto(String method, String path) {
-        this.method = method;
-        this.path = path;
-        this.methodAndPath = method + " " + path;
+    public RequestDto(String methodAndpath) {
+        String[] MAndP = methodAndpath.split(" ");
+        this.method = MAndP[0];
+        this.path = MAndP[1];
+        this.methodAndPath = methodAndpath;
         this.params = new HashMap<>();
         this.headers = new HashMap<>();
     }

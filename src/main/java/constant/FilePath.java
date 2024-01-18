@@ -1,7 +1,8 @@
 package constant;
 
 public enum FilePath {
-    BASE_PATH ("src/main/resources/templates"),
+    HTML_BASE ("src/main/resources/templates"),
+    SUPPORT_FILE_BASE ("src/main/resources/static"),
     MAIN_PAGE ("/index.html");
 
     private final String path;
