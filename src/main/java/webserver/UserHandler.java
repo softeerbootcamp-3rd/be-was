@@ -19,11 +19,7 @@ public class UserHandler {
 
     private static final String HOME = "/index.html";
     private static final String CREATE = "/create";
-    private final UserController userController;
-
-    public UserHandler(UserController userController) {
-        this.userController = userController;
-    }
+    private final UserController userController = new UserController();
 
     public Response handleUserPath(String url, Request request, DataOutputStream dos) throws IOException {
         if (url.startsWith(CREATE)) {

@@ -38,7 +38,6 @@ public class Request {
             throw new IllegalArgumentException("Invalid Header line");
         }
         headers.put(parts.get(0), parts.get(1));
-
     }
 
     public String getUrl() {

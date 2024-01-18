@@ -16,14 +16,11 @@ import static util.HttpResponse.*;
 public class RequestHandler implements Runnable {
     private static final String USER_PATH = "/user";
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
     private final Socket connection;
+    private final UserHandler userHandler = new UserHandler();
 
-    private final UserHandler userHandler;
-
-    public RequestHandler(Socket connectionSocket, UserHandler userHandler) {
+    public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.userHandler = userHandler;
     }
 
     public void run() {

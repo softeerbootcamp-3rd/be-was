@@ -1,13 +1,11 @@
 package webserver;
 
-import controller.UserController;
 import model.HttpStatus;
 import model.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import service.UserService;
 
 import java.io.DataOutputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,8 +15,7 @@ public class UserHandlerTest {
     private static final String HOME = "/index.html";
 
     private DataOutputStream dataOutputStream;
-    private final UserController userController = new UserController(new UserService());
-    private final UserHandler userHandler = new UserHandler(userController);
+    private final UserHandler userHandler = new UserHandler();
 
     @ParameterizedTest
     @DisplayName("쿼리문이 제대로 전달되지 않은 경우 BadRequest를 전달한다.")
