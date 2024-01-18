@@ -79,12 +79,42 @@ public final class ResponseBuilder {
     }
 
     private static String getContentType(String file) { // 파일의 확장자에 따라 Content-Type을 결정
-        String contentType = "text/html";
-        if (file.endsWith(".css")) {
-            contentType = "text/css";
-        }
-        else if (file.endsWith(".js")) {
-            contentType = "application/javascript";
+        String contentType = "";
+
+        switch (file.substring(file.lastIndexOf("."))) {
+            case ".html":
+                contentType = ExtensionType.HTML.getExtension();
+                break;
+            case ".css":
+                contentType = ExtensionType.CSS.getExtension();
+                break;
+            case ".js":
+                contentType = ExtensionType.JS.getExtension();
+                break;
+            case ".png":
+                contentType = ExtensionType.PNG.getExtension();
+                break;
+            case ".ico":
+                contentType = ExtensionType.ICO.getExtension();
+                break;
+            case ".svg":
+                contentType = ExtensionType.SVG.getExtension();
+                break;
+            case ".woff":
+                contentType = ExtensionType.WOFF.getExtension();
+                break;
+            case ".ttf":
+                contentType = ExtensionType.TTF.getExtension();
+                break;
+            case ".eot":
+                contentType = ExtensionType.EOT.getExtension();
+                break;
+            case ".woff2":
+                contentType = ExtensionType.WOFF2.getExtension();
+                break;
+            default:
+                contentType = ExtensionType.HTML.getExtension();
+                break;
         }
         return contentType;
     }
