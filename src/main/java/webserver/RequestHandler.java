@@ -51,9 +51,6 @@ public class RequestHandler implements Runnable {
             ResponseEnum responseEnum = ResponseEnum.getResponse(httpResponseDto.getStatusCode());
             responseEnum.writeResponse(httpResponseDto, httpRequestDto, dos);
 
-//            response200Header(dos, response.getContents().length, httpRequestDto.getAccept());
-//            responseBody(dos, response.getContents());
-
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -108,61 +105,18 @@ public class RequestHandler implements Runnable {
 
     // 쿼리 스트링 파싱
     private void getRequestParams(String url) {
-        if(url == null)
+        if (url == null)
             return;
-        if(!url.contains("?"))
+        if (!url.contains("?"))
             return;
 
         String[] tokens = url.split("\\?");
         tokens = tokens[1].split("&");
-        for(int i = 0; i < tokens.length; i++) {
+        for (int i = 0; i < tokens.length; i++) {
             String key = tokens[i].substring(0, tokens[i].indexOf("="));
-            String value = tokens[i].substring(tokens[i].indexOf("=")+1);
+            String value = tokens[i].substring(tokens[i].indexOf("=") + 1);
             httpRequestDto.addRequestParam(key, value);
         }
     }
-
-    /*
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String accept) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + accept + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response303Header(DataOutputStream dos, byte[] location) {
-        try {
-            dos.writeBytes("HTTP/1.1 303 See other \r\n");
-            dos.writeBytes("Location: ");
-            dos.write(location);
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-     */
 
 }

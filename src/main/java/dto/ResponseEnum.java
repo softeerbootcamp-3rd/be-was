@@ -91,47 +91,4 @@ public enum ResponseEnum {
         dos.flush();
     }
 
-    /*
-    // 200에 해당하는 response 작성
-    private static byte[] response200(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto) {
-        String responseContents = "HTTP/1.1 200 OK \r\n"
-                + "Content-Type: " + httpRequestDto.getAccept() + ";charset=utf-8\r\n"
-                + "Content-Length: " + httpResponseDto.getContents().length + "\r\n"
-                + "\r\n"
-                + new String(httpResponseDto.getContents());
-        return responseContents.getBytes();
-    }
-
-    // 303에 해당하는 response 작성
-    private static byte[] response303(HTTPResponseDto httpResponseDto) {
-        String responseContents = "HTTP/1.1 303 See other \r\n"
-                + "Location: " + new String(httpResponseDto.getContents())
-                + "\r\n";
-        System.out.print(responseContents);
-        return responseContents.getBytes();
-    }
-
-    // 404에 해당하는 response 작성
-    private static byte[] response404(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto) {
-        String responseContents = "HTTP/1.1 404 Not Found \r\n"
-                + "Connection: close"
-                + "Content-Type: " + httpRequestDto.getAccept() + ";charset=utf-8\r\n"
-                + "Content-Length: " + httpResponseDto.getContents().length + "\r\n"
-                + "\r\n"
-                + new String(httpResponseDto.getContents());
-        return responseContents.getBytes();
-    }
-
-    // 500에 해당하는 response 작성
-    private static byte[] response500(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto) {
-        String responseContents = "HTTP/1.1 500 Internal Server Error \r\n"
-                + "Connection: close"
-                + "Content-Type: " + httpRequestDto.getAccept() + ";charset=utf-8\r\n"
-                + "Content-Length: " + httpResponseDto.getContents().length + "\r\n"
-                + "\r\n";
-        return responseContents.getBytes();
-    }
-
-     */
-
 }
