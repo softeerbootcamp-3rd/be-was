@@ -37,8 +37,7 @@ public class UserHandler {
             if (!query.startsWith("?")) {
                 return new Response(HttpStatus.BAD_REQUEST);
             }
-            String decodedQuery = URLDecoder.decode(query.substring(1), StandardCharsets.UTF_8);
-            Map<String, String> queryParams = parseQueryString(decodedQuery);
+            Map<String, String> queryParams = parseQueryString(query.substring(1));
             UserCreateRequestDto userCreateRequestDto = new UserCreateRequestDto(queryParams.get("userId"),
                     queryParams.get("password"), queryParams.get("name"), queryParams.get("email"));
             userController.create(userCreateRequestDto);

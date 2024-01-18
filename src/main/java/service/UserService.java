@@ -3,12 +3,8 @@ package service;
 import db.Database;
 import dto.UserCreateRequestDto;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 public class UserService {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     public void create(UserCreateRequestDto userRequestDto){
         User user = new User(userRequestDto.getUserId(), userRequestDto.getPassword(),

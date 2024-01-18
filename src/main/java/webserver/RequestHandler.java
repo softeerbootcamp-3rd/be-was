@@ -21,14 +21,11 @@ public class RequestHandler implements Runnable {
     private final UserHandler userHandler;
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private final UserController userController;
-
     public RequestHandler(Socket connectionSocket, UserService userService) {
         this.connection = connectionSocket;
-        this.userController = new UserController(userService);
+        UserController userController = new UserController(userService);
         this.userHandler = new UserHandler(userController);
     }
-
 
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());

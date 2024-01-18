@@ -22,7 +22,6 @@ public class HttpResponse {
         dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + response.getBody().length + "\r\n");
         dos.writeBytes("\r\n");
-
         dos.write(response.getBody(), 0, response.getBody().length);
         dos.flush();
     }
