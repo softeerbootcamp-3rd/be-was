@@ -43,6 +43,11 @@ public class RequestHandler implements Runnable {
                     if(body != null){
                         httpResponse = responseBuilder.createSuccessResponse(body);
                     }
+                } else{
+                    byte[] body = FileUtil.getFileContents(httpRequest.getPath());
+                    if(body != null){
+                        httpResponse = responseBuilder.createSuccessResponse(body);
+                    }
                 }
             }
 
