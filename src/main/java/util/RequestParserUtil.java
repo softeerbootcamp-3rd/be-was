@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class RequestParserUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestParserUtil.class);
 
     private RequestParserUtil() {}
 

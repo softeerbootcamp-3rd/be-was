@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public static void registerUser(RequestData requestData) {
         String url = requestData.getRequestContent();
