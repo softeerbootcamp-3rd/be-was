@@ -13,9 +13,14 @@ public class MimeType {
         mimeTypes.put("png", "image/png");
         mimeTypes.put("jpg", "image/jpeg");
         mimeTypes.put("jpeg", "image/jpeg");
+        mimeTypes.put("ico", "image/x-icon");
+        mimeTypes.put("woff", "font/woff");
+        mimeTypes.put("woff2", "font/woff2");
     }
 
-    public static String getContentType(String extension) {
+    public static String getContentType(String filePath) {
+        String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
         return mimeTypes.getOrDefault(extension, "text/html");
     }
+
 }
