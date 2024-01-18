@@ -14,8 +14,10 @@ public final class ResponseBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static void response(String status, String route, OutputStream out) throws IOException {
+    public static void response(String request, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
+        String status = request.substring(0, 3);
+        String route = request.substring(4);
 
         if (status.equals("200")) {
             byte[] body = getContent(route); // 해당하는 경로의 파일을 읽고 byte[]로 반환
@@ -25,6 +27,9 @@ public final class ResponseBuilder {
         }
         else if (status.equals("302")) {
             response302Header(dos, route);
+        }
+        else {
+            response404Header(dos);
         }
     }
 
@@ -44,6 +49,15 @@ public final class ResponseBuilder {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + location + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private static void response404Header(DataOutputStream dos) {
+        try {
+            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
