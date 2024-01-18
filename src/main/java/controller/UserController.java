@@ -17,7 +17,7 @@ public class UserController {
     public Response createUser(@RequestParam(name = "userId") String userId,
                                @RequestParam(name = "password") String password,
                                @RequestParam(name = "name") String name,
-                               @RequestParam(name = "email") String email) throws GeneralException {
+                               @RequestParam(name = "email") String email) {
         logger.debug("createUser() 실행");
 
         userService.createUser(userId, password, name, email);
