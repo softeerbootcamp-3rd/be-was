@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import service.UserService;
 
-public class UserController {
+public class UserController implements Controller {
 
     private static final UserService userService = new UserService();
 

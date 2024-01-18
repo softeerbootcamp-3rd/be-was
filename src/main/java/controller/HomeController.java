@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class HomeController {
+public class HomeController implements Controller{
 
     public ResponseDto route(String url) {
         if (url.equals("/") || url.equals("/index.html")) {

@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.Controller;
 import controller.HomeController;
 import controller.UserController;
 import dto.ResponseDto;
@@ -31,15 +32,9 @@ public class RequestHandler implements Runnable {
                     request.getMethod(), request.getHttp(), request.getUrl());
 
             String url = request.getUrl();
-            ResponseDto responseDto = new ResponseDto();
 
-            if (url.startsWith("/user")) {
-                responseDto = userController.route(url);
-            } else if (url.startsWith("/qna")) {
-                // todo : qna 컨트롤러, 서비스 개발
-            } else {
-                responseDto = homeController.route(url);
-            }
+            Controller controller = getController(url);
+            ResponseDto responseDto = controller.route(url);
 
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes(HeaderBuilder.build(responseDto));
@@ -48,5 +43,15 @@ public class RequestHandler implements Runnable {
         } catch (Exception e) {
             logger.error("error in run", e);
         }
+    }
+
+    private Controller getController(String url) {
+        if (url.startsWith("/user")) {
+            return userController;
+        }
+        if (url.startsWith("/qna")) {
+            // todo : qna 컨트롤러, 서비스 개발
+        }
+        return homeController;
     }
 }

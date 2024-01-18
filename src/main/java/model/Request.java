@@ -10,7 +10,7 @@ import java.util.Map;
 public class Request {
 
     private final String method;
-    private final String urn;
+    private final String url;
     private final String http;
     private final int port;
     private final Map<String, String> headers = new HashMap<>();
@@ -23,7 +23,7 @@ public class Request {
         // general header
         String[] generalHeader = header.split(" ");
         method = generalHeader[0];
-        urn = generalHeader[1];
+        url = generalHeader[1];
         http = generalHeader[2];
         port = portNumber;
 
@@ -45,7 +45,7 @@ public class Request {
     }
 
     public String getUrl() {
-        return urn;
+        return url;
     }
 
     public String getHttp() {
