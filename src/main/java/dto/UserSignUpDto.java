@@ -10,8 +10,8 @@ public class UserSignUpDto {
     private final String name;
     private final String email;
 
-    public UserSignUpDto(String id, String password, String name, String email){
-        validateNotNullOrEmpty( id, "User ID");
+    public UserSignUpDto(String id, String password, String name, String email) {
+        validateNotNullOrEmpty(id, "User ID");
         validateNotNullOrEmpty(password, "Password");
         validateNotNullOrEmpty(name, "Name");
         validateNotNullOrEmpty(email, "Email");
@@ -26,6 +26,7 @@ public class UserSignUpDto {
             throw new IllegalArgumentException(fieldName + " cannot be null or empty");
         }
     }
+
     public String getId() {
         return id;
     }

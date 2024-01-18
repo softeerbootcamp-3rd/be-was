@@ -1,18 +1,17 @@
-package webApplicationServer.service;
+package service;
 
-import config.AppConfig;
 import db.Database;
 import dto.UserSignUpDto;
 import exception.BadRequestException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.HttpResponseSendService;
 
 import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Override
     public void signUp(UserSignUpDto userSignUpDto) {
         validation(userSignUpDto);

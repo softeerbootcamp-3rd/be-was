@@ -1,4 +1,4 @@
-package webApplicationServer.controller;
+package controller;
 
 import config.AppConfig;
 import dto.HttpResponseDto;
@@ -7,9 +7,7 @@ import exception.BadRequestException;
 import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webApplicationServer.service.UserService;
+import service.UserService;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package util;
 
-import model.http.ContentType;
 import exception.NotFound;
+import model.http.ContentType;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class FileDetector {
     }
 
     private Path getFilePath(String filePath) {
-        if(filePath.equals("/")){
+        if (filePath.equals("/")) {
             return new File(TEMPLATES_RESOURCE + "/index.html").toPath();
         }
         if (filePath.contains("html")) {

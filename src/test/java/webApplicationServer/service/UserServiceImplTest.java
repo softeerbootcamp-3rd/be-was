@@ -7,6 +7,8 @@ import exception.BadRequestException;
 import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import service.UserService;
+import service.UserServiceImpl;
 
 import java.util.Optional;
 

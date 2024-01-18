@@ -1,17 +1,20 @@
 package config;
 
+import controller.UserController;
+import controller.UserControllerImpl;
 import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
 import factory.HttpResponseFactory;
 import factory.HttpResponseFactoryImpl;
-import handler.*;
+import handler.DynamicResponseHandler;
+import handler.DynamicResponseHandlerImpl;
+import handler.StaticResponseHandler;
+import handler.StaticResponseHandlerImpl;
 import service.HttpResponseSendService;
 import service.HttpResponseSendServiceImpl;
+import service.UserService;
+import service.UserServiceImpl;
 import util.FileDetector;
-import webApplicationServer.controller.UserController;
-import webApplicationServer.controller.UserControllerImpl;
-import webApplicationServer.service.UserService;
-import webApplicationServer.service.UserServiceImpl;
 
 public class AppConfig {
     public static HttpResponseSendService httpResponseSendService() {

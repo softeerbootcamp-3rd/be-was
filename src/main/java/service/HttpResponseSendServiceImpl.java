@@ -9,31 +9,32 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class HttpResponseSendServiceImpl implements HttpResponseSendService {
-    private static class HttpResponseServiceHolder{
+    private static class HttpResponseServiceHolder {
         private static final HttpResponseSendService INSTANCE = new HttpResponseSendServiceImpl();
     }
 
-    public static HttpResponseSendService getInstance(){
+    public static HttpResponseSendService getInstance() {
         return HttpResponseServiceHolder.INSTANCE;
     }
+
     private static final Logger logger = LoggerFactory.getLogger(HttpResponseSendService.class);
+
     @Override
-    public void sendHttpResponse(OutputStream out, HttpResponse httpResponse){
+    public void sendHttpResponse(OutputStream out, HttpResponse httpResponse) {
         DataOutputStream dos = new DataOutputStream(out);
         if (httpResponse.getHeaders().getLocation() == null) {
             setStatusAndHeader(dos, httpResponse);
             setBody(dos, httpResponse);
-        }
-        else{
+        } else {
             setStatusAndHeaderForRedirect(dos, httpResponse);
         }
     }
 
-    private void setBody(DataOutputStream dos, HttpResponse httpResponse){
+    private void setBody(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.write(httpResponse.getBody().getContent(), 0, httpResponse.getBody().getContent().length);
             dos.flush();
-        } catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
@@ -48,6 +49,7 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
             logger.error(e.getMessage());
         }
     }
+
     private void setStatusAndHeaderForRedirect(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());

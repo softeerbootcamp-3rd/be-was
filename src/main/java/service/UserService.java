@@ -1,4 +1,4 @@
-package webApplicationServer.service;
+package service;
 
 import dto.UserSignUpDto;
 

@@ -1,15 +1,15 @@
 package handler;
 
 import config.AppConfig;
+import controller.UserController;
 import dto.HttpResponseDto;
+import exception.BadRequestException;
+import exception.InternalServerError;
 import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import exception.BadRequestException;
-import exception.InternalServerError;
-import webApplicationServer.controller.UserController;
 
 public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     private static class DynamicResponseHandlerHolder {

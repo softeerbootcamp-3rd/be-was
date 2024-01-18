@@ -4,13 +4,13 @@ import config.AppConfig;
 import dto.HttpResponseDto;
 import factory.HttpRequestFactory;
 import factory.HttpResponseFactory;
+import handler.DynamicResponseHandler;
+import handler.StaticResponseHandler;
 import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import handler.DynamicResponseHandler;
 import service.HttpResponseSendService;
-import handler.StaticResponseHandler;
 
 import java.io.*;
 import java.net.Socket;

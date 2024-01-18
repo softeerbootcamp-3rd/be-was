@@ -1,5 +1,7 @@
 package webApplicationServer.controller;
 
+import controller.UserController;
+import controller.UserControllerImpl;
 import dto.HttpResponseDto;
 import dto.UserSignUpDto;
 import exception.BadRequestException;
@@ -9,7 +11,7 @@ import model.http.request.StartLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webApplicationServer.service.UserService;
+import service.UserService;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;

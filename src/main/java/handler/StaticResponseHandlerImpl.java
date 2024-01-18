@@ -2,13 +2,13 @@ package handler;
 
 import config.AppConfig;
 import dto.HttpResponseDto;
+import exception.NotFound;
 import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.FileDetector;
-import exception.NotFound;
 
 public class StaticResponseHandlerImpl implements StaticResponseHandler {
     private final FileDetector fileDetector;
@@ -20,8 +20,13 @@ public class StaticResponseHandlerImpl implements StaticResponseHandler {
     private static class StaticResponseHandlerHolder {
         private static final StaticResponseHandler INSTANCE = new StaticResponseHandlerImpl(AppConfig.fileDetector());
     }
-    public static StaticResponseHandler getInstance(){return StaticResponseHandlerHolder.INSTANCE;}
+
+    public static StaticResponseHandler getInstance() {
+        return StaticResponseHandlerHolder.INSTANCE;
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(StaticResponseHandler.class);
+
     @Override
     public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try {
