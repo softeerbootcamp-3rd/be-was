@@ -52,6 +52,11 @@ public class RequestMapper {
             if (result instanceof HttpResponse) return (HttpResponse) result;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             logger.error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return HttpResponse.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage())
+                    .build();
         }
         return HttpResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -60,16 +65,18 @@ public class RequestMapper {
     }
 
     private static Object[] mapParams(Method method, HttpRequest request) {
-        Class<? extends Annotation> requestParam = RequestParam.class;
+        Class<? extends Annotation> annotationClass = RequestParam.class;
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
 
         IntStream.range(0, parameters.length)
                 .forEach(i -> {
                     Parameter parameter = parameters[i];
-                    if(parameter.isAnnotationPresent(requestParam)){
-                        RequestParam annotation = (RequestParam) parameter.getAnnotation(requestParam);
-
+                    if(parameter.isAnnotationPresent(annotationClass)){
+                        RequestParam annotation = (RequestParam) parameter.getAnnotation(annotationClass);
+                        String requestParam = request.getParamMap().get(annotation.value());
+                        if (annotation.required() && requestParam == null)
+                            throw new IllegalArgumentException("Parameter '" + annotation.value() + "' cannot be null");
                         params[i]= request.getParamMap().get(annotation.value());
                     }
                 });

@@ -12,11 +12,18 @@ import webserver.HttpStatus;
 public class UserController {
 
     @RequestMapping(method = "GET", path = "/user/create")
-    public static HttpResponse createUser(@RequestParam("request") String userId,
-                                          @RequestParam("password") String password,
+    public static HttpResponse createUser(@RequestParam(value = "request", required = true) String userId,
+                                          @RequestParam(value = "password", required = true) String password,
                                           @RequestParam("name") String name,
                                           @RequestParam("email") String email) {
         User user = new User(userId, password, name, email);
+        User existUser = Database.findUserById(userId);
+        if (existUser != null)
+            return HttpResponse.builder()
+                    .status(HttpStatus.CONFLICT)
+                    .body("The requested username is already in use.")
+                    .build();
+
         Database.addUser(user);
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
