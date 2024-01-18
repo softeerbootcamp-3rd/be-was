@@ -60,6 +60,11 @@ Java Web Application Server 2023
 
 
 ##### 4. Junit5 & AssertJ
+- given/when/then 패턴 사용
+  >- given(준비): 어떠한 데이터가 준비되었을 때
+  >- when(실행): 어떠한 함수를 실행하면
+  >- then(검증): 어떠한 결과가 나와야 한다.
+
 - JUnit 5
   >- 자바 단위 테스트 프레임워크
   >- `@Test`, `@BeforeAll`, `@AfterAll`, `@BeforeEach`, `@AfterEach` 등의 애너테이션을 제공
@@ -68,7 +73,10 @@ Java Web Application Server 2023
   >- 자바 단언 라이브러리.
   >- 풍부한 단언 메서드와 체이닝을 통해 테스트 코드를 가독성 있게 작성할 수 있다.
 
-- AssertJ를 JUnit 5와 함께 사용하면 더 풍부하고 가독성이 높은 테스트 코드를 작성할 수 있다.
+- @ParameterizedTest: 하나의 테스트 메소드로 여러 개의 파라미터에 대해서 테스트할 수 있다.
+  >- 여러개의 인수를 제공하는 방법으로 @MethodSource와 함께 사용된다.
+  >- @MethodSource의 value에는 메소드명을 넣는다.
+
 
 ---
 
