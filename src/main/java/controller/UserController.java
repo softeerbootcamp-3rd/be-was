@@ -6,8 +6,6 @@ import utils.HttpRequest;
 import service.UserService;
 import utils.Parser;
 
-import java.io.IOException;
-
 /**
  * 스프링의 controller 역할
  * controller - service 연결
@@ -15,7 +13,7 @@ import java.io.IOException;
 public class UserController {
     private static final UserService userService = new UserService();
 
-    public static HttpResponseDto signup(HttpRequest request) throws IOException {
+    public static HttpResponseDto signup(HttpRequest request) {
         // query 추출
         String query = Parser.extractQuery(request.getUrl());
         String[] params = Parser.parsing(query, "&", -1);

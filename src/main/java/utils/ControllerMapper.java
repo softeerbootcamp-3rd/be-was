@@ -4,7 +4,6 @@ import controller.UserController;
 import dto.HttpResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,15 +24,7 @@ public class ControllerMapper {
     public static final Map<String, Function<HttpRequest, HttpResponseDto>> CONTROLLER = new HashMap<>();
 
     static {
-        CONTROLLER.put("GET /user/create", request -> {
-            try {
-                return UserController.signup(request);
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-                // Internal server error : 파일 입출력 관련
-                return HttpResponseDto.of(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.PLAIN_TEXT, e.getMessage().getBytes());
-            }
-        });
+        CONTROLLER.put("GET /user/create", UserController::signup);
     }
 
     public static Function<HttpRequest, HttpResponseDto> getController(HttpRequest request) {
