@@ -2,67 +2,78 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
+import controller.MainController;
+import model.Request;
+import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
+    private static final HashSet<String> printedKey =  // logger.debug로 출력할 헤더값들
+            new HashSet<>(Arrays.asList("Accept", "Host", "User-Agent", "Cookie"));
     private Socket connection;
-
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
+        logger.debug("#####  New Client Connect! Connected IP : {}, Port : {}  #####",
+                connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
 
-            if(line == null) {
-                return;
-            }
-            logger.debug("# Request Line");
-            logger.debug(line);
-            logger.debug("# Request Header");
-
-            String[] tokens = line.split(" ");
-            final Set<String> printedKey = new HashSet<>(Arrays.asList("Connection",
-                                                                        "Host",
-                                                                        "User-Agent",
-                                                                        "Cookie"));
-            while(true) {
-                line = br.readLine();
-                if(line.equals("")) break;
-                String[] keyAndValue = line.split(": ");
-                String key = keyAndValue[0], value = keyAndValue[1];
-                if(printedKey.contains(key)) logger.debug(line);
-            }
-            logger.debug("\n");
-
-            byte[] body = Files.readAllBytes(
-                    new File("./src/main/resources/templates" + tokens[1]).toPath());
-            response200Header(dos, body.length);
+            Request request = readRequest(br);
+            Response response = MainController.control(request);
+            responseProcess(dos, response);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    private void responseProcess(DataOutputStream dos,
+                          Response response) {
+        String statusCode = response.getStatusCode();
+        if(statusCode.equals("200")) {
+            byte[] body = response.getBody();
+            String mimeType = response.getMimeType();
+            response200Header(dos, mimeType, body.length);
             responseBody(dos, body);
+        }
+        else if(statusCode.equals("302")) {
+            response302Header(dos);
+        }
+        else {
+            byte[] body = response.getBody();
+            response200Header(dos, "text/html", body.length);
+            responseBody(dos, body);
+        }
+    }
+
+    private void response200Header(DataOutputStream dos,
+                                   String mimeType,
+                                   int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response302Header(DataOutputStream dos) {
+        String location = "/index.html";
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + location);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -76,5 +87,21 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+    private Request readRequest(BufferedReader br) throws IOException {
+        Request request = new Request();
+        String line = br.readLine();
+        request.parseStartLine(line);
+        logger.debug(request.toString());
+        while(true) {
+            line = br.readLine();
+            if(line.isEmpty()) break;
+            String[] keyAndValue = line.split(": ");
+            String key = keyAndValue[0], value = keyAndValue[1];
+            request.putHeader(key, value);
+            if(printedKey.contains(key))
+                logger.debug(line);
+        }
+        return request;
     }
 }
