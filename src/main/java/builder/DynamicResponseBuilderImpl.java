@@ -1,4 +1,4 @@
-package service;
+package builder;
 
 import config.AppConfig;
 import dto.HttpResponseDto;

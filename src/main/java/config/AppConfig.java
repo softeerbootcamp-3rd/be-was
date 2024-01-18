@@ -4,7 +4,9 @@ import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
 import factory.HttpResponseFactory;
 import factory.HttpResponseFactoryImpl;
-import service.*;
+import builder.*;
+import service.HttpResponseSendService;
+import service.HttpResponseSendServiceImpl;
 import util.FileDetector;
 import webApplicationServer.controller.UserController;
 import webApplicationServer.controller.UserControllerImpl;
@@ -12,8 +14,8 @@ import webApplicationServer.service.UserService;
 import webApplicationServer.service.UserServiceImpl;
 
 public class AppConfig {
-    public static HttpResponseSender httpResponseSender() {
-        return HttpResponseSenderImpl.getInstance();
+    public static HttpResponseSendService httpResponseSendService() {
+        return HttpResponseSendServiceImpl.getInstance();
     }
 
     public static HttpResponseFactory httpResponseFactory() {

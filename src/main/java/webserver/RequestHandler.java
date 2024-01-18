@@ -6,12 +6,11 @@ import factory.HttpRequestFactory;
 import factory.HttpResponseFactory;
 import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.DynamicResponseBuilder;
-import service.HttpResponseSender;
-import service.StaticResponseBuilder;
+import builder.DynamicResponseBuilder;
+import service.HttpResponseSendService;
+import builder.StaticResponseBuilder;
 
 import java.io.*;
 import java.net.Socket;
@@ -23,7 +22,7 @@ public class RequestHandler implements Runnable {
     private static final List<String> dynamicElements = List.of("/user/create?");
     private final Socket connection;
     private final HttpResponseFactory httpResponseFactory;
-    private final HttpResponseSender httpResponseSender;
+    private final HttpResponseSendService httpResponseSendService;
     private final HttpRequestFactory httpRequestFactory;
     private final StaticResponseBuilder staticResponseBuilder;
     private final DynamicResponseBuilder dynamicResponseBuilder;
@@ -31,7 +30,7 @@ public class RequestHandler implements Runnable {
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpResponseFactory = AppConfig.httpResponseFactory();
-        this.httpResponseSender = AppConfig.httpResponseSender();
+        this.httpResponseSendService = AppConfig.httpResponseSendService();
         this.httpRequestFactory = AppConfig.httpRequestFactory();
         this.staticResponseBuilder = AppConfig.staticResponseBuilder();
         this.dynamicResponseBuilder = AppConfig.dynamicResponseBuilder();
@@ -59,7 +58,7 @@ public class RequestHandler implements Runnable {
             }
 
             HttpResponse httpResponse = httpResponseFactory.create(httpResponseDto);
-            httpResponseSender.sendHttpResponse(out, httpResponse);
+            httpResponseSendService.sendHttpResponse(out, httpResponse);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

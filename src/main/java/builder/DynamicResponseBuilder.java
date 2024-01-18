@@ -1,4 +1,4 @@
-package service;
+package builder;
 
 import dto.HttpResponseDto;
 import model.http.request.HttpRequest;

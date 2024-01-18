@@ -4,6 +4,6 @@ import model.http.response.HttpResponse;
 
 import java.io.OutputStream;
 
-public interface HttpResponseSender {
+public interface HttpResponseSendService {
     void sendHttpResponse(OutputStream out, HttpResponse httpResponse);
 }
