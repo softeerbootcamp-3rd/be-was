@@ -54,13 +54,4 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
-    private static String getFileExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
-            return fileName.substring(lastDotIndex + 1);
-        } else {
-            return ""; // 확장자가 없는 경우
-        }
-    }
 }
