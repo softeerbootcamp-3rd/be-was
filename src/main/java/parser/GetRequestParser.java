@@ -1,11 +1,13 @@
 package parser;
 
+import exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.GetRequest;
+import webserver.status.ErrorCode;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -34,7 +36,7 @@ public class GetRequestParser {
             String value = decode(st.nextToken());
 
             if(paramsMap.containsKey(key)){
-                throw new IllegalArgumentException("중복된 파라미터 요청");
+                throw new GeneralException(ErrorCode.ILLEGAL_ARGUMENT_ERROR);
             }
 
             logger.debug(key + " " + value);
@@ -45,12 +47,6 @@ public class GetRequestParser {
     }
 
     private static String decode(String str){
-        try {
-            return URLDecoder.decode(str, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-
-            return null;
-        }
+        return URLDecoder.decode(str, StandardCharsets.UTF_8);
     }
 }
