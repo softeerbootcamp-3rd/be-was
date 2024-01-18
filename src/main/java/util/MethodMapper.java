@@ -1,4 +1,4 @@
-package webserver;
+package util;
 
 import controller.UserController;
 import dto.RequestDto;
