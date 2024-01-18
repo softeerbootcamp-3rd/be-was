@@ -2,72 +2,54 @@ package service;
 
 import model.RequestHeader;
 
+import java.util.HashMap;
+
 public class ResourceService {
 
-    private String fileExtension;
+    private static final String TEMPLATE_PATH = "./src/main/resources/templates";
+    private static final String STATIC_PATH = "./src/main/resources/static";
+    private final HashMap<String, String> extensionToPathMap = initializeExtensionToPathMap();
+    private final HashMap<String, String> extensionToContentTypeMap = initializeExtensionToContentTypeMap();
 
+    private HashMap<String, String> initializeExtensionToPathMap(){
+        HashMap<String, String> map = new HashMap<>();
+        map.put("html", TEMPLATE_PATH);
+        map.put("css", STATIC_PATH);
+        map.put("jpg", STATIC_PATH);
+        map.put("png", STATIC_PATH);
+        map.put("eot", STATIC_PATH);
+        map.put("svg", STATIC_PATH);
+        map.put("ttf", STATIC_PATH);
+        map.put("woff", STATIC_PATH);
+        map.put("woff2", STATIC_PATH);
+        map.put("ico", STATIC_PATH);
+        map.put("js", STATIC_PATH);
+        return map;
+    }
+    private HashMap<String, String> initializeExtensionToContentTypeMap() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("html", "text/html;charset=utf-8");
+        map.put("css", "text/css;charset=utf-8");
+        map.put("js", "application/javascript;charset=utf-8");
+        map.put("png", "image/png");
+        map.put("jpg", "image/jpg");
+        map.put("ico", "image/x-icon");
+        map.put("eot", "font/eot");
+        map.put("svg", "font/svg");
+        map.put("ttf", "font/ttf");
+        map.put("woff", "font/woff");
+        map.put("woff2", "font/woff2");
+        return map;
+    }
     public String separatedFileExtension(RequestHeader rh){
         String[] parts = rh.getPath().split("\\.");
         return parts[parts.length-1];
     }
-
-    public String getDetailPath(String file_extension, String path) {
-        if (file_extension.equals("html")) {
-            return "./src/main/resources/templates" + path;
-        }
-        else if ("css".equals(file_extension) || "jpg".equals(file_extension) || "png".equals(file_extension) ||
-                "eot".equals(file_extension) || "svg".equals(file_extension) || "ttf".equals(file_extension) ||
-                "woff".equals(file_extension) || "woff2".equals(file_extension) || "ico".equals(file_extension) ||
-                "js".equals(file_extension)) {
-            return "./src/main/resources/static" + path;
-        }
-        else{
-            return "404";
-        }
-
+    public String getDetailPath(String fileExtension, String path) {
+        return extensionToPathMap.getOrDefault(fileExtension, "404") + path;
     }
 
-    public String getContextType(String file_extension){
-
-        //html 파일 처리
-        if (file_extension.equals("html")) {
-            return "text/html;charset=utf-8";
-        }
-        // CSS 파일 처리
-        else if (file_extension.equals("css")) {
-            return "text/css;charset=utf-8";
-        }
-        // CSS 파일 처리
-        else if (file_extension.equals("js")) {
-            return "application/javascript;charset=utf-8";
-        }
-        else if (file_extension.equals("png")) {
-            return "image/png";
-        }
-        else if (file_extension.equals("jpg")) {
-            return "image/jpg";
-        }
-        else if (file_extension.equals("ico")) {
-            return "image/x-icon";
-        }
-        else if (file_extension.equals("eot")) {
-            return "font/eot";
-        }
-        else if (file_extension.equals("svg")) {
-            return "font/svg";
-        }
-        else if (file_extension.equals("ttf")) {
-            return "font/ttf";
-        }
-        else if (file_extension.equals("woff")) {
-            return "font/woff";
-        }
-        else if (file_extension.equals("woff2")) {
-            return "font/woff2";
-        }
-        // 다른 파일 형식 처리도 추가 가능
-        else {
-            return "error";
-        }
+    public String getContextType(String fileExtension){
+        return extensionToContentTypeMap.getOrDefault(fileExtension, "404");
     }
 }
