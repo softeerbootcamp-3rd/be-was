@@ -3,6 +3,7 @@ package http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.FrontController;
+import webserver.ViewResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +11,12 @@ import java.util.Map;
 public class Request {
     private String method;
     private String url;
-    private String contentType;
 
     private String location = "/index.html";
     private Map<String,String> requestParam = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
-
+    private final ViewResolver viewResolver = new ViewResolver();
 
     public Request() {
     }
@@ -34,9 +34,6 @@ public class Request {
         return location;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
 
 
     public void setMethod(String method) {
@@ -51,13 +48,11 @@ public class Request {
         String[] request = string.split("\\?");
         String url = request[0];
         this.url = url;
-        this.setContentType();
-        if(url.endsWith(".html")){
-            requestParam.put("template",url);
+
+        if(viewResolver.isTemplate(url)||viewResolver.isStatic(url)){
+            requestParam.put("content",url);
         }
-        else if(url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/")){
-            requestParam.put("static",url);
-        }
+
         if(request.length>1) {
             String[] params = request[1].split("\\&");
 
@@ -75,25 +70,14 @@ public class Request {
     }
 
     public void requestInfo(){
-        logger.debug("contentType : "+this.contentType);
         logger.debug("method : "+this.method);
         logger.debug("url : "+this.url);
         logger.debug("[ requestParams ]");
         for (Map.Entry<String, String> entry : this.requestParam.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            System.out.println(key + ":" + value);
         }
     }
 
-    private void setContentType(){
-        String fileName = this.url;
-        String fileExtension;
-        int dotIndex = fileName.lastIndexOf(".");
-        if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-            this.contentType = "text/"+fileName.substring(dotIndex + 1);
-        } else {
-            this.contentType =  ""; // 확장자가 없을 경우 빈 문자열 반환
-        }
-    }
+
 }
