@@ -3,7 +3,6 @@ package service;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.HttpRequest;
 import request.SignUpRequest;
 import webserver.RequestHandler;
 
