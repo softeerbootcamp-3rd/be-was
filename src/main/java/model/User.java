@@ -1,6 +1,6 @@
 package model;
 
-import java.lang.reflect.Field;
+import java.util.Map;
 
 public class User {
     private String userId;
@@ -15,20 +15,11 @@ public class User {
         this.email = email;
     }
 
-    public User(String params) {
-        try {
-            for (String param : params.split("&")) {
-                String[] keyAndValue = param.split("=");
-                String key = keyAndValue[0];
-                String value = keyAndValue[1];
-
-                Field field = this.getClass().getDeclaredField(key);
-                field.setAccessible(true);
-                field.set(this, value);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+    public User(Map<String, String> params) {
+        this.userId = params.get("userId");
+        this.password = params.get("password");
+        this.name = params.get("name");
+        this.email = params.get("email");
     }
 
     public String getUserId() {
