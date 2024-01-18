@@ -12,6 +12,7 @@ import java.nio.file.*;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
+import exception.DuplicateUserIdException;
 import exception.EmptyFormException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class RequestHandler implements Runnable {
     private static final String RESOURCES_PATH = "src/main/resources/";
     private static final String INDEX_FILE_PATH = "/index.html";
     private static final String USER_CREATE_FORM_FAIL_FILE_PATH = "/user/form_fail.html";
+    private static final String USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH = "/user/form_userId_duplicate_fail.html";
 
     private Socket connection;
 
@@ -54,6 +56,12 @@ public class RequestHandler implements Runnable {
                     byte[] body = Files.readAllBytes(new File(getFilePath(USER_CREATE_FORM_FAIL_FILE_PATH)).toPath());
                     DataOutputStream dos = new DataOutputStream(out);
                     response400Header(dos, body.length);
+                    responseBody(dos, body);
+                } catch (DuplicateUserIdException e) {
+                    logger.debug(e.getMessage());
+                    byte[] body = Files.readAllBytes(new File(getFilePath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH)).toPath());
+                    DataOutputStream dos = new DataOutputStream(out);
+                    response409Header(dos, body.length);
                     responseBody(dos, body);
                 }
             }
@@ -108,6 +116,17 @@ public class RequestHandler implements Runnable {
     private void response400Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 400 Bad Request \r\n");
+            dos.writeBytes("Content-Type: text/html; charset=UTF-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void response409Header(DataOutputStream dos, int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 409 Conflict \r\n");
             dos.writeBytes("Content-Type: text/html; charset=UTF-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
