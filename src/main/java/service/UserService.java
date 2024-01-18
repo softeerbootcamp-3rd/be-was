@@ -2,16 +2,15 @@ package service;
 
 import db.Database;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
-
-import javax.xml.crypto.Data;
 import java.util.Map;
+
 
 public class UserService {
 
     public boolean signUp(Map<String, String> queryParams){
+        if (!validateParams(queryParams)){
+            return false;
+        }
         User newUser = createUser(queryParams);
         if (Database.findUserById(newUser.getUserId()) != null) {
             return false;
@@ -27,4 +26,12 @@ public class UserService {
         String email = queryParams.getOrDefault("email", "");
         return new User(userId, password, name, email);
     }
+
+    private boolean validateParams(Map<String, String> queryParams) {
+        return queryParams.containsKey("userId") && !queryParams.get("userId").isEmpty()
+                && queryParams.containsKey("password") && !queryParams.get("password").isEmpty()
+                && queryParams.containsKey("name") && !queryParams.get("name").isEmpty()
+                && queryParams.containsKey("email") && !queryParams.get("email").isEmpty();
+    }
+
 }
