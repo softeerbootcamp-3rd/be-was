@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 public class RequestMapper {
     private static final Logger logger = LoggerFactory.getLogger(RequestMapper.class);
-    public static final Map<String, Method> URL_MAPPING = new HashMap<>();
+    public static final Map<String, Method> REQUEST_MAP = new HashMap<>();
 
     static {
         List<Class<?>> controllers = scanControllers("controller");
@@ -33,7 +33,7 @@ public class RequestMapper {
             for (Method method : methods) {
                 if (method.isAnnotationPresent(requestMapping)) {
                     RequestMapping requestInfo = (RequestMapping) method.getAnnotation(requestMapping);
-                    URL_MAPPING.put(requestInfo.method() + " " + requestInfo.path(), method);
+                    REQUEST_MAP.put(requestInfo.method() + " " + requestInfo.path(), method);
                 }
             }
         }
@@ -93,7 +93,7 @@ public class RequestMapper {
     }
 
     public static Method getMethod(HttpRequest request) {
-        return URL_MAPPING.get(request.getMethod() + " " + request.getPath());
+        return REQUEST_MAP.get(request.getMethod() + " " + request.getPath());
     }
 
     public static HttpResponse invoke(Method method, HttpRequest request) {
