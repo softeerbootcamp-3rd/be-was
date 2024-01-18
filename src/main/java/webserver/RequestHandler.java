@@ -1,5 +1,6 @@
 package webserver;
 
+import handler.ExceptionHandler;
 import webserver.header.RequestHeader;
 import handler.GetRequestHandler;
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import webserver.status.HttpStatus;
 import webserver.type.ContentType;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
@@ -49,7 +49,7 @@ public class RequestHandler implements Runnable {
             if(requestHeader.getMethod().equals("GET")){
                 File file = new File(RESOURCES_URL.getPath() + requestHeader.getPath());
 
-                if(file.exists()) {
+                if(!file.isDirectory() && file.exists()) {
                     response = Response.onSuccess(ContentType.HTML, Files.readAllBytes(file.toPath()));
                 } else{
                     Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
@@ -61,9 +61,9 @@ public class RequestHandler implements Runnable {
             }
 
             return response;
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | IOException e){
+        } catch (Throwable e){
             logger.error(e.getMessage());
-            response = Response.onFailure(HttpStatus.NOT_FOUND, ContentType.HTML, "404 Not Found".getBytes());
+            response = ExceptionHandler.handle(e);
 
             return response;
         }
