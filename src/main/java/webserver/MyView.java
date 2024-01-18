@@ -4,7 +4,7 @@ import http.Request;
 import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.dispatcher.SimpleRequestDispatcher;
+import webserver.dispatcher.servletDispatcher;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,15 +16,14 @@ public class MyView {
         this.viewPath = viewPath;
     }
     public void render(DataOutputStream dos,Request request, Response response) throws IOException {
-        SimpleRequestDispatcher dispatcher = new SimpleRequestDispatcher();
         if(viewPath.startsWith("redirect:")){
             viewPath = viewPath.substring("redirect:".length());
             logger.debug("viewPath = {}",viewPath);
-            dispatcher.sendRedirect(request,response,viewPath,dos);
+            servletDispatcher.sendRedirect(request,response,viewPath,dos);
             return;
         }
         logger.debug("viewPath = {}",viewPath);
-        dispatcher.forward(request,response,viewPath,dos);
+        servletDispatcher.forward(request,response,viewPath,dos);
     }
 
     public String getViewPath() {
