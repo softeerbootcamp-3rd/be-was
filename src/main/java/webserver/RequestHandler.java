@@ -8,9 +8,9 @@ import model.http.request.HttpRequest;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import builder.DynamicResponseBuilder;
+import handler.DynamicResponseHandler;
 import service.HttpResponseSendService;
-import builder.StaticResponseBuilder;
+import handler.StaticResponseHandler;
 
 import java.io.*;
 import java.net.Socket;
@@ -24,15 +24,15 @@ public class RequestHandler implements Runnable {
     private final HttpResponseFactory httpResponseFactory;
     private final HttpResponseSendService httpResponseSendService;
     private final HttpRequestFactory httpRequestFactory;
-    private final StaticResponseBuilder staticResponseBuilder;
-    private final DynamicResponseBuilder dynamicResponseBuilder;
+    private final StaticResponseHandler staticResponseHandler;
+    private final DynamicResponseHandler dynamicResponseBuilder;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpResponseFactory = AppConfig.httpResponseFactory();
         this.httpResponseSendService = AppConfig.httpResponseSendService();
         this.httpRequestFactory = AppConfig.httpRequestFactory();
-        this.staticResponseBuilder = AppConfig.staticResponseBuilder();
+        this.staticResponseHandler = AppConfig.staticResponseBuilder();
         this.dynamicResponseBuilder = AppConfig.dynamicResponseBuilder();
     }
 
@@ -51,10 +51,10 @@ public class RequestHandler implements Runnable {
             boolean isDynamic = dynamicElements.stream().anyMatch(httpRequest.getStartLine().getPathUrl()::startsWith);
             if (isDynamic) {
                 logger.debug("동적인 response 전달");
-                dynamicResponseBuilder.build(httpRequest, httpResponseDto);
+                dynamicResponseBuilder.handle(httpRequest, httpResponseDto);
             } else {
                 logger.debug("정적인 response 전달");
-                staticResponseBuilder.build(httpRequest, httpResponseDto);
+                staticResponseHandler.handle(httpRequest, httpResponseDto);
             }
 
             HttpResponse httpResponse = httpResponseFactory.create(httpResponseDto);

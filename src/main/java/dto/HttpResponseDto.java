@@ -6,10 +6,10 @@ import model.http.Status;
 public class HttpResponseDto {
     public static final String HTTP_VERSION = "HTTP/1.1";
     public static final String UTF_8 = "utf-8";
-    private String version;
+    private final String version;
     private Status status;
     private ContentType contentType;
-    private String charSet;
+    private final String charSet;
     private Integer contentLength;
     private String location;
     private byte[] content;

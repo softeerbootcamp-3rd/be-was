@@ -4,7 +4,7 @@ import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
 import factory.HttpResponseFactory;
 import factory.HttpResponseFactoryImpl;
-import builder.*;
+import handler.*;
 import service.HttpResponseSendService;
 import service.HttpResponseSendServiceImpl;
 import util.FileDetector;
@@ -26,16 +26,16 @@ public class AppConfig {
         return HttpRequestFactoryImpl.getInstance();
     }
 
-    public static StaticResponseBuilder staticResponseBuilder() {
-        return StaticResponseBuilderImpl.getInstance();
+    public static StaticResponseHandler staticResponseBuilder() {
+        return StaticResponseHandlerImpl.getInstance();
     }
 
     public static UserController userController() {
         return UserControllerImpl.getInstance();
     }
 
-    public static DynamicResponseBuilder dynamicResponseBuilder() {
-        return DynamicResponseBuilderImpl.getInstance();
+    public static DynamicResponseHandler dynamicResponseBuilder() {
+        return DynamicResponseHandlerImpl.getInstance();
     }
 
     public static UserService userService() {

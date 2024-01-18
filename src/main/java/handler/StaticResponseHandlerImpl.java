@@ -1,4 +1,4 @@
-package builder;
+package handler;
 
 import config.AppConfig;
 import dto.HttpResponseDto;
@@ -10,20 +10,20 @@ import org.slf4j.LoggerFactory;
 import util.FileDetector;
 import exception.NotFound;
 
-public class StaticResponseBuilderImpl implements StaticResponseBuilder{
+public class StaticResponseHandlerImpl implements StaticResponseHandler {
     private final FileDetector fileDetector;
 
-    public StaticResponseBuilderImpl(FileDetector fileDetector) {
+    public StaticResponseHandlerImpl(FileDetector fileDetector) {
         this.fileDetector = fileDetector;
     }
 
-    private static class StaticResponseBuilderHolder{
-        private static final StaticResponseBuilder INSTANCE = new StaticResponseBuilderImpl(AppConfig.fileDetector());
+    private static class StaticResponseHandlerHolder {
+        private static final StaticResponseHandler INSTANCE = new StaticResponseHandlerImpl(AppConfig.fileDetector());
     }
-    public static StaticResponseBuilder getInstance(){return StaticResponseBuilderHolder.INSTANCE;}
-    private static final Logger logger = LoggerFactory.getLogger(StaticResponseBuilder.class);
+    public static StaticResponseHandler getInstance(){return StaticResponseHandlerHolder.INSTANCE;}
+    private static final Logger logger = LoggerFactory.getLogger(StaticResponseHandler.class);
     @Override
-    public void build(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+    public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try {
             httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
             httpResponseDto.setStatus(Status.OK);

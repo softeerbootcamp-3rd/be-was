@@ -1,4 +1,4 @@
-package builder;
+package handler;
 
 import config.AppConfig;
 import dto.HttpResponseDto;
@@ -11,16 +11,16 @@ import exception.BadRequestException;
 import exception.InternalServerError;
 import webApplicationServer.controller.UserController;
 
-public class DynamicResponseBuilderImpl implements DynamicResponseBuilder {
-    private static class DynamicResponseBuilderHolder{
-        private static final DynamicResponseBuilder INSTANCE = new DynamicResponseBuilderImpl();
+public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
+    private static class DynamicResponseHandlerHolder {
+        private static final DynamicResponseHandler INSTANCE = new DynamicResponseHandlerImpl();
     }
-    private static final Logger logger = LoggerFactory.getLogger(DynamicResponseBuilder.class);
-    public static DynamicResponseBuilder getInstance(){
-        return DynamicResponseBuilderHolder.INSTANCE;
+    private static final Logger logger = LoggerFactory.getLogger(DynamicResponseHandler.class);
+    public static DynamicResponseHandler getInstance(){
+        return DynamicResponseHandlerHolder.INSTANCE;
     }
     @Override
-    public void build(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+    public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try{
         UserController userController = AppConfig.userController();
         userController.doGet(httpRequest, httpResponseDto);
