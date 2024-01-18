@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -13,6 +12,7 @@ import controller.FrontController;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -34,24 +34,20 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            RequestHeader requestHeader = requestHeader(br);
-            String path = requestHeader.getPath();
-            String method = requestHeader.getMethod();
 
-            UserController controller = FrontController.getController(path);
-            URL resource = PathHandler.responseResource(method, path, controller);
+            RequestHeader requestHeader = readRequest(br);
 
-            byte[] body = Files.readAllBytes(new File(resource.getPath()).toPath());
+            UserController controller = FrontController.getController(requestHeader.getPath());
+            // -> resource 경로 반환
+            byte[] bytes = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
+            ResponseBuilder.sendResponse(dos, bytes);
 
-            //byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
         } catch (IOException | ClassNotFoundException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private RequestHeader requestHeader(BufferedReader br) throws IOException, ClassNotFoundException {
+    private RequestHeader readRequest(BufferedReader br) throws IOException, ClassNotFoundException {
         writeLock.lock();
         RequestHeader requestHeader = getRequestUrl(br);
         String line;
@@ -73,8 +69,7 @@ public class RequestHandler implements Runnable {
     private static RequestHeader getRequestUrl(BufferedReader br) throws IOException {
         String line = URLDecoder.decode(br.readLine(), StandardCharsets.UTF_8);
         String[] firstHeader = line.split(" ");
-        RequestHeader requestHeader = new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
-        return requestHeader;
+        return new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
     }
 
     private void parseHeader(String line, RequestHeader requestHeader) {

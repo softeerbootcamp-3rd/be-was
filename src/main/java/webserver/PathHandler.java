@@ -2,23 +2,24 @@ package webserver;
 
 import controller.UserController;
 import model.QueryParams;
+import util.ResourceHandler;
 
-import java.net.URL;
+import java.io.IOException;
 
 public class PathHandler {
 
-    public static URL responseResource(String method, String path, UserController controller) {
+    public static byte[] responseResource(String method, String path, UserController controller) throws IOException {
+        System.out.println("path = " + path + " con " + controller);
         if (controller != null) {
             if (method.equals("GET") && path.contains("?")) {
                 String[] splits = path.split("\\?");
                 QueryParams queryParams = QueryParams.from(splits[1]);
-                controller.process(queryParams);
-                return ClassLoader.getSystemClassLoader().getResource("./templates" + "/index.html");
-            } else if (method.equals("GET") && path.contains(".html")) {
-                return ClassLoader.getSystemClassLoader().getResource("./templates" + path);
+                return ResourceHandler.resolveResource(controller.process(queryParams));
+            } else if (method.equals("GET")) {
+                return ResourceHandler.resolveResource(controller.process(path));
             }
         }
 
-        return ClassLoader.getSystemClassLoader().getResource("./static" + path);
+        return null;
     }
 }
