@@ -15,7 +15,7 @@ public class Response {
     private String location;
 
     private HttpStatus status;
-    private String contentType;
+    private String contentType = "";
     public Response(){
     }
 
@@ -35,16 +35,25 @@ public class Response {
         this.status = status;
     }
 
+    public void send(DataOutputStream dos, Request req){
+        byte[] body = new byte[0];
+        setResponseHeader(dos,body.length,req);
+        setResponseBody(dos,body);
+    }
     public void send(DataOutputStream dos,byte[] body, Request req){
         setResponseHeader(dos,body.length,req);
         setResponseBody(dos,body);
     }
     private void setResponseHeader(DataOutputStream dos, int lengthOfBodyContent, Request req) {
         try {
-            logger.debug("req.getUrl() = "+req.getUrl());
-            setContentType(req.getUrl());
             dos.writeBytes("HTTP/1.1 " + status +"\r\n");
-            dos.writeBytes("Content-Type: "+contentType+";charset=utf-8\r\n");
+            if(req.getRequestParam().containsKey("content")) {
+                logger.debug("content = "+req.getRequestParam().get("content"));
+                setContentType(req.getRequestParam().get("content"));
+                dos.writeBytes("Content-Type: "+contentType+";");
+            }
+
+            dos.writeBytes("charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("Location : " + location + "\r\n");
             dos.writeBytes("\r\n");
@@ -69,26 +78,27 @@ public class Response {
         int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
             fileExtension = fileName.substring(dotIndex + 1);
-            if(fileExtension == "css"){
+            if(fileExtension.equals("css")){
                 this.contentType = "text/css";
             }
-            else if(fileExtension == "js"){
+            else if(fileExtension.equals("js")){
                 this.contentType = "text/javascript";
             }
-            else if(fileExtension == "ico"){
+            else if(fileExtension.equals("ico")){
                 this.contentType = "image/x-icon";
             }
-            else if(fileExtension == "html"){
+            else if(fileExtension.equals("html")){
                 this.contentType = "text/html";
             }
-            else if(fileExtension == "png"){
+            else if(fileExtension.equals("png")){
                 this.contentType = "image/png";
             }
-            else if(fileExtension == "jpg"){
+            else if(fileExtension.equals("jpg")){
                 this.contentType = "image/jpeg";
             }
             else {
-                this.contentType =  ""; // 확장자가 없을 경우 빈 문자열 반환
+                this.contentType =  "";
+                logger.warn("this.contentType = null");
             }
 
         }

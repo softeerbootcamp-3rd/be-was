@@ -32,10 +32,9 @@ public class SimpleRequestDispatcher implements RequestDispatcher{
 
     @Override
     public void sendRedirect(Request request, Response response, String viewPath, DataOutputStream dos) {
-        byte[] body = new byte[0];
         response.setLocation(viewPath);
         response.setStatus(HttpStatus.MOVED_PERMANENTLY);
-        response.send(dos,body,request);
+        response.send(dos,request);
     }
 
     private String getAbsolutePath(String viewPath){
