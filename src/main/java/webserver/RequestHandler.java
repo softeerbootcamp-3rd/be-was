@@ -45,31 +45,30 @@ public class RequestHandler implements Runnable {
 
             Controller controller = controllerMap.get(request.getUrl());
             if (controller == null) { //.html
-                if (request.getUrl().contains(".html")) {
+                if (request.getUrl().endsWith(".html")) {
                     filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
 
                 } else { //.js .css ...
                     ;
                 }
             } else {
-                String path = controller.process(request.getRequestParam(), view);
+                String path = controller.process(request.getRequestParam());
                 filePath = Paths.get(path + ".html");
             }
-
-
-
 
             byte[] body = null;
 
             if (filePath == null) {
                 response.respond404();
+            } else if (filePath.toString().startsWith("redirect:")) {
+                String path=filePath.toString();
+                response.response301RedirectHeader(path.substring("redirect:".length(),path.length()));
+                response.responseBody(body);
             } else {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length);
                 response.responseBody(body);
             }
-
-
 
         } catch (IOException e) {
             logger.error(e.getMessage());

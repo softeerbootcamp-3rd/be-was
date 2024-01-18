@@ -27,6 +27,17 @@ public class HttpResponse {
         }
     }
 
+    public void response301RedirectHeader(String redirectUrl) {
+        try {
+            dos.writeBytes("HTTP/1.1 301 Moved Permanently\r\n");
+            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+
     public void responseBody(byte[] body) {
         try {
             dos.write(body, 0, body.length);

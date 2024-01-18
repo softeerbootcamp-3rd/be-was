@@ -8,9 +8,16 @@ import java.util.Collection;
 import java.util.Map;
 
 public class Database {
+    private static Database instance = new Database();
+
     private static Map<String, User> users = Maps.newHashMap();
 
+    public static Database getInstance() {
+        return instance;
+    }
+
     public static void addUser(User user) {
+        System.out.println(user.getUserId());
         users.put(user.getUserId(), user);
     }
 
