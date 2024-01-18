@@ -32,22 +32,18 @@ public class RequestHandler implements Runnable {
             logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
                     httpRequest.getMethod(), httpRequest.getPath(), httpRequest.getHttpVersion());
 
-            String response = getStatusAndRoute(httpRequest);
-            String status = response.split(" ")[0];
-            String route = response.split(" ")[1];
-
-            response(status, route, out);
+            getStatusAndRoute(httpRequest, out);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    public static String getStatusAndRoute(HttpRequest httpRequest) {
+    public static void getStatusAndRoute(HttpRequest httpRequest, OutputStream out) throws IOException {
         if (httpRequest.getPath().startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
-            return userController.route(httpRequest);
+            userController.route(httpRequest, out);
         } else { // 그 외의 경로는 HomeController에서 처리
-            return homeController.route(httpRequest);
+            homeController.route(httpRequest, out);
         }
     }
 }

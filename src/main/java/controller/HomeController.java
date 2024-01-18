@@ -4,6 +4,11 @@ package controller;
 import request.HttpRequest;
 import util.RequestUrl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static util.ResponseBuilder.response;
+
 public class HomeController {
     private volatile static HomeController instance;
 
@@ -17,14 +22,14 @@ public class HomeController {
         return instance;
     }
 
-    public String route(HttpRequest httpRequest) {
+    public void route(HttpRequest httpRequest, OutputStream out) throws IOException {
         String path = httpRequest.getPath();
 
         if (path.equals(RequestUrl.HOME.getUrl())) {
-            return "302 /index.html";
+            response("302", "/index.html", out);
         }
         else {
-            return "200 " + path;
+            response("200", path, out);
         }
     }
 }
