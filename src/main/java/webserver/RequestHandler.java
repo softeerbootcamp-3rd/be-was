@@ -4,12 +4,14 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.FileUtil;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -31,27 +33,21 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
+            HttpResponse httpResponse = responseBuilder.createErrorResponse("Invalid path or file not found".getBytes(StandardCharsets.UTF_8));
 
-            byte[] body = "Valid page is not found".getBytes(StandardCharsets.UTF_8);
-            HttpResponse response = responseBuilder.createErrorResponse(body);
-
-            File file = new File("./src/main/resources/templates" + httpRequest.getPath());
             if (httpRequest.getMethod().equals("GET")){
                 if(httpRequest.getPath().equals("/user/create")){
                     UserController userController = new UserController();
                     String path = userController.signUp(httpRequest.getQueryParams());
-                    body = Files.readAllBytes(new File(path).toPath());
-                    response = responseBuilder.createSuccessResponse(body);
-                } else{
-                    if (file.exists() && !"/".equals(httpRequest.getPath())) {
-                        body = Files.readAllBytes(file.toPath());
-                        response = responseBuilder.createSuccessResponse(body);
+                    byte[] body = FileUtil.getFileContents(path);
+                    if(body != null){
+                        httpResponse = responseBuilder.createSuccessResponse(body);
                     }
                 }
             }
 
             HttpResponseSender sender = new HttpResponseSender();
-            sender.sendResponse(response, dos);
+            sender.sendResponse(httpResponse, dos);
 
         } catch (IOException e) {
             logger.error(e.getMessage());

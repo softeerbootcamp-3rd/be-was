@@ -11,9 +11,9 @@ public class UserController {
 
     public String signUp(Map<String, String> queryParams){
         if(!userService.signUp(queryParams)){
-            return "./src/main/resources/templates/user/form.html";
+            return "/user/form.html";
         }
-        return "./src/main/resources/templates/user/login.html";
+        return "/user/login.html";
     }
 
 }
