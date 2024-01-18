@@ -19,7 +19,7 @@ class ServiceTest {
     void testSignUpNullParams() {
         try {
             // given
-            HTTPResponseDto expected = new HTTPResponseDto(404, "다시 시도해주세요.".getBytes());
+            HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
             // when
             HTTPResponseDto actual = Service.signup(null);
             // then
@@ -35,7 +35,7 @@ class ServiceTest {
     void testSignUpInvalidParams() {
         try {
             // given
-            HTTPResponseDto expected = new HTTPResponseDto(404, "다시 시도해주세요.".getBytes());
+            HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
             httpRequestDto.addRequestParam("hello", "world");
@@ -53,7 +53,7 @@ class ServiceTest {
     void testSignUpValidParams() {
         try {
             // given
-            HTTPResponseDto expected = new HTTPResponseDto(200, "Hello, 장보경!".getBytes());
+            HTTPResponseDto expected = new HTTPResponseDto(303, "/index.html".getBytes());
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/user/create",
                     "HTTP/1.1", "localhost:8080", "text/html");
@@ -75,7 +75,7 @@ class ServiceTest {
     void testRequestNullFile() {
         try {
             // given
-            HTTPResponseDto expected = new HTTPResponseDto(404, "다시 시도해주세요.".getBytes());
+            HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
             HTTPResponseDto actual = Service.requestFile(httpRequestDto);

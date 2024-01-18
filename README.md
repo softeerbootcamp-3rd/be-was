@@ -123,3 +123,6 @@ dependencies {
 |@BeforeAll| 테스트 시작 전에 실행되어야 하는 메소드에 써준다. (static 메소드여야 함) |
 |@AfterAll| 테스트 종료 후에 실행되어야 하는 메소드에 써준다. (static 메소드여야 함) |
 |@Disabled| 실행되지 않아야 하는 테스트 메소드에서 써준다.                    |
+
+### 4. AssertJ
+- usingRecursiveComparison: 실제 객체와 expected 객체의 필드를 재귀적으로 비교

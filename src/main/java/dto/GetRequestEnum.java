@@ -27,6 +27,7 @@ public enum GetRequestEnum {
         this.url = url;
     }
 
+    // 요청 url에 해당하는 상수 반환
     public static GetRequestEnum getRequest(String url) {
         return Arrays.stream(GetRequestEnum.values())
                 .filter(request -> request.url.equals(url))
@@ -34,6 +35,7 @@ public enum GetRequestEnum {
                 .orElse(FILE);
     }
 
+    // 상수별로 상속받을 함수
     public abstract HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException;
 
 }
