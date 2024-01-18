@@ -13,6 +13,6 @@ public class ViewResolver {
         return url.endsWith(".html");
     }
     public static Boolean isStatic(String url){
-        return url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/");
+        return url.startsWith("/css/")||url.startsWith("/fonts/")||url.startsWith("/images/")||url.startsWith("/js/")||url.endsWith(".ico")||url.endsWith(".png")||url.endsWith(".jpg");
     }
 }
