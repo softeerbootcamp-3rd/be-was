@@ -1,6 +1,7 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.function.Function;
 
@@ -23,11 +24,11 @@ public class RequestHandler implements Runnable {
             HttpRequest request = new HttpRequest(reader);
 
             logger.debug("Connection IP : {}, Port : {}, request: {}",
-                    connection.getInetAddress(), connection.getPort(), request.getURI());
+                    connection.getInetAddress(), connection.getPort(), request.getPath());
 
-            Function<HttpRequest, HttpResponse> handler = URLMapper.getMethod(request);
+            Method handler = RequestMapper.getMethod(request);
             if (handler != null) {
-                handler.apply(request).send(out, logger);
+                RequestMapper.invoke(handler, request).send(out, logger);
             } else if (request.getMethod().equals("GET")) {
                 ResourceLoader.getFileResponse(request).send(out, logger);
             } else {

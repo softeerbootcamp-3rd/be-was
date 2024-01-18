@@ -10,15 +10,14 @@ import java.util.Map;
 public class HttpRequest {
 
     private final String method;
-    private final String URI;
+    private final String path;
     private final Map<String, String> paramMap;
     private final Map<String, String> header;
-
 
     public HttpRequest(String requestString) {
         String[] requestParts = requestString.split(" ");
         this.method = requestParts[0];
-        this.URI = URIParser.extractPath(requestParts[1]);
+        this.path = URIParser.extractPath(requestParts[1]);
         this.paramMap = URIParser.parseQueryString(URIParser.extractQuery(requestParts[1]));
         this.header = new HashMap<>();
     }
@@ -27,7 +26,7 @@ public class HttpRequest {
         String requestLine = reader.readLine();
         String[] requestParts = requestLine.split(" ");
         this.method = requestParts[0];
-        this.URI = URIParser.extractPath(requestParts[1]);
+        this.path = URIParser.extractPath(requestParts[1]);
         this.paramMap = URIParser.parseQueryString(URIParser.extractQuery(requestParts[1]));
         this.header = new HashMap<>();
 
@@ -44,8 +43,8 @@ public class HttpRequest {
         return this.method;
     }
 
-    public String getURI() {
-        return this.URI;
+    public String getPath() {
+        return this.path;
     }
 
 

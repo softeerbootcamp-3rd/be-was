@@ -1,17 +1,22 @@
 package controller;
 
+import annotation.Controller;
+import annotation.RequestMapping;
+import annotation.RequestParam;
 import db.Database;
-import dto.CreateUserDto;
 import model.User;
-import webserver.HttpRequest;
 import webserver.HttpResponse;
 import webserver.HttpStatus;
 
+@Controller
 public class UserController {
 
-    public static HttpResponse createUser(HttpRequest request) {
-        CreateUserDto dto = new CreateUserDto(request.getParamMap());
-        User user = new User(dto.getUserId(), dto.getPassword(), dto.getName(), dto.getEmail());
+    @RequestMapping(method = "GET", path = "/user/create")
+    public static HttpResponse createUser(@RequestParam("request") String userId,
+                                          @RequestParam("password") String password,
+                                          @RequestParam("name") String name,
+                                          @RequestParam("email") String email) {
+        User user = new User(userId, password, name, email);
         Database.addUser(user);
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)

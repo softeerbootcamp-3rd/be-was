@@ -41,16 +41,16 @@ public class ResourceLoader {
 
     public static HttpResponse getFileResponse(HttpRequest request) throws IOException {
         String basePath = "src/main/resources/templates";
-        if (request.getURI().startsWith("/css/") || request.getURI().startsWith("/fonts/")
-                || request.getURI().startsWith("/images/") || request.getURI().startsWith("/js/"))
+        if (request.getPath().startsWith("/css/") || request.getPath().startsWith("/fonts/")
+                || request.getPath().startsWith("/images/") || request.getPath().startsWith("/js/"))
             basePath = "src/main/resources/static";
 
-        Path filePath = Paths.get(basePath + request.getURI());
+        Path filePath = Paths.get(basePath + request.getPath());
         if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
             byte[] content = Files.readAllBytes(filePath);
             return HttpResponse.builder()
                     .status(HttpStatus.OK)
-                    .addHeader("Content-Type", getContentType(request.getURI()))
+                    .addHeader("Content-Type", getContentType(request.getPath()))
                     .body(content)
                     .build();
         } else {

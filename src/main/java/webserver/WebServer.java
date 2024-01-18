@@ -6,8 +6,10 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.RequestMapper;
 
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
@@ -22,6 +24,7 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        RequestMapper.scanControllers("controller");
         ExecutorService executorService = Executors.newFixedThreadPool(maxThreads);
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started on {} port.", port);
