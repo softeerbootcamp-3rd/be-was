@@ -48,6 +48,7 @@ public class Response {
         try {
             dos.writeBytes("HTTP/1.1 " + status +"\r\n");
             if(req.getRequestParam().containsKey("content")) {
+                logger.debug("content = "+req.getRequestParam().get("content"));
                 setContentType(req.getUrl());
                 dos.writeBytes("Content-Type: "+contentType+";");
             }
@@ -77,26 +78,27 @@ public class Response {
         int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
             fileExtension = fileName.substring(dotIndex + 1);
-            if(fileExtension == "css"){
+            if(fileExtension.equals("css")){
                 this.contentType = "text/css";
             }
-            else if(fileExtension == "js"){
+            else if(fileExtension.equals("js")){
                 this.contentType = "text/javascript";
             }
-            else if(fileExtension == "ico"){
+            else if(fileExtension.equals("ico")){
                 this.contentType = "image/x-icon";
             }
-            else if(fileExtension == "html"){
+            else if(fileExtension.equals("html")){
                 this.contentType = "text/html";
             }
-            else if(fileExtension == "png"){
+            else if(fileExtension.equals("png")){
                 this.contentType = "image/png";
             }
-            else if(fileExtension == "jpg"){
+            else if(fileExtension.equals("jpg")){
                 this.contentType = "image/jpeg";
             }
             else {
-                this.contentType =  ""; // 확장자가 없을 경우 빈 문자열 반환
+                this.contentType =  "";
+                logger.warn("this.contentType = null");
             }
 
         }
