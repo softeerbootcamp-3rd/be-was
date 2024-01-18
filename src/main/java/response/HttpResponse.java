@@ -113,6 +113,16 @@ public class HttpResponse {
 //        }
 //    }
 
+    public void setResponse(String statusCode, String statusMessage, byte[] body, Map<String, String> headers) {
+        this.version = "HTTP/1.1";
+        this.statusCode = statusCode;
+        this.statusMessage = statusMessage;
+        this.body = body;
+        for (String key : headers.keySet()) {
+            this.headers.put(key, headers.get(key));
+        }
+    }
+
     @Override
     public String toString() {
         return "HttpResponse{" +

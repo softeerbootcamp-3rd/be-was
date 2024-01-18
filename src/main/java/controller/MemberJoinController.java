@@ -15,7 +15,10 @@ public class MemberJoinController implements Controller {
         Map<String, String> params = parse(queryString);
         User user = createUser(params);
         System.out.println(user);
-        set302Response(response, null);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Location", "/index.html");
+        response.setResponse("302", "FOUND", null, headers);
     }
 
     public static Map<String, String> parse(String query) {
@@ -40,12 +43,4 @@ public class MemberJoinController implements Controller {
         return user;
     }
 
-    private static void set302Response(HttpResponse response, byte[] body) {
-        response.setVersion("HTTP/1.1");
-        response.setStatusCode("302");
-        response.setStatusMessage("FOUND");
-        response.setBody(body);
-
-        response.getHeaders().put("Location", "/index.html");
-    }
 }
