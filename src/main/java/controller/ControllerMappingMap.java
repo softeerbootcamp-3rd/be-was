@@ -8,13 +8,19 @@ public class ControllerMappingMap {
 
     static {
         controllerMappingMap.put("html", new HtmlController());
+        controllerMappingMap.put("/user/create", new MemberJoinController());
     }
 
     public static Controller getController(String url) {
         if (url.endsWith(".html")) {
             return controllerMappingMap.get("html");
         }
+        if (url.contains("?")) {
+            return controllerMappingMap.get(url.substring(0, url.indexOf("?")));
+        }
         return null;
     }
+
+
 
 }

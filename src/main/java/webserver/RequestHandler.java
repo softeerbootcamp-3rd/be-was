@@ -120,36 +120,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-//    private static void setResponse(HttpResponse response, byte[] body) {
-//        response.setVersion("HTTP/1.1");
-//        response.setStatusCode("200");
-//        response.setStatusMessage("OK");
-//        response.getHeaders().put("Content-Type", "text/html;charset=utf-8\n");
-//        response.getHeaders().put("Content-Length", String.valueOf(body.length));
-//
-//        response.setBody(body);
-//    }
 
-
-
-
-    public static User createUser(Map<String, String> params) {
-        String userId = params.get("userId");
-        String password = params.get("password");
-        String name = params.get("name");
-        String email = params.get("email");
-
-        User user = new User(userId, password, name, email);
-        return user;
-    }
-
-    // html 파일을 요청하는지 확인
-    boolean isHTML(String requestURL) {
-        if (requestURL.endsWith(".html")) {
-            return true;
-        }
-        return false;
-    }
 
     // Request line에서 url만 추출
     public String getRequestURL(String requestLine) {
@@ -176,19 +147,5 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
-    // login url parsing 기능
-    public static Map<String, String> parse(String query) {
-        Map<String, String> params = new HashMap<>();
-
-        String[] pairs = query.split("&");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            params.put(keyValue[0], keyValue[1]);
-        }
-
-        return params;
-    }
-
 
 }
