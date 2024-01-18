@@ -11,6 +11,7 @@ public class HttpResponseDto {
     private ContentType contentType;
     private String charSet;
     private Integer contentLength;
+    private String location;
     private byte[] content;
 
     public HttpResponseDto() {
@@ -21,10 +22,6 @@ public class HttpResponseDto {
 
     public String getVersion() {
         return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public Status getStatus() {
@@ -47,8 +44,12 @@ public class HttpResponseDto {
         return charSet;
     }
 
-    public void setCharSet(String charSet) {
-        this.charSet = charSet;
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Integer getContentLength() {

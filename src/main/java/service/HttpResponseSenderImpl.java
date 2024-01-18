@@ -20,8 +20,13 @@ public class HttpResponseSenderImpl implements HttpResponseSender {
     @Override
     public void sendHttpResponse(OutputStream out, HttpResponse httpResponse){
         DataOutputStream dos = new DataOutputStream(out);
-        setStatusAndHeader(dos, httpResponse);
-        setBody(dos, httpResponse);
+        if (httpResponse.getHeaders().getLocation() == null) {
+            setStatusAndHeader(dos, httpResponse);
+            setBody(dos, httpResponse);
+        }
+        else{
+            setStatusAndHeaderForRedirect(dos, httpResponse);
+        }
     }
 
     private void setBody(DataOutputStream dos, HttpResponse httpResponse){
@@ -38,6 +43,15 @@ public class HttpResponseSenderImpl implements HttpResponseSender {
             dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
             dos.writeBytes(httpResponse.getHeaders().getContentTypeHeader());
             dos.writeBytes(httpResponse.getHeaders().getContentLengthHeader());
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    private void setStatusAndHeaderForRedirect(DataOutputStream dos, HttpResponse httpResponse) {
+        try {
+            dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
+            dos.writeBytes(httpResponse.getHeaders().getLocationTypeHeader());
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
