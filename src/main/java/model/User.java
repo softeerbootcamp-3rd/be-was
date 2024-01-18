@@ -15,6 +15,7 @@ public class User {
         this.email = signUpRequest.getEmail();
     }
 
+
     public String getUserId() {
         return userId;
     }

@@ -7,14 +7,11 @@ public class SignUpRequest {
     private String email;
 
     // 회원가입 요청 객체 생성
-    public SignUpRequest(String request) {
-
-        String[] userInfo = request.split("&");
-
-        this.userId = userInfo[0].split("=")[1];
-        this.password = userInfo[1].split("=")[1];
-        this.name = userInfo[2].split("=")[1];
-        this.email = userInfo[3].split("=")[1];
+    public SignUpRequest(String userId, String password, String name, String email) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
     public String getUserId() {
