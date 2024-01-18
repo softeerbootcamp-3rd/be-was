@@ -24,15 +24,16 @@ public class ResponseBuilder {
 
         if(statusCode.equals("200")) {
             response200Header(dos, body.length);
+            responseBody(dos, body);
         } else if(statusCode.equals("302")) {
             response302Header(dos, targetPath);
         } else if (statusCode.equals("404")) {
             response404Header(dos);
+            responseBody(dos, body);
         } else {
             logger.error("지원하지 않는 상태 코드입니다.");
             return;
         }
-        responseBody(dos, body);
     }
     private static void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
