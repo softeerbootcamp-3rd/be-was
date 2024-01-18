@@ -1,76 +1,79 @@
 package controller;
 
 import db.Database;
+import dto.RequestBuilder;
+import dto.ResponseBuilder;
 import model.User;
+import webserver.HttpStatus;
 import util.ResourceLoader;
-import util.ResponseBuilder;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class GetController {
-    
-    public static void getMethod(OutputStream out, String requestPath) {
-        if (requestPath.equals("/")) {
-            getMain(out);
-        }
-        else if (requestPath.equals("/index.html")) {
-            getIndexHtml(out, requestPath);
-        }
-        else if (requestPath.startsWith("/user/create")) {
-            signup(out, requestPath);
-        }
-        else {
-            getStaticFile(out, requestPath);
+
+    public static ResponseBuilder getMethod(RequestBuilder requestBuilder) {
+        String requestPath = requestBuilder.getPath();
+
+        if (requestPath.equals("/") || requestPath.equals("/index.html")) {
+            return getIndexHtml("/index.html");
+        } else if (requestPath.startsWith("/user/create")) {
+            return signup(requestPath);
+        } else {
+            return getStaticFile(requestPath);
         }
     }
 
-    private static void getMain(OutputStream out) {
-        byte[] body = "Hello World!".getBytes();
-        DataOutputStream dos = new DataOutputStream(out);
-
-        ResponseBuilder.response200Header(dos, body.length, "text/html;charset=utf-8");
-        ResponseBuilder.responseBody(dos, body);
-    }
-
-    private static void getIndexHtml(OutputStream out, String requestPath) {
-        String filePath = "src/main/resources/templates";
-        String contentType = "text/html;charset=utf-8";
-        DataOutputStream dos = new DataOutputStream(out);
-
+    private static ResponseBuilder getIndexHtml(String requestPath) {
         try {
+            String filePath = "src/main/resources/templates";
+            String contentType = "text/html;charset=utf-8";
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
 
-            ResponseBuilder.response200Header(dos, body.length, contentType);
-            ResponseBuilder.responseBody(dos, body);
+            return new ResponseBuilder.Builder()
+                    .httpStatus(HttpStatus.OK)
+                    .contentType(contentType)
+                    .body(body)
+                    .build();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return new ResponseBuilder.Builder()
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
     }
 
-    private static void getStaticFile(OutputStream out, String requestPath) {
-        String contentType = "text/html;charset=utf-8";
-        String filePath = "src/main/resources/templates";
-        DataOutputStream dos = new DataOutputStream(out);
-
-        if (!requestPath.endsWith(".html")) {
-            contentType = ResourceLoader.getContentType(requestPath);
-            filePath = "src/main/resources/static";
-        }
-
+    private static ResponseBuilder getStaticFile(String requestPath) {
         try {
+            String contentType = "text/html;charset=utf-8";
+            String filePath = "src/main/resources/templates";
+
+            if (!requestPath.endsWith(".html")) {
+                contentType = ResourceLoader.getContentType(requestPath);
+                filePath = "src/main/resources/static";
+            }
+
             byte[] body = Files.readAllBytes(new File(filePath + requestPath).toPath());
-            ResponseBuilder.response200Header(dos, body.length, contentType);
-            ResponseBuilder.responseBody(dos, body);
+
+            return new ResponseBuilder.Builder()
+                    .httpStatus(HttpStatus.OK)
+                    .contentType(contentType)
+                    .body(body)
+                    .build();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return new ResponseBuilder.Builder()
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
     }
 
-    private static void signup(OutputStream out, String requestPath) {
+    private static ResponseBuilder signup(String requestPath) {
         String[] userArray = requestPath.split("\\?")[1].split("&");
         String userId = userArray[0];
         String password = userArray[1];
@@ -79,7 +82,11 @@ public class GetController {
 
         User user = new User(userId, password, name, email);
         Database.addUser(user);
-        ResponseBuilder.redirect(out, "/index.html");
+
+        return new ResponseBuilder.Builder()
+                .httpStatus(HttpStatus.FOUND)
+                .body("/index.html")
+                .build();
     }
 
 }
