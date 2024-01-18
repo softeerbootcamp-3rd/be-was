@@ -24,7 +24,6 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        RequestMapper.scanControllers("controller");
         ExecutorService executorService = Executors.newFixedThreadPool(maxThreads);
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started on {} port.", port);
