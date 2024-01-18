@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class RequestLogger {
-    private static final Logger logger = LoggerFactory.getLogger(RequestLogger.class);
+public class HttpRequestLogger {
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestLogger.class);
 
-    public static void logRequest(InputStream in){
+    public static void logHttpRequest(InputStream in){
         try{
             RequestParser.parseHeaders(in);
             logger.debug("HEADER> METHOD: {}", RequestParser.getMethod());

@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 import utils.FileReader;
-import utils.RequestLogger;
+import utils.HttpRequestLogger;
 import utils.RequestParser;
 import utils.HTTPResponseSender;
 
@@ -29,7 +29,7 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            RequestLogger.logRequest(in);
+            HttpRequestLogger.logHttpRequest(in);
 
             //TODO 파일을 읽어오는 요청이 아닌 경우(예: 회원가입의 가입 버튼)
             String path = RequestParser.getPath();
