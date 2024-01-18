@@ -5,6 +5,7 @@ import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.RequestParserUtil;
 import webserver.RequestHandler;
 
 import java.io.UnsupportedEncodingException;
@@ -16,23 +17,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public static void registerUser(RequestData requestData) {
-        String url = requestData.getRequestContent();
-
-        String userQuery = url.split("\\?")[1];
-
-        // HTTP 요청으로부터 사용자 데이터 추출
-        String[] pairs = userQuery.split("&");
-
-        Map<String, String> userProps = new HashMap<>();
-        for (String pair : pairs) {
-            String[] splitPair = pair.split("=");
-            if (splitPair.length == 2) {
-                String key = splitPair[0];
-                String val;
-                val = URLDecoder.decode(splitPair[1]);
-                userProps.put(key, val);
-            }
-        }
+        Map<String, String> userProps = RequestParserUtil.parseUserRegisterQuery(requestData.getRequestContent());
 
         String userId = userProps.get("userId");
         String password = userProps.get("password");

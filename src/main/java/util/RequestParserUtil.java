@@ -7,6 +7,7 @@ import webserver.RequestHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,5 +57,25 @@ public class RequestParserUtil {
         } else {
             return ""; // 확장자가 없는 경우
         }
+    }
+
+    public static Map<String, String> parseUserRegisterQuery(String url) {
+        String userQuery = url.split("\\?")[1];
+
+        // HTTP 요청으로부터 사용자 데이터 추출
+        String[] pairs = userQuery.split("&");
+
+        Map<String, String> userProps = new HashMap<>();
+        for (String pair : pairs) {
+            String[] splitPair = pair.split("=");
+            if (splitPair.length == 2) {
+                String key = splitPair[0];
+                String val;
+                val = URLDecoder.decode(splitPair[1]);
+                userProps.put(key, val);
+            }
+        }
+
+        return userProps;
     }
 }
