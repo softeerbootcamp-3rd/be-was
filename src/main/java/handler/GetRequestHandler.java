@@ -4,9 +4,11 @@ import annotation.GetMapping;
 import annotation.RequestParam;
 import controller.TestController;
 import controller.UserController;
+import exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.GetRequest;
+import webserver.status.ErrorCode;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -19,17 +21,21 @@ import java.util.Map;
 public class GetRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(GetRequestHandler.class);
 
-    public static Object run(GetRequest getRequest) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static Object run(GetRequest getRequest) throws Throwable {
         List<Class<?>> classes = getControllerClasses();
         Method method = findMethod(classes, getRequest.getPath());
 
         if(method == null){
-            throw new NoSuchMethodException(String.format("GET %s 를 찾을 수 없습니다.", getRequest.getPath()));
+            throw new GeneralException(ErrorCode.RESOURCE_NOT_FOUND_ERROR);
         }
 
         Object[] params = createParams(method, getRequest.getParamsMap());
 
-       return executeMethod(method, params);
+        try {
+            return executeMethod(method, params);
+        } catch (InvocationTargetException e){
+            throw e.getTargetException();
+        }
     }
 
     private static Object executeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
