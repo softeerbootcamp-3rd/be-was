@@ -43,6 +43,10 @@
   > <br>URL은 어떻게 리소스를 얻을 것이고 어디에서 가져와야하는지 명시하는 URI이고,
   > <br>URN은 리소스를 어떻게 접근할 것인지 명시하지 않고 경로와 리소스 자체를 특정하는 것을 목표로하는 URI입니다.
 
+- try-with-resources
+  > try-catch-finally에서 자원을 직접 반납해주는 번거로움과 실수로 인한 오류 발생을 해결하기 위해 Java7부터 도입된 문법입니다.
+  > 
+  > AutoCloseable 인터페이스를 구현하고 있는 자원에 대해 적용 가능합니다.
 ---
 
 ## 4. 문제 해결
@@ -65,6 +69,8 @@
 [HTTP Status Code](http/status-code.md)
 
 [URI](http/uri.md)
+
+[try with resources](java/try-with-resources.md)
 
 ---
 

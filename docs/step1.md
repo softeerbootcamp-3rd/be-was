@@ -76,9 +76,9 @@
 
 [MIME Type](http/MIME-type.md)
 
-[Java Thread Model](thread/java-thread-model)
+[Java Thread Model](java/java-thread-model.md)
 
-[OOP](programming/oop.md)
+[OOP](java/oop.md)
 
 ---
 
