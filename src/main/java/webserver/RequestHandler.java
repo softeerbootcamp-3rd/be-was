@@ -23,6 +23,7 @@ public class RequestHandler implements Runnable {
     public void run() {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            // Parsing HTTP Request
             HttpRequestDto request = WebUtil.httpRequestParse(in);
             logger.debug("HTTP Request >>\n" + request.toString() + "\n" +
                     "Connected IP: {}, Port: {}", connection.getInetAddress(), connection.getPort() + "\n");
@@ -31,6 +32,9 @@ public class RequestHandler implements Runnable {
             Controller controller = mappingController(request);
             DataOutputStream dos = new DataOutputStream(out);
             controller.handleRequest(request, dos);
+
+            // Send HTTP Response
+            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

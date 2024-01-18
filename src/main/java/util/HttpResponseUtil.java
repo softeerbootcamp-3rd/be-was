@@ -25,7 +25,6 @@ public class HttpResponseUtil {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + location + "\r\n");
             dos.writeBytes("\r\n");
-            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -35,7 +34,6 @@ public class HttpResponseUtil {
         try {
             dos.writeBytes("HTTP/1.1 400 Bad Request \r\n");
             dos.writeBytes("\r\n");
-            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -45,7 +43,6 @@ public class HttpResponseUtil {
         try {
             dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
             dos.writeBytes("\r\n");
-            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -54,7 +51,6 @@ public class HttpResponseUtil {
     public static void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
-            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
