@@ -24,7 +24,7 @@ public class RequestHandler implements Runnable {
         try { in = connection.getInputStream(); } catch (IOException e) { logger.error(e.getMessage()); }
         try { out = connection.getOutputStream(); } catch (IOException e) { logger.error(e.getMessage()); }
         if (in == null || out == null) {
-            closeConnections(in, out)
+            closeConnections(in, out);
             return;
         }
 
