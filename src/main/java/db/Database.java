@@ -18,6 +18,19 @@ public class Database {
         return users.get(userId);
     }
 
+    public static User findUserByEmail(String email) {
+        User user;
+
+        for (String id : users.keySet()) {
+            user = users.get(id);
+            if (user.getEmail().equals(email)){
+                return user;
+            }
+        }
+
+        return null;
+    }
+
     public static Collection<User> findAll() {
         return users.values();
     }
