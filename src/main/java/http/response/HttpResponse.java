@@ -2,6 +2,8 @@ package http.response;
 
 import http.ContentType;
 import http.HttpStatus;
+import http.request.GeneralHeader;
+import http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +49,17 @@ public class HttpResponse {
         return new HttpResponse(status);
     }
 
-    public void send(DataOutputStream dos) {
+    public void send(DataOutputStream dos, HttpRequest request) {
+        Map<String, String> generalHeader = request.getGeneralHeader().getGeneralHeaders();
         try {
             dos.writeBytes("HTTP/1.1 " + status + "\r\n");
+            generalHeader.forEach((key, value) -> {
+                try {
+                    dos.writeBytes(key + ": " + value + "\r\n");
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            });
             responseHeader.forEach((key, value) -> {
                 try {
                     dos.writeBytes(key + ": " + value + "\r\n");

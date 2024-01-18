@@ -63,7 +63,7 @@ public class RequestHandler implements Runnable {
 
             // 응답
             DataOutputStream dos = new DataOutputStream(out);
-            response.send(dos);
+            response.send(dos, httpRequest);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
