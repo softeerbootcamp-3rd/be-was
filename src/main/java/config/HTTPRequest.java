@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class HTTPRequest{
@@ -14,6 +14,7 @@ public class HTTPRequest{
     private String HTTPType;
 
     private HashMap<String,String> head;
+
     private HashMap<String,String> body;
 
     public String getMethod() {
@@ -74,11 +75,20 @@ public class HTTPRequest{
 
         while(line != null && !line.isEmpty()) {
             line = br.readLine();
-            tokens = line.split("");
+            tokens = line.split(": ");
             body.put(tokens[0], tokens[1]);
             logger.debug("body : {}", line);
         }
 
+    }
+    public void print(){
+        for(Map.Entry<String,String> entry : head.entrySet()){
+            System.out.println(entry.getKey()+": "+entry.getValue());
+        }
+        System.out.println();
+        for(Map.Entry<String,String> entry : body.entrySet()){
+            System.out.println(entry.getKey()+": "+entry.getValue());
+        }
     }
 
 }

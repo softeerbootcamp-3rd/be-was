@@ -1,5 +1,7 @@
-package config;
+package webserver;
 
+import config.HTTPRequest;
+import config.HTTPResponse;
 import controller.PageController;
 import controller.UserController;
 

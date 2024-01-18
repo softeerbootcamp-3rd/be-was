@@ -1,12 +1,8 @@
 package webserver;
 
-import config.ControllerHandler;
-import config.HTTPResponse;
-import config.ResponseCode;
 import org.junit.jupiter.api.Test;
 
 import static config.ResponseCode.OK;
-import static org.junit.jupiter.api.Assertions.*;
 
 class RequestHandlerTest {
 

@@ -1,7 +1,5 @@
 package config;
 
-import java.util.HashMap;
-
 public class HTTPResponse {
     private String HTTPType;
     private int code;

@@ -2,13 +2,10 @@ package webserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +17,8 @@ public class WebServer {
     // 스레드의 개수가 한계치를 초과할 경우 나머지 스레드를 큐 형태로 대기 시킴.
     private static final int MAX_THREADS = 200;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
-    //너무 오래 살아 있는 스레드를 KeepAlive함수를 이용하여 없앨 수 있으나 복잡해서 다음에 도전
 
 
-    //멀티스레드를 사용하기 때문에 락이 걸리는 리스트를 선언
-    static List<User> users =  Collections.synchronizedList(new ArrayList<>());
 
     public static void main(String args[]) throws Exception {
 
