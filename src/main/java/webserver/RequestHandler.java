@@ -5,6 +5,11 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
+import controller.Controller;
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +18,13 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
 
+    private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
+
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        controllerMap.put("/user/create", new UserController());
     }
 
     public void run() {
@@ -30,46 +38,39 @@ public class RequestHandler implements Runnable {
             HttpRequest request = new HttpRequest(in); //http request 정복 가져오기
             request.print(); //http request 정보 출력
 
+            HttpResponse response = new HttpResponse(dos);
 
-            byte[] body = null;
-            if (request.getUrl() != null && request.getAccept().startsWith("text/html")) {
-                Path filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
-                body = Files.readAllBytes(filePath);
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+            Map<String, Object> view = new HashMap<>();
+            Path filePath = null;
+
+            Controller controller = controllerMap.get(request.getUrl());
+            if (controller == null) { //.html
+                if (request.getUrl().contains(".html")) {
+                    filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
+
+                } else { //.js .css ...
+                    ;
+                }
             } else {
-                respond404(dos);
+                String path = controller.process(request.getRequestParam(), view);
+                filePath = Paths.get(path + ".html");
             }
 
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
 
-    private void respond404(DataOutputStream dos) {
-        try {
-            String response = "HTTP/1.1 404 Not Found\r\n\r\n";
-            dos.writeBytes(response);
+            byte[] body = null;
+
+            if (filePath == null) {
+                response.respond404();
+            } else {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length);
+                response.responseBody(body);
+            }
+
+
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
