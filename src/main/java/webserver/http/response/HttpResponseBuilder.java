@@ -1,6 +1,6 @@
-package webserver;
+package webserver.http.response;
 
-import java.nio.charset.StandardCharsets;
+import webserver.http.response.HttpResponse;
 
 public class HttpResponseBuilder {
     private static final int SUCCESS_STATUS_CODE = 200;

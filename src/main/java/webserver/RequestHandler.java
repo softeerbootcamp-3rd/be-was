@@ -3,15 +3,16 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.FileUtil;
+import utils.FileUtil;
+import webserver.http.request.HttpRequest;
+import webserver.http.request.HttpRequestParser;
+import webserver.http.response.HttpResponse;
+import webserver.http.response.HttpResponseBuilder;
+import webserver.http.response.HttpResponseSender;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);

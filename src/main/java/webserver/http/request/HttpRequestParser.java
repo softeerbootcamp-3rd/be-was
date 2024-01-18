@@ -1,4 +1,6 @@
-package webserver;
+package webserver.http.request;
+
+import webserver.http.request.HttpRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
