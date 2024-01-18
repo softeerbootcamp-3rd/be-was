@@ -14,6 +14,8 @@ import util.FileManager;
 import util.MethodMapper;
 import util.RequestParser;
 
+import static constant.FilePath.MAIN_PAGE;
+
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -35,6 +37,10 @@ public class RequestHandler implements Runnable {
 
             BiConsumer<DataOutputStream, RequestDto> method;
             byte[] body;
+
+            if (requestDto.getPath().equals("/")) {
+                requestDto.setPath(MAIN_PAGE.getPath());
+            }
 
             if ((method = MethodMapper.getMethod(requestDto.getMethodAndPath())) != null) {
                 try {
