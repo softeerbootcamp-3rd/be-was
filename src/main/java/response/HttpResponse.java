@@ -1,45 +1,19 @@
 package response;
 
+import utils.HttpResponseUtils;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
-    private String version;
-    private String statusCode;
-    private String statusMessage;
+    private String statusLine;
     private Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
 
     public Map<String, String> getHeaders() {
         return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
     }
 
     public byte[] getBody() {
@@ -51,25 +25,24 @@ public class HttpResponse {
     }
 
 
-
-    public void setResponse(String statusCode, String statusMessage, byte[] body, Map<String, String> headers) {
-        this.version = "HTTP/1.1";
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
+    public void setResponse(HttpResponseStatus status, byte[] body, Map<String, String> headers) {
+        this.statusLine = HttpResponseUtils.getResponseStatusLine(status);
         this.body = body;
         for (String key : headers.keySet()) {
             this.headers.put(key, headers.get(key));
         }
     }
 
+    public String getStatusLine() {
+        return statusLine;
+    }
+
     @Override
     public String toString() {
         return "HttpResponse{" +
-                "version='" + version + '\'' +
-                ", statusCode='" + statusCode + '\'' +
-                ", statusMessage='" + statusMessage + '\'' +
+                "statusLine='" + statusLine + '\'' +
                 ", headers=" + headers +
-                ", body='" + body + '\'' +
+                ", body=" + Arrays.toString(body) +
                 '}';
     }
 }

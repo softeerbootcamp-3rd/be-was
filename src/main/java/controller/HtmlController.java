@@ -2,6 +2,7 @@ package controller;
 
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponseStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,13 +23,13 @@ public class HtmlController implements Controller {
 
                 headers.put("Content-Type", "text/html;charset=utf-8");
                 headers.put("Content-Length", String.valueOf(body.length));
-                response.setResponse("200", "OK", body, headers);
+                response.setResponse(HttpResponseStatus.OK, body, headers);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             headers.put("Content-Type", "text/html;charset=utf-8");
-            response.setResponse("404", "NOT FOUND", "404 NOT FOUND".getBytes(), headers);
+            response.setResponse(HttpResponseStatus.NOT_FOUND, "404 NOT FOUND".getBytes(), headers);
         }
 
     }

@@ -64,9 +64,7 @@ public class RequestHandler implements Runnable {
 
     private static void renderResponse(DataOutputStream dos, HttpResponse response) {
         try {
-            dos.writeBytes(response.getVersion() + " ");
-            dos.writeBytes(response.getStatusCode() + " ");
-            dos.writeBytes(response.getStatusMessage() + " \r\n");
+            dos.writeBytes(response.getStatusLine() + " \r\n");
             Map<String, String> headers = response.getHeaders();
             for (String key : headers.keySet()) {
                 dos.writeBytes(key+": ");

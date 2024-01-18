@@ -1,12 +1,9 @@
 package controller;
 
-import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponseStatus;
 import service.MemberJoinService;
-import webserver.RequestHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +21,7 @@ public class MemberJoinController implements Controller {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Location", "/index.html");
-        response.setResponse("302", "FOUND", null, headers);
+        response.setResponse(HttpResponseStatus.FOUND, null, headers);
     }
 
     public static Map<String, String> parse(String query) {
