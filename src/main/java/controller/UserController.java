@@ -21,6 +21,7 @@ public class UserController implements Controller {
     public void handleRequest(HttpRequestDto request, DataOutputStream dos) {
         if (request.getMethod().equals("GET") && request.getUri().startsWith("/user/create")) {
             createUser(request, dos);
+            return;
         }
         getPage(request, dos, logger);
     }
@@ -30,8 +31,9 @@ public class UserController implements Controller {
             Map<String, String> parameters = WebUtil.parseQueryString(request.getUri());
             userService.createUser(UserDto.buildUserDtoFromParams(parameters));
             HttpResponseUtil.response302Header(dos, "/index.html");
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
+            HttpResponseUtil.response400Header(dos);
         }
     }
 }

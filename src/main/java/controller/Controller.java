@@ -19,7 +19,8 @@ public interface Controller {
             body = Files.readAllBytes(new File(WebUtil.getPath(request.getUri())).toPath());
         } catch (IOException e) {
             logger.error(e.getMessage());
-            body = "<h1>Hello, Suji👋</h1>".getBytes();
+            HttpResponseUtil.response404Header(dos);
+            return;
         }
 
         HttpResponseUtil.response200Header(dos, body.length, WebUtil.getContentType(request.getUri()));

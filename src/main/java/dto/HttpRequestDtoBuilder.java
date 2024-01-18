@@ -13,10 +13,6 @@ public class HttpRequestDtoBuilder {
 
     private String body;
 
-    private String path;
-
-    private String contentType;
-
     public HttpRequestDtoBuilder(String method, String uri, String httpVersion) {
         this.method = method;
         this.uri = uri;
@@ -30,16 +26,6 @@ public class HttpRequestDtoBuilder {
 
     public HttpRequestDtoBuilder setBody(String body) {
         this.body = body;
-        return this;
-    }
-
-    public HttpRequestDtoBuilder setPath(String path) {
-        this.path = path;
-        return this;
-    }
-
-    public HttpRequestDtoBuilder setContentType(String contentType) {
-        this.contentType = contentType;
         return this;
     }
 

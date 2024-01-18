@@ -15,6 +15,7 @@ public class DefaultController implements Controller {
         // root 인덱스로 접근 시 /index.html 반환
         if (request.getUri().equals("/")) {
             HttpResponseUtil.response302Header(dos, "/index.html");
+            return;
         }
         getPage(request, dos, logger);
     }

@@ -36,7 +36,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private Controller mappingController(HttpRequestDto request) {
+    public Controller mappingController(HttpRequestDto request) {
         String uri = request.getUri();
         Controller controller;
         if (uri.startsWith("/user")) {

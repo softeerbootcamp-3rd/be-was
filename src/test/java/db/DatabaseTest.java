@@ -18,7 +18,5 @@ public class DatabaseTest {
         // then
         Assertions.assertThat(initialSize + 1).isEqualTo(Database.findAll().size());
         Assertions.assertThat(Database.findUserById("user")).isEqualTo(user);
-
-        Database.deleteUserById(user.getUserId()); // 테스트 종료 후 데이터 정리
     }
 }
