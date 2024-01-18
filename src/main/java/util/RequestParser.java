@@ -1,4 +1,4 @@
-package webserver;
+package util;
 
 import dto.RequestDto;
 import org.slf4j.Logger;
