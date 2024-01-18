@@ -1,7 +1,8 @@
-package utils;
+package http;
 
 public enum HttpStatus {
     OK(200, "OK"),
+    REDIRECT(302, "Temporarily Moved"),
     BAD_REQUEST(400, "Bad Request"),
     NOT_FOUND(404, "Not Found"),
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),

@@ -13,7 +13,7 @@ class UserServiceTest {
     UserService userService = new UserService();
 
     @Test
-    void 회원가입() {
+    void 회원가입_서비스() {
         // given
         UserDto userDto = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
 

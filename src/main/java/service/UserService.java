@@ -1,14 +1,14 @@
 package service;
 
 import db.Database;
-import dto.HttpResponseDto;
+import http.response.HttpResponse;
 import dto.UserDto;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.ContentType;
+import http.ContentType;
 import utils.FileReader;
-import utils.HttpStatus;
+import http.HttpStatus;
 import webserver.RequestHandler;
 
 /**
@@ -17,7 +17,7 @@ import webserver.RequestHandler;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     // 회원가입
-    public HttpResponseDto createUser(UserDto userDto) {
+    public HttpResponse createUser(UserDto userDto) {
         User user = new User(userDto.getUserId(), userDto.getPassword(),
                     userDto.getName(), userDto.getEmail());
         // 유저 아이디 중복 검사
@@ -26,10 +26,10 @@ public class UserService {
             logger.info(Database.findAll().toString());
 
             byte[] body = Database.findUserById(user.getUserId()).toString().getBytes();
-            return HttpResponseDto.of(HttpStatus.OK, ContentType.PLAIN_TEXT, body);
+            return HttpResponse.of(HttpStatus.REDIRECT, ContentType.HTML, "/index.html", body);
         }
         byte[] body = FileReader.readFile("/user/form.html");
-        return HttpResponseDto.of(HttpStatus.BAD_REQUEST, ContentType.HTML, body);
+        return HttpResponse.of(HttpStatus.BAD_REQUEST, ContentType.HTML, body);
     }
 
     private boolean validateDuplicated(User user) {

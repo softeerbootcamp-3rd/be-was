@@ -1,11 +1,10 @@
 package controller;
 
-import dto.HttpResponseDto;
+import http.response.HttpResponse;
 import dto.UserDto;
-import utils.ContentType;
-import utils.HttpRequest;
+import http.request.HttpRequest;
 import service.UserService;
-import utils.HttpStatus;
+import http.HttpStatus;
 import utils.Parser;
 
 /**
@@ -15,9 +14,9 @@ import utils.Parser;
 public class UserController {
     private static final UserService userService = new UserService();
 
-    public static HttpResponseDto signup(HttpRequest request) {
+    public static HttpResponse signup(HttpRequest request) {
         // query 추출
-        String query = Parser.extractQuery(request.getUrl());
+        String query = Parser.extractQuery(request.getRequestLine().getUri());
         String[] params = Parser.parsing(query, "&", -1);
         String userId = "", password = "", name = "", email = "";
 
@@ -39,8 +38,12 @@ public class UserController {
                     email = value;
                     break;
                 default:
-                    return new HttpResponseDto(HttpStatus.BAD_REQUEST, ContentType.HTML);
+                    return new HttpResponse(HttpStatus.BAD_REQUEST);
             }
+        }
+
+        if (userId.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
+            return new HttpResponse(HttpStatus.BAD_REQUEST);
         }
 
         UserDto userDto = new UserDto(userId, password, name, email);

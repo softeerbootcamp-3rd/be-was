@@ -1,11 +1,11 @@
 package utils;
 
 import controller.UserController;
-import dto.HttpResponseDto;
+import http.response.HttpResponse;
+import http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -21,19 +21,19 @@ import java.util.function.Function;
 public class ControllerMapper {
     private static final Logger logger = LoggerFactory.getLogger(ControllerMapper.class);
     // Key : 메소드 url-path, Value : controller
-    public static final Map<String, Function<HttpRequest, HttpResponseDto>> CONTROLLER = new HashMap<>();
+    public static final Map<String, Function<HttpRequest, HttpResponse>> CONTROLLER = new HashMap<>();
 
     static {
         CONTROLLER.put("GET /user/create", UserController::signup);
     }
 
-    public static Function<HttpRequest, HttpResponseDto> getController(HttpRequest request) {
-        String path = request.getUrl();
+    public static Function<HttpRequest, HttpResponse> getController(HttpRequest request) {
+        String path = request.getRequestLine().getUri();
         if (path.contains("?")) {
             path = path.split("\\?", 2)[0];
         }
-        logger.info("path = " + request.getMethod() + path);
-        return CONTROLLER.get(request.getMethod() + " " + path);
+        logger.info("path = " + request.getRequestLine().getMethod() + path);
+        return CONTROLLER.get(request.getRequestLine().getMethod() + " " + path);
     }
 
 }

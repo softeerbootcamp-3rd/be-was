@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
 
-import dto.HttpResponseDto;
+import http.response.HttpResponse;
+import http.ContentType;
+import http.request.HttpRequest;
+import http.HttpStatus;
 import utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +35,9 @@ public class RequestHandler implements Runnable {
             logger.debug(httpRequest.toString());
 
             // 동적 & 정적 자원 분할 처리
-            Function<HttpRequest, HttpResponseDto> controller = ControllerMapper.getController(httpRequest);
-            HttpResponseDto response;
-            String requestUrl = httpRequest.getUrl();
+            Function<HttpRequest, HttpResponse> controller = ControllerMapper.getController(httpRequest);
+            HttpResponse response;
+            String requestUrl = httpRequest.getRequestLine().getUri();
             // 동적 자원 처리
             if (controller != null) {
                 logger.info("controller 호출");
@@ -51,17 +54,16 @@ public class RequestHandler implements Runnable {
                 if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
                     String extension = FileReader.getFileExtension(filePath);
                     byte[] body = FileReader.readFile(requestUrl);
-                    response = HttpResponseDto.of(HttpStatus.OK, ContentType.getContentType(extension), body);
+                    response = HttpResponse.of(HttpStatus.OK, ContentType.getContentType(extension), body);
                 } else {
                     logger.info("404 not found");
-                    byte[] body = FileReader.readFile("/404.html");
-                    response = HttpResponseDto.of(HttpStatus.NOT_FOUND, ContentType.HTML, body);
+                    response = HttpResponse.of(HttpStatus.NOT_FOUND);
                 }
             }
 
             // 응답
             DataOutputStream dos = new DataOutputStream(out);
-            ResponseBuilder.send(dos, response);
+            response.send(dos);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
