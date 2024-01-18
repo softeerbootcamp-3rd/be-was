@@ -1,7 +1,7 @@
 package service;
 
 import db.Database;
-import exception.GeneralException;
+import webserver.exception.GeneralException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

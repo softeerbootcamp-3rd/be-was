@@ -2,14 +2,12 @@ package controller;
 
 import annotation.GetMapping;
 import annotation.RequestParam;
-import exception.GeneralException;
+import webserver.exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 import webserver.response.Response;
 import webserver.type.ContentType;
-
-import java.io.Serializable;
 
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);

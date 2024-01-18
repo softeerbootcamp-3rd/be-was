@@ -1,4 +1,4 @@
-package exception;
+package webserver.exception;
 
 import webserver.status.ErrorCode;
 

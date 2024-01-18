@@ -1,6 +1,6 @@
 package webserver.handler;
 
-import exception.GeneralException;
+import webserver.exception.GeneralException;
 import webserver.response.Response;
 import webserver.status.ErrorCode;
 import webserver.type.ContentType;

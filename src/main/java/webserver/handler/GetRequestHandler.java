@@ -4,7 +4,7 @@ import annotation.GetMapping;
 import annotation.RequestParam;
 import controller.TestController;
 import controller.UserController;
-import exception.GeneralException;
+import webserver.exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.GetRequest;
