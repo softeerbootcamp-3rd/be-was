@@ -1,6 +1,7 @@
 package service;
 
 import data.RequestData;
+import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,9 @@ public class UserService {
 
         // 추출한 데이터로 사용자 생성
         User newUser = new User(userId, password, name, email);
+
+        // DB에 저장
+        Database.addUser(newUser);
 
         logger.debug(newUser.toString());
     }
