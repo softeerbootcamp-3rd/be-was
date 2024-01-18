@@ -1,4 +1,4 @@
-package webserver;
+package webserver.exception;
 
 import java.lang.annotation.*;
 

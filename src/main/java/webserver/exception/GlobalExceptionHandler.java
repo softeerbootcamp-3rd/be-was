@@ -1,5 +1,6 @@
-package webserver;
+package webserver.exception;
 
+import webserver.MyHttpServletResponse;
 import webserver.controller.InvalidParameterException;
 
 public class GlobalExceptionHandler {
