@@ -3,45 +3,31 @@ package model;
 import db.Database;
 
 public class User {
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
 
-    public User(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-    }
+    private UserInfo userInfo;
 
-    public String getUserId() {
-        return userId;
+    public User(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
+    public UserInfo getUserInfo() {return this.userInfo;}
 
     @Override
     public String toString() {
+        String userId = userInfo.getInfo().get("userId");
+        String password = userInfo.getInfo().get("password");
+        String name = userInfo.getInfo().get("name");
+        String email = userInfo.getInfo().get("email");
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
 
-    public static String verifyUser(User user) {
-        if(user.getUserId().isEmpty()
-                || user.getEmail().isEmpty()
-                || user.getName().isEmpty()
-                || user.getPassword().isEmpty()) return "입력란에 공백이 존재하면 안됩니다.";
-        else if(Database.findUserById(user.getUserId()) != null) return "중복되는 아이디 입니다.";
-        return "성공";
+    public boolean verifyUser() {
+        String userId = userInfo.getInfo().get("userId");
+        String password = userInfo.getInfo().get("password");
+        String name = userInfo.getInfo().get("name");
+        String email = userInfo.getInfo().get("email");
+        if(userId.isEmpty() || password.isEmpty()
+                || name.isEmpty() || email.isEmpty()) return false;
+        if(Database.findUserById(userId) != null) return false;
+        return true;
     }
 }

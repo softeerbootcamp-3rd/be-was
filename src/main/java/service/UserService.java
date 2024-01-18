@@ -1,17 +1,17 @@
 package service;
 
+import db.Database;
 import model.User;
-
-import java.util.HashMap;
+import model.UserInfo;
 
 public class UserService {
 
-    public static User create(HashMap<String, String> info) {
-        String userId = info.get("userId");
-        String password = info.get("password");
-        String name = info.get("name");
-        String email = info.get("email");
-        User user = new User(userId, password, name, email);
-        return (User.verifyUser(user).equals("성공")) ? user : null;
+    public static User create(UserInfo info) {
+        User user = new User(info);
+        if(user.verifyUser()) {
+            Database.addUser(user);
+            return user;
+        }
+        else return null;
     }
 }

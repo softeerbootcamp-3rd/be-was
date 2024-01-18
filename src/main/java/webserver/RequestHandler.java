@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import controller.MainController;
@@ -30,7 +29,7 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
-            Request request = readRequest(br);
+            Request request = handleRequest(br);
             Response response = MainController.control(request);
             responseProcess(dos, response);
         } catch (IOException e) {
@@ -47,7 +46,7 @@ public class RequestHandler implements Runnable {
             responseBody(dos, body);
         }
         else if(statusCode.equals("302")) {
-            response302Header(dos);
+            response302Header(dos, response.getRedirectUrl());
         }
         else {
             byte[] body = response.getBody();
@@ -69,8 +68,8 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void response302Header(DataOutputStream dos) {
-        String location = "/index.html";
+    private void response302Header(DataOutputStream dos, String redirectUrl) {
+        String location = redirectUrl;
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: " + location);
@@ -88,7 +87,7 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-    private Request readRequest(BufferedReader br) throws IOException {
+    private Request handleRequest(BufferedReader br) throws IOException {
         Request request = new Request();
         String line = br.readLine();
         request.parseStartLine(line);
