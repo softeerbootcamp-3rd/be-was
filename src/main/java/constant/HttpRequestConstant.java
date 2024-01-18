@@ -7,7 +7,6 @@ import webserver.RequestHandler;
 public class HttpRequestConstant {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     public static final String END = "";
-    public static final String CHARSET_NAME = "UTF-8";
     public static final String HOST = "Host:";
     public static final String CONNECTION = "Connection:";
     public static final String ACCEPT = "Accept:";
