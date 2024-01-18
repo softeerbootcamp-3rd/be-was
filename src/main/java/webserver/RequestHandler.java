@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import controller.Controller;
+import controller.ControllerMappingMap;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,13 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest request = makeHttpRequest(in);
+            HttpResponse response = new HttpResponse();
+            Controller controller = ControllerMappingMap.getController(request.getUrl());
+            controller.process(request, response);
+
+            DataOutputStream dos = new DataOutputStream(out);
+            renderResponse(dos, response);
+
 
 //            HttpResponse response = new HttpResponse();
 //            if (isHTML(request.getUrl())) {
@@ -62,7 +71,7 @@ public class RequestHandler implements Runnable {
 //                body = "LOGIN OK".getBytes();
 //            }
 //
-//            DataOutputStream dos = new DataOutputStream(out);
+
 //            response200Header(dos, body.length);
 //            responseBody(dos, body);
         } catch (IOException e) {
@@ -90,6 +99,25 @@ public class RequestHandler implements Runnable {
             }
         }
         return request;
+    }
+
+    private static void renderResponse(DataOutputStream dos, HttpResponse response) {
+        try {
+            dos.writeBytes(response.getVersion() + " ");
+            dos.writeBytes(response.getStatusCode() + " ");
+            dos.writeBytes(response.getStatusMessage() + " \r\n");
+            Map<String, String> headers = response.getHeaders();
+            for (String key : headers.keySet()) {
+                dos.writeBytes(key+": ");
+                dos.writeBytes(headers.get(key)+"\r\n");
+            }
+            dos.writeBytes("\r\n");
+
+            dos.write(response.getBody(), 0, response.getBody().length);
+            dos.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
     }
 
 //    private static void setResponse(HttpResponse response, byte[] body) {
