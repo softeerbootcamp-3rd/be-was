@@ -1,3 +1,4 @@
+import controller.Controller;
 import controller.UserController;
 import db.Database;
 import http.HttpStatus;
@@ -37,7 +38,7 @@ public class UserTest {
         //given
         Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com");
         Response res = new Response();
-        Object handler = new UserController();
+        Controller handler = new UserController();
         ModelAndView mv = adapter.handle(req, res, handler);
         //when
 
@@ -56,7 +57,7 @@ public class UserTest {
         //given
         Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com");
         Response res = new Response();
-        Object handler = new UserController();
+        Controller handler = new UserController();
         ModelAndView mv = adapter.handle(req, res, handler);
         //when
 

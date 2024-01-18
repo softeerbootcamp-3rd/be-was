@@ -1,3 +1,4 @@
+import controller.Controller;
 import controller.ResourceController;
 import http.HttpStatus;
 import http.Request;
@@ -32,7 +33,7 @@ public class TemplateTest {
         //given
         Request req = new Request("GET","/index.html");
         Response res = new Response();
-        Object handler = new ResourceController();
+        Controller handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -49,7 +50,7 @@ public class TemplateTest {
         //given
         Request req = new Request("GET","/index1.html");
         Response res = new Response();
-        Object handler = new ResourceController();
+        Controller handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);

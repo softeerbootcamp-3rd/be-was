@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
+import controller.Controller;
 import controller.ResourceController;
 import controller.UserController;
 import http.HttpStatus;
@@ -22,7 +23,7 @@ public class FrontController implements Runnable {
     private Socket connection;
     private Request req;
 
-    private final Map<String, Object> handlerMappingMap = new HashMap<>();
+    private final Map<String, Controller> handlerMappingMap = new HashMap<>();
     private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
     private final ViewResolver viewResolver = new ViewResolver();
     public FrontController(Socket connectionSocket) {
@@ -52,7 +53,7 @@ public class FrontController implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             //handler mapping
-            Object handler = getHandler(req);
+            Controller handler = getHandler(req);
 
             if (handler == null) {
                 logger.debug("[RequestHandler.run] handler Not found");
@@ -73,7 +74,7 @@ public class FrontController implements Runnable {
         }
     }
 
-    private MyHandlerAdapter getHandlerAdapter(Object handler) {
+    private MyHandlerAdapter getHandlerAdapter(Controller handler) {
         for (MyHandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
                 return adapter;
@@ -82,7 +83,7 @@ public class FrontController implements Runnable {
         throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
     }
 
-    private Object getHandler(Request req) {
+    private Controller getHandler(Request req) {
         if (viewResolver.isTemplate(req.getUrl())||viewResolver.isStatic(req.getUrl())) {
             return new ResourceController();
         }

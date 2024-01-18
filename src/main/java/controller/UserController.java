@@ -15,7 +15,7 @@ public class UserController implements Controller{
     private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
 
     @Override
-    public String process(Request req, Map<String, Object> model) {
+    public String process(Request req, Map<String, String> model) {
         logger.debug("[MemberFormController.process] req.getUrl() : "+req.getUrl());
         String subPath = req.getUrl().replace("/user/", "");
         switch (subPath) {
@@ -29,7 +29,7 @@ public class UserController implements Controller{
 
     }
 
-    private String createUser(Request req, Map<String, Object> model){
+    private String createUser(Request req, Map<String, String> model){
         try{
             User user = new User();
             Map<String, String> paramMap = req.getRequestParam();

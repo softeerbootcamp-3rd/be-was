@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class ResourceController implements Controller{
     @Override
-    public String process(Request req, Map<String, Object> model) {
+    public String process(Request req, Map<String, String> model) {
         Map<String, String> paramMap = req.getRequestParam();
         return paramMap.get("content");
     }
