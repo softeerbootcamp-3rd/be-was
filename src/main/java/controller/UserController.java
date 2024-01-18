@@ -12,7 +12,7 @@ import webserver.HttpStatus;
 public class UserController {
 
     @RequestMapping(method = "GET", path = "/user/create")
-    public static HttpResponse createUser(@RequestParam(value = "request", required = true) String userId,
+    public static HttpResponse createUser(@RequestParam(value = "userId", required = true) String userId,
                                           @RequestParam(value = "password", required = true) String password,
                                           @RequestParam("name") String name,
                                           @RequestParam("email") String email) {
