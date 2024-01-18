@@ -15,7 +15,7 @@ public class Response {
     private String location;
 
     private HttpStatus status;
-    private String contentType;
+    private String contentType = "";
     public Response(){
     }
 
@@ -41,10 +41,13 @@ public class Response {
     }
     private void setResponseHeader(DataOutputStream dos, int lengthOfBodyContent, Request req) {
         try {
-            logger.debug("req.getUrl() = "+req.getUrl());
-            setContentType(req.getUrl());
             dos.writeBytes("HTTP/1.1 " + status +"\r\n");
-            dos.writeBytes("Content-Type: "+contentType+";charset=utf-8\r\n");
+            if(req.getRequestParam().containsKey("content")) {
+                setContentType(req.getUrl());
+                dos.writeBytes("Content-Type: "+contentType+";");
+            }
+
+            dos.writeBytes("charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("Location : " + location + "\r\n");
             dos.writeBytes("\r\n");
