@@ -2,12 +2,12 @@ package handler;
 
 
 import http.request.HttpRequest;
+import service.Service;
+import service.user.UserServiceFactory;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import logger.CustomLogger;
-import service.Service;
-import service.user.UserServiceFactory;
 
 public class DynamicRequestHandler {
 
@@ -50,8 +50,6 @@ public class DynamicRequestHandler {
             return new HashMap<>();
         }
         String params = path.split("\\?")[1];
-
-        CustomLogger.printInfo(params);
 
         Map<String, String> paramsMap = new HashMap<>();
         Arrays.stream(params.split("&"))
