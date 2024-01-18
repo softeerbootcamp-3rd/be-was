@@ -26,10 +26,10 @@ public class HomeController {
         String path = httpRequest.getPath();
 
         if (path.equals(RequestUrl.HOME.getUrl())) {
-            response("302", "/index.html", out);
+            response("302 /index.html", out);
         }
         else {
-            response("200", path, out);
+            response("200 " + path, out);
         }
     }
 }

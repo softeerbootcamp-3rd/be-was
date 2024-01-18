@@ -30,26 +30,18 @@ public class UserController {
 
         String path = httpRequest.getPath();
 
-        if (path.startsWith(RequestUrl.USER_FORM.getUrl())) {
-            response("200", path, out);
-        }
-        if (path.startsWith(RequestUrl.USER_LIST.getUrl())) {
-            response("200", path, out);
-        }
-        if (path.startsWith(RequestUrl.USER_LOGIN.getUrl())) {
-            response("200", path, out);
-        }
-        if (path.startsWith(RequestUrl.USER_LOGIN_FAILED.getUrl())) {
-            response("200", path, out);
-        }
-        if (path.startsWith(RequestUrl.USER_PROFILE.getUrl())) {
-            response("200", path, out);
-        }
-        if (path.startsWith(RequestUrl.USER_CREATE.getUrl())) {
+        if (path.startsWith(RequestUrl.USER_FORM.getUrl()) ||
+            path.startsWith(RequestUrl.USER_LIST.getUrl()) ||
+            path.startsWith(RequestUrl.USER_LOGIN.getUrl()) ||
+            path.startsWith(RequestUrl.USER_LOGIN_FAILED.getUrl()) ||
+            path.startsWith(RequestUrl.USER_PROFILE.getUrl())
+        )
+            response("200 " + path, out);
+        else if (path.startsWith(RequestUrl.USER_CREATE.getUrl())) {
             signUp(httpRequest);
-            response("302", "/index.html", out);
+            response("302 /index.html", out);
         }
-        throw new IllegalArgumentException("올바르지 않은 요청입니다.");
+        response("404 ", out);
     }
 
     // 회원가입 요청 처리
