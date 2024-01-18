@@ -5,8 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.nio.file.Files;
 
-import dto.ResponseBuilder;
-import handler.RequestMappingHandler;
+import dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +41,12 @@ public class RequestHandler implements Runnable {
             if (file.exists()) {
                 String contentType = ResourceLoader.getContentType(path);
                 byte[] body = Files.readAllBytes(file.toPath());
-                ResponseBuilder responseBuilder = new ResponseBuilder(HttpStatus.OK, contentType, body);
-                HttpResponse.response(dos, responseBuilder);
+                Response response = new Response(HttpStatus.OK, contentType, body);
+                HttpResponse.response(dos, response);
             } else {
                 Class<?> controllerClass = ControllerMapper.getController(httpRequest.getHttpMethod());
-                ResponseBuilder responseBuilder = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
-                HttpResponse.response(dos, responseBuilder);
+                Response response = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
+                HttpResponse.response(dos, response);
             }
 
         } catch (IOException | InvocationTargetException | NoSuchMethodException | InstantiationException |

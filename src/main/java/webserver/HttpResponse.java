@@ -1,6 +1,6 @@
 package webserver;
 
-import dto.ResponseBuilder;
+import dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,15 +12,15 @@ public class HttpResponse {
     // 로그 찍을 때 어떤 클래스인지 표시하는 용도
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
-    public static void response(DataOutputStream dos, ResponseBuilder responseBuilder) throws IOException {
-        HttpStatus httpStatus = responseBuilder.getHttpStatus();
+    public static void response(DataOutputStream dos, Response response) throws IOException {
+        HttpStatus httpStatus = response.getHttpStatus();
         StringBuilder sb = new StringBuilder();
 
         if (httpStatus == HttpStatus.OK) {
-            sb.append(response200Header(dos, responseBuilder));
-            responseBody(dos, responseBuilder);
+            sb.append(response200Header(dos, response));
+            responseBody(dos, response);
         } else if (httpStatus == HttpStatus.FOUND) {
-            sb.append(redirect(dos, responseBuilder.getBody()));
+            sb.append(redirect(dos, response.getBody()));
         } else if (httpStatus == HttpStatus.NOT_FOUND) {
             sb.append(response404Header(dos));
         } else if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -28,7 +28,7 @@ public class HttpResponse {
         }
 
         dos.close();
-        
+
         logger.debug("Response [" + sb + "]");
     }
 
@@ -37,11 +37,11 @@ public class HttpResponse {
             response500Header(dos);
     }
 
-    private static String response200Header(DataOutputStream dos, ResponseBuilder responseBuilder) {
+    private static String response200Header(DataOutputStream dos, Response response) {
         try {
             String s1 = "HTTP/1.1 200 OK";
-            String s2 = "Content-Type: " + responseBuilder.getContentType();
-            String s3 = "Content-Length: " + responseBuilder.getBody().length;
+            String s2 = "Content-Type: " + response.getContentType();
+            String s3 = "Content-Length: " + response.getBody().length;
 
             dos.writeBytes(s1+ " \r\n");
             dos.writeBytes(s2 + "\r\n");
@@ -56,9 +56,9 @@ public class HttpResponse {
         return null;
     }
 
-    private static String responseBody(DataOutputStream dos, ResponseBuilder responseBuilder) {
+    private static String responseBody(DataOutputStream dos, Response response) {
         try {
-            dos.write(responseBuilder.getBody(), 0, responseBuilder.getBody().length);
+            dos.write(response.getBody(), 0, response.getBody().length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());

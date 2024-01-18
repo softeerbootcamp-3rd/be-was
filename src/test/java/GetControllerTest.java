@@ -1,5 +1,5 @@
 import db.Database;
-import dto.ResponseBuilder;
+import dto.Response;
 import model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,11 +34,11 @@ public class GetControllerTest {
 
         // given : 테스트에서 구체화하고자 하는 행동을 하기 전 테스트의 상태를 설명하는 부분
         // [ 생성자를 통해 ResponseBuilder를 생성 ] 했을 때
-        ResponseBuilder response = new ResponseBuilder(httpStatus, contentType, body);
+        Response response = new Response(httpStatus, contentType, body);
 
         // when : 구체화하고자 하는 행동
         // [ Builder 패턴을 이용해 ResponseBuilder를 생성 ] 했을 때
-        ResponseBuilder builder = new ResponseBuilder.Builder()
+        Response builder = new Response.Builder()
                                         .httpStatus(httpStatus)
                                         .contentType(contentType)
                                         .body(body)

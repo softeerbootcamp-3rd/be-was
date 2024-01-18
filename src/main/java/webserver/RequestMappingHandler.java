@@ -1,11 +1,8 @@
-package handler;
+package webserver;
 
 import annotation.GetMapping;
 import annotation.RequestParam;
-import dto.ResponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.HttpRequest;
+import dto.Response;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +14,7 @@ import java.util.Map;
 public class RequestMappingHandler {
 
     // RequestHandler에서 컨트롤러 전송
-    public static ResponseBuilder handleRequest(Class<?> controllerClass, HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public static Response handleRequest(Class<?> controllerClass, HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Method method = findMethod(controllerClass, request.getPath());
         Object[] params = createParams(method, request.getParams());
 
@@ -25,6 +22,7 @@ public class RequestMappingHandler {
     }
 
     private static Method findMethod(Class<?> controllerClass, String path) {
+        // [ 피드백 ] 아예 처음부터 맵핑해놓고 시작하기
         Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
         for (Method method : methods) {
             if (method.isAnnotationPresent(GetMapping.class)) {
@@ -36,11 +34,11 @@ public class RequestMappingHandler {
         return null;
     }
 
-    private static ResponseBuilder invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static Response invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> c = method.getDeclaringClass();
         Object instance = c.getDeclaredConstructor().newInstance();
 
-        return (ResponseBuilder) method.invoke(instance, params);
+        return (Response) method.invoke(instance, params);
     }
 
 
