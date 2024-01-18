@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static constant.HttpRequestConstant.*;
@@ -17,6 +19,8 @@ public class HttpRequest {
     private final String connection;
     private final String accept;
 
+    private static final int KEY_INDEX = 0;
+    private static final int VALUE_INDEX = 1;
     public HttpRequest(String method, URI uri, String host, String connection, String accept) {
         this.method = Objects.requireNonNull(method);
         this.uri = Objects.requireNonNull(uri);
@@ -26,13 +30,13 @@ public class HttpRequest {
     }
 
     public static HttpRequest from(InputStream in) throws IOException{
-        String requestHeader = getRequestHeader(in);
+        Map<String, String> requestHeader = getRequestHeader(in);
 
-        String method = requestHeader.split(PATH_DELIMITER)[HTTP_METHOD_POS];
-        URI uri = URI.create(requestHeader.split(PATH_DELIMITER)[PATH_POS]);
-        String host = requestHeader.split(NEW_LINE)[HOST_POS];
-        String connection = requestHeader.split(NEW_LINE)[CONNECTION_POS];
-        String accept = requestHeader.split(NEW_LINE)[ACCEPT_POS];
+        String method = requestHeader.get(START_LINE).split(PATH_DELIMITER)[HTTP_METHOD_POS];
+        URI uri = URI.create(requestHeader.get(START_LINE).split(PATH_DELIMITER)[PATH_POS]);
+        String host = requestHeader.get(HOST);
+        String connection = requestHeader.get(CONNECTION);
+        String accept = requestHeader.get(ACCEPT);
 
         return new HttpRequest(method, uri, host, connection, accept);
     }
@@ -45,22 +49,40 @@ public class HttpRequest {
         return method;
     }
 
-    private static String getRequestHeader(InputStream in) throws IOException {
+    private static Map<String, String> getRequestHeader(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        StringBuilder request = new StringBuilder();
+        Map<String, String> request = new HashMap<>();
 
         String line = br.readLine();
-        request.append(line).append(NEW_LINE);
+        request.put(START_LINE, line);
 
         while(!line.equals(END)){
             line = br.readLine();
-            if(line.startsWith(HOST) || line.startsWith(CONNECTION) || line.startsWith(ACCEPT)){
-                request.append(line).append(NEW_LINE);
+            String[] splitLine = line.split(" ");
+
+            if(splitLine[KEY_INDEX].equals(HOST)){
+                request.put(HOST, splitLine[VALUE_INDEX]);
+            }
+            if(splitLine[KEY_INDEX].equals(CONNECTION)){
+                request.put(CONNECTION, splitLine[VALUE_INDEX]);
+            }
+            if(splitLine[KEY_INDEX].equals(ACCEPT)){
+                request.put(ACCEPT, splitLine[VALUE_INDEX]);
             }
         }
 
-        logger.debug(request.toString());
-        return request.toString();
+        return request;
+    }
+
+    @Override
+    public String toString() {
+        return "HttpRequest{" +
+                "method='" + method + '\'' +
+                ", uri=" + uri +
+                ", host='" + host + '\'' +
+                ", connection='" + connection + '\'' +
+                ", accept='" + accept + '\'' +
+                '}';
     }
 
 }
