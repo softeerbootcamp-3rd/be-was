@@ -7,4 +7,8 @@ public class ResponseSender {
         ResponseHandler.response200Header(dos, lengthOfBodyContent);
         ResponseHandler.responseBody(dos, body);
     }
+
+    public static void sendRedirectResponse(DataOutputStream dos, String redirectLocation){
+        ResponseHandler.response302Header(dos, redirectLocation);
+    }
 }
