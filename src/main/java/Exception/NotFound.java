@@ -1,4 +1,4 @@
-package webApplicationServer.Exception;
+package Exception;
 
 public class NotFound extends RuntimeException {
     public NotFound(String message) {

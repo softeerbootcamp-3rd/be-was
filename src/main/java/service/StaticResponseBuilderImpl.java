@@ -8,13 +8,8 @@ import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.FileDetector;
-import webApplicationServer.Exception.NotFound;
-import webserver.RequestHandler;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import Exception.NotFound;
+import Exception.BadRequestException;
 
 public class StaticResponseBuilderImpl implements StaticResponseBuilder{
     private final FileDetector fileDetector;

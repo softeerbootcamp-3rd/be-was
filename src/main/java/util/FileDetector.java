@@ -1,7 +1,7 @@
 package util;
 
 import model.http.ContentType;
-import webApplicationServer.Exception.NotFound;
+import Exception.NotFound;
 
 import java.io.File;
 import java.io.IOException;

@@ -6,8 +6,8 @@ import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webApplicationServer.Exception.BadRequestException;
-import webApplicationServer.Exception.InternalServerError;
+import Exception.BadRequestException;
+import Exception.InternalServerError;
 import webApplicationServer.controller.UserController;
 
 public class DynamicResponseBuilderImpl implements DynamicResponseBuilder {

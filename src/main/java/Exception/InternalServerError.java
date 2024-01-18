@@ -1,4 +1,4 @@
-package webApplicationServer.Exception;
+package Exception;
 
 public class InternalServerError extends RuntimeException {
     public InternalServerError(String message) {
