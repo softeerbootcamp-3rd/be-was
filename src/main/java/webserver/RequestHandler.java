@@ -56,15 +56,6 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    // DataOutputStream에 response 내용 write
-    private void response(byte[] responseHeader, byte[] responseBody, DataOutputStream dos) throws IOException {
-        dos.write(responseHeader, 0, responseHeader.length);
-        dos.writeBytes("\r\n");
-        if(responseBody != null)
-            dos.write(responseBody, 0, responseBody.length);
-        dos.flush();
-    }
-
     // HTTP Request 파싱
     private void httpRequestParsing(BufferedReader br) throws IOException {
         // 요청 라인 읽어오기
@@ -85,21 +76,45 @@ public class RequestHandler implements Runnable {
                 httpRequestDto.getRequestTarget(),
                 httpRequestDto.getHTTPVersion());
 
+        // header 읽기
         // host, accept 출력
-        while(!line.equals("")) {
+        while(line != null) {
             line = br.readLine();
+            // 개행문자만을 읽었다면 -> 헤더 끝
+            if(line != null && line.trim().isEmpty())
+                break;
             if(line.contains("Host:")) {
+                // Host 추출
                 httpRequestDto.setHost(line.substring("Host: ".length()));
                 logger.debug("Host: {}", httpRequestDto.getHost());
+                continue;
             }
-            else if(line.contains("Accept:")) {
+            if(line.contains("Accept:")) {
                 // Accept 추출
                 String accept = line.substring("Accept: ".length());
                 if(line.contains(","))
                     accept = accept.substring(0, accept.indexOf(","));
                 httpRequestDto.setAccept(accept);
                 logger.debug("Accept: {}", httpRequestDto.getAccept());
+                continue;
             }
+            if(line.contains("Content-Length:")) {
+                // Content-Length 추출
+                Integer contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
+                httpRequestDto.setContentLength(contentLength);
+                logger.debug("Content-Length: {}", httpRequestDto.getContentLength());
+                continue;
+            }
+        }
+
+        // body 읽기
+        if(httpRequestDto.getContentLength() != null) {
+            char[] body = new char[httpRequestDto.getContentLength()];
+            br.read(body);
+
+            // 한글 파라미터 decoding 후 body 저장
+            httpRequestDto.setBody(URLDecoder.decode(new String(body), "UTF-8"));
+            System.out.println("Request Body: " + httpRequestDto.getBody());
         }
     }
 

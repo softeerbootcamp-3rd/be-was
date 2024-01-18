@@ -45,7 +45,7 @@ class ServiceTest {
         HTTPResponseDto expected = new HTTPResponseDto(303, "/index.html".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html");
+                "HTTP/1.1", "localhost:8080", "text/html", null, null);
         httpRequestDto.addRequestParam("userId", "bonnie1");
         httpRequestDto.addRequestParam("password", "1111");
         httpRequestDto.addRequestParam("name", "장보경");
@@ -62,7 +62,7 @@ class ServiceTest {
         HTTPResponseDto expected = new HTTPResponseDto(303, "/index.html".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/",
-                "HTTP/1.1", "localhost:8080", "text/html");
+                "HTTP/1.1", "localhost:8080", "text/html", null, null);
         HTTPResponseDto actual = Service.showIndex(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -94,7 +94,7 @@ class ServiceTest {
             HTTPResponseDto expected = new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/index.html",
-                    "HTTP/1.1", "localhost:8080", "text/html");
+                    "HTTP/1.1", "localhost:8080", "text/html", null, null);
             HTTPResponseDto actual = Service.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -113,7 +113,7 @@ class ServiceTest {
             HTTPResponseDto expected = new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/css/styles.css",
-                    "HTTP/1.1", "localhost:8080", "text/css");
+                    "HTTP/1.1", "localhost:8080", "text/css", null, null);
             HTTPResponseDto actual = Service.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);

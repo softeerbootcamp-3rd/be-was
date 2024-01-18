@@ -10,14 +10,18 @@ public class HTTPRequestDto {
     private String host;
     private String accept;
     private HashMap<String, String> requestParams;
+    private Integer contentLength;   // http request body의 길이
+    private String body;            // http request body
 
-    public HTTPRequestDto(String HTTPMethod, String requestTarget, String HTTPVersion, String host, String accept) {
+    public HTTPRequestDto(String HTTPMethod, String requestTarget, String HTTPVersion, String host, String accept, Integer contentLength, String body) {
         this.HTTPMethod = HTTPMethod;
         this.requestTarget = requestTarget;
         this.HTTPVersion = HTTPVersion;
         this.host = host;
         this.accept = accept;
         this.requestParams = new HashMap<>();       // 쿼리 스트링이 들어왔을 경우 저장
+        this.contentLength = contentLength;
+        this.body = body;
     }
     public HTTPRequestDto() {
         this.requestParams = new HashMap<>();
@@ -41,6 +45,12 @@ public class HTTPRequestDto {
     public HashMap<String, String> getRequestParams() {
         return this.requestParams;
     }
+    public Integer getContentLength() {
+        return this.contentLength;
+    }
+    public String getBody() {
+        return this.body;
+    }
 
     public void setHTTPMethod(String HTTP_Method) {
         this.HTTPMethod = HTTP_Method;
@@ -59,6 +69,12 @@ public class HTTPRequestDto {
     }
     public void setRequestParams(HashMap<String, String> requestParams) {
         this.requestParams = requestParams;
+    }
+    public void setContentLength(Integer contentLength) {
+        this.contentLength = contentLength;
+    }
+    public void setBody(String body) {
+        this.body = body;
     }
     public void addRequestParam(String key, String value) {
         this.requestParams.put(key, value);
