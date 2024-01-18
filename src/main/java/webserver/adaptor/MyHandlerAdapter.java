@@ -11,15 +11,15 @@ import java.util.Map;
 
 public class MyHandlerAdapter implements HandlerAdapter {
     @Override
-    public boolean supports(Object handler) {
+    public boolean supports(Controller handler) {
         return (handler instanceof Controller);
     }
 
     @Override
-    public ModelAndView handle(Request req, Response res, Object handler) throws IOException {
-        Controller controller = (Controller) handler;
+    public ModelAndView handle(Request req, Response res, Controller handler) throws IOException {
+        Controller controller = handler;
 
-        Map<String, Object> model = new HashMap<>();
+        Map<String, String> model = new HashMap<>();
 
         String viewName = controller.process(req,model);
 

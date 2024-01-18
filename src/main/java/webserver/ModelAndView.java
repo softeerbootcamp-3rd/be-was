@@ -1,11 +1,13 @@
 package webserver;
 
+import controller.Controller;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
     private String viewName;
-    private Map<String, Object> model = new HashMap<>();
+    private Map<String, String> model = new HashMap<>();
 
     public ModelAndView(String viewName) {
         this.viewName = viewName;
@@ -15,11 +17,11 @@ public class ModelAndView {
         return viewName;
     }
 
-    public Map<String, Object> getModel() {
+    public Map<String, String> getModel() {
         return model;
     }
 
-    public void setModel(Map<String, Object> model) {
+    public void setModel(Map<String, String> model) {
         this.model = model;
     }
 }
