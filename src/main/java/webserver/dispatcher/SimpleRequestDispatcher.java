@@ -16,14 +16,14 @@ public class SimpleRequestDispatcher implements RequestDispatcher{
     private static final Logger logger = LoggerFactory.getLogger(SimpleRequestDispatcher.class);
     @Override
     public void forward(Request request, Response response, String viewPath,DataOutputStream dos) throws IOException {
-        File file = new File(getAbsolutePath(viewPath));
+        File file = new File(viewPath);
         byte[] body;
         if (file.exists() && file.isFile()) {
             body = Files.readAllBytes(file.toPath());
             response.setStatus(HttpStatus.OK);
         }
         else{
-            body = Files.readAllBytes(new File(getAbsolutePath("/not-found.html")).toPath());
+            body = Files.readAllBytes(new File("/not-found.html").toPath());
             response.setStatus(HttpStatus.NOT_FOUND);
         }
         response.send(dos,body,request);
@@ -36,13 +36,6 @@ public class SimpleRequestDispatcher implements RequestDispatcher{
         response.send(dos,request);
     }
 
-    private String getAbsolutePath(String viewPath){
-        if(viewPath.endsWith(".html")){
-            return Paths.get(System.getProperty("user.dir"), "src/main/resources/templates").toString()+"/"+viewPath;
-        }
-        else{
-            return Paths.get(System.getProperty("user.dir"), "src/main/resources/static").toString() + viewPath;
-        }
-    }
+
 
 }
