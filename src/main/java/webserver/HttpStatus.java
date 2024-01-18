@@ -3,6 +3,7 @@ package webserver;
 public enum HttpStatus {
   OK(200,"OK"),
   BAD_REQUEST(400,"BAD_REQUEST"),
+  NOT_FOUND(404,"NOT_FOUND"),
   REDIRECT(302,"REDIRECT");
 
   final int value;
