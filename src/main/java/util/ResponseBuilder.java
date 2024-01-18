@@ -20,14 +20,16 @@ public class ResponseBuilder {
         String statusCode = tokens[0];
         String targetPath = tokens[1];
 
-        byte[] body = ResourceLoader.loadResource(targetPath);
+        byte[] body;
 
         if(statusCode.equals("200")) {
+            body = ResourceLoader.loadResource(targetPath);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } else if(statusCode.equals("302")) {
             response302Header(dos, targetPath);
         } else if (statusCode.equals("404")) {
+            body = ResourceLoader.loadResource(targetPath);
             response404Header(dos);
             responseBody(dos, body);
         } else {
