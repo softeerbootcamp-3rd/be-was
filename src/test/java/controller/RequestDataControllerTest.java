@@ -25,6 +25,16 @@ public class RequestDataControllerTest {
         );
     }
 
+    static Stream<Object[]> provideInvalidResourcePaths() {
+        return Stream.of(
+                new Object[]{"/inddex.html", "404 /error/notfound.html"},
+                new Object[]{"/user/foorm.html", "404 /error/notfound.html"},
+                new Object[]{"/user/lisst.html", "404 /error/notfound.html"},
+                new Object[]{"/user/logiin.html", "404 /error/notfound.html"},
+                new Object[]{"/user/profiile.html", "404 /error/notfound.html"}
+        );
+    }
+
     static Stream<Object[]> provideApiPaths() {
         return Stream.of(
                 new Object[]{"/", "302 /index.html"},
@@ -45,6 +55,20 @@ public class RequestDataControllerTest {
     @MethodSource("provideResourcePaths")
     @DisplayName("리소스 라우팅 테스트")
     public void routeRequest_Resource(String path, String expected) throws IOException {
+        // Given
+        Map<String, String> map = new HashMap<>();
+
+        // When
+        String actual = RequestDataController.routeRequest(new RequestData("GET", path, "HTTP/1.1", map));
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidResourcePaths")
+    @DisplayName("유효하지않은 리소스 라우팅 테스트")
+    public void routeRequest_InvalidResource(String path, String expected) throws IOException {
         // Given
         Map<String, String> map = new HashMap<>();
 
