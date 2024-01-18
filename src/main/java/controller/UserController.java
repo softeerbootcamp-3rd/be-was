@@ -2,6 +2,7 @@ package controller;
 
 import annotation.GetMapping;
 import annotation.RequestParam;
+import exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -18,7 +19,7 @@ public class UserController {
     public Response createUser(@RequestParam(name = "userId") String userId,
                                @RequestParam(name = "password") String password,
                                @RequestParam(name = "name") String name,
-                               @RequestParam(name = "email") String email){
+                               @RequestParam(name = "email") String email) throws GeneralException {
         logger.debug("createUser() 실행");
 
         userService.createUser(userId, password, name, email);
