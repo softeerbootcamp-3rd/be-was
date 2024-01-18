@@ -17,7 +17,8 @@ public class RequestDataController {
         userService = new UserService();
     }
 
-    public static String routeRequest(String url, RequestData requestData) {
+    public static String routeRequest(RequestData requestData) {
+        String url = requestData.getRequestContent();
 
         if (url.equals("/")) {
             return redirectHome();
@@ -32,8 +33,7 @@ public class RequestDataController {
         } else if (url.equals("/user/profile.html")) {
             return getFilePath(url);
         } else if (url.startsWith("/user/create?")) {
-            String userQuery = url.split("\\?")[1];
-            userService.registerUser(requestData, userQuery);
+            userService.registerUser(requestData);
 
             return redirectHome();
         } else {

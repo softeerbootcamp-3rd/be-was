@@ -15,9 +15,13 @@ import java.util.Map;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public static void registerUser(RequestData requestData, String requestURL) {
+    public static void registerUser(RequestData requestData) {
+        String url = requestData.getRequestContent();
+
+        String userQuery = url.split("\\?")[1];
+
         // HTTP 요청으로부터 사용자 데이터 추출
-        String[] pairs = requestURL.split("&");
+        String[] pairs = userQuery.split("&");
 
         Map<String, String> userProps = new HashMap<>();
         for (String pair : pairs) {

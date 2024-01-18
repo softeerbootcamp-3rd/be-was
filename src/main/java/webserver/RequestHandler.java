@@ -42,13 +42,11 @@ public class RequestHandler implements Runnable {
             logger.debug(requestData.formatForOutput());
             System.out.println();
 
-            String url = requestData.getRequestContent();
-
 //            if (url.equals("/")) {
 //                url = "/index.html";
 //            }
 
-            String statusCodeUrl = RequestDataController.routeRequest(url, requestData);
+            String statusCodeUrl = RequestDataController.routeRequest(requestData);
 
             ResponseBuilder.buildResponse(out, statusCodeUrl);
 

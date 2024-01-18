@@ -25,12 +25,12 @@ public class RequestDataControllerTest {
 
         // When
         Map<String, String> map = new HashMap<>();
-        String redirectHome = RequestDataController.routeRequest(pathHome, new RequestData("GET", pathHome, "HTTP/1.1", map));
-        String redirectIndex = RequestDataController.routeRequest(pathIndex, new RequestData("GET", pathIndex, "HTTP/1.1", map));
-        String redirectForm = RequestDataController.routeRequest(pathForm, new RequestData("GET", pathForm, "HTTP/1.1", map));
-        String redirectList = RequestDataController.routeRequest(pathList, new RequestData("GET", pathList, "HTTP/1.1", map));
-        String redirectLogin = RequestDataController.routeRequest(pathLogin, new RequestData("GET", pathLogin, "HTTP/1.1", map));
-        String redirectProfile = RequestDataController.routeRequest(pathProfile, new RequestData("GET", pathProfile, "HTTP/1.1", map));
+        String redirectHome = RequestDataController.routeRequest(new RequestData("GET", pathHome, "HTTP/1.1", map));
+        String redirectIndex = RequestDataController.routeRequest(new RequestData("GET", pathIndex, "HTTP/1.1", map));
+        String redirectForm = RequestDataController.routeRequest(new RequestData("GET", pathForm, "HTTP/1.1", map));
+        String redirectList = RequestDataController.routeRequest(new RequestData("GET", pathList, "HTTP/1.1", map));
+        String redirectLogin = RequestDataController.routeRequest(new RequestData("GET", pathLogin, "HTTP/1.1", map));
+        String redirectProfile = RequestDataController.routeRequest(new RequestData("GET", pathProfile, "HTTP/1.1", map));
 
         // Then
         assertThat(redirectHome).isEqualTo("/index.html");
