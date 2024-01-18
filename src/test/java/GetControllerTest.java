@@ -2,8 +2,7 @@ import db.Database;
 import dto.ResponseBuilder;
 import model.User;
 import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.A;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import webserver.HttpStatus;
 
 public class GetControllerTest {
@@ -46,11 +45,10 @@ public class GetControllerTest {
                                         .build();
 
         // then : 예상되는 변화를 확인, 검증
-        // [ 두 객체가 같아야 ] 한다.
+        // [ 두 객체가 같은 내용을 갖고 있어야 ] 한다.
         Assertions.assertThat(builder.getHttpStatus()).isEqualTo(response.getHttpStatus());
         Assertions.assertThat(builder.getContentType()).isEqualTo(response.getContentType());
         Assertions.assertThat(builder.getBody()).isEqualTo(response.getBody());
-
     }
 
 }
