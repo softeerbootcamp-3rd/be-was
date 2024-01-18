@@ -13,11 +13,7 @@ public class UserController {
 
     public static void create(DataOutputStream dos, RequestDto requestDto) {
 
-        try {
-            UserService.signUp(requestDto.getParams());
-        } catch (CustomException e) {
-            ResponseHandler.sendError(dos, e.getErrorCode());
-        }
+        UserService.signUp(requestDto.getParams());
 
         ResponseHandler.sendRedirect(dos, MAIN_PAGE.getPath());
     }
