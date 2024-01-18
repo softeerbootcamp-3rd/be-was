@@ -17,22 +17,29 @@ public class HtmlController implements Controller {
         if (file.isFile()) {
             try{
                 byte[] body = Files.readAllBytes(new File(url).toPath());
-
-                response.setVersion("HTTP/1.1");
-                response.setStatusCode("200");
-                response.setStatusMessage("OK");
-                response.setBody(body);
-                response.getHeaders().put("Content-Type", "text/html;charset=utf-8");
-                response.getHeaders().put("Content-Length", String.valueOf(body.length));
+                set200Response(response, body);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            response.setVersion("HTTP/1.1");
-            response.setStatusCode("404");
-            response.setStatusMessage("NOT FOUND");
-            response.setBody("404 NOT FOUND".getBytes());
+            set404Response(response);
         }
 
+    }
+
+    private static void set200Response(HttpResponse response, byte[] body) {
+        response.setVersion("HTTP/1.1");
+        response.setStatusCode("200");
+        response.setStatusMessage("OK");
+        response.setBody(body);
+        response.getHeaders().put("Content-Type", "text/html;charset=utf-8");
+        response.getHeaders().put("Content-Length", String.valueOf(body.length));
+    }
+
+    private static void set404Response(HttpResponse response) {
+        response.setVersion("HTTP/1.1");
+        response.setStatusCode("404");
+        response.setStatusMessage("NOT FOUND");
+        response.setBody("404 NOT FOUND".getBytes());
     }
 }
