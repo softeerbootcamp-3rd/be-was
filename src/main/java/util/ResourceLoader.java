@@ -1,6 +1,8 @@
 package util;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -16,8 +18,17 @@ public class ResourceLoader {
 
     public static String getResourceType(String targetUrl) {
         String fileOrApi;
-        if (!getFileExtension(targetUrl).isEmpty()) fileOrApi = "FILE";
-        else fileOrApi = "API";
+
+        try {
+            URI uri = new URI(targetUrl);
+            targetUrl = uri.getPath();
+
+            if (!getFileExtension(targetUrl).isEmpty()) fileOrApi = "FILE";
+            else fileOrApi = "API";
+        } catch (URISyntaxException e) {
+            fileOrApi = "UNKNOWN";
+        }
+
 
         return fileOrApi;
     }
