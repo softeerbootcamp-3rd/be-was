@@ -49,19 +49,17 @@ public class HttpRequest {
 
     public HttpRequest (InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+        getRequestInfo(br);
+    }
 
+    private void getRequestInfo(BufferedReader br) throws IOException {
         String line = br.readLine();
         if (line != null) {
             String[] lines = line.split(" ");
             method=lines[0];
             if (lines[1].contains("?")) {
-                String paramLine = lines[1].substring(lines[1].indexOf('?')+1);
-                lines[1] = lines[1].substring(0,lines[1].indexOf('?'));
-                String[] params = paramLine.split("&");
-                for (String param : params) {
-                    String[] p = param.split("=");
-                    requestParam.put(p[0], decode(p[1]));
-                }
+                getQueryParam(lines[1]);
+                lines[1] = lines[1].substring(0,line.indexOf('?'));
             }
             url=lines[1];
             httpVersion = lines[2];
@@ -78,6 +76,16 @@ public class HttpRequest {
             }
         }
     }
+
+    private void getQueryParam(String url) {
+        String paramLine = url.substring(url.indexOf('?')+1);
+        String[] params = paramLine.split("&");
+        for (String param : params) {
+            String[] p = param.split("=");
+            requestParam.put(p[0], decode(p[1]));
+        }
+    }
+
     public void print() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n= = HTTP REQUEST INFORMATION = =");
