@@ -8,7 +8,7 @@ import java.util.Map;
 public class HttpRequest {
 
     private final String method;
-    private final String path;
+    private final String URI;
     private final String httpVersion;
     private final Map<String, String> headers = new HashMap<>();
     //헤더 정보 저장 & 테스트
@@ -18,7 +18,7 @@ public class HttpRequest {
 
         //request line 저장
         this.method = tokens[0];
-        this.path = tokens[1];
+        this.URI = tokens[1];
         this.httpVersion = tokens[2];
 
         //헤더 정보 저장
@@ -35,8 +35,8 @@ public class HttpRequest {
         return method;
     }
 
-    public String getPath() {
-        return path;
+    public String getURI() {
+        return URI;
     }
 
     public String getHttpVersion() {
@@ -44,6 +44,6 @@ public class HttpRequest {
     }
 
     public String getHttpRequst() {
-        return method + " " + path + " " + httpVersion;
+        return method + " " + URI + " " + httpVersion;
     }
 }
