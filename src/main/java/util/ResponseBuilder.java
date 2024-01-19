@@ -20,11 +20,34 @@ public class ResponseBuilder {
         String statusCode = tokens[0];
         String targetPath = tokens[1];
 
+        String extension = RequestParserUtil.getFileExtension(targetPath);
+        String contentType;
+
+        if(extension.equals("html")) {
+            contentType = "text/html";
+        } else if(extension.equals("css")) {
+            contentType = "text/css";
+        } else if(extension.equals("js")) {
+            contentType = "application/javascript";
+        } else if(extension.equals("woff")) {
+            contentType = "font/" + extension;
+        } else if(extension.equals("ttf")) {
+            contentType = "font/" + extension;
+        } else if(extension.equals("ico")) {
+            contentType = "image/x-icon";
+        } else if(extension.equals("png")) {
+            contentType = "image/png";
+        } else if(extension.equals("jpg")) {
+            contentType = "image/jpg";
+        } else {
+            contentType = "text/html";
+        }
+
         byte[] body;
 
         if(statusCode.equals("200")) {
             body = ResourceLoader.loadResource(targetPath);
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } else if(statusCode.equals("302")) {
             response302Header(dos, targetPath);
@@ -41,10 +64,10 @@ public class ResponseBuilder {
             return;
         }
     }
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
