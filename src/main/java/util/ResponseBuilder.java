@@ -1,5 +1,6 @@
 package util;
 
+import controller.ResourcePathMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,27 +22,7 @@ public class ResponseBuilder {
         String targetPath = tokens[1];
 
         String extension = RequestParserUtil.getFileExtension(targetPath);
-        String contentType;
-
-        if(extension.equals("html")) {
-            contentType = "text/html";
-        } else if(extension.equals("css")) {
-            contentType = "text/css";
-        } else if(extension.equals("js")) {
-            contentType = "application/javascript";
-        } else if(extension.equals("woff")) {
-            contentType = "font/" + extension;
-        } else if(extension.equals("ttf")) {
-            contentType = "font/" + extension;
-        } else if(extension.equals("ico")) {
-            contentType = "image/x-icon";
-        } else if(extension.equals("png")) {
-            contentType = "image/png";
-        } else if(extension.equals("jpg")) {
-            contentType = "image/jpg";
-        } else {
-            contentType = "text/html";
-        }
+        String contentType = ResourcePathMapping.getContentType(extension);
 
         byte[] body;
 

@@ -1,5 +1,6 @@
 package util;
 
+import controller.ResourcePathMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +22,9 @@ public class ResourceLoader {
         logger.debug("resourcePath: " + resourcePath);
 
         String extension = getFileExtension(resourcePath);
+        String directory = ResourcePathMapping.getDirectory(extension);
 
-        if(extension.equals("html")) {
-            return Files.readAllBytes(Paths.get( url+ "/templates" + resourcePath));
-        } else if(extension.equals("css") || extension.equals("js") || extension.equals("woff") || extension.equals("ttf") || extension.equals("ico") || extension.equals("png") || extension.equals("jpg")) {
-            return Files.readAllBytes(Paths.get( url+ "/static" + resourcePath));
-        }
-
-        return Files.readAllBytes(Paths.get( url+ "/templates" + resourcePath));
+        return Files.readAllBytes(Paths.get( url + directory + resourcePath));
     }
 
     public static String getResourceType(String targetUrl) {

@@ -31,11 +31,9 @@ public class RequestDataController {
         try {
             File file;
 
-            if(extension.equals("html")) {
-                file = new File(ResourceLoader.url + "/templates" + url);
-            } else {
-                file = new File(ResourceLoader.url + "/static" + url);
-            }
+            String directory = ResourcePathMapping.getDirectory(extension);
+
+            file = new File(ResourceLoader.url + directory + url);
 
             String fileOrApi = getResourceType(url); // URL이 FILE을 나타내는지 API를 나타내는지 문자열로 반환
 
