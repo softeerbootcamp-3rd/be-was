@@ -6,7 +6,7 @@ import annotation.RequestParam;
 import db.Database;
 import model.User;
 import webserver.HttpResponse;
-import webserver.HttpStatus;
+import constant.HttpStatus;
 
 @Controller
 public class UserController {
@@ -16,6 +16,7 @@ public class UserController {
                                           @RequestParam(value = "password", required = true) String password,
                                           @RequestParam("name") String name,
                                           @RequestParam("email") String email) {
+
         User user = new User(userId, password, name, email);
         User existUser = Database.findUserById(userId);
         if (existUser != null)

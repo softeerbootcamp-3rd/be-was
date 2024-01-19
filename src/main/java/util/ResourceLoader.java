@@ -1,6 +1,6 @@
 package util;
 
-import webserver.HttpStatus;
+import constant.HttpStatus;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
