@@ -2,25 +2,25 @@ package dto;
 
 import webserver.HttpStatus;
 
-public class ResponseBuilder {
+public class Response {
 
     private HttpStatus httpStatus;
     private String contentType;
     private byte[] body;
 
-    public ResponseBuilder(HttpStatus httpStatus, String contentType, String str) {
+    public Response(HttpStatus httpStatus, String contentType, String str) {
         this.httpStatus = httpStatus;
         this.contentType = contentType;
         this.body = str.getBytes();
     }
 
-    public ResponseBuilder(HttpStatus httpStatus, String contentType, byte[] body) {
+    public Response(HttpStatus httpStatus, String contentType, byte[] body) {
         this.httpStatus = httpStatus;
         this.contentType = contentType;
         this.body = body;
     }
 
-    public ResponseBuilder(HttpStatus httpStatus) {
+    public Response(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
         this.contentType = null;
         this.body = null;
@@ -47,10 +47,10 @@ public class ResponseBuilder {
 
         }
 
-        public Builder(ResponseBuilder responseBuilder) {
-            this.httpStatus = responseBuilder.httpStatus;
-            this.contentType = responseBuilder.contentType;
-            this.body = responseBuilder.body;
+        public Builder(Response response) {
+            this.httpStatus = response.httpStatus;
+            this.contentType = response.contentType;
+            this.body = response.body;
         }
 
         public Builder httpStatus(HttpStatus httpStatus) {
@@ -73,8 +73,8 @@ public class ResponseBuilder {
             return this;
         }
 
-        public ResponseBuilder build() {
-            return new ResponseBuilder(httpStatus, contentType, body);
+        public Response build() {
+            return new Response(httpStatus, contentType, body);
         }
 
     }

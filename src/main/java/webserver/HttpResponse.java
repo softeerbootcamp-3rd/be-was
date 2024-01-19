@@ -1,6 +1,6 @@
 package webserver;
 
-import dto.ResponseBuilder;
+import dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,41 +12,38 @@ public class HttpResponse {
     // 로그 찍을 때 어떤 클래스인지 표시하는 용도
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
-    public static void response(DataOutputStream dos, ResponseBuilder responseBuilder) {
-        HttpStatus httpStatus = responseBuilder.getHttpStatus();
+    public static void response(DataOutputStream dos, Response response) throws IOException {
+        HttpStatus httpStatus = response.getHttpStatus();
         StringBuilder sb = new StringBuilder();
 
+        String line = "HTTP/1.1 " + response.getHttpStatus().getStatusCode() + " " + response.getHttpStatus().getStatusMessage();
+        dos.writeBytes(line + "\r\n");
+        sb.append(line);
+
         if (httpStatus == HttpStatus.OK) {
-            sb.append(response200Header(dos, responseBuilder));
-            responseBody(dos, responseBuilder);
+            sb.append(response200Header(dos, response));
+            dos.writeBytes("\r\n");
+            responseBody(dos, response);
         } else if (httpStatus == HttpStatus.FOUND) {
-            sb.append(redirect(dos, responseBuilder.getBody()));
-        } else if (httpStatus == HttpStatus.NOT_FOUND) {
-            sb.append(response404Header(dos));
-        } else if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
-            sb.append(response500Header(dos));
+            sb.append(redirect(dos, response.getBody()));
         }
+
+        dos.writeBytes("\r\n");
+        dos.flush();
+        dos.close();
 
         logger.debug("Response [" + sb + "]");
     }
 
-    public static void response(DataOutputStream dos, HttpStatus httpStatus) {
-        if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR)
-            response500Header(dos);
-    }
-
-    private static String response200Header(DataOutputStream dos, ResponseBuilder responseBuilder) {
+    private static String response200Header(DataOutputStream dos, Response response) {
         try {
-            String s1 = "HTTP/1.1 200 OK";
-            String s2 = "Content-Type: " + responseBuilder.getContentType();
-            String s3 = "Content-Length: " + responseBuilder.getBody().length;
+            String contentType = "Content-Type: " + response.getContentType();
+            String contentLength = "Content-Length: " + response.getBody().length;
 
-            dos.writeBytes(s1+ " \r\n");
-            dos.writeBytes(s2 + "\r\n");
-            dos.writeBytes(s3 + "\r\n");
-            dos.writeBytes("\r\n");
+            dos.writeBytes(contentType + "\r\n");
+            dos.writeBytes(contentLength + "\r\n");
 
-            return s1 + ", " + s2 + ", " + s3;
+            return ", " + contentType + ", " + contentLength;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -54,57 +51,23 @@ public class HttpResponse {
         return null;
     }
 
-    private static String responseBody(DataOutputStream dos, ResponseBuilder responseBuilder) {
+    private static void responseBody(DataOutputStream dos, Response response) {
         try {
-            dos.write(responseBuilder.getBody(), 0, responseBuilder.getBody().length);
-            dos.flush();
+            dos.write(response.getBody(), 0, response.getBody().length);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
 
-        return null;
     }
 
     private static String redirect(DataOutputStream dos, byte[] body) {
         try {
             String redirectUrl = new String(body);
-            String s1 = "HTTP/1.1 302 Found";
-            String s2 = "Location: " + redirectUrl;
+            String redirectResponse = "Location: " + redirectUrl;
 
-            dos.writeBytes(s1 + "\r\n");
-            dos.writeBytes(s2 + "\r\n");
-            dos.writeBytes("\r\n");
-            dos.flush();
+            dos.writeBytes(redirectResponse + "\r\n");
 
-            return s1 + ", " + s2;
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-
-        return null;
-    }
-
-    private static String response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not_Found\r\n");
-            dos.writeBytes("\r\n");
-            dos.flush();
-
-            return "HTTP/1.1 404 Not_Found";
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-
-        return null;
-    }
-
-    private static String response500Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 500 Internal_Server_Error\r\n");
-            dos.writeBytes("\r\n");
-            dos.flush();
-
-            return "HTTP/1.1 500 Internal_Server_Error";
+            return redirectResponse;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

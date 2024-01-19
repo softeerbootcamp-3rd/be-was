@@ -1,19 +1,20 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.util.function.Function;
+import java.nio.file.Files;
 
-import dto.RequestBuilder;
-import dto.ResponseBuilder;
+import dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import util.ControllerMapper;
+import util.ResourceLoader;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
+    private static final String FILE_PATH = "src/main/resources";
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -29,20 +30,12 @@ public class RequestHandler implements Runnable {
             logger.debug(httpRequest.toString());
             DataOutputStream dos = new DataOutputStream(out);
 
-            // GET만 다루고 있으므로 일단 body는 null로
-            RequestBuilder requestBuilder = new RequestBuilder<>(httpRequest.getUri(), null);
+            Class<?> controllerClass = ControllerMapper.getController(httpRequest.getHttpMethod());
+            Response response = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
+            HttpResponse.response(dos, response);
 
-            Function<RequestBuilder, ResponseBuilder> controller =
-                    ControllerMapper.getController(httpRequest.getHttpMethod());
-
-            if (controller != null) {
-                ResponseBuilder responseBuilder = controller.apply(requestBuilder);
-                HttpResponse.response(dos, responseBuilder);
-            } else {
-                HttpResponse.response(dos, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-        } catch (IOException e) {
+        } catch (IOException | InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }
