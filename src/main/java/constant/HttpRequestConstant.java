@@ -14,6 +14,4 @@ public class HttpRequestConstant {
     public static final int HTTP_METHOD_POS = 0;
     public static final int PATH_POS = 1;
     public static final String PATH_DELIMITER = " ";
-    public static final int EXTENSION_POS = 1;
-    public static final String EXTENSION_DELIMITER = "/";
 }
