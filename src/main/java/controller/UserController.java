@@ -2,12 +2,10 @@ package controller;
 
 import request.HttpRequest;
 import service.UserService;
-import util.RequestUrl;
+import util.StatusCode;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import static util.ResponseBuilder.response;
+import static util.RequestUrl.*;
+import static util.StatusCode.*;
 
 public class UserController implements Controller{
 
@@ -26,27 +24,27 @@ public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public void route(HttpRequest httpRequest, OutputStream out) throws IOException {
+    public StatusCode route(HttpRequest httpRequest) {
 
-        String path = httpRequest.getPath();
+        String URI = httpRequest.getURI();
 
-        if (path.startsWith(RequestUrl.USER_FORM.getUrl()) ||
-            path.startsWith(RequestUrl.USER_LIST.getUrl()) ||
-            path.startsWith(RequestUrl.USER_LOGIN.getUrl()) ||
-            path.startsWith(RequestUrl.USER_LOGIN_FAILED.getUrl()) ||
-            path.startsWith(RequestUrl.USER_PROFILE.getUrl())
+        if (URI.startsWith(USER_FORM.getUrl()) ||
+            URI.startsWith(USER_LIST.getUrl()) ||
+            URI.startsWith(USER_LOGIN.getUrl()) ||
+            URI.startsWith(USER_LOGIN_FAILED.getUrl()) ||
+            URI.startsWith(USER_PROFILE.getUrl())
         )
-            response("200 " + path, out);
-        else if (path.startsWith(RequestUrl.USER_CREATE.getUrl())) {
+            return OK;
+        else if (URI.startsWith(USER_CREATE.getUrl())) {
             signUp(httpRequest);
-            response("302 /index.html", out);
+            return FOUND;
         }
-        response("404 ", out);
+        return NOT_FOUND;
     }
 
     // 회원가입 요청 처리
     public void signUp(HttpRequest httpRequest) {
         String request = httpRequest.getHttpRequst();
-        userService.signUp(request); // 회원가입 요청 처리
+        userService.signUp(request);
     }
 }

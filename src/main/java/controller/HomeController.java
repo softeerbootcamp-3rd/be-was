@@ -1,13 +1,10 @@
 package controller;
 
-
 import request.HttpRequest;
-import util.RequestUrl;
+import util.StatusCode;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import static util.ResponseBuilder.response;
+import static util.RequestUrl.*;
+import static util.StatusCode.*;
 
 public class HomeController implements Controller {
     private volatile static HomeController instance;
@@ -23,14 +20,14 @@ public class HomeController implements Controller {
     }
 
     @Override
-    public void route(HttpRequest httpRequest, OutputStream out) throws IOException {
-        String path = httpRequest.getPath();
+    public StatusCode route(HttpRequest httpRequest) {
+        String URI = httpRequest.getURI();
 
-        if (path.equals(RequestUrl.HOME.getUrl())) {
-            response("302 /index.html", out);
+        if (URI.equals(HOME.getUrl())) {
+            return FOUND;
         }
         else {
-            response("200 " + path, out);
+            return OK;
         }
     }
 }
