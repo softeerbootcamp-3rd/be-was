@@ -1,6 +1,5 @@
 package controller;
 
-import request.HttpRequest;
 import util.StatusCode;
 
 import static util.RequestUrl.*;
@@ -20,8 +19,8 @@ public class HomeController implements Controller {
     }
 
     @Override
-    public StatusCode route(HttpRequest httpRequest) {
-        String URI = httpRequest.getURI();
+    public StatusCode route(String requestLine) {
+        String URI = requestLine.split(" ")[1];
 
         if (URI.equals(HOME.getUrl())) {
             return FOUND;

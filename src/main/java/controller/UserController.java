@@ -24,9 +24,9 @@ public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public StatusCode route(HttpRequest httpRequest) {
+    public StatusCode route(String requestLine) {
 
-        String URI = httpRequest.getURI();
+        String URI = requestLine.split(" ")[1];
 
         if (URI.startsWith(USER_FORM.getUrl()) ||
             URI.startsWith(USER_LIST.getUrl()) ||
@@ -36,15 +36,14 @@ public class UserController implements Controller{
         )
             return OK;
         else if (URI.startsWith(USER_CREATE.getUrl())) {
-            signUp(httpRequest);
+            signUp(requestLine);
             return FOUND;
         }
         return NOT_FOUND;
     }
 
     // 회원가입 요청 처리
-    public void signUp(HttpRequest httpRequest) {
-        String request = httpRequest.getHttpRequst();
-        userService.signUp(request);
+    public void signUp(String requestLine) {
+        userService.signUp(requestLine);
     }
 }

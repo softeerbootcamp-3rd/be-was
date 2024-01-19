@@ -29,13 +29,15 @@ public class DispatcherServlet implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = new HttpRequest(br);
+            String requestLine = httpRequest.getHttpRequst();
             String URI = httpRequest.getURI();
+
 
             // request line 출력
             logger.debug("request method : {}, filePath : {}, http version : {}\n",
                     httpRequest.getMethod(), httpRequest.getURI(), httpRequest.getHttpVersion());
 
-            StatusCode status = getStatus(httpRequest); // 상태코드 반환
+            StatusCode status = getStatus(requestLine); // 상태코드 반환
 
             response(status, URI, out);
 
@@ -44,11 +46,12 @@ public class DispatcherServlet implements Runnable {
         }
     }
 
-    public static StatusCode getStatus(HttpRequest httpRequest) throws IOException {
-        if (httpRequest.getURI().startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
-            return userController.route(httpRequest);
+    public static StatusCode getStatus(String requestLine) throws IOException {
+        String URI = requestLine.split(" ")[1];
+        if (URI.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
+            return userController.route(requestLine);
         } else {                                         // 그 외의 경로는 HomeController에서 처리
-            return homeController.route(httpRequest);
+            return homeController.route(requestLine);
         }
     }
 }
