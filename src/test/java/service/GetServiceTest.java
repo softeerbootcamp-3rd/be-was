@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ServiceTest {
+class GetServiceTest {
 
     // 쿼리 스트링에 null 값이 들어왔을 경우 회원가입 테스트
     @Test
@@ -21,7 +21,7 @@ class ServiceTest {
         // given
         HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
         // when
-        HTTPResponseDto actual = Service.signup(null);
+        HTTPResponseDto actual = GetService.signup(null);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -34,7 +34,7 @@ class ServiceTest {
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto();
         httpRequestDto.addRequestParam("hello", "world");
-        HTTPResponseDto actual = Service.signup(httpRequestDto);
+        HTTPResponseDto actual = GetService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -51,7 +51,7 @@ class ServiceTest {
         httpRequestDto.addRequestParam("password", "1111");
         httpRequestDto.addRequestParam("name", "장보경");
         httpRequestDto.addRequestParam("email", "bonnie@gmail.com");
-        HTTPResponseDto actual = Service.signup(httpRequestDto);
+        HTTPResponseDto actual = GetService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -64,7 +64,7 @@ class ServiceTest {
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/",
                 "HTTP/1.1", "localhost:8080", "text/html", null, null);
-        HTTPResponseDto actual = Service.showIndex(httpRequestDto);
+        HTTPResponseDto actual = GetService.showIndex(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -77,7 +77,7 @@ class ServiceTest {
             HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
-            HTTPResponseDto actual = Service.requestFile(httpRequestDto);
+            HTTPResponseDto actual = GetService.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
@@ -96,7 +96,7 @@ class ServiceTest {
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/index.html",
                     "HTTP/1.1", "localhost:8080", "text/html", null, null);
-            HTTPResponseDto actual = Service.requestFile(httpRequestDto);
+            HTTPResponseDto actual = GetService.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
@@ -115,7 +115,7 @@ class ServiceTest {
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/css/styles.css",
                     "HTTP/1.1", "localhost:8080", "text/css", null, null);
-            HTTPResponseDto actual = Service.requestFile(httpRequestDto);
+            HTTPResponseDto actual = GetService.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         }
@@ -124,32 +124,4 @@ class ServiceTest {
         }
     }
 
-    // 로그인 실패 테스트
-    @Test
-    void testLoginFail() {
-        // given
-        HTTPResponseDto expected = new HTTPResponseDto(303, "/user/login_failed.html".getBytes());
-        // when
-        String body = "userId=login&password=fail";
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
-                "HTTP/1.1", "localhost:8080", "text/html", body.length(), body);
-        HTTPResponseDto actual = Service.login(httpRequestDto);
-        // then
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-    }
-
-    // 로그인 성공 테스트
-    @Test
-    void testLoginSuccess() {
-        // given
-        HTTPResponseDto expected = new HTTPResponseDto(303, "/index.html".getBytes());
-        // when
-        Database.addUser(new User("hello", "world", "hello", "world"));
-        String body = "userId=hello&password=world";
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
-                "HTTP/1.1", "localhost:8080", "text/html", body.length(), body);
-        HTTPResponseDto actual = Service.login(httpRequestDto);
-        // then
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-    }
 }

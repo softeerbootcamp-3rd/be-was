@@ -206,3 +206,5 @@ dependencies {
   myField.setAccessible(true);
   Object value = myField.get(newInstance);
   ```
+  - setAccessible(true) 
+    - 접근 제어자에 상관없이 해당 멤버(필드, 메서드, 생성자 등)에 접근할 수 있도록 접근성(accessibility)을 설정

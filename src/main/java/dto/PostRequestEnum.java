@@ -1,15 +1,14 @@
 package dto;
 
-import service.Service;
+import service.PostService;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public enum PostRequestEnum {
     LOGIN("/user/login") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return Service.login(httpRequestDto);
+            return PostService.login(httpRequestDto);
         }
     },
     ERROR("wrong request") {

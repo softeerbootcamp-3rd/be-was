@@ -1,29 +1,27 @@
 package dto;
 
-import service.Service;
+import service.GetService;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public enum GetRequestEnum {
     DEFAULT("/") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Service.showIndex(httpRequestDto);
+            return GetService.showIndex(httpRequestDto);
         }
     },
     SIGNUP("/user/create") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Service.signup(httpRequestDto);
+            return GetService.signup(httpRequestDto);
         }
     },
     FILE("file") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Service.requestFile(httpRequestDto);
+            return GetService.requestFile(httpRequestDto);
         }
     };
 
