@@ -4,8 +4,6 @@ import common.util.Util;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UtilTest {
@@ -18,7 +16,7 @@ class UtilTest {
         String requestLine = "GET /index.html HTTP/1.1";
 
         //when
-        String[] result = Util.splitRequestLine(requestLine);
+        String[] result = Util.splitRequestLineToMethodAndURL(requestLine);
 
         //then
         assertThat(result).contains("GET", "/index.html", "HTTP/1.1");
@@ -40,14 +38,14 @@ class UtilTest {
     }
 
     @Test
-    @DisplayName("url을 경로와 파라미터 문자열로 분리")
-    void splitUrlToPathAndParameters() {
+    @DisplayName("url을 경로와 쿼리스트링 문자열로 분리")
+    void splitUrlToPathAndQueryString() {
 
         //given
         String url = "/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
 
         //when
-        String[] result = Util.splitUrlToPathAndParameters(url);
+        String[] result = Util.splitUrlToPathAndQueryString(url);
 
         //then
         assertThat(result.length).isEqualTo(2);
