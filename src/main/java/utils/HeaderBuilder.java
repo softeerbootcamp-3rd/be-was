@@ -58,6 +58,18 @@ public class HeaderBuilder {
         if (url.endsWith(".woff")) {
             return "font/woff";
         }
+        if (url.endsWith(".woff2")) {
+            return "font/woff2";
+        }
+        if (url.endsWith(".svg")) {
+            return "image/svg+xml";
+        }
+        if (url.endsWith(".png")) {
+            return "image/png";
+        }
+        if (url.endsWith(".eot")) {
+            return "application/vnd.ms-fontobject";
+        }
         return "text/html";
     }
 }
