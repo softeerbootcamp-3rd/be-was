@@ -22,6 +22,7 @@ public class RequestHandler implements Runnable {
 
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
     private final String RESOURCES_STATIC_URL = "src/main/resources/static";
+    private final String DEFAULT_URL = "/index.html";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -36,66 +37,70 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequest request = new HttpRequest(in); //http request 정복 가져오기
+            HttpRequest request = new HttpRequest(in); //http request 정보 가져오기
             request.print(); //http request 정보 출력
 
             HttpResponse response = new HttpResponse(dos);
 
-            Map<String, Object> view = new HashMap<>();
-            Path filePath = null;
+            String path = DEFAULT_URL;
+
+
 
             Controller controller = controllerMap.get(request.getUrl());
             if (controller == null) { //.html
                 if (request.getUrl().endsWith(".html")) {
-                    filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
+                    path = RESOURCES_TEMPLATES_URL + request.getUrl();
 
                 } else { //.js .css ...
-                    filePath = Paths.get(RESOURCES_STATIC_URL + request.getUrl());
+                    path = RESOURCES_STATIC_URL + request.getUrl();
                 }
             } else {
-                String path = controller.process(request.getRequestParam());
-                filePath = Paths.get(path + ".html");
+                path = controller.process(request.getRequestParam()) + ".html";
             }
 
-            byte[] body = null;
 
-            if (filePath == null) {
-                response.respond404();
-            } else if (filePath.toString().startsWith("redirect:")) {
-                String path=filePath.toString();
+            //알아서 바디 가져오고
+
+            byte[] body = null;
+            Path filePath = Paths.get(path);
+            // setBody():body setHeader(contentType
+
+            if (path.startsWith("redirect:")) {
                 response.response301RedirectHeader(path.substring("redirect:".length()));
                 response.responseBody(body);
-            } else if (filePath.toString().endsWith(".html")) {
+            } else if (path.equals(DEFAULT_URL) || path.endsWith(".html")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "text/html");
                 response.responseBody(body);
-            } else if (filePath.toString().endsWith(".css")) {
+            } else if (path.endsWith(".css")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "text/css");
                 response.responseBody(body);
-            } else if (filePath.toString().endsWith(".js")) {
+            } else if (path.endsWith(".js")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "text/javascript");
                 response.responseBody(body);
-            } else if (filePath.toString().endsWith(".woff") || filePath.toString().endsWith(".ttf")) {
+            } else if (path.endsWith(".woff") || path.endsWith(".ttf")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "application/x-font");
                 response.responseBody(body);
-            } else if(filePath.toString().endsWith(".ico")) {
+            } else if(path.endsWith(".ico")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "image/x-icon");
                 response.responseBody(body);
-            } else if (filePath.toString().endsWith(".jpg")) {
+            } else if (path.endsWith(".jpg")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "image/jpeg");
                 response.responseBody(body);
-            } else if (filePath.toString().endsWith(".png")) {
+            } else if (path.endsWith(".png")) {
                 body = Files.readAllBytes(filePath);
                 response.response200Header(body.length, "image/png");
                 response.responseBody(body);
             } else {
                 response.respond404();
             }
+
+
 
         } catch (IOException e) {
             logger.error(e.getMessage());
