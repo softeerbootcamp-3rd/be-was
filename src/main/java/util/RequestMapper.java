@@ -76,7 +76,7 @@ public class RequestMapper {
                         RequestParam annotation = (RequestParam) parameter.getAnnotation(annotationClass);
                         String requestParam = request.getParamMap().get(annotation.value());
                         if (requestParam != null) {
-                            params[i] = paramType.map(request.getParamMap().get(annotation.value()));
+                            params[i] = paramType.map(requestParam);
                         } else if (!annotation.required()) {
                             params[i] = null;
                         } else {
