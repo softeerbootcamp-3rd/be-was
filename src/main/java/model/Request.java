@@ -9,7 +9,7 @@ public class Request {
     private String target;
     private String version;
     private String path;
-    private HashMap<String, String> header = new HashMap<>();
+    private HashMap<String, String> header;
     private HashMap<String, String> param;
     private HashMap<String, String> body;
     private String fragment;
@@ -26,6 +26,11 @@ public class Request {
     public String getMimeType() {return this.mimeType;}
     public File getFile() {return this.file;}
 
+    public Request() {
+        this.header = new HashMap<>();
+        this.param = new HashMap<>();
+        this.body = new HashMap<>();
+    }
     public void parseStartLine(String line) {
         String[] tokens = line.split(" ");
         this.method = tokens[0];
@@ -63,6 +68,9 @@ public class Request {
         if (key.equals("Accept"))
             this.mimeType = parseAcceptHeader(value);
     }
+    public void putBody(String key, String value) {
+        this.body.put(key, value);
+    }
     private String parseAcceptHeader(String value) {
         String[] types = this.header.get("Accept").split(",");
         return types[0];
@@ -73,7 +81,7 @@ public class Request {
         String lastToken = tokens[tokens.length-1];
         int indexOfFile = lastToken.lastIndexOf(".");
         if(indexOfFile == -1) return;
-        this.file = new File(lastToken, lastToken.substring(indexOfFile+1));
+        this.file = new File(lastToken);
     }
 
     @Override

@@ -33,29 +33,33 @@ public class MainController {
                 statusCode = "200";
             }
             else {
-                statusCode = "302";
+                statusCode = "404";
                 redirectUrl = "/error404";
             }
         }
-        else if(request.getPath().equals("/")) {
+        else if(request.getPath().equals("/")) { // 홈 리다이렉트
             statusCode = "302";
             redirectUrl = "/index.html";
         }
         else if(request.getPath().equals("/user/create")) {
             User user = UserService.create(new UserInfo(request.getParam()));
-            if (user != null) {
+            if (user != null) { // 회원가입 성공
                 statusCode = "302";
                 redirectUrl = "/index.html";
                 logger.debug("회원가입 완료!! = " + user.toString());
             }
-            else {
+            else { // 회원가입 실패
                 statusCode = "200";
                 body = Files.readAllBytes(new File(base + "/templates/user/form.html").toPath());
             }
         }
-        else {
-            statusCode = "302";
-            redirectUrl = "/error404.html";
+        else if(request.getPath().equals("/error404")) {
+            statusCode = "200";
+            body = Files.readAllBytes(new File(base + "/templates/error404.html").toPath());
+        }
+        else { // 알 수 없는 요청시 404ERROR
+            statusCode = "404";
+            redirectUrl = "/error404";
         }
 
         return new Response(statusCode, body, mimeType, redirectUrl);

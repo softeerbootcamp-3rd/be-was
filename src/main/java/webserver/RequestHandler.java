@@ -36,8 +36,7 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-    private void responseProcess(DataOutputStream dos,
-                          Response response) {
+    private void responseProcess(DataOutputStream dos, Response response) {
         String statusCode = response.getStatusCode();
         if(statusCode.equals("200")) {
             byte[] body = response.getBody();
@@ -50,8 +49,8 @@ public class RequestHandler implements Runnable {
         }
         else {
             byte[] body = response.getBody();
-            response200Header(dos, "text/html", body.length);
-            responseBody(dos, body);
+            String mimeType = response.getMimeType();
+            response404Header(dos, response.getRedirectUrl());
         }
     }
 
@@ -69,10 +68,18 @@ public class RequestHandler implements Runnable {
     }
 
     private void response302Header(DataOutputStream dos, String redirectUrl) {
-        String location = redirectUrl;
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location);
+            dos.writeBytes("Location: " + redirectUrl);
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    private void response404Header(DataOutputStream dos, String redirectUrl) {
+        try {
+            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
+            dos.writeBytes("Location: " + redirectUrl);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -89,9 +96,19 @@ public class RequestHandler implements Runnable {
     }
     private Request handleRequest(BufferedReader br) throws IOException {
         Request request = new Request();
+        request = handleStartLine(br, request); // startLine 처리
+        request = handleHeader(br, request); // header 처리
+        request = handleBody(br, request); // body 처리
+        return request;
+    }
+    private Request handleStartLine(BufferedReader br, Request request) throws IOException {
         String line = br.readLine();
         request.parseStartLine(line);
         logger.debug(request.toString());
+        return request;
+    }
+    private Request handleHeader(BufferedReader br, Request request) throws IOException {
+        String line;
         while(true) {
             line = br.readLine();
             if(line.isEmpty()) break;
@@ -101,6 +118,12 @@ public class RequestHandler implements Runnable {
             if(printedKey.contains(key))
                 logger.debug(line);
         }
+        return request;
+    }
+    private Request handleBody(BufferedReader br, Request request) throws IOException {
+        String contentLength = request.getHeader().getOrDefault("Content-Length", "0");
+        if(contentLength.equals("0")) return request;
+        // 추후 처리
         return request;
     }
 }
