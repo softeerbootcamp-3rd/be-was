@@ -5,7 +5,11 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
+import controller.Controller;
+import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +18,13 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
 
+    private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
+
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        controllerMap.put("/user/create", new UserController());
     }
 
     public void run() {
@@ -28,87 +35,44 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequestInformation request = getHttpRequest(in); //http request 정복 가져오기
-            printHttpRequestInformation(request); //http request 정보 출력
+            HttpRequest request = new HttpRequest(in); //http request 정복 가져오기
+            request.print(); //http request 정보 출력
+
+            HttpResponse response = new HttpResponse(dos);
+
+            Map<String, Object> view = new HashMap<>();
+            Path filePath = null;
+
+            Controller controller = controllerMap.get(request.getUrl());
+            if (controller == null) { //.html
+                if (request.getUrl().endsWith(".html")) {
+                    filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
+
+                } else { //.js .css ...
+                    ;
+                }
+            } else {
+                String path = controller.process(request.getRequestParam());
+                filePath = Paths.get(path + ".html");
+            }
 
             byte[] body = null;
-            if (request.getUrl() != null && request.getUrl().equals("/index.html")) {
-                Path filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
-                body = Files.readAllBytes(filePath);
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+
+            if (filePath == null) {
+                response.respond404();
+            } else if (filePath.toString().startsWith("redirect:")) {
+                String path=filePath.toString();
+                response.response301RedirectHeader(path.substring("redirect:".length(),path.length()));
+                response.responseBody(body);
             } else {
-                respond404(dos);
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length);
+                response.responseBody(body);
             }
 
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private HttpRequestInformation getHttpRequest(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-        HttpRequestInformation httpRequestInformation = new HttpRequestInformation();
-
-        String line = br.readLine();
-        if (line != null) {
-            String[] lines = line.split(" ");
-            httpRequestInformation.setMethod(lines[0]);
-            httpRequestInformation.setUrl(lines[1]);
-            httpRequestInformation.setHttpVersion(lines[2]);
-
-            while (!line.equals("")) {
-                line = br.readLine();
-                if (line.startsWith("Accept:")) {
-                    httpRequestInformation.setAccept(line);
-                } else if (line.startsWith("Connection")) {
-                    httpRequestInformation.setConnection(line);
-                } else if (line.startsWith("Host:")) {
-                    httpRequestInformation.setHost(line);
-                }
-            }
-        }
-        return httpRequestInformation;
-    }
-
-    private void printHttpRequestInformation(HttpRequestInformation requestInformation) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n= = HTTP REQUEST INFORMATION = =");
-        sb.append("\n"+requestInformation.getMethod() + " " + requestInformation.getUrl() + " " + requestInformation.getHttpVersion());
-        sb.append("\n"+requestInformation.getHost());
-        sb.append("\n" + requestInformation.getConnection());
-        sb.append("\n" + requestInformation.getAccept()+"\n");
-
-        logger.debug(sb.toString());
-    }
-
-    private void respond404(DataOutputStream dos) {
-        try {
-            String response = "HTTP/1.1 404 Not Found\r\n\r\n";
-            dos.writeBytes(response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 }
+
