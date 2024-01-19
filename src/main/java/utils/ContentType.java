@@ -7,16 +7,16 @@ import java.util.stream.Stream;
 
 public enum ContentType {
 
-    HTML("html", "text/html"),
-    CSS("css", "text/css"),
-    JS("js", "text/javascript"),
-    ICO("ico", "image/x-icon"),
-    TTF("ttf", "font/ttf"),
-    WOFF("woff", "font/woff"),
-    WOFF2("woff2", "font/woff2"),
-    SVG("svg", "image/svg+xml"),
-    PNG("png", "image/png"),
-    EOT("eot", "application/vnd.ms-fontobject");
+    HTML(".html", "text/html"),
+    CSS(".css", "text/css"),
+    JS(".js", "text/javascript"),
+    ICO(".ico", "image/x-icon"),
+    TTF(".ttf", "font/ttf"),
+    WOFF(".woff", "font/woff"),
+    WOFF2(".woff2", "font/woff2"),
+    SVG(".svg", "image/svg+xml"),
+    PNG(".png", "image/png"),
+    EOT(".eot", "application/vnd.ms-fontobject");
 
     private final String extension;
     private final String contentType;
@@ -39,8 +39,8 @@ public enum ContentType {
     }
 
     public static String findContentType(String url) throws NullPointerException {
-        String[] splitUrl = url.split("\\.");
-        String extension = splitUrl[splitUrl.length - 1];
+        String extension = url.substring(url.lastIndexOf("."));
+        System.out.println(extension);
         try {
             String type = contentTypes.get(extension);
             ContentType contentType = ContentType.valueOf(type);
