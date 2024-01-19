@@ -76,13 +76,12 @@ public class HttpRequest {
 
     @Override
     public String toString() {
-        return "HttpRequest{" +
-                "method='" + method + '\'' +
-                ", uri=" + uri +
-                ", host='" + host + '\'' +
-                ", connection='" + connection + '\'' +
-                ", accept='" + accept + '\'' +
-                '}';
+        return "HttpRequest " + "{" + "\n" +
+                "method='" + method + "\n" +
+                "uri=" + uri + "\n" +
+                "host='" + host + "\n" +
+                "connection='" + connection + "\n" +
+                "accept='" + accept + " }";
     }
 
 }

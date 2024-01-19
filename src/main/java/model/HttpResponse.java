@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,6 +84,14 @@ public class HttpResponse {
         header.put(CONTENT_LENGTH, String.valueOf(body.length) + CRLF);
 
         return new HttpResponse(httpStatus, header, body);
+    }
+
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                "httpStatus=" + httpStatus +
+                ", body=" + new String(body, StandardCharsets.UTF_8) +
+                '}';
     }
 
 }
