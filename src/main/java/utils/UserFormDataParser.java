@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UserFormDataParser {
     private static final Logger logger = LoggerFactory.getLogger(UserFormDataParser.class);
@@ -13,15 +15,13 @@ public class UserFormDataParser {
         this.data = data;
     }
 
-    public HashMap<String,String> ParseData(){
-        HashMap<String, String> formData = new HashMap<>();
-        String[] units = data.split("&");
-        for(String it : units){
-            String[] itSplit = it.split("=");
-            String key = itSplit[0];
-            String value = URLDecoder.decode(itSplit[1], StandardCharsets.UTF_8);
-            formData.put(key, value);
-        }
-        return formData;
+    public Map<String, String> parseData() {
+        return Arrays.stream(data.split("&"))
+                .map(it -> it.split("=", 2))
+                .collect(Collectors.toMap(
+                        it -> it[0],
+                        it -> URLDecoder.decode(it.length > 1 ? it[1] : "", StandardCharsets.UTF_8),
+                        (existing, replacement) -> existing
+                ));
     }
 }
