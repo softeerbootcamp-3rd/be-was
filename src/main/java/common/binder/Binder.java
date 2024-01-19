@@ -1,5 +1,7 @@
 package common.binder;
 
+import common.util.Util;
+
 import java.lang.reflect.Field;
 
 import static common.util.Util.splitParamters;
@@ -14,7 +16,7 @@ public class Binder {
         for (String param : params) {
             String[] keyValue = splitParameter(param);
             String fieldName = keyValue[0];
-            String fieldValue = keyValue[1];
+            String fieldValue = Util.decode(keyValue[1]);
 
             Field field = dtoClass.getDeclaredField(fieldName);
             field.setAccessible(true);
