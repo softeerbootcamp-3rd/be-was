@@ -15,6 +15,14 @@ public class RequestHeaders {
         this.etc = etc;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
     public String getAccept() {
         return accept;
     }

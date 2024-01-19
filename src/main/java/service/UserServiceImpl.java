@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
         } else {
             User user = new User(userSignUpDto.getId(), userSignUpDto.getPassword(), userSignUpDto.getName(), userSignUpDto.getEmail());
             Database.addUser(user);
-            logger.debug("유저가 등록되었습니다. user : {}", user.toString());
+            logger.debug("유저가 등록되었습니다. user : {}", user);
         }
     }
 

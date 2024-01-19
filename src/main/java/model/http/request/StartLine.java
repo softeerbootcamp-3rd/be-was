@@ -13,6 +13,14 @@ public class StartLine {
         this.version = version;
     }
 
+    public HttpMethod getMethod() {
+        return method;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
     public String getPathUrl() {
         return pathUrl;
     }

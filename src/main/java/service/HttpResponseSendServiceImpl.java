@@ -22,6 +22,10 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
     @Override
     public void sendHttpResponse(OutputStream out, HttpResponse httpResponse) {
         DataOutputStream dos = new DataOutputStream(out);
+        setResponse(httpResponse, dos);
+    }
+
+    private void setResponse(HttpResponse httpResponse, DataOutputStream dos) {
         if (httpResponse.getHeaders().getLocation() == null) {
             setStatusAndHeader(dos, httpResponse);
             setBody(dos, httpResponse);
