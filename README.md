@@ -199,6 +199,22 @@ Content-Type: text/html; charset=iso-8859-1
 > - 파일이나 네트워크 같이 명시적인 `close()`가 필요한 경우 유용함
 > - `Closeable` 혹은 `AutoCloseable` 인터페이스를 구현한 객체를 구문에 사용하면 try 구문의 종료와 함께 close() 메서드를 호출함
 
+#### 4. TDD 모델
+- AAA
+> - Assignment (준비) : 실행 전 시스템 상태를 준비
+> - Action (실행) : 테스트 코드 실행
+> - Assert (단언) : 기대대로 동작하는지 검사
+
+- GWT
+> Given (준비) : 테스트를 준비
+> When (실행) : 테스트 코드 실행
+> Then (검증) : 테스트 검
+
+- 비교
+> - 단어 차이
+> - AAA : 개발자 지향
+> - GWT : 비즈니스 로직 처리
+
 ### 4. Trouble Shooting
 - redirect - 1
 > 1. 회원가입 버튼 클릭하면 요청을 처리하고 응답을 받지 못해 페이지를 찾을 수 없다는 오류가 발생한다
