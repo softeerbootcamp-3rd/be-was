@@ -62,11 +62,14 @@
 
 ## 4. 문제 해결
 
-- Content-Type 설정
+### 1. Content-Type 설정
+
+- 문제
   > css, js, ico, 등 html이 아닌 다른 파일 형식을 `Content-Type: text/html`으로 지정할 경우
   > 파일이 정상적으로 불러올 수 없는 문제가 있었습니다.
 
-  > 파일 확장자명에 따라 MIME Type을 Content-Type으로 설정하도록 해서 해결했습니다.
+- 해결 방안
+  > 해결파일 확장자명에 따라 MIME Type을 Content-Type으로 설정하도록 해서 해결했습니다.
 
 ---
 
