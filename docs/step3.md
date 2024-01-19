@@ -101,7 +101,7 @@
 
 ## 5. 기록
 
-step 1 과정에서 다루었기 때문에 기록하지 않았습니다.
+[Step 1 / MIME Type](http/MIME-type.md)
 
 ---
 
