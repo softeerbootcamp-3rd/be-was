@@ -1,23 +1,31 @@
 package webApplicationServer.service;
 
+import com.google.common.collect.Maps;
 import config.AppConfig;
 import db.Database;
 import dto.UserSignUpDto;
 import exception.BadRequestException;
 import model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 import service.UserServiceImpl;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserServiceImplTest {
-    private final UserService userService = AppConfig.userService();
+    private UserService userService;
 
+    @BeforeEach
+    void setUP(){
+        this.userService = new UserServiceImpl();
+        Database.clear();
+    }
     @Test
     @DisplayName("중복되는 사용자가 없으면 회원가입이 완료된다.")
     void signUp() {
@@ -41,7 +49,7 @@ class UserServiceImplTest {
         //given
         Database.addUser(new User("테스트", "1234", "이준현", "dlwnsgus07@naver.com"));
         UserSignUpDto userSignUpDto = new UserSignUpDto("테스트", "1234", "이준현", "dlwnsgus07@naver.com");
-        //when, then
+        //when & then
         assertThrows(BadRequestException.class, ()->{
             userService.signUp(userSignUpDto);
         },"ID already exists");
