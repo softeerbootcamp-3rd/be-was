@@ -1,5 +1,6 @@
 package service;
 
+import model.http.Status;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,11 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
     }
 
     private void setResponse(HttpResponse httpResponse, DataOutputStream dos) {
-        if (httpResponse.getHeaders().getLocation() == null) {
+        if (httpResponse.getStatusLine().getStatus() == Status.REDIRECT) {
+            setStatusAndHeaderForRedirect(dos, httpResponse);
+        } else {
             setStatusAndHeader(dos, httpResponse);
             setBody(dos, httpResponse);
-        } else {
-            setStatusAndHeaderForRedirect(dos, httpResponse);
         }
     }
 
