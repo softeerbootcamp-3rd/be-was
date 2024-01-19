@@ -1,32 +1,20 @@
-package webserver;
+package webserver.http.response;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
     private static final String HTTP_VERSION = "HTTP/1.1";
-    private final int statusCode;
-    private String statusText;
+    private final HttpStatus status;
     private Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    public HttpResponse(int statusCode){
-        this.statusCode = statusCode;
-        setStatusText(statusCode);
+    public HttpResponse(HttpStatus httpStatus){
+        status = httpStatus;
     }
 
     public void addHeader(String key, String value) {
         headers.put(key, value);
-    }
-
-    public void setStatusText(int statusCode) {
-        switch (statusCode) {
-            case 200: statusText = "OK";
-                break;
-            case 404: statusText = "Not Found";
-                break;
-            default: break;
-        }
     }
 
     public void setBody(byte[] body) {
@@ -38,11 +26,11 @@ public class HttpResponse {
     }
 
     public int getStatusCode(){
-        return statusCode;
+        return status.getCode();
     }
 
     public String getStatusText(){
-        return statusText;
+        return status.getText();
     }
 
     public Map<String, String> getHeaders(){
