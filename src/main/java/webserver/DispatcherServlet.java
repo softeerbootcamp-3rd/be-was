@@ -9,7 +9,6 @@ import controller.UserController;
 import request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponse;
 import util.StatusCode;
 
 import static webserver.ViewResolver.response;

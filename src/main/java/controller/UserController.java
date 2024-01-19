@@ -1,6 +1,5 @@
 package controller;
 
-import request.HttpRequest;
 import service.UserService;
 import util.StatusCode;
 
