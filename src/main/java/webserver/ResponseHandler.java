@@ -1,7 +1,6 @@
 package webserver;
 
 import constant.ErrorCode;
-import constant.FilePath;
 import constant.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

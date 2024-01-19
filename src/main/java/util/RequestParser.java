@@ -21,7 +21,7 @@ public class RequestParser {
 
         RequestDto requestDto = new RequestDto(pathWithParams[0]);
 
-        if (pathWithParams[1] != null) {
+        if (pathWithParams.length == 2) {
             for (String param : pathWithParams[1].split("&")) {
                 String[] keyAndValue = param.split("=");
                 requestDto.addParam(keyAndValue[0], keyAndValue[1]);
