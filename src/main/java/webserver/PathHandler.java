@@ -1,6 +1,7 @@
 package webserver;
 
 import controller.UserController;
+import dto.ResourceDto;
 import model.QueryParams;
 import util.ResourceHandler;
 
@@ -9,7 +10,6 @@ import java.io.IOException;
 public class PathHandler {
 
     public static byte[] responseResource(String method, String path, UserController controller) throws IOException {
-        System.out.println("path = " + path + " con " + controller);
         if (controller != null) {
             if (method.equals("GET") && path.contains("?")) {
                 String[] splits = path.split("\\?");
@@ -20,6 +20,6 @@ public class PathHandler {
             }
         }
 
-        return null;
+        return ResourceHandler.resolveResource(ResourceDto.of(path));
     }
 }
