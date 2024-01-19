@@ -56,17 +56,16 @@ class UtilTest {
     }
 
     @Test
-    void splitParamtersToKeyAndValue() {
+    @DisplayName("인코딩된 문자열의 디코딩 테스트")
+    void decode() {
 
         //given
-        String parameters = "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
+        String encoded = "%EB%B0%95%EC%9E%AC%EC%84%B1";
 
         //when
-        Map<String, String> result = Util.splitParamtersToKeyAndValue(parameters);
+        String result = Util.decode(encoded);
 
         //then
-        assertThat(result.keySet()).contains("userId", "password", "name", "email");
-        assertThat(result.get("userId")).isEqualTo("javajigi");
-        assertThat(result.get("password")).isEqualTo("password");
+        assertThat(result).isEqualTo("박재성");
     }
 }
