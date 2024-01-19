@@ -1,10 +1,12 @@
 package service;
 
 import db.Database;
+import exception.SourceException;
 import model.QueryParams;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ErrorCode;
 
 import java.util.Map;
 
@@ -18,9 +20,10 @@ public class UserService {
             User.setUser(user, key, paramMap.get(key));
         }
         logger.debug("user info = {}", user);
-        if (Database.findUserById(user.getUserId()) == null) {
-            Database.addUser(user);
+        if (Database.findUserById(user.getUserId()) != null) {
+            throw new SourceException(ErrorCode.DUPLICATED_USER);
         }
+        Database.addUser(user);
         logger.debug("DataBase Size = {}", Database.findAll().size());
     }
 
