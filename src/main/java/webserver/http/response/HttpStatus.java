@@ -8,6 +8,7 @@ public enum HttpStatus {
     // 리다이렉션 상태 코드
     MOVED_PERMANENTLY(301, "Moved Permanently"),
     FOUND(302, "Found"),
+    SEE_OTHER(303, "See Other"),
 
     // 클라이언트 에러 상태 코드
     BAD_REQUEST(400, "Bad Request"),

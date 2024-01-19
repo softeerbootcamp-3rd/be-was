@@ -1,6 +1,7 @@
 package controller;
 
 import service.UserService;
+import utils.FileUtil;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
@@ -18,10 +19,10 @@ public class UserController {
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
         if(userService.signUp(queryParams)){
             // 회원가입 성공
-            return responseBuilder.createSuccessResponse(HttpStatus.CREATED, "/user/login.html".getBytes(StandardCharsets.UTF_8));
+            return responseBuilder.createRedirectResponse(HttpStatus.SEE_OTHER, "/user/login.html");
         }
         // 회원가입 실패
-        return responseBuilder.createErrorResponse(HttpStatus.BAD_REQUEST, "/user/form.html".getBytes(StandardCharsets.UTF_8));
+        return responseBuilder.createErrorResponse(HttpStatus.BAD_REQUEST, "SignUp Failed".getBytes(StandardCharsets.UTF_8));
     }
 
 }
