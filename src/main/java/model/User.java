@@ -2,6 +2,8 @@ package model;
 
 import db.Database;
 
+import java.util.HashMap;
+
 public class User {
 
     private UserInfo userInfo;
@@ -10,21 +12,24 @@ public class User {
         this.userInfo = userInfo;
     }
     public UserInfo getUserInfo() {return this.userInfo;}
-
+    public String getUserId() {return this.userInfo.getInfo().get("userId");}
+    public String getPassword() {return this.userInfo.getInfo().get("password");}
+    public String getName() {return this.userInfo.getInfo().get("name");}
+    public String getEmail() {return this.userInfo.getInfo().get("email");}
     @Override
     public String toString() {
-        String userId = userInfo.getInfo().get("userId");
-        String password = userInfo.getInfo().get("password");
-        String name = userInfo.getInfo().get("name");
-        String email = userInfo.getInfo().get("email");
+        String userId = this.userInfo.getInfo().get("userId");
+        String password = this.userInfo.getInfo().get("password");
+        String name = this.userInfo.getInfo().get("name");
+        String email = this.userInfo.getInfo().get("email");
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
 
     public boolean verifyUser() {
-        String userId = userInfo.getInfo().get("userId");
-        String password = userInfo.getInfo().get("password");
-        String name = userInfo.getInfo().get("name");
-        String email = userInfo.getInfo().get("email");
+        String userId = this.userInfo.getInfo().get("userId");
+        String password = this.userInfo.getInfo().get("password");
+        String name = this.userInfo.getInfo().get("name");
+        String email = this.userInfo.getInfo().get("email");
         if(userId.isEmpty() || password.isEmpty()
                 || name.isEmpty() || email.isEmpty()) return false;
         if(Database.findUserById(userId) != null) return false;
