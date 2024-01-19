@@ -1,7 +1,5 @@
 package model.http;
 
-import java.util.Arrays;
-
 public class Body {
     private final byte[] content;
 

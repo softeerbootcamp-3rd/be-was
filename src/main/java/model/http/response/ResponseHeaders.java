@@ -2,38 +2,45 @@ package model.http.response;
 
 import model.http.ContentType;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class ResponseHeaders {
-    private final LocalDateTime Date;
+    private final Date date;
     private final ContentType contentType;
     private final String charSet;
     private final Integer contentLength;
+    private String location;
 
-    public ResponseHeaders(ContentType contentType, Integer contentLength) {
-        Date = LocalDateTime.now();
+    public ResponseHeaders(ContentType contentType, Integer contentLength, String charSet) {
+        this.date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
         this.contentType = contentType;
+        this.charSet = charSet;
         this.contentLength = contentLength;
-        this.charSet = "utf-8";
     }
+
+    public String getDate() {
+        return "Date: " + date + "\r\n";
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getContentTypeHeader() {
         return "Content-Type: " + contentType.getType() + ";" + charSet + " \r\n";
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public String getCharSet() {
-        return charSet;
-    }
-
-    public Integer getContentLength() {
-        return contentLength;
-    }
-
     public String getContentLengthHeader() {
         return "Content-Length: " + contentLength + "\r\n";
+    }
+
+    public String getLocationTypeHeader() {
+        return "Location: " + location + "\r\n";
     }
 }

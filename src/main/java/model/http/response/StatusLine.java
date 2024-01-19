@@ -4,7 +4,7 @@ import model.http.Status;
 
 public class StatusLine {
     private final String version;
-   private final Status status;
+    private final Status status;
 
     public StatusLine(String version, Status status) {
         this.version = version;
