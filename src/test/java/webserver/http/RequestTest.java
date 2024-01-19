@@ -1,6 +1,7 @@
 package webserver.http;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,6 +36,7 @@ class RequestTest {
     Request request;
 
     @Test
+    @DisplayName("User Create 파싱 테스트")
     void getRequestTarget() {
         String expected = "/user/create?userId=123&password=123&name=123&email=1%403";
         String actual = request.getRequestTarget();
@@ -42,6 +44,7 @@ class RequestTest {
     }
 
     @Test
+    @DisplayName("HTTP Request MIME 파싱 결과 테스트")
     void getResponseMimeType() {
         Mime expected = Mime.NONE;
         Mime actual = request.getResponseMimeType();
