@@ -15,7 +15,7 @@ public class UserController {
             UserService.signUp(userDto);
             return HttpResponse.redirect(FOUND, "/index.html");
         }catch (IllegalArgumentException e){
-            return HttpResponse.response400(BAD_REQUEST, e.getMessage());
+            return HttpResponse.errorResponse(BAD_REQUEST, e.getMessage());
         }
     }
 }

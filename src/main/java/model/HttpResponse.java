@@ -63,11 +63,10 @@ public class HttpResponse {
         return new HttpResponse(httpStatus, header, NO_BODY);
     }
 
-    public static HttpResponse response400(HttpStatus httpStatus, String errorMessage) {
+    public static HttpResponse errorResponse(HttpStatus httpStatus, String errorMessage) {
         byte[] errorMessageBytes = errorMessage.getBytes(StandardCharsets.UTF_8);
 
         Map<String, String> header = new HashMap<>();
-
         header.put(CONTENT_TYPE, "text/plain;charset=utf-8" + CRLF);
         header.put(CONTENT_LENGTH, errorMessageBytes.length + CRLF);
 
@@ -77,7 +76,6 @@ public class HttpResponse {
     public static HttpResponse response200(HttpRequest httpRequest, HttpStatus httpStatus) throws IOException {
         String path = httpRequest.getUri().getPath();
         String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
-
         byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
 
         Map<String, String> header = new HashMap<>();

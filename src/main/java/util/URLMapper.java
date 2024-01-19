@@ -4,10 +4,9 @@ import controller.UserController;
 import model.HttpRequest;
 import model.HttpResponse;
 
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+
 import java.util.function.Function;
 
 public class URLMapper {
