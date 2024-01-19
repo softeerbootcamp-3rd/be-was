@@ -105,5 +105,53 @@ executorService.shoutdowmNow();
 ### 추가로 공부할 주제
 - Virtual Thread
 
+</div>
+</details>
 
+<details>
+
+<summary> ✏ STEP 2 학습 기록 </summary>
+<div markdown="1">
+
+### 테스트 코드란?
+-   테스트 코드는 소프트웨어의 기능과 동작을 테스트하는데 사용되는 코드이다.
+-   테스트 코드는 개발자가 작성한 코드를 실행하고 예상된 결과가 나오는지 확인하는데 사용된다.
+
+### 테스트 코드를 작성해야 하는 이유
+
+-   코드의 품질 향상
+    -   테스트 코드를 통해 발생 가능성 있는 버그를 사전에 찾아내고 방지할 수 있으며, 이는 개발자가 신뢰할 수 있는 코드를 작성할 수 있게 도와준다.
+-   문서화
+    -   테스트 코드는 개발자가 기능의 동작 방식을 이해하는데 도움이 되는 문서로 작용할 수 있다.
+    -   테스트 코드를 통해 코드의 예상 동작을 명확하게 확인할 수 있으며, 개발자 간의 커뮤니케이션 향상에도 도움이 된다.
+-   리팩토링
+    -   테스트 코드가 있는 경우 코드를 리팩토링할때 기존 기능이 여전히 올바르게 작동하는지 확인할 수 있다.
+    -   변경 사항이 예상치 못한 부작용을 일으키지 않도록 하며, 코드의 동작이 바뀌지 않았는지 확인할 수 있다.
+
+테스트 종류
+단위 테스트(Unit Test)
+> 단위 테스트는 응용 프로그램에서 테스트 가능한 가장 작은 소프트웨어를 실행하여 예상대로 동작하는지 확인하는 테스트이다. 테스트 대상 단위의 크기는 엄격하게 정해져 있지 않지만 일반적으로 클래스 또는 메서드 수준으로 정해진다.
+
+통합 테스트(Integreation Test)
+> 통합 테스트는 단위 테스트보다 더 큰 동작을 달성하기 위해 여러 모듈들을  모아 이들이 의도대로 협력하는지 확인하는 테스트이다. 단위 테스트와 달리 개발자가 변경할 수 없는 부분(외부 라이브러리)까지 묶어 검증할 때 사용한다. 이는 DB에 접근하거나 전체 코드와 다양한 환경이 제대로 작동하는지 확인하는데 필요한 모든 작업을 수행할 수 있다.
+
+### JUnit5 란?
+> JUnit5 = JUnit Platform + JUnit Jupiter + Junit Vintage
+- JUnit5는 자바 프로그래밍 언어를 위한 테스트 프레임워크이다. JUnit은 소프트웨어의 단위 테스트를 작성하고 실행하는 데 사용되는 도구로서, 코드의 품질을 검증하고 버그를 감지하기 위해 개발자들에게 도움을 주는 역할을 한다. JUnit5는 이전 버전인 JUnit4의 다음 세데 버전으로 개발되었다. JUnit5는 자바 8 이상부터 사용 가능하다.
+
+[JUnit 5 User Guide
+Although the JUnit Jupiter programming model and extension model do not support JUnit 4 features such as Rules and Runners natively, it is not expected that source code maintainers will need to update all of their existing tests, test extensions, and custo
+junit.org](https://junit.org/junit5/docs/current/user-guide/)
+
+### AssertJ
+- AssertJ는 자바 프로그래밍 언어를 위한 테스트 단언 라이브러리이다. assertion은 코드의 동작을 검증하고 예상한 결과와 실제 결과가 일치하는지를 확인하는데 사용한다.**
+- AssertJ는 테스트 코드를 더 읽기 쉽고 유지보수하기 쉽도록 만들어주는 다양한 메서드와 기능을 제공한다.**
+
+[AssertJ / Fluent assertions for java
+AssertJ Fluent assertions for java
+joel-costigliola.github.io](http://joel-costigliola.github.io/assertj/)
+
+
+</div>
+</details>
 
