@@ -1,28 +1,21 @@
 package webserver.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 public class Response {
-    String httpVersion;
-    int statusCode;
-    String statusText;
-    HashMap<String, String> responseHeader= new HashMap<>();
-    ResponseHandler responseHandler = new ResponseHandler();
-    byte[] responseBody;
+    private String httpVersion;
+    private int statusCode;
+    private String statusText;
+    private final HashMap<String, String> responseHeader= new HashMap<>();
+    private final ResponseHandler responseHandler = new ResponseHandler();
+    private byte[] responseBody;
 
     public Response(Request request) {
-        this.httpVersion = request.httpVersion;
+        this.httpVersion = request.getHttpVersion();
         setStatusCode(request);
         setBody(request);
         setHeader(request);
@@ -66,7 +59,7 @@ public class Response {
     }
 
     void setBody(Request request){
-        responseBody = responseHandler.setResponseBody(request.responseMimeType, request.getRequestTarget());
+        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget());
     }
 
     public byte[] getResponseBody() {

@@ -2,16 +2,13 @@ package utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.RequestHandler;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class UserFormDataParser {
     private static final Logger logger = LoggerFactory.getLogger(UserFormDataParser.class);
-    String data;
+    private String data;
     public UserFormDataParser(String data) {
         this.data = data;
     }
