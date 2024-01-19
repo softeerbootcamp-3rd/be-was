@@ -2,16 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import DTO.RequestDTO;
-import DTO.ResponseDTO;
+import DTO.Request;
+import DTO.Response;
 import HandlerMapping.HandlerMapping;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,17 +32,15 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = null;
-            RequestDTO Request = MakeRequest(in);
+            Request Request = MakeRequest(in);
 
-            String filePath = "./src/main/resources/templates";
+
 
             HandlerMapping handlerMapping = new HandlerMapping(Request);
-            ResponseDTO responseDTO = new ResponseDTO();
-            responseDTO = handlerMapping.Controller();
+            Response response = handlerMapping.Controller();
 
-            //body = "Hello World".getBytes();
-            response200Header(dos, responseDTO.Getbody().length, responseDTO.GetreturnType());
-            responseBody(dos, responseDTO.Getbody());
+            response200Header(dos, response.Getbody().length, response.GetreturnType());
+            responseBody(dos, response.Getbody());
 
 
             ///
@@ -58,8 +51,8 @@ public class RequestHandler implements Runnable {
     }
     ///
 
-    private RequestDTO MakeRequest(InputStream inputStream) throws IOException {
-        RequestDTO Request = new RequestDTO();
+    private Request MakeRequest(InputStream inputStream) throws IOException {
+        Request Request = new Request();
         // Read the request headers
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder requestBuilder = new StringBuilder();
@@ -69,6 +62,9 @@ public class RequestHandler implements Runnable {
         Request.SetHTTPMethod(line.split("\\s+")[0]);
         Request.SetURI(line.split("\\s+")[1]);
         Request.SetVersion(line.split("\\s+")[2]);
+
+
+
 
         while ((line = reader.readLine()) != null && !line.isEmpty()) {
             requestBuilder.append(line).append("\r\n");

@@ -2,7 +2,7 @@ package DTO;
 
 import java.util.ArrayList;
 
-public class RequestDTO {
+public class Request {
 
     String HTTPMethod;
     String URI;

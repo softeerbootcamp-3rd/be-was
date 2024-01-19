@@ -10,12 +10,15 @@ import java.nio.file.Files;
 public class UserController {
 
     private String URI;
-    private String filePath = "./src/main/resources/templates";
+
 
     private byte[] body;
     public UserController(String URI){
         this.URI = URI;
     }
+
+    private String userFile = "./src/main/resources/templates/user";
+    private String filePath = "./src/main/resources/templates";
     public byte[] UserLogic(){
 
         try {
@@ -30,18 +33,17 @@ public class UserController {
                 String email = args[3].split("=")[1];
                 User user = new User(userId, password, name, email);
 
-
                 User finduser = Database.findUserById(userId);
                 if(finduser == null){
                     Database.addUser(user);
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/login.html").toPath());
+                    body = Files.readAllBytes(new File(userFile + "/login.html").toPath());
+
                 }else{
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/login_failed.html").toPath());
+                    body = Files.readAllBytes(new File(userFile + "/signup_failed.html").toPath());
                 }
 
-
-
-
+            }else if("login.html".equals(URI)){
+                body = Files.readAllBytes(new File(filePath + "/user/login.html").toPath());
             }
         }catch(Exception e){
 

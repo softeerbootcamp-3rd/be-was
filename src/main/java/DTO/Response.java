@@ -1,6 +1,6 @@
 package DTO;
 
-public class ResponseDTO {
+public class Response {
 
     byte[] body;
     String returnType;

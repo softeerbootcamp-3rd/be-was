@@ -1,14 +1,15 @@
 package HandlerMapping;
 
 import Controller.User.UserController;
-import DTO.RequestDTO;
+import DTO.Request;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
-import DTO.ResponseDTO;
+import DTO.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
@@ -16,57 +17,69 @@ import webserver.RequestHandler;
 
 public class HandlerMapping {
 
-    private RequestDTO requestDTO;
+    private Request request;
     private String filePath = "./src/main/resources/templates";
+    private String staticfilePath = "./src/main/resources/static";
+
+    private static Map<String, String> Mapping;
+
+    static {
+        Mapping = new HashMap<>();
+        Mapping.put("css", "text/css");
+        Mapping.put("js", "application/javascript");
+        Mapping.put("fonts", "application/font-woff");
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public HandlerMapping(RequestDTO requestDTO){
-        this.requestDTO = requestDTO;
+    public HandlerMapping(Request request){
+        this.request = request;
     }
+    public HandlerMapping(){}
 
-    public ResponseDTO Controller(){
+    public Response Controller() throws IOException {
 
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.SetreturnType("text/html");
-
+        Response response = new Response();
+        response.SetreturnType("text/html");
         byte[] body = null;
-        try {
-            String URI = requestDTO.GetURI();
-            System.out.println("here    " + URI.split("/")[1]);
-
-            if("css".equals(URI.split("/")[1])){
-                responseDTO.SetreturnType("text/css");
-                body = Files.readAllBytes(new File("./src/main/resources/static/css/" + URI.split("/")[2]).toPath());
-
-            }else if("js".equals(URI.split("/")[1])){
-                responseDTO.SetreturnType("application/javascript");
-                body = Files.readAllBytes(new File("./src/main/resources/static/js/" + URI.split("/")[2]).toPath());
-            }else if("fonts".equals(URI.split("/")[1])){
-                responseDTO.SetreturnType("application/font-woff");
-                body = Files.readAllBytes(new File("./src/main/resources/static/fonts/" + URI.split("/")[2]).toPath());
-            }
-
-
-            else if (URI.equals("/index.html")) {
-
-                body = Files.readAllBytes(new File(filePath + "/index.html").toPath());
-
-            }else if(URI.split("/")[1].equals("user")){
-
-
-                UserController userController = new UserController(URI.split("/")[2]);
-                body = userController.UserLogic();
-            }
-
-        }
-        catch (IOException e) {
-                logger.error(e.getMessage());
-        }
-        responseDTO.Setbody(body);
-        return responseDTO;
+        String URI = request.GetURI();
+        body = urlParsing(URI, response);
+        response.Setbody(body);
+        return response;
 
     }
 
+
+    public byte[] urlParsing(String URI,  Response response) throws IOException {
+        byte[] body = null;
+        String type = URI.split("/")[1];
+        if(Mapping.get(type) != null){
+            body = notHTML(URI, response);
+        }else{
+            body = HTML(URI);
+        }
+
+        return body;
+    }
+
+    public byte[] notHTML(String URI, Response response) throws IOException {
+        String type = URI.split("/")[1];
+        String file = URI.split("/")[2];
+        response.SetreturnType(Mapping.get(type));
+        return Files.readAllBytes(new File(staticfilePath + "/" + type + "/" + file).toPath());
+    }
+
+    public byte[] HTML(String URI) throws IOException {
+        byte[] body = null;
+        String middleURI = URI.split("/")[1];
+        if (URI.equals("/index.html")) {
+            body = Files.readAllBytes(new File(filePath + "/index.html").toPath());
+        }else if(middleURI.equals("user")){
+            UserController userController = new UserController(URI.split("/")[2]);
+            body = userController.UserLogic();
+        }
+        return body;
+    }
 
 
 }
