@@ -83,11 +83,23 @@ public class RequestMappingHandler {
         Object[] params = new Object[parameters.length];
         int index = 0;
 
-        for(Parameter parameter: parameters){
-            if(parameter.isAnnotationPresent(requestParam)){
+        for (Parameter parameter : parameters) {
+            if (parameter.isAnnotationPresent(requestParam)) {
                 RequestParam annotation = (RequestParam) parameter.getAnnotation(requestParam);
 
-                params[index++]= originParams.get(annotation.name());
+                String paramName = annotation.name();
+                Class<?> paramType = parameter.getType();
+
+                // 각 타입에 맞게 변환 처리
+                if (paramType == String.class) {
+                    params[index++] = originParams.get(paramName);
+                } else if (paramType == Integer.class || paramType == int.class) {
+                    params[index++] = Integer.parseInt(originParams.get(paramName));
+                } else if (paramType == Double.class || paramType == double.class) {
+                    params[index++] = Double.parseDouble(originParams.get(paramName));
+                } else if (paramType == Long.class || paramType == long.class) {
+                    params[index++] = Long.parseLong(originParams.get(paramName));
+                }
             }
         }
 
