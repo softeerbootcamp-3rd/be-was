@@ -1,5 +1,6 @@
 package service;
 
+import db.Database;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +17,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class UserServiceTest {
 
     private UserService userService;
+    private Database database;
 
     @BeforeEach
     void init() {
         this.userService = UserService.getInstance();
+        this.database = new Database();
     }
 
     @ParameterizedTest
@@ -29,7 +32,7 @@ class UserServiceTest {
 
         // when
         userService.signUp(request);
-        User findUser = userService.findUser("test2");
+        User findUser = database.findUserById("test2");
 
         // then
         assertThat(findUser).isNotNull();
