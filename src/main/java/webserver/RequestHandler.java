@@ -30,24 +30,9 @@ public class RequestHandler implements Runnable {
             logger.debug(httpRequest.toString());
             DataOutputStream dos = new DataOutputStream(out);
 
-            File file;
-            String path = httpRequest.getPath().equals("/") ? "/index.html" : httpRequest.getPath();
-            if (path.endsWith(".html")) {
-                file = new File(FILE_PATH + "/templates" + path);
-            } else {
-                file = new File(FILE_PATH + "/static" + path);
-            }
-
-            if (file.exists()) {
-                String contentType = ResourceLoader.getContentType(path);
-                byte[] body = Files.readAllBytes(file.toPath());
-                Response response = new Response(HttpStatus.OK, contentType, body);
-                HttpResponse.response(dos, response);
-            } else {
-                Class<?> controllerClass = ControllerMapper.getController(httpRequest.getHttpMethod());
-                Response response = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
-                HttpResponse.response(dos, response);
-            }
+            Class<?> controllerClass = ControllerMapper.getController(httpRequest.getHttpMethod());
+            Response response = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
+            HttpResponse.response(dos, response);
 
         } catch (IOException | InvocationTargetException | NoSuchMethodException | InstantiationException |
                  IllegalAccessException e) {
