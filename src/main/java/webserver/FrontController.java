@@ -22,13 +22,13 @@ public class FrontController implements Runnable {
 
     private Socket connection;
     private Request req;
-
+    private Response res;
     private final Map<String, Controller> handlerMappingMap = new HashMap<>();
     private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
-    private final ViewResolver viewResolver = new ViewResolver();
     public FrontController(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.req = new Request();
+        this.res = new Response();
         initHandlerMappingMap();
         initHandlerAdapters();
     }
@@ -42,19 +42,11 @@ public class FrontController implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
-
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),connection.getPort());
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             getRequest(in);
-            req.requestInfo();
-            Response res = new Response();
             DataOutputStream dos = new DataOutputStream(out);
-
-            //handler mapping
             Controller handler = getHandler(req);
-
             if (handler == null) {
                 logger.debug("[RequestHandler.run] handler Not found");
                 res.setStatus(HttpStatus.NOT_FOUND);
@@ -63,11 +55,8 @@ public class FrontController implements Runnable {
             }
             MyHandlerAdapter adapter = getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(req, res, handler);
-            MyView view = viewResolver.resolve(mv.getViewName());
+            MyView view = ViewResolver.resolve(mv.getViewName());
             view.render(dos, req, res);
-
-
-
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -83,7 +72,7 @@ public class FrontController implements Runnable {
     }
 
     private Controller getHandler(Request req) {
-        if (viewResolver.isTemplate(req.getUrl())||viewResolver.isStatic(req.getUrl())) {
+        if (ViewResolver.isTemplate(req.getUrl())||ViewResolver.isStatic(req.getUrl())) {
             return new ResourceController();
         }
         for (String key : handlerMappingMap.keySet()) {

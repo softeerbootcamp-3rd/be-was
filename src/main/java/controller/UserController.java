@@ -5,18 +5,17 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import webserver.FrontController;
 
 import java.net.URLDecoder;
 import java.util.Map;
 
 public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
-    private static final Logger logger = LoggerFactory.getLogger(FrontController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Override
     public String process(Request req, Map<String, String> model) {
-        logger.debug("[MemberFormController.process] req.getUrl() : "+req.getUrl());
+        logger.debug(new StringBuilder("[MemberFormController.process] req.getUrl() : ").append(req.getUrl()).toString());
         String subPath = req.getUrl().replace("/user/", "");
         switch (subPath) {
             case "create":

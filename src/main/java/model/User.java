@@ -43,6 +43,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+        return new StringBuilder("User [userId=").append(userId).append(", password=").append(password).append(", name=").append(name).append(", email=").append(email).append("]").toString();
     }
 }
