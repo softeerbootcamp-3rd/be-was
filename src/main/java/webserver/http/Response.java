@@ -72,10 +72,11 @@ public class Response {
             if(request.responseMimeType==Mime.TEXT_HTML){
                 responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
             }
+            else if(request.responseMimeType == Mime.NONE)
+                responseBody = new byte[0];
             else{
                 responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/static" + request.getRequestTarget()).toPath());
                 System.out.println(ROOT_DIRECTORY + "/src/main/resources/static" + request.getRequestTarget());
-                //responseBody = new byte[0];
             }
         }
         catch (IOException e) {
