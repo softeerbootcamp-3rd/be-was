@@ -14,14 +14,6 @@ public class HttpRequest {
     private final Map<String, String> paramMap;
     private final Map<String, String> header;
 
-    public HttpRequest(String requestString) {
-        String[] requestParts = requestString.split(" ");
-        this.method = requestParts[0];
-        this.path = URIParser.extractPath(requestParts[1]);
-        this.paramMap = URIParser.parseQueryString(URIParser.extractQuery(requestParts[1]));
-        this.header = new HashMap<>();
-    }
-
     public HttpRequest(BufferedReader reader) throws IOException {
         String requestLine = reader.readLine();
         String[] requestParts = requestLine.split(" ");
@@ -46,7 +38,6 @@ public class HttpRequest {
     public String getPath() {
         return this.path;
     }
-
 
     public Map<String, String> getParamMap() {
         return this.paramMap;

@@ -12,9 +12,7 @@ import org.slf4j.Logger;
 public class HttpResponse {
 
     private HttpStatus status;
-
     private final Map<String, String> header;
-
     private byte[] body;
 
     public HttpResponse() {
