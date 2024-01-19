@@ -3,6 +3,7 @@ package dto.user.request;
 import java.util.Map;
 
 public class UserCreateRequestDto {
+
     private String userId;
     private String password;
     private String name;
@@ -37,7 +38,7 @@ public class UserCreateRequestDto {
     public static UserCreateRequestDto of(Map<String, String> params) {
         UserCreateRequestDto userCreateRequestDto = new UserCreateRequestDto();
         params.forEach((key, value) ->
-                {
+            {
                 switch (key) {
                     case "userId":
                         userCreateRequestDto.userId = value;

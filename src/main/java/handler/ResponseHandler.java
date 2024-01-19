@@ -1,23 +1,28 @@
 package handler;
 
 import http.request.HttpRequest;
-import http.response.*;
-import logger.CustomLogger;
-
+import http.response.ContentType;
+import http.response.HttpResponse;
+import http.response.HttpResponseHeader;
+import http.response.HttpResponseStartLine;
+import http.response.HttpStatusCode;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import logger.CustomLogger;
 
 public class ResponseHandler {
 
-    private ResponseHandler() {}
+    private ResponseHandler() {
+    }
 
     private static class SingletonHelper {
+
         private static final ResponseHandler SINGLETON = new ResponseHandler();
     }
 
-    public static ResponseHandler getInstance(){
+    public static ResponseHandler getInstance() {
         return SingletonHelper.SINGLETON;
     }
 
@@ -27,7 +32,8 @@ public class ResponseHandler {
         HttpResponse httpResponse = createResponse(body, httpRequest);
 
         try {
-            dos.write(httpResponse.convertResponseToByteArray(), 0, httpResponse.convertResponseToByteArray().length);
+            dos.write(httpResponse.convertResponseToByteArray(), 0,
+                httpResponse.convertResponseToByteArray().length);
             dos.flush();
         } catch (IOException e) {
             CustomLogger.printError(e);
@@ -40,9 +46,9 @@ public class ResponseHandler {
         responseHeader.put("Content-Type", getContentType(httpRequest));
 
         return new HttpResponse(
-                new HttpResponseStartLine(HttpStatusCode.OK),
-                new HttpResponseHeader(responseHeader),
-                body
+            new HttpResponseStartLine(HttpStatusCode.OK),
+            new HttpResponseHeader(responseHeader),
+            body
         );
     }
 

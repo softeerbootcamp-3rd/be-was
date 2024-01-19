@@ -2,10 +2,9 @@ package service.user;
 
 import db.Database;
 import http.request.HttpMethod;
+import java.util.Map;
 import model.User;
 import service.Service;
-
-import java.util.Map;
 
 public class OneUserSearchService extends Service {
 
@@ -20,7 +19,7 @@ public class OneUserSearchService extends Service {
 
     @Override
     public void validate(HttpMethod method, Map<String, String> params, Map<String, String> body) {
-        if (!method.equals(HttpMethod.GET)){
+        if (!method.equals(HttpMethod.GET)) {
             throw new IllegalArgumentException("method is not GET");
         }
         if (params.get("userId").isEmpty()) {

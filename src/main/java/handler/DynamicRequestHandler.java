@@ -2,22 +2,23 @@ package handler;
 
 
 import http.request.HttpRequest;
-import service.Service;
-import service.user.UserServiceFactory;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import service.Service;
+import service.user.UserServiceFactory;
 
 public class DynamicRequestHandler {
 
-    private DynamicRequestHandler() {}
+    private DynamicRequestHandler() {
+    }
 
     private static class SingletonHelper {
+
         private static final DynamicRequestHandler SINGLETON = new DynamicRequestHandler();
     }
 
-    public static DynamicRequestHandler getInstance(){
+    public static DynamicRequestHandler getInstance() {
         return SingletonHelper.SINGLETON;
     }
 

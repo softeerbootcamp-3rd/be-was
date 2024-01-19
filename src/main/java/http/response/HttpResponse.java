@@ -1,6 +1,7 @@
 package http.response;
 
 public class HttpResponse {
+
     private HttpResponseStartLine startLine;
     private HttpResponseHeader header;
     private byte[] body;

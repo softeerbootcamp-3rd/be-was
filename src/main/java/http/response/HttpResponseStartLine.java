@@ -1,6 +1,7 @@
 package http.response;
 
 public class HttpResponseStartLine {
+
     private String httpVersion;
     private HttpStatusCode statusCode;
     private String statusText;

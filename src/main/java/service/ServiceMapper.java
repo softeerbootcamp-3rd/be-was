@@ -7,6 +7,7 @@ import service.user.TotalUserSearchService;
 import service.user.UserCreateService;
 
 public class ServiceMapper {
+
     private static final Map<String, Class<? extends Service>> mapping = new HashMap<>();
 
     static {

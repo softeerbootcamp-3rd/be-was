@@ -5,20 +5,24 @@ import http.request.StaticResourceExtension;
 
 public class RequestHandler {
 
-    private RequestHandler() {}
+    private RequestHandler() {
+    }
 
     private static class SingletonHelper {
+
         private static final RequestHandler SINGLETON = new RequestHandler();
     }
 
-    public static RequestHandler getInstance(){
+    public static RequestHandler getInstance() {
         return SingletonHelper.SINGLETON;
     }
 
     public byte[] dispatcher(HttpRequest httpRequest) throws Exception {
-        boolean isStaticRequest = isStaticResource(httpRequest.getHttpRequestStartLine().getRequestTarget());
+        boolean isStaticRequest = isStaticResource(
+            httpRequest.getHttpRequestStartLine().getRequestTarget());
         if (isStaticRequest) {
-            return StaticResourceHandler.getInstance().process(httpRequest.getHttpRequestStartLine().getRequestTarget());
+            return StaticResourceHandler.getInstance()
+                .process(httpRequest.getHttpRequestStartLine().getRequestTarget());
         } else {
             return DynamicRequestHandler.getInstance().process(httpRequest);
         }

@@ -1,6 +1,7 @@
 package http.request;
 
 public class HttpRequestStartLine {
+
     private HttpMethod httpMethod;
     private String requestTarget;
     private String httpVersion;

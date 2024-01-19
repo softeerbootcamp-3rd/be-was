@@ -5,12 +5,16 @@ import service.ServiceFactory;
 import service.ServiceMapper;
 
 public class UserServiceFactory implements ServiceFactory {
+
     // Thread-Safe 한 싱글톤 객체화
-    private UserServiceFactory() {}
+    private UserServiceFactory() {
+    }
 
     private static class SingleInstanceHolder {
+
         private static final UserServiceFactory INSTANCE = new UserServiceFactory();
     }
+
     public static UserServiceFactory getInstance() {
         return UserServiceFactory.SingleInstanceHolder.INSTANCE;
     }
