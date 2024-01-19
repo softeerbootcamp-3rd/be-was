@@ -3,10 +3,11 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.util.HashMap;
 
 import controller.Controller;
 import dto.HTTPRequestDto;
+import dto.HTTPResponseDto;
+import dto.ResponseEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +17,6 @@ public class RequestHandler implements Runnable {
     private Socket connection;
 
     private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
-    private HashMap<String, String> requestParams = new HashMap<>();
-    private byte[] body;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -36,19 +35,22 @@ public class RequestHandler implements Runnable {
             // HTTP Request 파싱
             httpRequestParsing(br);
 
-            // 요청에서 Request param 떼어내기
-            if(httpRequestDto.getRequest_target().contains("?")) {
-                getRequestParams(httpRequestDto.getRequest_target());
-                httpRequestDto.setRequest_target(
-                        httpRequestDto.getRequest_target().substring(0, httpRequestDto.getRequest_target().indexOf("?"))
+            if(httpRequestDto.getRequestTarget().contains("?")) {
+                // request param 맵에 저장
+                getRequestParams(httpRequestDto.getRequestTarget());
+                // 요청에서 쿼리 스트링 떼어내기
+                httpRequestDto.setRequestTarget(
+                        httpRequestDto.getRequestTarget().substring(0, httpRequestDto.getRequestTarget().indexOf("?"))
                 );
             }
 
             // 요청 처리
-            body = Controller.doRequest(httpRequestDto, requestParams);
+            HTTPResponseDto httpResponseDto = Controller.doRequest(httpRequestDto);
 
-            response200Header(dos, body.length, httpRequestDto.getAccept());
-            responseBody(dos, body);
+            // status code에 따른 분기 처리 - response DataOutputStream에 작성
+            ResponseEnum responseEnum = ResponseEnum.getResponse(httpResponseDto.getStatusCode());
+            responseEnum.writeResponse(httpResponseDto, httpRequestDto, dos);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -65,66 +67,70 @@ public class RequestHandler implements Runnable {
         line = URLDecoder.decode(line, "UTF-8");
         String[] tokens = line.split(" ");
 
-        httpRequestDto.setHTTP_Method(tokens[0]);
-        httpRequestDto.setRequest_target(tokens[1]);
-        httpRequestDto.setHTTP_version(tokens[2]);
+        httpRequestDto.setHTTPMethod(tokens[0]);
+        httpRequestDto.setRequestTarget(tokens[1]);
+        httpRequestDto.setHTTPVersion(tokens[2]);
 
         logger.debug("HTTP Method: {}, Request Target: {}, Version: {}",
-                httpRequestDto.getHTTP_Method(),
-                httpRequestDto.getRequest_target(),
-                httpRequestDto.getHTTP_version());
+                httpRequestDto.getHTTPMethod(),
+                httpRequestDto.getRequestTarget(),
+                httpRequestDto.getHTTPVersion());
 
+        // header 읽기
         // host, accept 출력
-        while(!line.equals("")) {
+        while(line != null) {
             line = br.readLine();
+            // 개행문자만을 읽었다면 -> 헤더 끝
+            if(line != null && line.trim().isEmpty())
+                break;
             if(line.contains("Host:")) {
+                // Host 추출
                 httpRequestDto.setHost(line.substring("Host: ".length()));
                 logger.debug("Host: {}", httpRequestDto.getHost());
+                continue;
             }
-            else if(line.contains("Accept:")) {
+            if(line.contains("Accept:")) {
                 // Accept 추출
                 String accept = line.substring("Accept: ".length());
                 if(line.contains(","))
                     accept = accept.substring(0, accept.indexOf(","));
                 httpRequestDto.setAccept(accept);
                 logger.debug("Accept: {}", httpRequestDto.getAccept());
+                continue;
+            }
+            if(line.contains("Content-Length:")) {
+                // Content-Length 추출
+                Integer contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
+                httpRequestDto.setContentLength(contentLength);
+                logger.debug("Content-Length: {}", httpRequestDto.getContentLength());
+                continue;
             }
         }
-    }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String accept) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + accept + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+        // body 읽기
+        if(httpRequestDto.getContentLength() != null) {
+            char[] body = new char[httpRequestDto.getContentLength()];
+            br.read(body);
+
+            // 한글 파라미터 decoding 후 body 저장
+            httpRequestDto.setBody(URLDecoder.decode(new String(body), "UTF-8"));
+            System.out.println("Request Body: " + httpRequestDto.getBody());
         }
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    // 요청 url에서 Request Param 리스트 가져오기
+    // 쿼리 스트링 파싱
     private void getRequestParams(String url) {
-        if(url == null)
+        if (url == null)
             return;
-        if(!url.contains("?"))
+        if (!url.contains("?"))
             return;
 
         String[] tokens = url.split("\\?");
         tokens = tokens[1].split("&");
-        for(int i = 0; i < tokens.length; i++) {
+        for (int i = 0; i < tokens.length; i++) {
             String key = tokens[i].substring(0, tokens[i].indexOf("="));
-            String value = tokens[i].substring(tokens[i].indexOf("=")+1);
-            requestParams.put(key, value);
+            String value = tokens[i].substring(tokens[i].indexOf("=") + 1);
+            httpRequestDto.addRequestParam(key, value);
         }
     }
 

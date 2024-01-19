@@ -2,26 +2,29 @@ package controller;
 
 import dto.GetRequestEnum;
 import dto.HTTPRequestDto;
-import service.Service;
+import dto.HTTPResponseDto;
+import dto.PostRequestEnum;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class Controller {
 
-    public static byte[] doRequest(HTTPRequestDto httpRequestDto, HashMap<String, String> requestParams) throws IOException {
-        // 요청 url에 해당하는 enum 찾기
-        byte[] result = "".getBytes();
-
+    public static HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+        HTTPResponseDto response = new HTTPResponseDto();
         // 1. GET 요청
-        if(httpRequestDto.getHTTP_Method().equals("GET")) {
-            GetRequestEnum getRequestEnum = GetRequestEnum.getRequest(httpRequestDto.getRequest_target());
+        if(httpRequestDto.getHTTPMethod().equals("GET")) {
+            GetRequestEnum getRequestEnum = GetRequestEnum.getRequest(httpRequestDto.getRequestTarget());
             // enum에 따라 함수 실행
-            return getRequestEnum.doRequest(httpRequestDto, requestParams);
+            return getRequestEnum.doRequest(httpRequestDto);
+        }
+        // 2. POST 요청
+        if(httpRequestDto.getHTTPMethod().equals("POST")) {
+            PostRequestEnum postRequestEnum = PostRequestEnum.getRequest(httpRequestDto.getRequestTarget());
+            // enum에 따라 함수 실행
+            return postRequestEnum.doRequest(httpRequestDto);
         }
 
-        return result;
+        return response;
     }
 }
 
