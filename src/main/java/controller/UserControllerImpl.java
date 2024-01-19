@@ -34,7 +34,7 @@ public class UserControllerImpl implements UserController {
             UserSignUpDto userSignUpDto = getPathParameter(pathUrl);
             userService.signUp(userSignUpDto);
             httpResponseDto.setStatus(Status.REDIRECT);
-            httpResponseDto.setLocation("/user/login.html");
+            httpResponseDto.addHeader("Location", "/user/login.html");
         }
     }
 

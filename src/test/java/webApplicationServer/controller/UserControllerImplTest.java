@@ -52,7 +52,7 @@ class UserControllerImplTest {
         //then
         verify(userServiceMock, times(1)).signUp(any(UserSignUpDto.class));
         verify(httpResponseMock, times(1)).setStatus(Status.REDIRECT);
-        verify(httpResponseMock, times(1)).setLocation("/user/login.html");
+        verify(httpResponseMock, times(1)).addHeader("Location", "/user/login.html");
     }
 
     @Test

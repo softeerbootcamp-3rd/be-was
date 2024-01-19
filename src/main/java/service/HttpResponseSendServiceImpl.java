@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 public class HttpResponseSendServiceImpl implements HttpResponseSendService {
     private static class HttpResponseServiceHolder {
@@ -48,6 +49,7 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
         try {
             dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
             dos.writeBytes(httpResponse.getHeaders().getContentTypeHeader());
+            writeOptionHeader(dos, httpResponse);
             dos.writeBytes(httpResponse.getHeaders().getContentLengthHeader());
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -58,10 +60,18 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
     private void setStatusAndHeaderForRedirect(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
-            dos.writeBytes(httpResponse.getHeaders().getLocationTypeHeader());
+            writeOptionHeader(dos, httpResponse);
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private void writeOptionHeader(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
+        for (Map.Entry<String, String> entry : httpResponse.getHeaders().getOptionHeader().entrySet()) {
+            String header = entry.getKey();
+            String content = entry.getValue();
+            dos.writeBytes(header + ": " + content + "\r\n");
         }
     }
 }

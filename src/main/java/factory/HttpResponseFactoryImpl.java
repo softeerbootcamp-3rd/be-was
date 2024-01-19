@@ -7,6 +7,9 @@ import model.http.response.HttpResponse;
 import model.http.response.ResponseHeaders;
 import model.http.response.StatusLine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HttpResponseFactoryImpl implements HttpResponseFactory {
 
     public static HttpResponseFactory getInstance() {
@@ -34,9 +37,7 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
 
     private ResponseHeaders getResponseHeaders(HttpResponseDto dto) {
         ResponseHeaders responseHeaders = new ResponseHeaders(dto.getContentType(), dto.getContentLength(), dto.getCharSet());
-        if (dto.getLocation() != null) {
-            responseHeaders.setLocation(dto.getLocation());
-        }
+        dto.getOptionHeader().forEach(responseHeaders::addOptionHeader);
         return responseHeaders;
     }
 
