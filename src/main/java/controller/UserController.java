@@ -15,9 +15,8 @@ public class UserController implements Controller {
     public Response route(String url) {
         if (url.startsWith("/user/create")) {
             return createUser(url);
-        } else {
-            return getPage(url);
         }
+        return getPage(url);
     }
 
     private Response getPage(String url) {
@@ -25,10 +24,10 @@ public class UserController implements Controller {
 
         try {
             byte[] body = Files.readAllBytes(new File(filePath).toPath());
-            return new Response(url, 200, body);
+            return new Response(200, url, body);
         } catch (IOException e) {
             byte[] body = "404 Not Found".getBytes();
-            return new Response(url, 404, body);
+            return new Response(404, body);
         }
     }
 
@@ -38,12 +37,14 @@ public class UserController implements Controller {
         try {
             userService.saveUser(params);
         } catch (NullPointerException e) {
-            return new Response("", 400, "cannot find parameter.".getBytes());
+            byte[] body = "cannot find parameter.".getBytes();
+            return new Response(400, body);
         } catch (IllegalArgumentException e) {
-            return new Response("", 400, "user id already exists.".getBytes());
+            byte[] body = "user id already exists.".getBytes();
+            return new Response(400, body);
         }
 
         String location = "/";
-        return new Response(location, 302, "".getBytes());
+        return new Response(302, location);
     }
 }

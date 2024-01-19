@@ -8,10 +8,17 @@ import java.nio.file.Files;
 public class HomeController implements Controller{
 
     public Response route(String url) {
-        if (url.equals("/") || url.equals("/index.html")) {
+        if (url.equals("/")) {
+            return redirectIndex();
+        }
+        if (url.equals("/index.html")) {
             return getIndex(url);
         }
         return getStatic(url);
+    }
+
+    private Response redirectIndex() {
+        return new Response(302, "/index.html");
     }
 
     private Response getIndex(String url) {
@@ -19,10 +26,10 @@ public class HomeController implements Controller{
 
         try {
             byte[] body = Files.readAllBytes(new File(filePath).toPath());
-            return new Response(filePath, 200, body);
+            return new Response(200, url, body);
         } catch (IOException e) {
             byte[] body = "404 Not Found".getBytes();
-            return new Response(filePath, 404, body);
+            return new Response(404, body);
         }
     }
 
@@ -31,10 +38,10 @@ public class HomeController implements Controller{
 
         try {
             byte[] body = Files.readAllBytes(new File(filePath).toPath());
-            return new Response(url, 200, body);
+            return new Response(200, url, body);
         } catch (IOException e) {
             byte[] body = "404 Not Found".getBytes();
-            return new Response(url, 404, body);
+            return new Response(404, body);
         }
     }
 }

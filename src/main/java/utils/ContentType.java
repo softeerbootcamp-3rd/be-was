@@ -40,7 +40,6 @@ public enum ContentType {
 
     public static String findContentType(String url) throws NullPointerException {
         String extension = url.substring(url.lastIndexOf("."));
-        System.out.println(extension);
         try {
             String type = contentTypes.get(extension);
             ContentType contentType = ContentType.valueOf(type);

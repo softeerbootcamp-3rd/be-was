@@ -18,7 +18,7 @@ public class HeaderBuilder {
     }
 
     private static String header400() {
-        return "HTTP/1.1 404 Not Found \r\n"
+        return "HTTP/1.1 400 Bad Request \r\n"
                 + "\r\n";
     }
 

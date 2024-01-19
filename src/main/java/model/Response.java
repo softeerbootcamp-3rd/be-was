@@ -2,14 +2,22 @@ package model;
 
 public class Response {
 
-    private final String url;
     private final int code;
-    private final byte[] body;
+    private String url;
+    private byte[] body;
 
-    // todo 생성자 오버로딩 만들기
+    public Response(int code, String url) {
+        this.code = code;
+        this.url = url;
+    }
 
-    public Response(String path, int code, byte[] body) {
-        this.url = path;
+    public Response(int code, byte[] body) {
+        this.code = code;
+        this.body = body;
+    }
+
+    public Response(int code, String url, byte[] body) {
+        this.url = url;
         this.code = code;
         this.body = body;
     }
