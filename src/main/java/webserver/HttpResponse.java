@@ -37,13 +37,13 @@ public class HttpResponse {
 
     private static String response200Header(DataOutputStream dos, Response response) {
         try {
-            String s1 = "Content-Type: " + response.getContentType();
-            String s2 = "Content-Length: " + response.getBody().length;
+            String contentType = "Content-Type: " + response.getContentType();
+            String contentLength = "Content-Length: " + response.getBody().length;
 
-            dos.writeBytes(s1 + "\r\n");
-            dos.writeBytes(s2 + "\r\n");
+            dos.writeBytes(contentType + "\r\n");
+            dos.writeBytes(contentLength + "\r\n");
 
-            return ", " + s1 + ", " + s2;
+            return ", " + contentType + ", " + contentLength;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -63,11 +63,11 @@ public class HttpResponse {
     private static String redirect(DataOutputStream dos, byte[] body) {
         try {
             String redirectUrl = new String(body);
-            String s = "Location: " + redirectUrl;
+            String redirectResponse = "Location: " + redirectUrl;
 
-            dos.writeBytes(s + "\r\n");
+            dos.writeBytes(redirectResponse + "\r\n");
 
-            return s;
+            return redirectResponse;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
