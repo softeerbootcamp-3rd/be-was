@@ -18,7 +18,6 @@ public class UserController {
             String url = request.getUrl();
             String data = url.split("/")[2].split("\\?")[1];
             System.out.println("전달 받은 파라미터 원형: " + data);
-            //userId=asdf&password=sadf&name=asdf&email=asdf%40asdf
             Map<String, String> map = querytoMap(data);
             User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
             Database.addUser(user);

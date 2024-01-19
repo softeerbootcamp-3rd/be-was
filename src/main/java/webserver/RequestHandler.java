@@ -60,36 +60,9 @@ public class RequestHandler implements Runnable {
             dos.write(body, 0, body.length);
             dos.flush();
 
-
-
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-//아래는 기존의 코드
-//    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-//        try {
-//            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-//            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-//            dos.writeBytes("\r\n");
-//            //\r\n 두개는 헤더와 바디를 구분하게 해준다
-//            logger.debug(dos.toString());
-//        } catch (IOException e) {
-//            logger.error(e.getMessage());
-//        }
-//    }
-//
-//    private void responseBody(DataOutputStream dos, byte[] body) {
-//        try {
-//            //dos
-//            dos.write(body, 0, body.length);
-//            //flush를 사용하면 dos에 있는 내용을 전부 보낸다
-//            dos.flush();
-//        } catch (IOException e) {
-//            logger.error(e.getMessage());
-//        }
-//    }
-
 
 }

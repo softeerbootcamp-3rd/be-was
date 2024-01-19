@@ -44,9 +44,6 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 executorService.execute(new RequestHandler(connection));
 
-                //아래는 기존의 코드(스레드 무한생성가능)
-//                Thread thread = new Thread(new RequestHandler(connection));
-//                thread.start();
             }
         }
         // 스레드풀 종료
