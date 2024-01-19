@@ -17,6 +17,10 @@ public class RequestMappingHandler {
     // RequestHandler에서 컨트롤러 전송
     public static Response handleRequest(Class<?> controllerClass, HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Method method = findMethod(controllerClass, request.getPath());
+        if (method == null) {
+            return new Response.Builder().httpStatus(HttpStatus.BAD_REQUEST).build();
+        }
+
         Object[] params = createParams(method, request.getParams());
 
         return invokeMethod(method, params);

@@ -18,7 +18,7 @@ public class HttpResponse {
 
         String line = "HTTP/1.1 " + response.getHttpStatus().getStatusCode() + " " + response.getHttpStatus().getStatusMessage();
         dos.writeBytes(line + "\r\n");
-        sb.append(line + ", ");
+        sb.append(line);
 
         if (httpStatus == HttpStatus.OK) {
             sb.append(response200Header(dos, response));
@@ -43,7 +43,7 @@ public class HttpResponse {
             dos.writeBytes(s1 + "\r\n");
             dos.writeBytes(s2 + "\r\n");
 
-            return s1 + ", " + s2;
+            return ", " + s1 + ", " + s2;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
