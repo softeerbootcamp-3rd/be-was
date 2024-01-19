@@ -14,17 +14,15 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Response {
-    private static final Logger logger = LoggerFactory.getLogger(Response.class);
-    private static final String ROOT_DIRECTORY = System.getProperty("user.dir");
     String httpVersion;
     int statusCode;
     String statusText;
-    HashMap<String, String> responseHeader;
+    HashMap<String, String> responseHeader= new HashMap<>();
+    ResponseHandler responseHandler = new ResponseHandler();
     byte[] responseBody;
 
     public Response(Request request) {
         this.httpVersion = request.httpVersion;
-        this.responseHeader = new HashMap<>();
         setStatusCode(request);
         setBody(request);
         setHeader(request);
@@ -68,21 +66,7 @@ public class Response {
     }
 
     void setBody(Request request){
-        try{
-            if(request.responseMimeType==Mime.TEXT_HTML){
-                responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
-            }
-            else if(request.responseMimeType == Mime.NONE)
-                responseBody = new byte[0];
-            else{
-                responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/static" + request.getRequestTarget()).toPath());
-                System.out.println(ROOT_DIRECTORY + "/src/main/resources/static" + request.getRequestTarget());
-            }
-        }
-        catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-
+        responseBody = responseHandler.setResponseBody(request.responseMimeType, request.getRequestTarget());
     }
 
     public byte[] getResponseBody() {

@@ -16,24 +16,17 @@ public class Request {
     String httpVersion;
     Float httpVersionNum;
     Mime responseMimeType;
-    private final ArrayList<String> headerContent;
-    private final ArrayList<String> bodyContent;
-    HashMap<String, String> requestHeader;
-    HashMap<String, String> requestBody;
-    RequestHandler requestHandler;
+    private final ArrayList<String> headerContent = new ArrayList<>();
+    private final ArrayList<String> bodyContent= new ArrayList<>();
+    HashMap<String, String> requestHeader = new HashMap<>();
+    HashMap<String, String> requestBody = new HashMap<>();;
+    RequestHandler requestHandler= new RequestHandler();
 
     public Request(BufferedReader br) throws IOException {
-        headerContent = new ArrayList<>();
-        bodyContent = new ArrayList<>();
         parseRequest(br);
-        requestHeader = new HashMap<>();
-        requestBody = new HashMap<>();
-
         parseRequestStartLine(headerContent.get(0));
         parseRequestHeader();
         parseRequestBody();
-
-        requestHandler = new RequestHandler();
         requestHandler.handleRequest(this);
     }
 

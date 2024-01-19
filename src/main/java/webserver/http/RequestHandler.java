@@ -11,10 +11,9 @@ import java.util.function.Consumer;
 
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private final Map<String, Consumer<Request>> routeHandlers;
+    private final Map<String, Consumer<Request>> routeHandlers= new HashMap<>();
 
     public RequestHandler() {
-        this.routeHandlers = new HashMap<>();
         initializeRoutes();
     }
 
