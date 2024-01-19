@@ -7,7 +7,6 @@ import model.User;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
 
 
 public class Service {
@@ -64,7 +63,7 @@ public class Service {
         return new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
     }
 
-    // url 요청으로 "/" 가 왔을 경우 (localhost:8080) index.html 띄우기 (GET)
+    // index.html로 리다이렉트
     public static HTTPResponseDto showIndex(HTTPRequestDto httpRequestDto) {
         return new HTTPResponseDto(303, "/index.html".getBytes());
     }

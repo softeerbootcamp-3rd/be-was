@@ -89,6 +89,7 @@ A. 파일 종류에 따라 응답 헤더의 content type을 다르게 지정해�
 - Enum을 이용하면 요청 URL이 추가될 때마다 Enum 상수만 추가하면 됨
 - 요청 처리: 상수별 호출할 메소드를 Service 클래스에 구현
 - enum의 상수는 static final이므로 추상 메소드 구현 시 static method만 호출 가능
+- enum은 상속 불가
  
 ### 3. JUnit
 1. given-when-then 패턴
@@ -146,6 +147,8 @@ dependencies {
 
 -------------------------------------------------
 
+## 웹 서버 1주차 추가 굥부
+
 ### 1. request body 추출
 
 - http request를 bufferedreader로 읽는 과정에서, body가 포함되어 있을 경우 read 과정이 끝나지 않는 문제가 발생
@@ -157,3 +160,49 @@ dependencies {
 - 헤결 방법
   - request header 중 Content-Length가 존재
   - body의 길이를 나타내는 해당 값을 저장해두고, 해당 길이 만큼 body를 읽어와야 함
+
+### 2. Java Reflection
+
+- 프로그램이 자기 자신을 검사하고, 자신의 구조를 동적으로 분석하고 수정할 수 있는 능력
+- 장점
+  - 런타임에 동적 클래스 로딩 및 인스턴스 생성 가능
+  - 메타데이터 얻기 가능
+  - 유연한 코드 작성 -> 코드의 재사용성을 높이고 유지보수 용이
+- 사용법
+  1. Class 객체 얻기
+  ```java
+  Class<?> myClass = MyClass.class; // MyClass는 대상 클래스의 이름
+  ```
+   2. 클래스 정보 조회
+  ```java
+  // 클래스의 이름
+  String className = myClass.getName();
+  System.out.println("Class Name: " + className);
+  
+  // 클래스의 메서드들
+  Method[] methods = myClass.getMethods();
+  for (Method method : methods) {
+      System.out.println("Method: " + method.getName());
+  }
+  
+  // 클래스의 필드들
+  Field[] fields = myClass.getDeclaredFields();
+  for (Field field : fields) {
+      System.out.println("Field: " + field.getName());
+  }
+  ```
+   3. 인스턴스 생성
+  ```java
+  MyClass newInstance = (MyClass) myClass.newInstance();
+  ```
+   4. 메서드 호출
+  ```java
+  Method myMethod = myClass.getMethod("methodName", parameterTypes);
+  myMethod.invoke(newInstance, arguments);
+  ```
+   5. 필드에 접근
+  ```java
+  Field myField = myClass.getDeclaredField("fieldName");
+  myField.setAccessible(true);
+  Object value = myField.get(newInstance);
+  ```

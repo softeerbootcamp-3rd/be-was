@@ -1,10 +1,7 @@
 package dto;
 
-import org.slf4j.Logger;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.Arrays;
 
 public enum ResponseEnum {
