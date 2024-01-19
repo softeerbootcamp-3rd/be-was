@@ -3,6 +3,7 @@ package http.request;
 import java.util.Map;
 
 public class HttpRequestBody {
+
     private Map<String, String> body;
 
     public HttpRequestBody(Map<String, String> body) {

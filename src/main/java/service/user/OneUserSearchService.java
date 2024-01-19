@@ -1,6 +1,7 @@
 package service.user;
 
 import db.Database;
+import http.request.HttpMethod;
 import java.util.Map;
 import model.User;
 import service.Service;
@@ -8,7 +9,7 @@ import service.Service;
 public class OneUserSearchService extends Service {
 
     @Override
-    public byte[] execute(String method, Map<String, String> params, Map<String, String> body) {
+    public byte[] execute(HttpMethod method, Map<String, String> params, Map<String, String> body) {
         validate(method, params, body);
 
         User userEntity = getOneUserEntity(params.get("userId"));
@@ -17,8 +18,8 @@ public class OneUserSearchService extends Service {
     }
 
     @Override
-    public void validate(String method, Map<String, String> params, Map<String, String> body) {
-        if (!method.equals("GET")){
+    public void validate(HttpMethod method, Map<String, String> params, Map<String, String> body) {
+        if (!method.equals(HttpMethod.GET)) {
             throw new IllegalArgumentException("method is not GET");
         }
         if (params.get("userId").isEmpty()) {

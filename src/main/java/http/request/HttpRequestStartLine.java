@@ -1,17 +1,18 @@
 package http.request;
 
 public class HttpRequestStartLine {
-    private String httpMethod;
+
+    private HttpMethod httpMethod;
     private String requestTarget;
     private String httpVersion;
 
     public HttpRequestStartLine(String httpMethod, String requestTarget, String httpVersion) {
-        this.httpMethod = httpMethod;
+        this.httpMethod = HttpMethod.of(httpMethod);
         this.requestTarget = requestTarget;
         this.httpVersion = httpVersion;
     }
 
-    public String getHttpMethod() {
+    public HttpMethod getHttpMethod() {
         return httpMethod;
     }
 

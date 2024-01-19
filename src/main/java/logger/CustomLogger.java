@@ -5,6 +5,7 @@ import java.net.Socket;
 import org.slf4j.LoggerFactory;
 
 public class CustomLogger {
+
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CustomLogger.class);
 
     public static void printInfo(String message) {
@@ -17,7 +18,8 @@ public class CustomLogger {
 
     // IP, Port 출력 부
     public static void printIPAndPort(Socket connection) {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}",
+            connection.getInetAddress(), connection.getPort());
     }
 
     // request 출력 부

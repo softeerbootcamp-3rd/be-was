@@ -6,13 +6,16 @@ import http.request.HttpRequest;
 import http.request.HttpRequestBody;
 import http.request.HttpRequestHeader;
 import http.request.HttpRequestStartLine;
-import logger.CustomLogger;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import logger.CustomLogger;
 
 public class HttpProcessor implements Runnable {
 
@@ -44,14 +47,15 @@ public class HttpProcessor implements Runnable {
     }
 
     private HttpRequest httpRequestParser(InputStream in) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        BufferedReader bufferedReader = new BufferedReader(
+            new InputStreamReader(in, StandardCharsets.UTF_8));
 
         String line = bufferedReader.readLine();
         HttpRequestStartLine httpRequestStartLine = parsingStringLine(line);
 
         LinkedHashMap<String, String> headers = new LinkedHashMap<>();
         line = bufferedReader.readLine();
-        while(!line.isEmpty()) {
+        while (!line.isEmpty()) {
             headers.put(line.split(": ")[0], line.split(": ")[1]);
             line = bufferedReader.readLine();
         }

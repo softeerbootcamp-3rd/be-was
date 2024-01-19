@@ -4,10 +4,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import logger.CustomLogger;
 
 public class WebServer {
+
     private static final int DEFAULT_PORT = 8080;
 
     private final int port;

@@ -5,19 +5,20 @@ import http.request.HttpRequest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import logger.CustomLogger;
 import service.Service;
 import service.user.UserServiceFactory;
 
 public class DynamicRequestHandler {
 
-    private DynamicRequestHandler() {}
+    private DynamicRequestHandler() {
+    }
 
     private static class SingletonHelper {
+
         private static final DynamicRequestHandler SINGLETON = new DynamicRequestHandler();
     }
 
-    public static DynamicRequestHandler getInstance(){
+    public static DynamicRequestHandler getInstance() {
         return SingletonHelper.SINGLETON;
     }
 
@@ -50,8 +51,6 @@ public class DynamicRequestHandler {
             return new HashMap<>();
         }
         String params = path.split("\\?")[1];
-
-        CustomLogger.printInfo(params);
 
         Map<String, String> paramsMap = new HashMap<>();
         Arrays.stream(params.split("&"))

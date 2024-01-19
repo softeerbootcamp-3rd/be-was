@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestHeader {
+
     private Map<String, String> headers;
 
     public HttpRequestHeader(HashMap<String, String> headers) {
