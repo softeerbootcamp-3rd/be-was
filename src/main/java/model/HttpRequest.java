@@ -6,94 +6,82 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static constant.HttpRequestConstant.*;
 
 public class HttpRequest {
     private final String method;
     private final URI uri;
-    private final String host;
-    private final String connection;
-    private final String accept;
+    private final Map<String, String>  headers;
+    private final String body;
 
-    private static final int KEY_INDEX = 0;
-    private static final int VALUE_INDEX = 1;
-    public static final int EXTENSION_POS = 1;
-    public static final String SLASH_DELIMITER = "/";
-    public static final String DOT_DELIMITER = "\\.";
-
-    public HttpRequest(String method, URI uri, String host, String connection, String accept) {
+    public HttpRequest(String method, URI uri, Map<String, String> headers, String body) {
         this.method = Objects.requireNonNull(method);
         this.uri = Objects.requireNonNull(uri);
-        this.host = Objects.requireNonNull(host);
-        this.connection = Objects.requireNonNull(connection);
-        this.accept = Objects.requireNonNull(accept);
+        this.headers = Objects.requireNonNull(headers);
+        this.body = body;
     }
 
-    public static HttpRequest from(InputStream in) throws IOException{
-        Map<String, String> requestHeader = getRequestHeader(in);
+    public static HttpRequest from(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        String line = br.readLine();
 
-        String method = requestHeader.get(START_LINE).split(PATH_DELIMITER)[HTTP_METHOD_POS];
-        URI uri = URI.create(requestHeader.get(START_LINE).split(PATH_DELIMITER)[PATH_POS]);
-        String host = requestHeader.get(HOST);
-        String connection = requestHeader.get(CONNECTION);
-        String accept = requestHeader.get(ACCEPT);
+        String[] startLine = line.split(PATH_DELIMITER);
+        String method = startLine[HTTP_METHOD_POS];
+        URI uri = URI.create(startLine[PATH_POS]);
 
-        return new HttpRequest(method, uri, host, connection, accept);
+        Map<String, String> headers = getHeaders(br);
+
+        if(method.equals("POST")){
+            int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH));
+            char[] body = new char[contentLength];
+            return new HttpRequest(method, uri, headers, new String(body, 0, br.read(body)));
+        }
+
+        return new HttpRequest(method, uri, headers, null);
+    }
+
+    public String getExtension() {
+        String[] split = getPath().split(SLASH_DELIMITER)[EXTENSION_POS].split(DOT_DELIMITER);
+        //TODO 3항 연산자 안쓰도록 수정
+        return split.length > 1 ? split[1] : split[0];
+    }
+
+    private static Map<String, String> getHeaders(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String line;
+
+        while (!(line = br.readLine()).equals(END)) {
+            String[] header = line.split(" ");
+            if (line.startsWith(HOST) || line.startsWith(CONNECTION) || line.startsWith(ACCEPT) || line.startsWith(CONTENT_LENGTH)) {
+                headers.put(header[KEY_INDEX], header[VALUE_INDEX]);
+            }
+        }
+
+        return headers;
     }
 
     public URI getUri() {
         return uri;
     }
-
     public String getMethod() {
         return method;
     }
-
     public String getPath() {
         return uri.getPath();
     }
-
-    public String getExtension() {
-        String[] split = getPath().split(SLASH_DELIMITER)[EXTENSION_POS].split(DOT_DELIMITER);
-        return split.length > 1 ? split[1] : split[0];
-    }
-
-    private static Map<String, String> getRequestHeader(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        Map<String, String> request = new HashMap<>();
-
-        String line = br.readLine();
-        request.put(START_LINE, line);
-
-        while(!line.equals(END)){
-            line = br.readLine();
-            String[] splitLine = line.split(" ");
-
-            if(splitLine[KEY_INDEX].equals(HOST)){
-                request.put(HOST, splitLine[VALUE_INDEX]);
-            }
-            if(splitLine[KEY_INDEX].equals(CONNECTION)){
-                request.put(CONNECTION, splitLine[VALUE_INDEX]);
-            }
-            if(splitLine[KEY_INDEX].equals(ACCEPT)){
-                request.put(ACCEPT, splitLine[VALUE_INDEX]);
-            }
-        }
-
-        return request;
+    public String getBody() {
+        return body;
     }
 
     @Override
     public String toString() {
-        return "HttpRequest " + "{" + "\n" +
-                "method='" + method + "\n" +
-                "uri=" + uri + "\n" +
-                "host='" + host + "\n" +
-                "connection='" + connection + "\n" +
-                "accept='" + accept + " }";
+        return "HttpRequest{" + "\n" +
+                "method=" + method + ",\n" +
+                "uri=" + uri + ",\n" +
+                "headers=" + headers + ",\n" +
+                "body=" + body + "\n" +
+                '}';
     }
 }

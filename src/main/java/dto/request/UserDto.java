@@ -21,8 +21,9 @@ public class UserDto {
         this.email = Objects.requireNonNull(email, "email은 필수입니다.");
     }
 
-    public static UserDto from(String query){
-        Map<String, String> parameters = Arrays.stream(query.split("&"))
+    public static UserDto from(String info){
+        System.out.println(info);
+        Map<String, String> parameters = Arrays.stream(info.split("&"))
                 .map(param -> param.split("="))
                 .filter(pair -> pair.length > 1)
                 .collect(Collectors.toMap(pair -> pair[KEY], pair -> pair[VALUE]));

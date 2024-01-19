@@ -1,5 +1,7 @@
 package model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.HttpStatus;
 import webserver.ResponseEnum;
 
@@ -12,9 +14,11 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import static constant.HttpRequestConstant.*;
+import static webserver.HttpStatus.FOUND;
+import static webserver.HttpStatus.OK;
 
 public class HttpResponse {
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
     private static final String VERSION = "HTTP/1.1 ";
     private static final String CONTENT_TYPE = "Content-Type: ";
     private static final String CONTENT_LENGTH = "Content-Length: ";
@@ -56,11 +60,11 @@ public class HttpResponse {
         }
     }
 
-    public static HttpResponse redirect(HttpStatus httpStatus, String location) {
+    public static HttpResponse redirect(String location) {
         Map<String, String> header = new HashMap<>();
         header.put(LOCATION, location);
 
-        return new HttpResponse(httpStatus, header, NO_BODY);
+        return new HttpResponse(FOUND, header, NO_BODY);
     }
 
     public static HttpResponse errorResponse(HttpStatus httpStatus, String errorMessage) {
@@ -73,14 +77,14 @@ public class HttpResponse {
         return new HttpResponse(httpStatus, header, errorMessageBytes);
     }
 
-    public static HttpResponse response200(HttpStatus httpStatus, String extension, String path) throws IOException {
+    public static HttpResponse response200(String extension, String path) throws IOException {
         byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
 
         Map<String, String> header = new HashMap<>();
         header.put(CONTENT_TYPE, ResponseEnum.getContentType(extension)+";charset=utf-8" + CRLF);
         header.put(CONTENT_LENGTH, String.valueOf(body.length) + CRLF);
 
-        return new HttpResponse(httpStatus, header, body);
+        return new HttpResponse(OK, header, body);
     }
 
     @Override
@@ -90,5 +94,4 @@ public class HttpResponse {
                 ", body=" + new String(body, StandardCharsets.UTF_8) +
                 '}';
     }
-
 }

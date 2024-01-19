@@ -14,7 +14,7 @@ public class URLMapper {
     public static final Map<String, Function<HttpRequest, HttpResponse>> URL_MAPPING = new HashMap<>();
 
     static {
-        URL_MAPPING.put("GET /user/create", UserController::createUser);
+        URL_MAPPING.put("POST /user/create", UserController::createUser);
     }
 
     //찾으면 찾은 컨트롤러 반환, 못 찾으면 ResourceController 반환
