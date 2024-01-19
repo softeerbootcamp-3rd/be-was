@@ -32,7 +32,7 @@ public class StaticResponseHandlerImpl implements StaticResponseHandler {
         try {
             httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
             httpResponseDto.setStatus(Status.OK);
-            httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept()));
+            httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept(), httpRequest.getStartLine().getPathUrl()));
         } catch (NotFound e) {
             logger.error("파일을 찾을 수 없습니다." + e.getMessage());
             httpResponseDto.setStatus(Status.REDIRECT);
