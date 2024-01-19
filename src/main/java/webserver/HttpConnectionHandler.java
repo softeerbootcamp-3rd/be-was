@@ -2,21 +2,20 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.Mime;
 import webserver.http.Request;
 import webserver.http.Response;
 
-public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+public class HttpConnectionHandler implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(HttpConnectionHandler.class);
 
     private Socket connection;
-    private static final String ROOT_DIRECTORY = System.getProperty("user.dir");
 
-    public RequestHandler(Socket connectionSocket) {
+    public HttpConnectionHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
@@ -28,20 +27,19 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             Request request = new Request(br);
+            request.print();
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            byte[] body = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
+            Response response = new Response(request);
 
-            Response response = new Response(request, body);
-
-            sendResponse(dos, body, response);
+            sendResponse(dos,request, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void sendResponse(DataOutputStream dos, byte[] body, Response response) {
+    private void sendResponse(DataOutputStream dos,Request request, Response response) {
         try{
             dos.writeBytes(response.getHttpVersion() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n");
             for (Map.Entry<String, String> entry : response.getResponseHeader().entrySet()) {
@@ -50,8 +48,10 @@ public class RequestHandler implements Runnable {
                 dos.writeBytes(key + ": " + value + "\r\n");
             }
 
-            dos.writeBytes("\r\n");
-            dos.write(body, 0, body.length);
+            if(!request.getResponseMimeType().getMimeType().equals(Mime.NONE.getMimeType())){
+                dos.writeBytes("\r\n");
+                dos.write(response.getResponseBody(), 0, response.getResponseBody().length);
+            }
             dos.flush();
         }catch (IOException e) {
             logger.error(e.getMessage());

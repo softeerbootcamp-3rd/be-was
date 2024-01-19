@@ -2,6 +2,7 @@ package webserver.http;
 
 public enum StatusCode {
     OK(200),
+    FOUND(302),
     BAD_REQUEST(400),
     UNAUTHORIZED(401);
 

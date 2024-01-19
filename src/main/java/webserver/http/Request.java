@@ -1,20 +1,26 @@
 package webserver.http;
 
+import webserver.HttpConnectionHandler;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static webserver.http.Mime.convertMime;
+
 public class Request {
     String httpMethod;
     String requestTarget;
     String httpVersion;
     Float httpVersionNum;
+    Mime responseMimeType;
     private final ArrayList<String> headerContent;
     private final ArrayList<String> bodyContent;
     HashMap<String, String> requestHeader;
     HashMap<String, String> requestBody;
+    RequestHandler requestHandler;
 
     public Request(BufferedReader br) throws IOException {
         headerContent = new ArrayList<>();
@@ -26,10 +32,13 @@ public class Request {
         parseRequestStartLine(headerContent.get(0));
         parseRequestHeader();
         parseRequestBody();
+
+        requestHandler = new RequestHandler();
+        requestHandler.handleRequest(this);
     }
 
-    public String getRequestTarget() {
-        return requestTarget;
+    public void addRequestHeader(String key, String val){
+        requestHeader.put(key, val);
     }
 
     private void parseRequestHeader() {
@@ -61,6 +70,12 @@ public class Request {
         this.httpMethod = requestStartLine[0];
         this.requestTarget = requestStartLine[1];
         this.httpVersion = requestStartLine[2];
+        int lastDotIndex = requestTarget.lastIndexOf('.');
+        if (lastDotIndex != -1 && lastDotIndex < requestTarget.length() - 1) {
+            this.responseMimeType = convertMime(requestTarget.substring(lastDotIndex + 1));
+        } else {
+            this.responseMimeType = Mime.NONE;
+        }
         httpVersionNum = Float.parseFloat(httpVersion.split("/")[1]);
     }
 
@@ -97,16 +112,28 @@ public class Request {
         System.out.println("requestTarget : " + this.requestTarget);
         System.out.println("httpVersion : " + this.httpVersion);
         System.out.println("httpVersionNum : " + this.httpVersionNum);
-
-        System.out.println("requestHeader : ");
+        System.out.println("mime : " + this.responseMimeType.getMimeType());
+        System.out.println("[ requestHeader ]");
         for (Map.Entry<String, String> entry : requestHeader.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
-        System.out.println("requestBody : ");
+        System.out.println("[ requestBody ]");
         for (Map.Entry<String, String> entry : requestBody.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("*******************************************");
+    }
+
+    public String getRequestTarget() {
+        return requestTarget;
+    }
+
+    public Mime getResponseMimeType() {
+        return responseMimeType;
+    }
+
+    public HashMap<String, String> getRequestHeader() {
+        return requestHeader;
     }
 
 }
