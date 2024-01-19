@@ -7,8 +7,10 @@ import controller.Controller;
 import controller.DefaultController;
 import controller.UserController;
 import dto.HttpRequestDto;
+import dto.HttpResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpResponseUtil;
 import util.WebUtil;
 
 public class RequestHandler implements Runnable {
@@ -30,10 +32,12 @@ public class RequestHandler implements Runnable {
 
             // Controller mapping
             Controller controller = mappingController(request);
-            DataOutputStream dos = new DataOutputStream(out);
-            controller.handleRequest(request, dos);
+            HttpResponseDto httpResponse = controller.handleRequest(request);
 
             // Send HTTP Response
+            DataOutputStream dos = new DataOutputStream(out);
+            dos.writeBytes(HttpResponseUtil.responseHeaderBuilder(httpResponse));
+            dos.write(httpResponse.getBody(), 0, httpResponse.getBody().length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());

@@ -1,29 +1,27 @@
 package controller;
 
 import dto.HttpRequestDto;
+import dto.HttpResponseDto;
 import org.slf4j.Logger;
 import util.HttpResponseUtil;
 import util.WebUtil;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 public interface Controller {
-    void handleRequest(HttpRequestDto request, DataOutputStream dos);
+    public abstract HttpResponseDto handleRequest(HttpRequestDto request);
 
-    default void getPage(HttpRequestDto request, DataOutputStream dos, Logger logger) {
+    default HttpResponseDto getPage(HttpRequestDto request, Logger logger) {
         byte[] body = null;
         try {
             body = Files.readAllBytes(new File(WebUtil.getPath(request.getUri())).toPath());
         } catch (IOException e) {
             logger.error(e.getMessage());
-            HttpResponseUtil.response404Header(dos);
-            return;
+            return HttpResponseUtil.response404();
         }
 
-        HttpResponseUtil.response200Header(dos, body.length, WebUtil.getContentType(request.getUri()));
-        HttpResponseUtil.responseBody(dos, body);
+        return HttpResponseUtil.response200(body, WebUtil.getContentType(request.getUri()));
     }
 }

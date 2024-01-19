@@ -1,58 +1,47 @@
 package util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
+import dto.HttpResponseDto;
+import dto.HttpResponseDtoBuilder;
 
 public class HttpResponseUtil {
-    private static final Logger logger = LoggerFactory.getLogger(HttpResponseUtil.class);
 
-    public static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public static String responseHeaderBuilder(HttpResponseDto httpResponseDto) {
+        StringBuilder stringBuilder = new StringBuilder();
+        // Status line
+        stringBuilder.append(httpResponseDto.getHttpVersion()).append(" ")
+                .append(httpResponseDto.getStatus()).append(" ")
+                .append(httpResponseDto.getMessage()).append(" \r\n");
+        // Response Headers
+        httpResponseDto.getHeaders().forEach((key, value) -> {
+            stringBuilder.append(key).append(": ")
+                    .append(value).append("\r\n");
+        });
+        stringBuilder.append("\r\n");
+
+        return stringBuilder.toString();
     }
 
-    public static void response302Header(DataOutputStream dos, String location) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public static HttpResponseDto response200(byte[] body, String contentType) {
+        return new HttpResponseDtoBuilder().setStatus("200").setMessage("OK")
+                .setHeaders("Content-Type", contentType + ";charset=utf-8")
+                .setHeaders("Content-Length", Integer.toString(body.length))
+                .setBody(body)
+                .build();
     }
 
-    public static void response400Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 400 Bad Request \r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public static HttpResponseDto response302(String location) {
+        return new HttpResponseDtoBuilder().setStatus("302").setMessage("Found")
+                .setHeaders("Location", location)
+                .build();
     }
 
-    public static void response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public static HttpResponseDto response400() {
+        return new HttpResponseDtoBuilder().setStatus("400").setMessage("Bad Request")
+                .build();
     }
 
-    public static void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public static HttpResponseDto response404() {
+        return new HttpResponseDtoBuilder().setStatus("404").setMessage("Not Found")
+                .build();
     }
 }
