@@ -1,6 +1,5 @@
 # java-was-2023
-
-Java Web Application Server 2023
+Java Web Application Server 2023   
 
 # 1단계
 
@@ -31,11 +30,11 @@ Java Web Application Server 2023
 
 ### 체크리스트
 - [x] 회원가입 기능 구현
-  - [x] 회원가입 데이터 유효성 검증
-  - [x] 쿼리스트링의 value 데이터 디코딩
-  - [x] 쿼리스트링을 User 객체의 필드에 동적 바인딩
-  - [x] 회원가입 예외처리
-  - [x] 단위테스트 작성
+    - [x] 회원가입 데이터 유효성 검증
+    - [x] 쿼리스트링의 value 데이터 디코딩
+    - [x] 쿼리스트링을 User 객체의 필드에 동적 바인딩
+    - [x] 회원가입 예외처리
+    - [x] 단위테스트 작성
 
 ### 학습 내역
 - GET
@@ -44,6 +43,6 @@ Java Web Application Server 2023
 
 <hr>
 
-### 프로젝트 정보
-이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was
+## 프로젝트 정보 
+이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
 를 참고하여 작성되었습니다.
