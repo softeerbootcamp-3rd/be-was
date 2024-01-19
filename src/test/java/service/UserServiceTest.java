@@ -23,6 +23,9 @@ class UserServiceTest {
         // then
         User user = Database.findUserById(userDto.getUserId());
         assertEquals(userDto.getName(), user.getName());
+        assertEquals(userDto.getEmail(), user.getEmail());
+        assertEquals(userDto.getPassword(), user.getPassword());
+        assertEquals(1, Database.findAll().size());
     }
 
     @Test
@@ -31,7 +34,6 @@ class UserServiceTest {
         UserDto userDto1 = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
         UserDto userDto2 = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
 
-
         // when
         userService.createUser(userDto1);
         userService.createUser(userDto2);
@@ -39,6 +41,5 @@ class UserServiceTest {
         // then
         Collection<User> users = Database.findAll();
         assertEquals(1, users.size());
-
     }
 }
