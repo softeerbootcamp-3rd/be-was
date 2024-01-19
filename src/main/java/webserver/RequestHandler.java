@@ -3,14 +3,21 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Function;
 
+import http.response.HttpResponse;
+import http.ContentType;
+import http.request.HttpRequest;
+import http.HttpStatus;
+import utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.FileReader;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -21,62 +28,46 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // Request Header 출력
-            InputStreamReader inputStreamReader = new InputStreamReader(in);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            String requestUrl = getRequestUrl(bufferedReader);
+            // httpRequest 생성 및 출력
+            HttpRequest httpRequest = new HttpRequest(br);
+            logger.debug(httpRequest.toString());
 
-            while (bufferedReader.ready()) {
-                logger.debug(bufferedReader.readLine());
-            }
-
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            if(requestUrl != null && requestUrl.equals("/index.html")) {
-                byte[] body = Files.readAllBytes(new File("src/main/resources/templates" + requestUrl).toPath());
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+            // 동적 & 정적 자원 분할 처리
+            Function<HttpRequest, HttpResponse> controller = ControllerMapper.getController(httpRequest);
+            HttpResponse response;
+            String requestUrl = httpRequest.getRequestLine().getUri();
+            // 동적 자원 처리
+            if (controller != null) {
+                logger.info("controller 호출");
+                response = controller.apply(httpRequest);
             } else {
-                byte[] body = "Hello World".getBytes();
-                response200Header(dos, body.length);
-                responseBody(dos, body);
+                // 정적 자원 처리
+                logger.info("정적 파일 호출");
+                if (requestUrl.equals("/")) {
+                    requestUrl = "/index.html";
+                }
+
+                String basePath = FileReader.getBasePath(requestUrl);
+                Path filePath = Path.of(basePath + requestUrl);
+                if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
+                    String extension = FileReader.getFileExtension(filePath);
+                    byte[] body = FileReader.readFile(requestUrl);
+                    response = HttpResponse.of(HttpStatus.OK, ContentType.getContentType(extension), body);
+                } else {
+                    logger.info("404 not found");
+                    response = HttpResponse.of(HttpStatus.NOT_FOUND);
+                }
             }
+
+            // 응답
+            DataOutputStream dos = new DataOutputStream(out);
+            response.send(dos, httpRequest);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private String getRequestUrl(BufferedReader bufferedReader) {
-        try {
-            String[] tokens = bufferedReader.readLine().split(" ");
-            for (String s : tokens) {
-                logger.debug(s);
-            }
-            return tokens[1];
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-        return null;
-    }
 }
