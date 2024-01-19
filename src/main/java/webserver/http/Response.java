@@ -34,7 +34,7 @@ public class Response {
         responseHeader.put("Date",ZonedDateTime.now().format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)));
         responseHeader.put("Server", "MyServer/1.0" );
         responseHeader.put("Content-Length", Integer.toString(responseBody.length));
-        responseHeader.put("Content-Type", "text/html; charset=UTF-8");
+        responseHeader.put("Content-Type", request.getRequestHeader().get("Accept").split(",")[0]);
         Optional.ofNullable(request.getRequestHeader().get("Location"))
                 .ifPresent(location -> responseHeader.put("Location", location));
     }
@@ -69,11 +69,13 @@ public class Response {
 
     void setBody(Request request){
         try{
-            if(request.responseMimeType.getMimeType().equals("text/html")){
+            if(request.responseMimeType==Mime.TEXT_HTML){
                 responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/templates" + request.getRequestTarget()).toPath());
             }
             else{
-                responseBody = new byte[0];
+                responseBody = Files.readAllBytes(new File(ROOT_DIRECTORY + "/src/main/resources/static" + request.getRequestTarget()).toPath());
+                System.out.println(ROOT_DIRECTORY + "/src/main/resources/static" + request.getRequestTarget());
+                //responseBody = new byte[0];
             }
         }
         catch (IOException e) {
