@@ -22,21 +22,28 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
+        try {
+            InputStream in = connection.getInputStream();
+            OutputStream out = connection.getOutputStream();
+            DataOutputStream dos = new DataOutputStream(out);
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            execute(in, dos);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void execute(InputStream in, DataOutputStream dos) throws Exception {
+        try {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
             HttpRequest httpRequest = new HttpRequest(connection, in);
             logger.debug(httpRequest.toString());
-            DataOutputStream dos = new DataOutputStream(out);
 
             Class<?> controllerClass = ControllerMapper.getController(httpRequest.getHttpMethod());
             Response response = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
             HttpResponse.response(dos, response);
-
-        } catch (IOException | InvocationTargetException | NoSuchMethodException | InstantiationException |
-                 IllegalAccessException e) {
-            logger.error(e.getMessage());
+        } catch (IndexOutOfBoundsException e) {
+            HttpResponse.response(dos, new Response(HttpStatus.BAD_REQUEST));
         }
     }
 
