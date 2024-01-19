@@ -10,12 +10,9 @@ public class HttpRequestConstant {
     public static final String HOST = "Host:";
     public static final String CONNECTION = "Connection:";
     public static final String ACCEPT = "Accept:";
-    public static final String NEW_LINE = "\n";
+    public static final String START_LINE = "StartLine";
     public static final int HTTP_METHOD_POS = 0;
     public static final int PATH_POS = 1;
-    public static final int HOST_POS = 1;
-    public static final int CONNECTION_POS = 2;
-    public static final int ACCEPT_POS = 3;
     public static final String PATH_DELIMITER = " ";
     public static final int EXTENSION_POS = 1;
     public static final String EXTENSION_DELIMITER = "/";

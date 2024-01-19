@@ -24,17 +24,17 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest httpRequest = HttpRequest.from(in);
+            System.out.println(httpRequest.toString());
             Function<HttpRequest, HttpResponse> controller = URLMapper.getController(httpRequest);
 
-            if(controller != null){
-                HttpResponse httpResponse = controller.apply(httpRequest);
+            if(controller == null){
+                HttpResponse httpResponse = HttpResponse.response200(httpRequest, OK);
                 httpResponse.send(out);
                 return;
             }
 
-            HttpResponse httpResponse = HttpResponse.response200(httpRequest, OK);
+            HttpResponse httpResponse = controller.apply(httpRequest);
             httpResponse.send(out);
-
 
         } catch (IOException e) {
             logger.error(e.getMessage());
