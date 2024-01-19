@@ -14,7 +14,7 @@ public class User {
         this.email = email;
     }
 
-    private void validate(String userId, String password, String name, String email){
+    private void validate(String userId, String password, String name, String email) {
         if (userId == null || password == null || name == null || email == null) {
             throw new IllegalArgumentException("모든 필드가 입력되야 합니다.");
         }

@@ -5,6 +5,7 @@ import model.Response;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import static model.MimeType.getContentTypeByExtension;
 
 public class HttpResponse {

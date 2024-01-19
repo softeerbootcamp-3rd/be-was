@@ -5,6 +5,7 @@ import dto.UserCreateRequestDto;
 import model.HttpStatus;
 import model.Request;
 import model.Response;
+import util.UrlParser;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,8 +18,8 @@ import static webserver.RequestHandler.serveStaticResource;
 
 public class UserHandler {
 
-    private static final String HOME = "/index.html";
-    private static final String CREATE = "/create";
+    private final String HOME = "/index.html";
+    private final String CREATE = "/create";
     private final UserController userController = new UserController();
 
     public Response handleUserPath(String url, Request request, DataOutputStream dos) throws IOException {

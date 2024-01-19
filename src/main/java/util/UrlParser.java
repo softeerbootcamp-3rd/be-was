@@ -18,7 +18,7 @@ public class UrlParser {
         return queryParams;
     }
 
-    private static String decodeQuery(String query){
+    private static String decodeQuery(String query) {
         return URLDecoder.decode(query, StandardCharsets.UTF_8);
     }
 }

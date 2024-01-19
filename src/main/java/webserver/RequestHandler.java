@@ -15,7 +15,7 @@ import static util.HttpResponse.*;
 
 public class RequestHandler implements Runnable {
     private static final String USER_PATH = "/user";
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
     private final UserHandler userHandler = new UserHandler();
 
@@ -36,7 +36,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private static Request getRequest(InputStream in) throws IOException {
+    private Request getRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
         String line = br.readLine();
