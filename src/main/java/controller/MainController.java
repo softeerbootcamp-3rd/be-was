@@ -33,8 +33,8 @@ public class MainController {
                 statusCode = "200";
             }
             else {
-                statusCode = "404";
-                redirectUrl = "/error404";
+                statusCode = "302";
+                redirectUrl = "/error404.html";
             }
         }
         else if(request.getPath().equals("/")) { // 홈 리다이렉트
@@ -53,13 +53,9 @@ public class MainController {
                 body = Files.readAllBytes(new File(base + "/templates/user/form.html").toPath());
             }
         }
-        else if(request.getPath().equals("/error404")) {
-            statusCode = "200";
-            body = Files.readAllBytes(new File(base + "/templates/error404.html").toPath());
-        }
         else { // 알 수 없는 요청시 404ERROR
             statusCode = "404";
-            redirectUrl = "/error404";
+            body = Files.readAllBytes(new File(base + "/templates/error404.html").toPath());
         }
 
         return new Response(statusCode, body, mimeType, redirectUrl);
