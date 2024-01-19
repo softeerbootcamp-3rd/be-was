@@ -28,12 +28,12 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             execute(in, dos);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void execute(InputStream in, DataOutputStream dos) throws Exception {
+    private void execute(InputStream in, DataOutputStream dos) throws IOException {
         try {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest httpRequest = new HttpRequest(connection, in);
@@ -44,6 +44,8 @@ public class RequestHandler implements Runnable {
             HttpResponse.response(dos, response);
         } catch (IndexOutOfBoundsException e) {
             HttpResponse.response(dos, new Response(HttpStatus.BAD_REQUEST));
+        } catch (Exception e) {
+            HttpResponse.response(dos, new Response(HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
