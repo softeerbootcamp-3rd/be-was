@@ -83,11 +83,12 @@ A. 파일 종류에 따라 응답 헤더의 content type을 다르게 지정해�
 - 원하는 한글의 모습으로 반환하기 위해 디코딩 과정 필요
 - URLDecoder클래스의 decode 함수를 사용
 
-### 2. Enum을 사용한 분기 처리
+### 2. Enum
 - 요청받은 URL에 따라 다른 함수를 호출해야함
 - if 문을 통한 분기는 요청 URL이 추가될 때마다 조건문을 추가로 작성해야함
 - Enum을 이용하면 요청 URL이 추가될 때마다 Enum 상수만 추가하면 됨
-- 상수별 호출할 메소드를 Service 클래스에 구현
+- 요청 처리: 상수별 호출할 메소드를 Service 클래스에 구현
+- enum의 상수는 static final이므로 추상 메소드 구현 시 static method만 호출 가능
  
 ### 3. JUnit
 1. given-when-then 패턴
