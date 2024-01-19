@@ -1,20 +1,20 @@
 package utils;
 
-import dto.ResponseDto;
+import model.Response;
 
 public class HeaderBuilder {
 
-    public static String build(ResponseDto responseDto) {
-        if (responseDto.getCode() == 400) {
+    public static String build(Response response) {
+        if (response.getCode() == 400) {
             return header400();
         }
-        if (responseDto.getCode() == 404) {
+        if (response.getCode() == 404) {
             return header404();
         }
-        if (responseDto.getCode() == 302) {
-            return header302(responseDto);
+        if (response.getCode() == 302) {
+            return header302(response);
         }
-        return header200(responseDto);
+        return header200(response);
     }
 
     private static String header400() {
@@ -27,49 +27,18 @@ public class HeaderBuilder {
                 + "\r\n";
     }
 
-    private static String header302(ResponseDto responseDto) {
+    private static String header302(Response response) {
         return "HTTP/1.1 302 Found \n"
-                + "Location: " + responseDto.getUrl() + "\r\n"
+                + "Location: " + response.getUrl() + "\r\n"
                 + "\r\n";
     }
 
-    private static String header200(ResponseDto responseDto) {
+    private static String header200(Response response) {
         return "HTTP/1.1 200 OK \n"
                 + "HTTP/1.1 200 OK \r\n"
-                + "Content-Type: " + contentType(responseDto.getUrl())
+                + "Content-Type: " + ContentType.findContentType(response.getUrl())
                 + ";charset=utf-8\r\n"
-                + "Content-Length: " + responseDto.getBody().length + "\r\n"
+                + "Content-Length: " + response.getBody().length + "\r\n"
                 + "\r\n";
-    }
-
-    private static String contentType(String url) {
-        if (url.endsWith(".css")) {
-            return "text/css";
-        }
-        if (url.endsWith(".js")) {
-            return "text/javascript";
-        }
-        if (url.endsWith(".ico")) {
-            return "image/x-icon";
-        }
-        if (url.endsWith(".ttf")) {
-            return "font/ttf";
-        }
-        if (url.endsWith(".woff")) {
-            return "font/woff";
-        }
-        if (url.endsWith(".woff2")) {
-            return "font/woff2";
-        }
-        if (url.endsWith(".svg")) {
-            return "image/svg+xml";
-        }
-        if (url.endsWith(".png")) {
-            return "image/png";
-        }
-        if (url.endsWith(".eot")) {
-            return "application/vnd.ms-fontobject";
-        }
-        return "text/html";
     }
 }

@@ -1,18 +1,14 @@
-package dto;
+package model;
 
-public class ResponseDto {
+public class Response {
 
     private final String url;
     private final int code;
     private final byte[] body;
 
-    public ResponseDto() {
-        this.url = "/";
-        this.code = 200;
-        this.body = "NULL".getBytes();
-    }
+    // todo 생성자 오버로딩 만들기
 
-    public ResponseDto(String path, int code, byte[] body) {
+    public Response(String path, int code, byte[] body) {
         this.url = path;
         this.code = code;
         this.body = body;

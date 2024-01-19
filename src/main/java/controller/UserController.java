@@ -1,6 +1,6 @@
 package controller;
 
-import dto.ResponseDto;
+import model.Response;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ public class UserController implements Controller {
 
     private static final UserService userService = new UserService();
 
-    public ResponseDto route(String url) {
+    public Response route(String url) {
         if (url.startsWith("/user/create")) {
             return createUser(url);
         } else {
@@ -20,30 +20,30 @@ public class UserController implements Controller {
         }
     }
 
-    private ResponseDto getPage(String url) {
+    private Response getPage(String url) {
         String filePath = "src/main/resources/templates" + url;
 
         try {
             byte[] body = Files.readAllBytes(new File(filePath).toPath());
-            return new ResponseDto(url, 200, body);
+            return new Response(url, 200, body);
         } catch (IOException e) {
             byte[] body = "404 Not Found".getBytes();
-            return new ResponseDto(url, 404, body);
+            return new Response(url, 404, body);
         }
     }
 
-    private ResponseDto createUser(String url) {
+    private Response createUser(String url) {
         Map<String, String> params = ParamBuilder.getParams(url);
 
         try {
             userService.saveUser(params);
         } catch (NullPointerException e) {
-            return new ResponseDto("", 400, "cannot find parameter.".getBytes());
+            return new Response("", 400, "cannot find parameter.".getBytes());
         } catch (IllegalArgumentException e) {
-            return new ResponseDto("", 400, "user id already exists.".getBytes());
+            return new Response("", 400, "user id already exists.".getBytes());
         }
 
         String location = "/";
-        return new ResponseDto(location, 302, "".getBytes());
+        return new Response(location, 302, "".getBytes());
     }
 }

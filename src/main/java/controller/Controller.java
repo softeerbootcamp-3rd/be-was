@@ -1,8 +1,8 @@
 package controller;
 
-import dto.ResponseDto;
+import model.Response;
 
 public interface Controller {
 
-    ResponseDto route(String url);
+    Response route(String url);
 }

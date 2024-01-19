@@ -3,7 +3,7 @@ package webserver;
 import controller.Controller;
 import controller.HomeController;
 import controller.UserController;
-import dto.ResponseDto;
+import model.Response;
 import java.io.*;
 import java.net.Socket;
 
@@ -34,11 +34,11 @@ public class RequestHandler implements Runnable {
             String url = request.getUrl();
 
             Controller controller = getController(url);
-            ResponseDto responseDto = controller.route(url);
+            Response response = controller.route(url);
 
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes(HeaderBuilder.build(responseDto));
-            dos.write(responseDto.getBody(), 0, responseDto.getBody().length);
+            dos.writeBytes(HeaderBuilder.build(response));
+            dos.write(response.getBody(), 0, response.getBody().length);
             dos.flush();
         } catch (Exception e) {
             logger.error("error in run", e);
