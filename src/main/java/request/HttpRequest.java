@@ -1,20 +1,17 @@
-package model;
+package request;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
-public class RequestHeader {
+public class HttpRequest {
 
-    private Integer port;
     private String method;
     private String path;
     private String httpVersion;
 
-    public RequestHeader(BufferedReader br, Integer port) throws IOException {
-        String line = br.readLine(); // 예시: GET /index.html HTTP/1.1 중 /index.html 추출
-        String[] tokens = line.split(" ");
+    public HttpRequest(String requestLine) throws IOException {
 
-        this.port = port;
+        String[] tokens = requestLine.split(" ");
+
         this.method = tokens[0];
         this.path = tokens[1];
         this.httpVersion = tokens[2];
@@ -32,7 +29,7 @@ public class RequestHeader {
         return httpVersion;
     }
 
-    public Integer getPort() {
-        return port;
+    public String getHttpRequst() {
+        return method + " " + path + " " + httpVersion;
     }
 }

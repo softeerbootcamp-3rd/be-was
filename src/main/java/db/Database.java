@@ -21,4 +21,9 @@ public class Database {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    // 데이터베이스에 저장된 회원정보의 개수를 반환
+    public static int getUserCount() {
+        return users.size();
+    }
 }

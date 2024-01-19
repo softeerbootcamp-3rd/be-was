@@ -1,12 +1,6 @@
 package webserver;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static util.ThreadUtil.startServer;
+import static util.ThreadPoolManager.startServer;
 
 public class WebServer {
     private static final int DEFAULT_PORT = 8080;
