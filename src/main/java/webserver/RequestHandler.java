@@ -21,6 +21,7 @@ public class RequestHandler implements Runnable {
     private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
 
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
+    private final String RESOURCES_STATIC_URL = "src/main/resources/static";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -49,7 +50,7 @@ public class RequestHandler implements Runnable {
                     filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
 
                 } else { //.js .css ...
-                    ;
+                    filePath = Paths.get(RESOURCES_STATIC_URL + request.getUrl());
                 }
             } else {
                 String path = controller.process(request.getRequestParam());
@@ -62,12 +63,38 @@ public class RequestHandler implements Runnable {
                 response.respond404();
             } else if (filePath.toString().startsWith("redirect:")) {
                 String path=filePath.toString();
-                response.response301RedirectHeader(path.substring("redirect:".length(),path.length()));
+                response.response301RedirectHeader(path.substring("redirect:".length()));
+                response.responseBody(body);
+            } else if (filePath.toString().endsWith(".html")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "text/html");
+                response.responseBody(body);
+            } else if (filePath.toString().endsWith(".css")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "text/css");
+                response.responseBody(body);
+            } else if (filePath.toString().endsWith(".js")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "text/javascript");
+                response.responseBody(body);
+            } else if (filePath.toString().endsWith(".woff") || filePath.toString().endsWith(".ttf")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "application/x-font");
+                response.responseBody(body);
+            } else if(filePath.toString().endsWith(".ico")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "image/x-icon");
+                response.responseBody(body);
+            } else if (filePath.toString().endsWith(".jpg")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "image/jpeg");
+                response.responseBody(body);
+            } else if (filePath.toString().endsWith(".png")) {
+                body = Files.readAllBytes(filePath);
+                response.response200Header(body.length, "image/png");
                 response.responseBody(body);
             } else {
-                body = Files.readAllBytes(filePath);
-                response.response200Header(body.length);
-                response.responseBody(body);
+                response.respond404();
             }
 
         } catch (IOException e) {
