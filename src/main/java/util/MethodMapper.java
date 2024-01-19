@@ -21,8 +21,8 @@ public class MethodMapper {
     }
 
     // 요청이 들어온 HTTP 메소드와 경로에 매팽되어 있는 컨트롤러_메소드가 있는지 확인
-    public static boolean hasMethod(String MethodAndPath) {
-        return CONTROLLER_METHOD.containsKey(MethodAndPath);
+    public static boolean hasMethod(String methodAndPath) {
+        return CONTROLLER_METHOD.containsKey(methodAndPath);
     }
 
     // 요청에 맞게 매핑되는 컨트롤러_메소드 를 실행
