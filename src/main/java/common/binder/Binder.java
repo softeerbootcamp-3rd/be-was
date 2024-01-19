@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 
 import static common.util.Util.splitParamters;
 import static common.util.Util.splitParameter;
-import static common.util.Util.decode;
 
 public class Binder {
 
@@ -15,7 +14,7 @@ public class Binder {
         for (String param : params) {
             String[] keyValue = splitParameter(param);
             String fieldName = keyValue[0];
-            String fieldValue = decode(keyValue[1]);
+            String fieldValue = keyValue[1];
 
             Field field = dtoClass.getDeclaredField(fieldName);
             field.setAccessible(true);
