@@ -10,6 +10,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import controller.FrontController;
 import controller.UserController;
+import exception.SourceException;
+import model.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ResponseBuilder;
@@ -29,6 +31,7 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
+//        public static final Map<String, Function<P, R>> REQUEST_MAP = new HashMap<>();
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
@@ -38,12 +41,23 @@ public class RequestHandler implements Runnable {
             RequestHeader requestHeader = readRequest(br);
 
             UserController controller = FrontController.getController(requestHeader.getPath());
-            // -> resource 경로 반환
-            byte[] bytes = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
-            ResponseBuilder.sendResponse(dos, bytes);
 
-        } catch (IOException | ClassNotFoundException e) {
+            CommonResponse response = getResponse(requestHeader, controller);
+            ResponseBuilder.sendResponse(dos, response.getBody(), response.getHttpStatus());
+        } catch (ClassNotFoundException | IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private static CommonResponse getResponse(RequestHeader requestHeader, UserController controller) throws IOException {
+        CommonResponse response = null;
+        try {
+            byte[] bytes = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
+            response = CommonResponse.onOk(bytes);
+        } catch (SourceException e) {
+            response = CommonResponse.onFail(e.getErrorCode().getStatus(), e.getMessage());
+        } finally {
+            return response;
         }
     }
 
