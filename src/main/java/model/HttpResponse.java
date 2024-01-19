@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +21,9 @@ public class HttpResponse {
     private static final String LOCATION = "Location: ";
     private static final byte[] NO_BODY = "".getBytes();
     private static final String CRLF = "\r\n";
+    public static final int EXTENSION_POS = 1;
+    public static final String SLASH_DELIMITER = "/";
+    public static final String DOT_DELIMITER = "\\.";
 
     private final HttpStatus httpStatus;
     private Map<String, String> header;
@@ -76,7 +78,9 @@ public class HttpResponse {
 
     public static HttpResponse response200(HttpRequest httpRequest, HttpStatus httpStatus) throws IOException {
         String path = httpRequest.getUri().getPath();
-        String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
+        String[] split = path.split(SLASH_DELIMITER)[EXTENSION_POS].split(DOT_DELIMITER);
+        String extension = split.length > 1 ? split[1] : split[0];
+
         byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
 
         Map<String, String> header = new HashMap<>();
