@@ -3,7 +3,6 @@ package service;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import request.SignUpRequest;
 import webserver.RequestHandler;
 
 import java.util.Collection;
@@ -49,13 +48,12 @@ public class UserService {
 
     private User createUserEntity(String request) {
 
-        if (!request.startsWith("GET")) {
-            throw new IllegalArgumentException("회원가입에 실패하였습니다.");
-        }
-
         String[] userInfo = request.split(" ")[1].split("&");
 
         if (userInfo.length != 4) {
+            throw new IllegalArgumentException("회원가입에 실패하였습니다.");
+        }
+        if (!request.startsWith("GET")) {
             throw new IllegalArgumentException("회원가입에 실패하였습니다.");
         }
 
@@ -64,8 +62,6 @@ public class UserService {
         String name = userInfo[2].split("=")[1];
         String email = userInfo[3].split("=")[1];
 
-        SignUpRequest signUpRequest = new SignUpRequest(userId, password, name, email);
-
-        return new User(signUpRequest);
+        return new User(userId, password, name, email);
     }
 }

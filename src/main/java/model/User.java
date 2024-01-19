@@ -1,18 +1,16 @@
 package model;
 
-import request.SignUpRequest;
-
 public class User {
     private String userId;
     private String password;
     private String name;
     private String email;
 
-    public User(SignUpRequest signUpRequest) {
-        this.userId = signUpRequest.getUserId();
-        this.password = signUpRequest.getPassword();
-        this.name = signUpRequest.getName();
-        this.email = signUpRequest.getEmail();
+    public User(String userId, String password, String name, String email) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
 
