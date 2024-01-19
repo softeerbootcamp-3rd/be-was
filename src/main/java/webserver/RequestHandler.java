@@ -24,9 +24,8 @@ public class RequestHandler implements Runnable {
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String requestline = br.readLine();
 
-            HttpRequest httpRequest = new HttpRequest(requestline);
+            HttpRequest httpRequest = new HttpRequest(br);
             // request line 출력
             logger.debug("port : {}, request method : {}, filePath : {}, http version : {}\n",
                     httpRequest.getMethod(), httpRequest.getPath(), httpRequest.getHttpVersion());
