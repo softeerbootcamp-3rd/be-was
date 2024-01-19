@@ -3,15 +3,13 @@ package service;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
-
-import java.util.Collection;
+import webserver.DispatcherServlet;
 
 import static db.Database.*;
 
 public class UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private volatile static UserService instance;
 
     private UserService() {
@@ -34,16 +32,6 @@ public class UserService {
         logger.debug("Total User Count : {}\n", getUserCount());
         logger.debug("UserId : {}, Password : {}, Name : {}, Email : {}\n",
                 user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
-    }
-
-    // 회원 아이디를 전달받아서 데이터베이스에서 회원정보를 조회하는 메소드
-    public User findUser(String userId) {
-        return findUserById(userId);
-    }
-
-    // 데이터베이스에 저장된 모든 회원정보를 조회하는 메소드
-    public Collection<User> findUsers() {
-        return findAll();
     }
 
     private User createUserEntity(String request) {
