@@ -18,7 +18,7 @@ public class RequestHandler {
     }
 
     private void initializeRoutes() {
-        routeHandlers.put("/user/create", this::handleUserCreate);
+        routeHandlers.put("/user/create", (Request r)-> handleUserCreate(r));
     }
 
     public void handleRequest(Request request) {
