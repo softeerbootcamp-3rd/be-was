@@ -17,7 +17,7 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-      - name: "Merge pull request"
+      - name: "Merge pull webserver.request"
         uses: "actions/github-script@v6"
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
