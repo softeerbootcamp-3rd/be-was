@@ -35,7 +35,6 @@ public class UserControllerImpl implements UserController {
             userService.signUp(userSignUpDto);
             httpResponseDto.setStatus(Status.REDIRECT);
             httpResponseDto.setLocation("/user/login.html");
-            httpResponseDto.setContentType(ContentType.PLAIN);
         }
     }
 
