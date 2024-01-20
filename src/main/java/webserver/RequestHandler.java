@@ -27,9 +27,9 @@ public class RequestHandler implements Runnable {
 
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request request = new Request(in, connection.getPort());
+            Request request = new Request(in);
 
-            logger.debug("port {} || method : {}, http : {}, url : {}", request.getPort(),
+            logger.debug("port {} || method : {}, http : {}, url : {}", connection.getPort(),
                     request.getMethod(), request.getHttp(), request.getUrl());
 
             String url = request.getUrl();
