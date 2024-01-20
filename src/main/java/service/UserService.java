@@ -15,7 +15,7 @@ public class UserService {
      * @throws NullPointerException user Id, password, name 중 하나라도 비어있는 경우 발생
      * @throws IllegalArgumentException 동일한 아이디가 이미 등록되어있는 경우 발생
      */
-    public void saveUser(Map<String, String> params)
+    public void createUser(Map<String, String> params)
             throws NullPointerException, IllegalArgumentException {
         try {
             if (params.get("userId").isEmpty() || params.get("password").isEmpty() || params.get(

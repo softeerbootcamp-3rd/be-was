@@ -52,7 +52,7 @@ public class UserController implements Controller {
         Map<String, String> params = ParamBuilder.getParams(url);
 
         try {
-            userService.saveUser(params);
+            userService.createUser(params);
         } catch (NullPointerException e) {
             byte[] body = "cannot find parameter.".getBytes();
             return new Response(400, body);

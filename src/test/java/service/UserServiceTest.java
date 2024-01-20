@@ -20,7 +20,7 @@ class UserServiceTest {
                 "email", "user@email");
 
         // when
-        userService.saveUser(userParams);
+        userService.createUser(userParams);
 
         // then
         User result = Database.findUserById(userParams.get("userId"));
@@ -38,10 +38,10 @@ class UserServiceTest {
                 "email", "user@email");
         Map<String, String> userParams2 = Map.of("userId", "user2", "password", "pwd", "name", "user",
                 "email", "user@email");
-        userService.saveUser(userParams1);
+        userService.createUser(userParams1);
 
         // when
-        Throwable result = catchThrowable(() -> userService.saveUser(userParams2));
+        Throwable result = catchThrowable(() -> userService.createUser(userParams2));
 
         // then
         assertThat(result).as("같은 아이디로 회원가입하는 경우 오류 발생")
@@ -60,10 +60,10 @@ class UserServiceTest {
         Map<String, String> userParams4 = Map.of();
 
         // when
-        Throwable result1 = catchThrowable(() -> userService.saveUser(userParams1));
-        Throwable result2 = catchThrowable(() -> userService.saveUser(userParams2));
-        Throwable result3 = catchThrowable(() -> userService.saveUser(userParams3));
-        Throwable result4 = catchThrowable(() -> userService.saveUser(userParams4));
+        Throwable result1 = catchThrowable(() -> userService.createUser(userParams1));
+        Throwable result2 = catchThrowable(() -> userService.createUser(userParams2));
+        Throwable result3 = catchThrowable(() -> userService.createUser(userParams3));
+        Throwable result4 = catchThrowable(() -> userService.createUser(userParams4));
 
         // then
         assertThat(result1).as("아이디가 비어있는 경우 오류 발생").isInstanceOf(NullPointerException.class);
