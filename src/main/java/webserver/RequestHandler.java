@@ -9,7 +9,6 @@ import model.HttpResponse;
 import util.URLMapper;
 
 import static constant.HttpRequestConstant.*;
-import static webserver.HttpStatus.OK;
 
 public class RequestHandler implements Runnable {
     private Socket connection;
@@ -25,13 +24,8 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest httpRequest = HttpRequest.from(in);
             logger.debug(httpRequest.toString());
-            Function<HttpRequest, HttpResponse> controller = URLMapper.getController(httpRequest);
 
-            if(controller == null){
-                HttpResponse httpResponse = HttpResponse.response200(OK, httpRequest.getExtension(), httpRequest.getPath());
-                httpResponse.send(out);
-                return;
-            }
+            Function<HttpRequest, HttpResponse> controller = URLMapper.getController(httpRequest);
 
             HttpResponse httpResponse = controller.apply(httpRequest);
             httpResponse.send(out);

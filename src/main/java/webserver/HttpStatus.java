@@ -3,7 +3,8 @@ package webserver;
 public enum HttpStatus {
     OK("200", "OK"),
     FOUND("302", "Found"),
-    BAD_REQUEST("400", "Bad Request");
+    BAD_REQUEST("400", "Bad Request"),
+    INTERNAL_SERVER_ERROR("500", "Internal Server Error");
     private String code;
     private String status;
 
