@@ -9,10 +9,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import controller.FrontController;
 import controller.UserController;
+import dto.ResourceDto;
 import exception.SourceException;
 import model.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ResourceHandler;
 import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
@@ -51,10 +53,10 @@ public class RequestHandler implements Runnable {
     private static CommonResponse getResponse(RequestHeader requestHeader, UserController controller) throws IOException {
         CommonResponse response = null;
         try {
-            byte[] bytes = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
-            response = CommonResponse.onOk(bytes);
+            ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
+            response = CommonResponse.onOk(resource.getHttpStatus(), ResourceHandler.resolveResource(resource));
         } catch (SourceException e) {
-            response = CommonResponse.onFail(e.getErrorCode().getStatus(), e.getMessage());
+            response = CommonResponse.onFail(e.getErrorCode().getHttpStatus(), e.getMessage());
         } finally {
             return response;
         }
@@ -91,16 +93,5 @@ public class RequestHandler implements Runnable {
         String key = parseKey.substring(0, 1).toLowerCase() + parseKey.substring(1);
         String value = header[1];
         RequestHeader.setHeader(requestHeader, key, value);
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 }

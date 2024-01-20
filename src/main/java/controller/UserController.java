@@ -9,7 +9,7 @@ public class UserController {
 
     public ResourceDto process(QueryParams queryParams) {
         userService.createUser(queryParams);
-        return ResourceDto.of("/index.html");
+        return ResourceDto.of("/index.html", 302);
     }
 
     public ResourceDto process(String path) {
