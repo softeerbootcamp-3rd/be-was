@@ -5,6 +5,9 @@ import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
@@ -42,20 +45,24 @@ public class RequestHandler implements Runnable {
             printRequest(requestLineDto, requestHeaderDto);
 
             String queryString = requestLineDto.getQueryString();
+
+            Path source = Paths.get(requestLineDto.getPath());
+            String mimeType = Files.probeContentType(source);
+
             if (queryString == null) {
-                createResponse(out, SUCCESS, requestLineDto.getPath());
+                createResponse(out, SUCCESS, mimeType, requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
                 try {
                     userController.create(requestLineDto.getQueryString());
-                    createResponse(out, REDIRECT, INDEX_FILE_PATH);
+                    createResponse(out, REDIRECT, mimeType, INDEX_FILE_PATH);
                 } catch (EmptyFormException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, BAD_REQUEST, USER_CREATE_FORM_FAIL_FILE_PATH);
+                    createResponse(out, BAD_REQUEST, mimeType, USER_CREATE_FORM_FAIL_FILE_PATH);
                 }
                 catch (DuplicateUserIdException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, CONFLICT, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
+                    createResponse(out, CONFLICT, mimeType, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
         } catch (Exception e) {

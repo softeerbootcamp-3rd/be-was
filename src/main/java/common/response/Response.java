@@ -12,18 +12,18 @@ public class Response {
 
     private static final String RESOURCES_PATH = "src/main/resources/";
 
-    public static void createResponse(OutputStream out, Status status, String url) throws IOException {
+    public static void createResponse(OutputStream out, Status status, String contentType, String url) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
         byte[] body = Files.readAllBytes(new File(getFilePath(url)).toPath());
         if (status == REDIRECT) {
             response302Header(dos, url);
             return;
         }
-        responseHeader(dos, status, body.length);
+        responseHeader(dos, status, contentType, body.length);
         responseBody(dos, body);
     }
 
-    private static void responseHeader(DataOutputStream dos, Status status, int lengthOfBodyContent) throws IOException {
+    private static void responseHeader(DataOutputStream dos, Status status, String contentType, int lengthOfBodyContent) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         String statusLine = stringBuilder.append("HTTP/1.1 ")
                 .append(status.getCode())
@@ -33,7 +33,7 @@ public class Response {
                 .toString();
 
         dos.writeBytes(statusLine);
-        dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+        dos.writeBytes("Content-Type: " + contentType + "\r\n");
         dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
         dos.writeBytes("\r\n");
     }
