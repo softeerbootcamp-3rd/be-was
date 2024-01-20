@@ -2,7 +2,6 @@ package controller;
 
 import dto.HttpRequestDto;
 import dto.HttpResponseDto;
-import dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -28,7 +27,7 @@ public class UserController implements Controller {
     public HttpResponseDto createUser(HttpRequestDto request) {
         try {
             Map<String, String> parameters = WebUtil.parseQueryString(request.getUri());
-            userService.createUser(UserDto.buildUserDtoFromParams(parameters));
+            userService.createUser(parameters);
             return HttpResponseUtil.response302("/index.html");
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());

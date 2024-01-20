@@ -42,6 +42,9 @@ public class HttpRequestDto {
     }
 
     public String toString() {
+        this.headers.forEach((key, value) -> {
+            System.out.println("key: " + key + " value: " + value);
+        });
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Requeset Line: ").append(this.method + " " + this.uri + " " + this.httpVersion);
         return stringBuilder.toString();
