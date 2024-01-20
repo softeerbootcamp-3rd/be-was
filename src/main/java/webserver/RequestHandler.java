@@ -28,7 +28,7 @@ public class RequestHandler implements Runnable {
             Function<HttpRequest, HttpResponse> controller = URLMapper.getController(httpRequest);
 
             if(controller == null){
-                HttpResponse httpResponse = HttpResponse.response200(OK, httpRequest.getPath(), httpRequest.getExtension());
+                HttpResponse httpResponse = HttpResponse.response200(OK, httpRequest.getExtension(), httpRequest.getPath());
                 httpResponse.send(out);
                 return;
             }

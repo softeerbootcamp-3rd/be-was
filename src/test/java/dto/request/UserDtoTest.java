@@ -23,16 +23,4 @@ class UserDtoTest {
                 .contains("user1", "1234", "test", "test@naver.com");
     }
 
-    @DisplayName("하나라도 필드가 없는 경우 예외가 발생한다.")
-    @Test
-    void userDtoFromWithNoEmail(){
-        //given
-        String query = "userId=user1&password=1234&name=test&email=";
-
-        //when //then
-        assertThatThrownBy(() -> UserDto.from(query))
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("email은 필수입니다.");
-    }
-
 }

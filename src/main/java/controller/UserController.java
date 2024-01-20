@@ -13,9 +13,8 @@ public class UserController {
         try{
             UserDto userDto = UserDto.from(httpRequest.getUri().getQuery());
             UserService.signUp(userDto);
-            System.out.println(HttpResponse.redirect(FOUND, "/index.html").toString());
             return HttpResponse.redirect(FOUND, "/index.html");
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException | NullPointerException e){
             return HttpResponse.errorResponse(BAD_REQUEST, e.getMessage());
         }
     }
