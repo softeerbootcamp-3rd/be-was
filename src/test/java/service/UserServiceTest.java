@@ -5,12 +5,18 @@ import static org.assertj.core.api.Assertions.*;
 import db.Database;
 import java.util.Map;
 import model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class UserServiceTest {
 
     private final UserService userService = new UserService();
+
+    @BeforeEach
+    void beforeEach() {
+        Database.clear();
+    }
 
     @Test
     @DisplayName("회원가입 정상처리")
@@ -34,9 +40,9 @@ class UserServiceTest {
     @DisplayName("중복 회원가입")
     void saveUserDuplication() {
         // given
-        Map<String, String> userParams1 = Map.of("userId", "user2", "password", "pwd", "name", "user",
+        Map<String, String> userParams1 = Map.of("userId", "user", "password", "pwd", "name", "user",
                 "email", "user@email");
-        Map<String, String> userParams2 = Map.of("userId", "user2", "password", "pwd", "name", "user",
+        Map<String, String> userParams2 = Map.of("userId", "user", "password", "pwd", "name", "user",
                 "email", "user@email");
         userService.createUser(userParams1);
 
