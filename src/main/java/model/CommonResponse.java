@@ -3,10 +3,10 @@ package model;
 import util.HttpStatus;
 
 public class CommonResponse {
-    private int httpStatus;
+    private HttpStatus httpStatus;
     private byte[] body;
 
-    private CommonResponse(int httpStatus, byte[] body){
+    private CommonResponse(HttpStatus httpStatus, byte[] body){
         this.httpStatus = httpStatus;
         this.body = body;
     }
@@ -15,15 +15,15 @@ public class CommonResponse {
         return body;
     }
 
-    public int getHttpStatus() {
+    public HttpStatus getHttpStatus() {
         return httpStatus;
     }
 
-    public static CommonResponse onOk(byte[] body){
-        return new CommonResponse(HttpStatus.OK.getCode(), body);
+    public static CommonResponse onOk(HttpStatus httpStatus, byte[] body){
+        return new CommonResponse(httpStatus, body);
     }
 
-    public static CommonResponse onFail(int status, String message){
-        return new CommonResponse(status, message.getBytes());
+    public static CommonResponse onFail(HttpStatus httpStatus, String message){
+        return new CommonResponse(httpStatus, message.getBytes());
     }
 }

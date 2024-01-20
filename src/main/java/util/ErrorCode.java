@@ -2,19 +2,19 @@ package util;
 
 public enum ErrorCode {
 
-    DUPLICATED_USER(400, "존재하는 사용자 입니다."),
-    NOT_VALID_PATH(404, "잘못된 요청입니다.");
+    DUPLICATED_USER(HttpStatus.BAD_REQUEST, "존재하는 사용자 입니다."),
+    NOT_VALID_PATH(HttpStatus.NOT_FOUND, "잘못된 요청입니다.");
 
-    private final int status;
-    private String message;
+    private final HttpStatus httpStatus;
+    private final String message;
 
-    ErrorCode(int errorCode, String message) {
-        this.status = errorCode;
+    ErrorCode(HttpStatus httpStatus, String message) {
+        this.httpStatus = httpStatus;
         this.message = message;
     }
 
-    public int getStatus() {
-        return status;
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
     public String getMessage() {

@@ -3,8 +3,10 @@ package util;
 public enum HttpStatus {
 
     OK(200, "OK"),
-    BAD_REQUEST(404, "BAD_REQUEST"),
-    REDIRECT(302, "REDIRECT");
+    BAD_REQUEST(400, "Bad Request"),
+    NOT_FOUND(404, "Not Found"),
+
+    REDIRECT(302, "Found");
 
 
     private final int code;
@@ -22,4 +24,14 @@ public enum HttpStatus {
     public String getMessage() {
         return message;
     }
+
+    public static HttpStatus findByStatusCode(int statusCode) {
+        for (HttpStatus status : values()) {
+            if (status.getCode() == statusCode) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Invalid status code: " + statusCode);
+    }
+
 }
