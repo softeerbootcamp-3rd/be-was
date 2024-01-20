@@ -34,6 +34,7 @@ class UserServiceTest {
         assertThat(user)
                 .extracting("userId", "password", "name", "email")
                 .contains("user1", "1234", "test", "test@naver.com");
+
     }
 
     @DisplayName("이미 존재하는 아이디인 경우 예외가 발생한다.")

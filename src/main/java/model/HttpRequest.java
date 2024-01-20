@@ -21,6 +21,10 @@ public class HttpRequest {
 
     private static final int KEY_INDEX = 0;
     private static final int VALUE_INDEX = 1;
+    public static final int EXTENSION_POS = 1;
+    public static final String SLASH_DELIMITER = "/";
+    public static final String DOT_DELIMITER = "\\.";
+
     public HttpRequest(String method, URI uri, String host, String connection, String accept) {
         this.method = Objects.requireNonNull(method);
         this.uri = Objects.requireNonNull(uri);
@@ -47,6 +51,15 @@ public class HttpRequest {
 
     public String getMethod() {
         return method;
+    }
+
+    public String getPath() {
+        return uri.getPath();
+    }
+
+    public String getExtension() {
+        String[] split = getPath().split(SLASH_DELIMITER)[EXTENSION_POS].split(DOT_DELIMITER);
+        return split.length > 1 ? split[1] : split[0];
     }
 
     private static Map<String, String> getRequestHeader(InputStream in) throws IOException {
@@ -83,5 +96,4 @@ public class HttpRequest {
                 "connection='" + connection + "\n" +
                 "accept='" + accept + " }";
     }
-
 }

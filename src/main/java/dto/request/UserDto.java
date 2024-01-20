@@ -22,7 +22,6 @@ public class UserDto {
     }
 
     public static UserDto from(String query){
-        System.out.println(query);
         Map<String, String> parameters = Arrays.stream(query.split("&"))
                 .map(param -> param.split("="))
                 .filter(pair -> pair.length > 1)

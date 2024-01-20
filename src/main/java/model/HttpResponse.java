@@ -21,9 +21,6 @@ public class HttpResponse {
     private static final String LOCATION = "Location: ";
     private static final byte[] NO_BODY = "".getBytes();
     private static final String CRLF = "\r\n";
-    public static final int EXTENSION_POS = 1;
-    public static final String SLASH_DELIMITER = "/";
-    public static final String DOT_DELIMITER = "\\.";
 
     private final HttpStatus httpStatus;
     private Map<String, String> header;
@@ -76,11 +73,7 @@ public class HttpResponse {
         return new HttpResponse(httpStatus, header, errorMessageBytes);
     }
 
-    public static HttpResponse response200(HttpRequest httpRequest, HttpStatus httpStatus) throws IOException {
-        String path = httpRequest.getUri().getPath();
-        String[] split = path.split(SLASH_DELIMITER)[EXTENSION_POS].split(DOT_DELIMITER);
-        String extension = split.length > 1 ? split[1] : split[0];
-
+    public static HttpResponse response200(HttpStatus httpStatus, String extension, String path) throws IOException {
         byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
 
         Map<String, String> header = new HashMap<>();
