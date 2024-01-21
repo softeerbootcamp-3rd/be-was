@@ -39,7 +39,7 @@ public class ControllerHandler implements Handler {
     try {
       controllerReturnValue = (String) method.invoke(controllerInstance, args);
     }catch (InvocationTargetException targetException){
-      if (targetException.getTargetException().getClass().isAssignableFrom(RuntimeException.class))
+      if (RuntimeException.class.isAssignableFrom(targetException.getTargetException().getClass()))
         throw (RuntimeException) targetException.getTargetException();
       else
         throw new RuntimeException();
