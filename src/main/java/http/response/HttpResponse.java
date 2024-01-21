@@ -17,12 +17,9 @@ public class HttpResponse {
     private Map<String, String> responseHeader = new HashMap<>();
     private byte[] body;
 
-    public HttpResponse(HttpStatus status, ContentType content, String redirect, byte[] body) {
+    public HttpResponse(HttpStatus status, String redirect) {
         this.status = status;
-        responseHeader.put("Content-Type", content.getType());
         responseHeader.put("Location", redirect);
-        responseHeader.put("Content-Length", String.valueOf(body.length));
-        this.body = body;
     }
 
     public HttpResponse(HttpStatus status, ContentType content, byte[] body) {
@@ -36,8 +33,8 @@ public class HttpResponse {
         this.status = status;
     }
 
-    public static HttpResponse of(HttpStatus status, ContentType content, String redirect, byte[] body) {
-        return new HttpResponse(status, content, redirect, body);
+    public static HttpResponse of(HttpStatus status, String redirect) {
+        return new HttpResponse(status, redirect);
     }
 
     public static HttpResponse of(HttpStatus status, ContentType content, byte[] body) {
