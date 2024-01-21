@@ -28,15 +28,13 @@ public class DispatcherServlet implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = new HttpRequest(br);
-            String requestLine = httpRequest.getRequestLine();
-            String URI = httpRequest.getUri();
+            String requestLine = httpRequest.getRequestLine(); // request line 반환
 
-
-            // request line 출력
             logger.debug("request method : {}, filePath : {}, http version : {}\n",
-                    httpRequest.getMethod(), httpRequest.getUri(), httpRequest.getHttpVersion());
+                    httpRequest.getMethod(), httpRequest.getUri(), httpRequest.getHttpVersion()); // request line 출력
 
-            StatusCode status = getStatus(requestLine); // 상태코드 반환
+            StatusCode status = findController(requestLine); // request line을 통해 적절한 controller를 찾아서 처리 및 status 반환
+            String URI = httpRequest.getUri(); // URI 반환
 
             response(status, URI, out);
 
@@ -45,7 +43,7 @@ public class DispatcherServlet implements Runnable {
         }
     }
 
-    public static StatusCode getStatus(String requestLine) throws IOException {
+    public static StatusCode findController(String requestLine) throws IOException {
         String URI = requestLine.split(" ")[1];
         if (URI.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
             return userController.handleUserRequest(requestLine);
