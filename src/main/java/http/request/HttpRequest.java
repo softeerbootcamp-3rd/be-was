@@ -10,7 +10,7 @@ import java.util.Map;
 public class HttpRequest {
     private final RequestLine requestLine;
     private final GeneralHeader generalHeader;
-    private Map<String, String> etc = new HashMap<>();
+    private Map<String, String> etcHeaders = new HashMap<>();
 
     // TODO : POST 추가할 때 body 필드 추가하기~~
 
@@ -28,7 +28,7 @@ public class HttpRequest {
             if (generalHeader.checkGeneralHeader(key)) {
                 generalHeader.addGeneralHeader(key, value);
             } else {
-                etc.put(key, value);
+                etcHeaders.put(key, value);
             }
         }
     }
@@ -42,7 +42,7 @@ public class HttpRequest {
                 "\n- General Header" +
                 mapToString(generalHeader.getGeneralHeaders()) +
                 "\n- 기타 헤더" +
-                "\n" + mapToString(etc);
+                "\n" + mapToString(etcHeaders);
     }
 
 
