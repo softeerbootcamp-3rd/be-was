@@ -21,43 +21,43 @@ class UserControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("status200Parameters")
+    @MethodSource("status_200_Parameters")
     @DisplayName("200 상태코드를 반환하는지 확인")
     void return_status_200(String requestLine) {
 
         // when
-        int status = userController.route(requestLine).getStatus();
+        int status = userController.handleUserRequest(requestLine).getStatus();
 
         // then
         assertThat(status).isEqualTo(200);
     }
 
     @ParameterizedTest
-    @MethodSource("status302Parameters")
+    @MethodSource("status_302_Parameters")
     @DisplayName("302 상태코드를 반환하는지 확인")
     void return_status_302(String requestLine) {
 
         // when
-        int status = userController.route(requestLine).getStatus();
+        int status = userController.handleUserRequest(requestLine).getStatus();
 
         // then
         assertThat(status).isEqualTo(302);
     }
 
     @ParameterizedTest
-    @MethodSource("status404Parameters")
+    @MethodSource("status_404_Parameters")
     @DisplayName("404 상태코드를 반환하는지 확인")
     void return_status_404(String requestLine) {
 
         // when
-        int status = userController.route(requestLine).getStatus();
+        int status = userController.handleUserRequest(requestLine).getStatus();
 
         // then
         assertThat(status).isEqualTo(404);
     }
 
 
-    private static Stream<Arguments> status200Parameters() {
+    private static Stream<Arguments> status_200_Parameters() {
         return Stream.of(
                 Arguments.of("GET /user/form.html HTTP/1.1"),
                 Arguments.of("GET /user/login.html HTTP/1.1"),
@@ -67,7 +67,7 @@ class UserControllerTest {
         );
     }
 
-    private static Stream<Arguments> status302Parameters() {
+    private static Stream<Arguments> status_302_Parameters() {
         return Stream.of(
                 Arguments.of("GET /user/create?userId=test1&password=password&name=이름&email=test1%40test.com HTTP/1.1"),
                 Arguments.of("GET /user/create?userId=test2&password=password&name=이름&email=test2%40test.com HTTP/1.1"),
@@ -75,7 +75,7 @@ class UserControllerTest {
         );
     }
 
-    private static Stream<Arguments> status404Parameters() {
+    private static Stream<Arguments> status_404_Parameters() {
         return Stream.of(
                 Arguments.of("GET /qna HTTP/1.1"),
                 Arguments.of("GET /qna/form.html HTTP/1.1"),

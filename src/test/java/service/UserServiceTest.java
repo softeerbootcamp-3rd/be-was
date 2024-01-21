@@ -26,12 +26,12 @@ class UserServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("validUserParameters")
+    @MethodSource("valid_User_Parameters")
     @DisplayName("회원가입이 정상적으로 처리되는지 확인")
     void sign_up_success(String request) {
 
         // when
-        userService.signUp(request);
+        userService.join(request);
         User findUser = database.findUserById("test2");
 
         // then
@@ -39,33 +39,33 @@ class UserServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidUserParameters")
+    @MethodSource("invalid_User_Parameters")
     @DisplayName("회원가입 진행 중 매개변수가 유효하지 않으면 예외를 IllegalArgumentException 예외를 발생시키는지 확인")
     void invalid_param(String request) {
 
-        assertThatThrownBy(() -> userService.signUp(request))
+        assertThatThrownBy(() -> userService.join(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("회원가입에 실패하였습니다.");
     }
 
     @ParameterizedTest
-    @MethodSource("invalidMethodParameters")
+    @MethodSource("invalid_Method_Parameters")
     @DisplayName("회원가입 진행 중 요청 메소드가 GET이 아니면 예외를 IllegalArgumentException 예외를 발생시키는지 확인")
     void invalid_method(String request) {
 
-        assertThatThrownBy(() -> userService.signUp(request))
+        assertThatThrownBy(() -> userService.join(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("회원가입에 실패하였습니다.");
     }
 
 
-    private static Stream<Arguments> validUserParameters() {
+    private static Stream<Arguments> valid_User_Parameters() {
         return Stream.of(
                 Arguments.of("GET userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1")
         );
     }
 
-    private static Stream<Arguments> invalidUserParameters() {
+    private static Stream<Arguments> invalid_User_Parameters() {
         return Stream.of(
                 Arguments.of("GET userId=test2&password=test2&name=test2 HTTP/1.1"), // email이 없는 경우
                 Arguments.of("GET password=test2&name=test2&email=test2@test.com HTTP/1.1"), // userId가 없는 경우
@@ -74,7 +74,7 @@ class UserServiceTest {
         );
     }
 
-    private static Stream<Arguments> invalidMethodParameters() {
+    private static Stream<Arguments> invalid_Method_Parameters() {
         return Stream.of(
                 Arguments.of("POST userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1"), // POST 요청인 경우
                 Arguments.of("PUT userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1") // PUT 요청인 경우
