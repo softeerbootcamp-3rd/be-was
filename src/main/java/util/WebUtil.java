@@ -33,6 +33,9 @@ public class WebUtil {
         MIME_CONTENT_TYPE.put("svg", "image/svg+xml");
         MIME_CONTENT_TYPE.put("ico", "image/x-icon");
         MIME_CONTENT_TYPE.put("ttf", "font/ttf");
+        MIME_CONTENT_TYPE.put("eot", "application/vnd.ms-fontobject");
+        MIME_CONTENT_TYPE.put("woff", "font/woff");
+        MIME_CONTENT_TYPE.put("woff2", "font/woff2");
     }
 
     // HTTP Request를 파싱해서 HttpRequestParam 객체로 리턴
