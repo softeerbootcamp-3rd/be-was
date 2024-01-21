@@ -155,3 +155,32 @@ joel-costigliola.github.io](http://joel-costigliola.github.io/assertj/)
 </div>
 </details>
 
+<details>
+
+<summary> ✏ STEP 3 학습 기록 </summary>
+<div markdown="1">
+
+### MIME 타입
+- Multipurpose Internet Mail Extensions
+- 미디어 타입이란 문서, 파일 또는 바이트 집합의 성격과 형식을 나타낸다.
+- 간단히 말하면 파일 변환을 의미한다.
+- 현재는 웹을 통해 여러 파일을 전달하는데 사용되고 있지만 이 용어가 생길 땐 이메일과 함께 동봉할 파일을 텍스트 문자로 전환해서 이메일 시스템을 통해 전달하기 위해 개발되어 Internet Mail Extensions라고 불리기 시작했다고 한다.
+
+### MIME 사용이유
+- 예전에는 텍스트파일을 주고 받는데 ASCII 코드로 공통된 표준에 따르기면 하면 되었으나, 네트워크를 통해 ASCII가 아닌 Binary 파일을 보내는 경우가 생기게 되었다. 음악파일, 비디오파일, 워드파일 등등 ASCII만으로 전송이 불가하기 때문에 기존시스템에서 문제없이 전달하기 위해 텍스트변환이 필요했다.
+TCP/IP 네트워크에서 이메일교환 시 표준으로 RFC822(기본 이메일메시지 형식 정의)이메일 메시지 형식이 사용되는데 이 형식은 ASCII코드를 사용하기 때문에 간단한 메시지를 전송할 경우에는 유용하지만, 다른 통신형태까지 모두 지원하기에는 유연성이 부족하다.
+따라서, 이러한 다른 통신형태의 다양한 메시지를 지원하기 위해서 MIME표준이 개발된 것이다.
+
+### 웹 개발에 자주 쓰이는 타입 
+
+|type|discription|
+|------|---|
+|application/octet-stream|바이너리 파일의 기본|
+|text/plain|텍스트, unknown textual file이어도 브러우저는 display|
+|text/css|웹 페이지 스타일링을 하는 css 파일은 반드시 text/css 타입으로 보내야 함|
+|text/html|HTML 파일은 반드시 이 타입으로 보내져야 햠|
+|text/javascript|다른 타입으로 보내게 되면 로드나 실행되지 않음|
+
+</div>
+</details>
+
