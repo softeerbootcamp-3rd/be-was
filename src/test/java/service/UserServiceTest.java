@@ -1,7 +1,6 @@
 package service;
 
 import db.Database;
-import dto.UserDto;
 import model.User;
 import org.junit.jupiter.api.Test;
 
@@ -15,28 +14,28 @@ class UserServiceTest {
     @Test
     void 회원가입_서비스() {
         // given
-        UserDto userDto = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
+        User user = new User("ossu1975", "1234", "ossu", "ossu@gmail.com");
 
         // when
-        userService.createUser(userDto);
+        userService.createUser(user);
 
         // then
-        User user = Database.findUserById(userDto.getUserId());
-        assertEquals(userDto.getName(), user.getName());
-        assertEquals(userDto.getEmail(), user.getEmail());
-        assertEquals(userDto.getPassword(), user.getPassword());
+        User findUser = Database.findUserById(user.getUserId());
+        assertEquals(user.getName(), findUser.getName());
+        assertEquals(user.getEmail(), findUser.getEmail());
+        assertEquals(user.getPassword(), findUser.getPassword());
         assertEquals(1, Database.findAll().size());
     }
 
     @Test
     void 중복_아이디_검증() {
         // given
-        UserDto userDto1 = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
-        UserDto userDto2 = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
+        User user1 = new User("ossu1975", "1234", "ossu", "ossu@gmail.com");
+        User user2 = new User("ossu1975", "1234", "ossu", "ossu@gmail.com");
 
         // when
-        userService.createUser(userDto1);
-        userService.createUser(userDto2);
+        userService.createUser(user1);
+        userService.createUser(user2);
 
         // then
         Collection<User> users = Database.findAll();

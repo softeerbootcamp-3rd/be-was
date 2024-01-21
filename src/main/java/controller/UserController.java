@@ -1,8 +1,8 @@
 package controller;
 
 import http.response.HttpResponse;
-import dto.UserDto;
 import http.request.HttpRequest;
+import model.User;
 import service.UserService;
 import http.HttpStatus;
 import utils.Parser;
@@ -46,7 +46,7 @@ public class UserController {
             return new HttpResponse(HttpStatus.BAD_REQUEST);
         }
 
-        UserDto userDto = new UserDto(userId, password, name, email);
-        return userService.createUser(userDto);
+        User user = new User(userId, password, name, email);
+        return userService.createUser(user);
     }
 }
