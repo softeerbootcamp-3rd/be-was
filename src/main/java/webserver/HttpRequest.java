@@ -38,6 +38,11 @@ public class HttpRequest {
         }
     }
 
+    public String getResponseMimeType(){
+        String[] pathParts = getPath().split("\\.");
+        return pathParts[pathParts.length-1];
+    }
+
     public UserDTO toUserDto(){
         extractAndAddUserInfoToHeader();
         return new UserDTO(header.get("userId"), header.get("password"), header.get("name"), header.get("email"));
