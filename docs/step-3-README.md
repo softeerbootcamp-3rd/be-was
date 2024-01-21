@@ -40,7 +40,6 @@ Java Web Application Server 2023
   >- Interface를 구현하는 Class들에 대해 동일한 method를 Overriding하여 여러가지 형태로 구현할 수 있도록 다형성을 높여준다.
   >- Overriding을 통해 다형성을 높여주기 때문에 Interface를 통해 구현된 Class들은 서로 다른 형태로 동작할 수 있다. <br>
   다른 의미로, **메소드의 구현을 강제**하기 위해 존재한다.
-
 - Abstract Class
   >- Abstract Class를 상속받으며 같은 부모 Class를 상속받는 자식 Class들 간에 공통 기능을 각각 구현할 수 있도록 확장성을 높여준다. <br>
   즉, **Subclass들에게 공통된 필드와 메소드를 제공**하기 위해 존재한다.
@@ -57,7 +56,7 @@ Java Web Application Server 2023
 - 스프링부트에서는 DispatcherServlet을 통해 클라이언트의 요청을 받고, 요청에 대한 응답을 보내는 역할을 한다. <Br>
   최종 프로젝트에서는 스프링부트를 활용한 웹 애플리케이션을 구현할 것이기 때문에, 자바로 WAS를 구현하는 과정에서 DispatcherServlet의 동작 원리를 학습하고 흐름을 직접 작성해봄으로써 높은 이해도를 가져갈 수 있을 것이라고 생각했다.
 - DispatcherServlet의 동작 과정
-![스크린샷 2024-01-20 오전 11.03.03.png](..%2F..%2F..%2F..%2F..%2F..%2F..%2Fvar%2Ffolders%2F12%2Fww5v9zpd3250jgrhn05hbb6c0000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_MYysby%2F%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-01-20%20%EC%98%A4%EC%A0%84%2011.03.03.png)
+  <img width="947" alt="스크린샷 2024-01-21 오후 11 58 21" src="https://github.com/taegon98/HMG-Softeer-be-was/assets/102223636/781d1df0-a51c-40b6-b922-e84d972538e8">
   >1. 클라이언트의 요청이 들어오면 DispatcherServlet(Front Controller)이 요청을 받는다.
   >2. DispatcherServlet은 HandlerMapping을 통해 요청에 대한 Controller를 찾는다.
   >3. DispatcherServlet은 HandlerAdapter를 통해 Controller 요청을 위임한다.
