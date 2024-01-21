@@ -12,10 +12,10 @@ import java.io.IOException;
 public class ResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
 
-    public static void sendBody(DataOutputStream dos, HttpStatus httpStatus, byte[] body, String fileExtension) {
+    public static void sendBody(DataOutputStream dos, HttpStatus httpStatus, byte[] body, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 " + httpStatus.getStatus() + " \r\n");
-            dos.writeBytes("Content-Type: text/" + fileExtension + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + body.length + "\r\n");
 
             dos.writeBytes("\r\n");
@@ -29,12 +29,13 @@ public class ResponseHandler {
 
     public static void sendError(DataOutputStream dos, ErrorCode errorCode) {
         byte[] errorMessage = errorCode.getErrorMessage().getBytes();
-        sendBody(dos, errorCode.getHttpStatus(), errorMessage, "plain");
+        sendBody(dos, errorCode.getHttpStatus(), errorMessage, "text/plain");
     }
 
+    // 정적 html 파일로 리다이렉트
     public static void sendRedirect(DataOutputStream dos, String redirectUrl) {
         try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("HTTP/1.1 303 See Other \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Location: " + redirectUrl + "\r\n");
             dos.writeBytes("\r\n");

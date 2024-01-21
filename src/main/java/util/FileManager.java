@@ -5,6 +5,7 @@ import constant.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileManager {
 
@@ -17,8 +18,7 @@ public class FileManager {
         return null;
     }
 
-    public static String getFileExtension(String path) {
-        int i = path.lastIndexOf('.');
-        return path.substring(i+1);
+    public static String getContentType(String path) throws IOException {
+        return Files.probeContentType(Paths.get(path));
     }
 }
