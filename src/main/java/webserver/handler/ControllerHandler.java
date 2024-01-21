@@ -1,4 +1,4 @@
-package webserver.io;
+package webserver.handler;
 
 import webserver.MyHttpServletRequest;
 import webserver.MyHttpServletResponse;

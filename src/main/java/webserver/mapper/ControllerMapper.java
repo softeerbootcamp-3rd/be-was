@@ -2,7 +2,7 @@ package webserver.mapper;
 
 import webserver.controller.Controller;
 import webserver.controller.MyController;
-import webserver.io.ControllerHandler;
+import webserver.handler.ControllerHandler;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
