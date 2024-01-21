@@ -10,7 +10,7 @@ import service.UserService;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class UserCreateTest {
+public class UserServiceTest {
 
     private final UserService userService = new UserService();
 

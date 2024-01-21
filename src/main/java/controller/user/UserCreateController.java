@@ -18,9 +18,9 @@ public class UserCreateController implements UserController {
         try {
             userService.addUser(userId, password, name, email);
         } catch (AlreadyExistUserException e) {
-            return new ModelView("user/form_failed");
+            return new ModelView("/templates/user/form_failed.html");
         }
 
-        return new ModelView("index");
+        return new ModelView("/templates/index.html");
     }
 }
