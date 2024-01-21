@@ -46,7 +46,6 @@ public class HttpRequest {
                 "\n" + mapToString(etcHeaders);
     }
 
-
     public String mapToString(Map<String, String> map) {
         StringBuilder sb = new StringBuilder();
         map.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
