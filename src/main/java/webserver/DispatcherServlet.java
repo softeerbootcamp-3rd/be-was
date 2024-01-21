@@ -48,9 +48,9 @@ public class DispatcherServlet implements Runnable {
     public static StatusCode getStatus(String requestLine) throws IOException {
         String URI = requestLine.split(" ")[1];
         if (URI.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
-            return userController.route(requestLine);
+            return userController.handleUserRequest(requestLine);
         } else {                                         // 그 외의 경로는 HomeController에서 처리
-            return homeController.route(requestLine);
+            return homeController.handleUserRequest(requestLine);
         }
     }
 }

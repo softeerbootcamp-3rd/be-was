@@ -23,7 +23,7 @@ public final class ViewResolver {
         }
         if (status.getStatus() == 302) {
             HttpResponse httpResponse = new HttpResponse(path, "/index.html");
-            response302Header(dos, httpResponse.getRedirectUrl());
+            response302Header(dos, httpResponse.getRedirectUri());
         }
         if (status.getStatus() == 404) {
             response404Header(dos);

@@ -19,7 +19,7 @@ public class HomeController implements Controller {
     }
 
     @Override
-    public StatusCode route(String requestLine) {
+    public StatusCode handleUserRequest(String requestLine) {
         String URI = requestLine.split(" ")[1];
 
         if (URI.equals(HOME.getUrl())) {

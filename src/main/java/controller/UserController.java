@@ -23,7 +23,7 @@ public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public StatusCode route(String requestLine) {
+    public StatusCode handleUserRequest(String requestLine) {
 
         String URI = requestLine.split(" ")[1];
 
@@ -43,6 +43,6 @@ public class UserController implements Controller{
 
     // 회원가입 요청 처리
     public void signUp(String requestLine) {
-        userService.signUp(requestLine);
+        userService.join(requestLine);
     }
 }
