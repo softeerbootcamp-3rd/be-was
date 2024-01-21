@@ -11,15 +11,16 @@ public class HttpRequest {
     private final RequestLine requestLine;
     private final GeneralHeader generalHeader;
     private Map<String, String> etcHeaders = new HashMap<>();
+    private Map<String, String> params = new HashMap<>();
 
     // TODO : POST 추가할 때 body 필드 추가하기~~
 
     public HttpRequest(BufferedReader br) throws IOException {
         // method, url, version 파싱
         String line = br.readLine();
-        String[] tokens = Parser.parsing(line, " ", 3);
+        String[] tokens;
 
-        requestLine = new RequestLine(tokens[0], tokens[1], tokens[2]);
+        requestLine = new RequestLine(Parser.splitRequestList(line));
         generalHeader = new GeneralHeader();
 
         while (!(line = br.readLine()).isEmpty()) {
