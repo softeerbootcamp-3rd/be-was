@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MethodMapper {
-    private static final Map<String, Object[]> CONTROLLER_METHOD = new HashMap<>();
+    private static final Map<String, Method> CONTROLLER_METHOD = new HashMap<>();
 
     static {
         registerMethod();
@@ -27,9 +27,8 @@ public class MethodMapper {
 
     // 요청에 맞게 매핑되는 컨트롤러_메소드 를 실행
     public static void execute(DataOutputStream dos, RequestDto requestDto) {
-        Object[] controllerAndMethod = CONTROLLER_METHOD.get(requestDto.getMethodAndPath());
-        Class<?> controller = (Class<?>) controllerAndMethod[0];
-        Method method = (Method) controllerAndMethod[1];
+        Method method = CONTROLLER_METHOD.get(requestDto.getMethodAndPath());
+        Class<?> controller = method.getDeclaringClass();
 
         try {
             method.invoke(controller, dos, requestDto);
@@ -65,18 +64,18 @@ public class MethodMapper {
         for (Class<?> controller : controllers) {
             Method[] methods = controller.getDeclaredMethods();
             for (Method method : methods) {
+                String httpMethod = "", path = "";
+
                 if (method.isAnnotationPresent(GetMapping.class)) {
-                    GetMapping annotation = method.getAnnotation(GetMapping.class);
-
-                    Object[] controllerAndMethod = new Object[2];
-                    controllerAndMethod[0] = controller;
-                    controllerAndMethod[1] = method;
-
-                    CONTROLLER_METHOD.put(("GET " + annotation.path()), controllerAndMethod);
+                    httpMethod = "GET";
+                    path = (method.getAnnotation(GetMapping.class)).path();
                 }
-            // TODO : POST, PUT 등 다른 요청에 대한 처리 코드 추가
+//             TODO : POST, PUT 등 다른 요청에 대한 처리 코드 추가
+//                else if (method.isAnnotationPresent(PostMapping.class)) {
+//                }
+
+                CONTROLLER_METHOD.put((httpMethod + " " + path), method);
             }
         }
-
     }
 }
