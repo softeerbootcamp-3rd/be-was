@@ -28,7 +28,7 @@ public class DispatcherServlet implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = new HttpRequest(br);
-            String requestLine = httpRequest.getHttpRequst();
+            String requestLine = httpRequest.getRequestLine();
             String URI = httpRequest.getURI();
 
 

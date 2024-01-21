@@ -43,7 +43,7 @@ public class HttpRequest {
         return httpVersion;
     }
 
-    public String getHttpRequst() {
+    public String getRequestLine() {
         return method + " " + URI + " " + httpVersion;
     }
 }
