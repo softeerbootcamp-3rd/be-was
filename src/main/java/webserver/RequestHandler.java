@@ -2,14 +2,19 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import controller.RequestDataController;
 import data.RequestData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import util.RequestParserUtil;
+import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -37,47 +42,14 @@ public class RequestHandler implements Runnable {
             logger.debug(requestData.formatForOutput());
             System.out.println();
 
-            String url = requestData.getRequestContent();
+//            if (url.equals("/")) {
+//                url = "/index.html";
+//            }
 
-            if (url.equals("/")) {
-                url = "/index.html";
-            }
+            String statusCodeUrl = RequestDataController.routeRequest(requestData);
 
-            DataOutputStream dos = new DataOutputStream(out);
+            ResponseBuilder.buildResponse(out, statusCodeUrl);
 
-            byte[] body = Files.readAllBytes(Paths.get("/Users/admin/Softeer/be-was/src/main/resources/templates" + url));
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private static String getFileExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
-            return fileName.substring(lastDotIndex + 1);
-        } else {
-            return ""; // 확장자가 없는 경우
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
