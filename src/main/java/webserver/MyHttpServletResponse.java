@@ -37,6 +37,21 @@ public class MyHttpServletResponse {
   public MyHttpServletResponse(){
     httpStatus=HttpStatus.BAD_REQUEST;
   }
+  public static MyHttpServletResponse staticResource(String resourcePath){
+    String absoluteResourcePathString = absoluteRootPath+staticResourcePath+resourcePath;
+    Path absoluteResourcePath = Paths.get(absoluteResourcePathString);
+    byte[] body;
+    try {
+      body = Files.readAllBytes(absoluteResourcePath);
+    }catch (IOException ioException){
+      throw new RuntimeException();
+    }
+    return new MyHttpServletResponse(HttpStatus.OK,body);
+  }
+  public MyHttpServletResponse(HttpStatus httpStatus,byte[] body){
+    this.httpStatus=httpStatus;
+    this.body=body;
+  }
   public HttpStatus getHttpStatus(){
     return this.httpStatus;
   }
@@ -57,5 +72,4 @@ public class MyHttpServletResponse {
       logger.error(ioException.getMessage());
     }
   }
-
 }
