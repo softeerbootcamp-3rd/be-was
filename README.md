@@ -9,14 +9,10 @@ Java Web Application Server 2023
 
 ---
 
-## 학습 내용
+## 학습 기록
 
-[OOP](./docs/oop.md)
+### 1 주차
 
-[Concurrent Package](./docs/concurrentPackage.md)
+[웹 서버 1단계 - index.html 응답](./docs/step1.md)
 
-[Request Header](./docs/requestHeader.md)
-
-[MIME type](./docs/MIMEType.md)
-
-[Java Thread Model](./docs/javaThreadModel.md)
+[웹 서버 2단계 - GET으로 회원가입](./docs/step2.md)

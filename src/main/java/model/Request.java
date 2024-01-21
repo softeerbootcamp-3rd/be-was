@@ -4,41 +4,36 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import org.slf4j.Logger;
-import utils.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Request {
 
-    private static final Response response = new Response();
-
     private final String method;
-    private final String file;
+    private final String url;
     private final String http;
     private final int port;
-    private final String contentType;
-    private final String filePath;
+    private final Map<String, String> headers = new HashMap<>();
 
-    public Request(InputStream in, int portNumber, Logger logger) throws Exception {
+    public Request(InputStream in, int portNumber) throws Exception {
         InputStreamReader inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(inputStreamReader);
         String header = br.readLine();
 
-        String[] parse = header.split(" ");
-        method = parse[0];
-        file = parse[1];
-        http = parse[2];
+        // general header
+        String[] generalHeader = header.split(" ");
+        method = generalHeader[0];
+        url = generalHeader[1];
+        http = generalHeader[2];
         port = portNumber;
-        contentType = response.getContentType(file);
-        filePath = response.getPath(file, contentType);
 
-        logger.debug("port {} || method : {}, http : {}, file : {}", port, method, http, file);
-
-        // 나머지 헤더 로깅
-//        String line = br.readLine();
-//        while (!line.isEmpty()) {
-//            line = br.readLine();
-//            logger.debug(line);
-//        }
+        // request header
+        String line = br.readLine();
+        while (!line.isEmpty()) {
+            String[] requestHeader = line.split(": ");
+            headers.put(requestHeader[0], requestHeader[1]);
+            line = br.readLine();
+        }
     }
 
     public String getMethod() {
@@ -49,19 +44,15 @@ public class Request {
         return port;
     }
 
-    public String getFile() {
-        return file;
+    public String getUrl() {
+        return url;
     }
 
     public String getHttp() {
         return http;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public String getFilePath() {
-        return filePath;
+    public String getHeader(String key) {
+        return headers.get(key);
     }
 }
