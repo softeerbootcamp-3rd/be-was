@@ -11,6 +11,7 @@ public class MyHttpServletRequest {
   private final String method;
   private final String uri;
   private final String version;
+  private String Accept;
   private String Cookie;
   private String Host;
   private String Origin;
@@ -83,6 +84,7 @@ public class MyHttpServletRequest {
   public String getUri(){
     return this.uri;
   }
+  public String getAccept(){return  this.Accept;}
   public String getQueryParameterValue(String parameterName){
     return queryParameters.get(parameterName);
   }
