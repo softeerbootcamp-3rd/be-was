@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import service.UserService;
 import service.UserServiceImpl;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

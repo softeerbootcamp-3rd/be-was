@@ -13,16 +13,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 class UserControllerImplTest {
     private UserController userController;
-    private UserService userServiceMock;
+    private FakeUserService userServiceMock;
     @BeforeEach
     public void setUP(){
-        userServiceMock = mock(UserService.class);
+        userServiceMock = new FakeUserService();
         userController = new UserControllerImpl(userServiceMock);
     }
 
@@ -39,34 +38,28 @@ class UserControllerImplTest {
             "ResponseHeader를 Status : REDIRECT, Location : /user/login.html로  설정한다.")
     void UserControllerCallUserServiceAndSetResponseRedirectToLogin() {
         //given
-        HttpRequest httpRequestMock = mock(HttpRequest.class);
-        HttpResponseDto httpResponseMock = mock(HttpResponseDto.class);
-        StartLine startLineMock = mock(StartLine.class);
-
-        when(httpRequestMock.getStartLine()).thenReturn(startLineMock);
-        when(httpRequestMock.getStartLine().getPathUrl()).thenReturn("/user/create?userId=test&password=123&name=John&email=test@example.com");
-
+        String fakePathUrl = "/user/create?userId=test&password=123&name=John&email=test@example.com";
+        FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl);
+        FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
         //when
-        userController.doGet(httpRequestMock, httpResponseMock);
+        userController.doGet(httpRequestMock, httpResponseDtoMock);
 
         //then
-        verify(userServiceMock, times(1)).signUp(any(UserSignUpDto.class));
-        verify(httpResponseMock, times(1)).setStatus(Status.REDIRECT);
-        verify(httpResponseMock, times(1)).addHeader("Location", "/user/login.html");
+        assertThat(userServiceMock.wasMethodCalled("signUp")).isTrue();
+        assertThat(httpResponseDtoMock.getStatus()).isEqualTo(Status.REDIRECT);
+        assertThat(httpResponseDtoMock.getOptionHeader().containsKey("Location")).isTrue();
+        assertThat(httpResponseDtoMock.getOptionHeader().get("Location")).isEqualTo("/user/login.html");
     }
 
     @Test
     @DisplayName("url이 /user/create 들어왔지만 정상적이지 않은 인자값을 갖고 있을때 BadRequestException을 return한다.")
     void ThrowBadRequestExceptionWhenInvalidRequest() {
         //given
-        HttpRequest httpRequestMock = mock(HttpRequest.class);
-        HttpResponseDto httpResponseMock = mock(HttpResponseDto.class);
-        StartLine startLineMock = mock(StartLine.class);
-
-        when(httpRequestMock.getStartLine()).thenReturn(startLineMock);
-        when(httpRequestMock.getStartLine().getPathUrl()).thenReturn("/user/create?userId=test");
+        String fakePathUrl = "/user/create?userId=test";
+        FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl);
+        FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
 
         //when & then
-        assertThrows(BadRequestException.class, () -> userController.doGet(httpRequestMock, httpResponseMock), "Please fill in all the necessary factors");
+        assertThrows(BadRequestException.class, () -> userController.doGet(httpRequestMock, httpResponseDtoMock), "Please fill in all the necessary factors");
     }
 }
