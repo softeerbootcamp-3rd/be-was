@@ -35,6 +35,7 @@ public class UserService {
 
         // 유저 아이디 중복 검사
         if (!validateDuplicated(userId)) {
+            // 고민사항 : BAD_REQUEST를 반환해야 할지 회원가입 폼으로 REDIRECT 시켜야 할지
             return HttpResponse.of(HttpStatus.REDIRECT, "/user/form.html");
         }
 
