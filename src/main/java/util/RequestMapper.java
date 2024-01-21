@@ -2,21 +2,20 @@ package util;
 
 import annotation.RequestMapping;
 import annotation.RequestParam;
+import constant.ParamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
-import webserver.HttpStatus;
+import constant.HttpStatus;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.File;
 import java.util.stream.IntStream;
 
 public class RequestMapper {
@@ -72,12 +71,17 @@ public class RequestMapper {
         IntStream.range(0, parameters.length)
                 .forEach(i -> {
                     Parameter parameter = parameters[i];
+                    ParamType paramType = ParamType.getByClass(parameter.getType());
                     if(parameter.isAnnotationPresent(annotationClass)){
                         RequestParam annotation = (RequestParam) parameter.getAnnotation(annotationClass);
                         String requestParam = request.getParamMap().get(annotation.value());
-                        if (annotation.required() && requestParam == null)
+                        if (requestParam != null) {
+                            params[i] = paramType.map(requestParam);
+                        } else if (!annotation.required()) {
+                            params[i] = null;
+                        } else {
                             throw new IllegalArgumentException("Parameter '" + annotation.value() + "' cannot be null");
-                        params[i]= request.getParamMap().get(annotation.value());
+                        }
                     }
                 });
 

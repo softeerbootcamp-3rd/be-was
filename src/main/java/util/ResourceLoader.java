@@ -1,6 +1,6 @@
 package util;
 
-import webserver.HttpStatus;
+import constant.HttpStatus;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
@@ -23,6 +23,11 @@ public class ResourceLoader {
         CONTENT_TYPE_MAP.put("jpeg", "image/jpeg");
         CONTENT_TYPE_MAP.put("gif", "image/gif");
         CONTENT_TYPE_MAP.put("ico", "image/x-icon");
+        CONTENT_TYPE_MAP.put("eot", "application/vnd.ms-fontobject");
+        CONTENT_TYPE_MAP.put("svg", "image/svg+xml");
+        CONTENT_TYPE_MAP.put("ttf", "font/ttf");
+        CONTENT_TYPE_MAP.put("woff", "font/woff");
+        CONTENT_TYPE_MAP.put("woff2", "woff2");
     }
 
     public static String getContentType(String path) {

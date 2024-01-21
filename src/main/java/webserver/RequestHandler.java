@@ -3,8 +3,8 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.Socket;
-import java.util.function.Function;
 
+import constant.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.*;
@@ -21,11 +21,11 @@ public class RequestHandler implements Runnable {
     public void run() {
         InputStream in = null;
         OutputStream out = null;
-        try {
-            in = connection.getInputStream();
-            out = connection.getOutputStream();
-        } catch (IOException e) {
-            logger.error("error processing request: {}", e.getMessage());
+        try { in = connection.getInputStream(); } catch (IOException e) { logger.error(e.getMessage()); }
+        try { out = connection.getOutputStream(); } catch (IOException e) { logger.error(e.getMessage()); }
+        if (in == null || out == null) {
+            closeConnections(in, out);
+            return;
         }
 
         try {
@@ -55,6 +55,22 @@ public class RequestHandler implements Runnable {
                     .body(e.getMessage())
                     .build()
                     .send(out, logger);
+        }
+        closeConnections(in, out);
+    }
+
+    void closeConnections(InputStream in, OutputStream out) {
+        try {
+            if (in != null)
+                in.close();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+        try {
+            if (out != null)
+                out.close();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 }

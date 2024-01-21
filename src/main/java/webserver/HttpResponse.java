@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import constant.HttpStatus;
 import org.slf4j.Logger;
 
 public class HttpResponse {
 
     private HttpStatus status;
-
     private final Map<String, String> header;
-
     private byte[] body;
 
     public HttpResponse() {
