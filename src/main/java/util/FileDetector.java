@@ -13,7 +13,6 @@ public class FileDetector {
     private static class FileDetectorHolder {
         private static final FileDetector INSTANCE = new FileDetector();
     }
-
     public static FileDetector getInstance() {
         return FileDetectorHolder.INSTANCE;
     }
@@ -29,27 +28,14 @@ public class FileDetector {
         }
     }
 
-    private static String parseFileExtension(String url) {
-            String[] pathSegments = url.split("/");
-            String lastSegment = pathSegments[pathSegments.length - 1];
+    private String parseFileExtension(String url) {
+        String[] pathSegments = url.split("/");
+        String lastSegment = pathSegments[pathSegments.length - 1];
 
-            // 파일 확장자 추출
-            int lastDotIndex = lastSegment.lastIndexOf('.');
-            if (lastDotIndex != -1) {
-                return lastSegment.substring(lastDotIndex + 1);
-            } else {
-                // 파일 확장자가 없는 경우
-                return "";
-            }
+        // 파일 확장자 추출, 없을시 "" return
+        int lastDotIndex = lastSegment.lastIndexOf('.');
+        return (lastDotIndex != -1) ? lastSegment.substring(lastDotIndex + 1) : "";
     }
-    public byte[] getNotFound() {
-        try {
-            return Files.readAllBytes(new File(TEMPLATES_RESOURCE + "/error/not_found.html").toPath());
-        } catch (IOException e) {
-            throw new NotFound("파일을 찾을 수 없습니다.");
-        }
-    }
-
     private Path getFilePath(String filePath) {
         if (filePath.equals("/")) {
             return new File(TEMPLATES_RESOURCE + "/index.html").toPath();

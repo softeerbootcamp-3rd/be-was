@@ -1,5 +1,7 @@
 package service;
 
+import factory.HttpResponseFactory;
+import handler.DynamicResponseHandler;
 import model.http.Status;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;
@@ -11,6 +13,10 @@ import java.io.OutputStream;
 import java.util.Map;
 
 public class HttpResponseSendServiceImpl implements HttpResponseSendService {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpResponseSendService.class);
+    private static final String CRLF = "\r\n";
+
     private static class HttpResponseServiceHolder {
         private static final HttpResponseSendService INSTANCE = new HttpResponseSendServiceImpl();
     }
@@ -19,15 +25,16 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
         return HttpResponseServiceHolder.INSTANCE;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpResponseSendService.class);
-
     @Override
     public void sendHttpResponse(OutputStream out, HttpResponse httpResponse) {
-        DataOutputStream dos = new DataOutputStream(out);
-        setResponse(httpResponse, dos);
+        try (DataOutputStream dos = new DataOutputStream(out)) {
+            setResponse(httpResponse, dos);
+        } catch (IOException e) {
+            logger.error("Http Response를 Send하는데 에러 발생", e);
+        }
     }
 
-    private void setResponse(HttpResponse httpResponse, DataOutputStream dos) {
+    private void setResponse(HttpResponse httpResponse, DataOutputStream dos) throws IOException {
         if (httpResponse.getStatusLine().getStatus() == Status.REDIRECT) {
             setStatusAndHeaderForRedirect(dos, httpResponse);
         } else {
@@ -36,42 +43,31 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
         }
     }
 
-    private void setBody(DataOutputStream dos, HttpResponse httpResponse) {
-        try {
-            dos.write(httpResponse.getBody().getContent(), 0, httpResponse.getBody().getContent().length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private void setBody(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
+        dos.write(httpResponse.getBody().getContent());
+        dos.flush();
     }
 
-    private void setStatusAndHeader(DataOutputStream dos, HttpResponse httpResponse) {
-        try {
-            dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
-            dos.writeBytes(httpResponse.getHeaders().getContentTypeHeader());
-            writeOptionHeader(dos, httpResponse);
-            dos.writeBytes(httpResponse.getHeaders().getContentLengthHeader());
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private void setStatusAndHeader(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
+        dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
+        dos.writeBytes(httpResponse.getHeaders().getContentTypeHeader());
+        writeOptionHeader(dos, httpResponse);
+        dos.writeBytes(httpResponse.getHeaders().getContentLengthHeader());
+        dos.writeBytes(CRLF);
     }
 
-    private void setStatusAndHeaderForRedirect(DataOutputStream dos, HttpResponse httpResponse) {
-        try {
-            dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
-            writeOptionHeader(dos, httpResponse);
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private void setStatusAndHeaderForRedirect(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
+        dos.writeBytes(httpResponse.getStatusLine().getStatusHeader());
+        writeOptionHeader(dos, httpResponse);
+        dos.writeBytes(CRLF);
     }
+
 
     private void writeOptionHeader(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
         for (Map.Entry<String, String> entry : httpResponse.getHeaders().getOptionHeader().entrySet()) {
             String header = entry.getKey();
             String content = entry.getValue();
-            dos.writeBytes(header + ": " + content + "\r\n");
+            dos.writeBytes(header + ": " + content + CRLF);
         }
     }
 }

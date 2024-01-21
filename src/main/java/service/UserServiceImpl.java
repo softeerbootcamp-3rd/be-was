@@ -7,42 +7,16 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.crypto.Data;
 import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
-    @Override
-    public void signUp(UserSignUpDto userSignUpDto) {
-        validation(userSignUpDto);
-        Optional<User> userById = Database.findUserById(userSignUpDto.getId());
-        if (userById.isPresent()) {
-            throw new BadRequestException("ID already exists");
-        } else {
-            User user = new User(userSignUpDto.getId(), userSignUpDto.getPassword(), userSignUpDto.getName(), userSignUpDto.getEmail());
-            Database.addUser(user);
-            logger.debug("유저가 등록되었습니다. user : {}", user);
-        }
-    }
-
-    private void validation(UserSignUpDto userSignUpDto) {
-        String id = userSignUpDto.getId();
-        String password = userSignUpDto.getPassword();
-        String name = userSignUpDto.getName();
-        String email = userSignUpDto.getEmail();
-        if (id == null || id.trim().isEmpty()) {
-            throw new BadRequestException("ID cannot be empty");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            throw new BadRequestException("Password cannot be empty");
-        }
-        if (name == null || name.trim().isEmpty()) {
-            throw new BadRequestException("Name cannot be empty");
-        }
-        if (email == null || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
-            throw new BadRequestException("Invalid email format");
-        }
-    }
+    private static final String ID_EMPTY_MESSAGE = "ID cannot be empty";
+    private static final String PASSWORD_EMPTY_MESSAGE = "Password cannot be empty";
+    private static final String NAME_EMPTY_MESSAGE = "Name cannot be empty";
+    private static final String INVALID_EMAIL_FORMAT_MESSAGE = "Invalid email format";
+    private static final String ID_EXISTS_MESSAGE = "ID already exists";
 
     public static class UserServiceHolder {
         private static final UserService INSTANCE = new UserServiceImpl();
@@ -50,5 +24,38 @@ public class UserServiceImpl implements UserService {
 
     public static UserService getInstance() {
         return UserServiceHolder.INSTANCE;
+    }
+
+    @Override
+    public void signUp(UserSignUpDto userSignUpDto) {
+        validateUserSignUpDto(userSignUpDto);
+
+        String userId = userSignUpDto.getId();
+        Optional<User> existingUser = Database.findUserById(userId);
+
+        existingUser.ifPresent(user -> {
+            throw new BadRequestException(ID_EXISTS_MESSAGE);
+        });
+
+        User newUser = new User(userId, userSignUpDto.getPassword(), userSignUpDto.getName(), userSignUpDto.getEmail());
+        Database.addUser(newUser);
+
+        logger.info("User registered: {}", newUser);
+    }
+
+    private void validateUserSignUpDto(UserSignUpDto userSignUpDto) {
+        validateNotBlank(userSignUpDto.getId(), ID_EMPTY_MESSAGE);
+        validateNotBlank(userSignUpDto.getPassword(), PASSWORD_EMPTY_MESSAGE);
+        validateNotBlank(userSignUpDto.getName(), NAME_EMPTY_MESSAGE);
+
+        String email = userSignUpDto.getEmail();
+        if (email == null || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+            throw new BadRequestException(INVALID_EMAIL_FORMAT_MESSAGE);
+        }
+    }
+    private void validateNotBlank(String value, String errorMessage) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new BadRequestException(errorMessage);
+        }
     }
 }

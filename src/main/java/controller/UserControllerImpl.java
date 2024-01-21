@@ -33,25 +33,14 @@ public class UserControllerImpl implements UserController {
     public void doGet(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         String pathUrl = httpRequest.getStartLine().getPathUrl();
         if (pathUrl.startsWith("/user/create")) {
-            UserSignUpDto userSignUpDto = getPathParameter(pathUrl);
-            userService.signUp(userSignUpDto);
-            httpResponseDto.setStatus(Status.REDIRECT);
-            httpResponseDto.addHeader("Location", "/user/login.html");
+            handleUserCreateRequest(httpResponseDto, pathUrl);
         }
     }
 
-    private UserSignUpDto getPathParameter(String pathUrl) {
-        try {
-            HashMap<String, String> map = new HashMap<>();
-            String[] splitUrl = pathUrl.split("\\?");
-            String[] parameter = splitUrl[1].split("&");
-            Arrays.stream(parameter).forEach(param -> {
-                String[] value = param.split("=");
-                map.put(value[0], value[1]);
-            });
-            return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
-        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-            throw new BadRequestException("Please fill in all the necessary factors", e);
-        }
+    private void handleUserCreateRequest(HttpResponseDto httpResponseDto, String pathUrl) {
+        UserSignUpDto userSignUpDto = UserSignUpDto.fromUrlParameters(pathUrl);
+        userService.signUp(userSignUpDto);
+        httpResponseDto.setStatus(Status.REDIRECT);
+        httpResponseDto.addHeader("Location", "/user/login.html");
     }
 }

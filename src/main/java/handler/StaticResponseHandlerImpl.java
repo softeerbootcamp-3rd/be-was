@@ -1,6 +1,5 @@
 package handler;
 
-import config.AppConfig;
 import dto.HttpResponseDto;
 import exception.NotFound;
 import model.http.ContentType;
@@ -10,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.FileDetector;
 
-import static config.AppConfig.*;
+import static config.AppConfig.fileDetector;
 
 public class StaticResponseHandlerImpl implements StaticResponseHandler {
     private final FileDetector fileDetector;
@@ -32,14 +31,22 @@ public class StaticResponseHandlerImpl implements StaticResponseHandler {
     @Override
     public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try {
-            httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
-            httpResponseDto.setStatus(Status.OK);
-            httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept(), httpRequest.getStartLine().getPathUrl()));
+            handleStaticFileRequest(httpRequest, httpResponseDto);
         } catch (NotFound e) {
-            logger.error("파일을 찾을 수 없습니다." + e.getMessage());
-            httpResponseDto.setStatus(Status.REDIRECT);
-            httpResponseDto.addHeader("Location","/error/not_found.html");
-            httpResponseDto.setContentType(ContentType.HTML);
+            handleNotFound(httpResponseDto, e);
         }
+    }
+
+    private static void handleNotFound(HttpResponseDto httpResponseDto, NotFound e) {
+        logger.error("파일을 찾을 수 없습니다." + e.getMessage());
+        httpResponseDto.setStatus(Status.REDIRECT);
+        httpResponseDto.addHeader("Location","/error/not_found.html");
+        httpResponseDto.setContentType(ContentType.HTML);
+    }
+
+    private void handleStaticFileRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
+        httpResponseDto.setStatus(Status.OK);
+        httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept(), httpRequest.getStartLine().getPathUrl()));
     }
 }

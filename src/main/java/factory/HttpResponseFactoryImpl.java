@@ -29,10 +29,8 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
     }
 
     private Body getBody(HttpResponseDto responseDto) {
-        if (responseDto.getContent() == null) {
-            return null;
-        }
-        return new Body(responseDto.getContent());
+        byte[] content = responseDto.getContent();
+        return content != null ? new Body(content) : null;
     }
 
     private ResponseHeaders getResponseHeaders(HttpResponseDto dto) {
@@ -41,7 +39,7 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
         return responseHeaders;
     }
 
-    public StatusLine getStatusLine(String version, Status status) {
+    private StatusLine getStatusLine(String version, Status status) {
         return new StatusLine(version, status);
     }
 }

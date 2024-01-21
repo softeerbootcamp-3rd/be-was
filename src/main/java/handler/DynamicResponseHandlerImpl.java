@@ -27,13 +27,20 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
         UserController userController = userController();
         userController.doGet(httpRequest, httpResponseDto);
         } catch (BadRequestException e) {
-            httpResponseDto.setStatus(Status.BAD_REQUEST);
-            httpResponseDto.setContentType(ContentType.PLAIN);
-            httpResponseDto.setContent(e.getMessage().getBytes());
-            logger.error("Bad_Request 발생" + e.getMessage());
+            handleBadRequestException(e, httpResponseDto);
         }catch (InternalServerError e){
-            httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
-            logger.error("InternalServerError 발생, " + e.getMessage());
+            handleInternalServerError(e, httpResponseDto);
         }
+    }
+    private void handleBadRequestException(BadRequestException e, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setStatus(Status.BAD_REQUEST);
+        httpResponseDto.setContentType(ContentType.PLAIN);
+        httpResponseDto.setContent(e.getMessage().getBytes());
+        logger.error("Bad_Request 발생", e);
+    }
+
+    private void handleInternalServerError(InternalServerError e, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
+        logger.error("InternalServerError 발생", e);
     }
 }

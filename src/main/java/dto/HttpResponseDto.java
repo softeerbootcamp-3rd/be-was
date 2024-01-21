@@ -1,6 +1,7 @@
 package dto;
 
 import model.http.ContentType;
+import model.http.Header;
 import model.http.Status;
 
 import java.util.HashMap;
@@ -13,13 +14,14 @@ public class HttpResponseDto {
     private ContentType contentType;
     private final String charSet;
     private Integer contentLength;
-    private HashMap<String, String> optionHeader = new HashMap<>();
+    private final HashMap<String, String> optionHeader;
     private byte[] content;
 
     public HttpResponseDto() {
         this.version = HTTP_VERSION;
         this.charSet = UTF_8;
         this.status = Status.OK;
+        this.optionHeader = new HashMap<>();
     }
 
     public String getVersion() {
