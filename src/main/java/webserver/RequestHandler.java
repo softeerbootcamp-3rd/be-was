@@ -2,10 +2,10 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+import config.HTTPRequest;
+import config.HTTPResponse;
+import config.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,66 +27,69 @@ public class RequestHandler implements Runnable {
 
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
-
-            //line: request line GET /index.html HTTP/1.1
-            // 위와 같은 형태이므로 여기서 URL만 추출
-            String[] tokens = line.split(" ");
-            String url = tokens[1];
-
-
-            // debug 라인 분석
-            // 첫줄 - 메소드, url, http버전
-            // Host - 서버 주소
-            // Connection: keep-alive -> TCP에서 배운 keep-alive
-            // Cahche-Control: max-age=0 -> 유효기간, 0이된 후 요청하면 새로 요청을 보내지만 그 전에는 메모리에서 가지고 옴
-            // 나머지는 클라이언트의 환경 및 스펙
-
-            logger.debug("request line {}",line);
-            while(line != null && !line.isEmpty()) {
-                line = br.readLine();
-                logger.debug("header : {}", line);
-            }
             logger.debug("Ending Connected IP : {}, Port : {}", connection.getInetAddress(),
                     connection.getPort());
-            System.out.println("================================================================");
+
+            HTTPRequest request = new HTTPRequest(br, logger);
             DataOutputStream dos = new DataOutputStream(out);
+            String url = request.getUrl();
 
 
-            // 1. File이라는 객체를 templateFilePath + url로 접근
-            // 2. File객체를 Path객체로 변환
 
-            String templateFilePath = "be-was/src/main/resources/templates";
-            Path path = new File(templateFilePath + url).toPath();
-            byte[] body = Files.readAllBytes(path);
+            ControllerHandler controllerHandler = null;
+            String urlFrontPart = url.split("\\?")[0];
+            for (ControllerHandler handler : ControllerHandler.values()) {
+                if (handler.url.equals(urlFrontPart)) {
+                    controllerHandler = handler;
+                    break;
+                }
+            }
 
+            // 적절한 컨트롤러 핸들러를 찾았을 경우, 해당 핸들러의 메소드 호출
+            HTTPResponse response;
+            if (controllerHandler != null)
+                response = controllerHandler.toController(request);
+            else
+                response = new HTTPResponse("HTTP/1.1", ResponseCode.NOT_FOUND.code, ResponseCode.NOT_FOUND.toString());
 
-            //byte[] body = "Hello 동민".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+            byte[] head = response.getHead();
+            byte[] body = response.getBody();
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.write(head, 0, head.length);
             dos.writeBytes("\r\n");
-            logger.debug(dos.toString());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
             dos.write(body, 0, body.length);
             dos.flush();
+
+
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
+//아래는 기존의 코드
+//    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+//        try {
+//            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+//            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+//            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+//            dos.writeBytes("\r\n");
+//            //\r\n 두개는 헤더와 바디를 구분하게 해준다
+//            logger.debug(dos.toString());
+//        } catch (IOException e) {
+//            logger.error(e.getMessage());
+//        }
+//    }
+//
+//    private void responseBody(DataOutputStream dos, byte[] body) {
+//        try {
+//            //dos
+//            dos.write(body, 0, body.length);
+//            //flush를 사용하면 dos에 있는 내용을 전부 보낸다
+//            dos.flush();
+//        } catch (IOException e) {
+//            logger.error(e.getMessage());
+//        }
+//    }
+
+
 }

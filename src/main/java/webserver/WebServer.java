@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +16,11 @@ public class WebServer {
 
     // 생성 가능한 스레드의 수를 스레드풀을 이용하여 제한.
     // 스레드의 개수가 한계치를 초과할 경우 나머지 스레드를 큐 형태로 대기 시킴.
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(200);
-    //너무 오래 살아 있는 스레드를 KeepAlive함수를 이용하여 없앨 수 있으나 복잡해서 다음에 도전
+
+    private static final int MAX_THREADS = 200;
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
+
+
 
 
     public static void main(String args[]) throws Exception {
@@ -47,4 +52,5 @@ public class WebServer {
         // 스레드풀 종료
         executorService.shutdown();
     }
+
 }
