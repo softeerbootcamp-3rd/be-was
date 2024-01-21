@@ -12,9 +12,11 @@ import service.UserService;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static config.AppConfig.*;
+
 public class UserControllerImpl implements UserController {
     private static class UserControllerHolder {
-        public static final UserController INSTANCE = new UserControllerImpl(AppConfig.userService());
+        public static final UserController INSTANCE = new UserControllerImpl(userService());
     }
 
     public static UserController getInstance() {

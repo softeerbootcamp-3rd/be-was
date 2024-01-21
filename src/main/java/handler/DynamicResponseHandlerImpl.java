@@ -11,6 +11,8 @@ import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static config.AppConfig.*;
+
 public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     private static class DynamicResponseHandlerHolder {
         private static final DynamicResponseHandler INSTANCE = new DynamicResponseHandlerImpl();
@@ -22,7 +24,7 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     @Override
     public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try{
-        UserController userController = AppConfig.userController();
+        UserController userController = userController();
         userController.doGet(httpRequest, httpResponseDto);
         } catch (BadRequestException e) {
             httpResponseDto.setStatus(Status.BAD_REQUEST);

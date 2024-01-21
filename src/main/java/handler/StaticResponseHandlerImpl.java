@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.FileDetector;
 
+import static config.AppConfig.*;
+
 public class StaticResponseHandlerImpl implements StaticResponseHandler {
     private final FileDetector fileDetector;
 
@@ -18,7 +20,7 @@ public class StaticResponseHandlerImpl implements StaticResponseHandler {
     }
 
     private static class StaticResponseHandlerHolder {
-        private static final StaticResponseHandler INSTANCE = new StaticResponseHandlerImpl(AppConfig.fileDetector());
+        private static final StaticResponseHandler INSTANCE = new StaticResponseHandlerImpl(fileDetector());
     }
 
     public static StaticResponseHandler getInstance() {
