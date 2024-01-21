@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static util.MIMEType.getMIMEType;
+import static util.MimeType.getMimeType;
 
 public class HttpResponse {
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
@@ -64,6 +64,6 @@ public class HttpResponse {
 
     private static String getContentType(String file) { // 파일의 확장자에 따라 Content-Type을 결정
         String extension = file.substring(file.lastIndexOf("."));
-        return getMIMEType(extension);
+        return getMimeType(extension);
     }
 }

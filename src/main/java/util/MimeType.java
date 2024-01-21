@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum MIMEType {
+public enum MimeType {
     HTML(".html", "text/html"),
     CSS(".css", "text/css"),
     JS(".js", "text/javascript"),
@@ -20,11 +20,11 @@ public enum MIMEType {
     private final String extension;
     private final String contentType;
 
-    private static final Map<String, String> MIMETypeBundle = Collections.unmodifiableMap(
-            Stream.of(values()).collect(Collectors.toMap(MIMEType::getExtension, MIMEType::getContentType))
+    private static final Map<String, String> MimeTypeBundle = Collections.unmodifiableMap(
+            Stream.of(values()).collect(Collectors.toMap(MimeType::getExtension, MimeType::getContentType))
     );
 
-    MIMEType(String extension, String contentType) {
+    MimeType(String extension, String contentType) {
         this.extension = extension;
         this.contentType = contentType;
     }
@@ -37,7 +37,7 @@ public enum MIMEType {
         return this.contentType;
     }
 
-    public static String getMIMEType (String extension) {
-        return MIMETypeBundle.get(extension);
+    public static String getMimeType (String extension) {
+        return MimeTypeBundle.get(extension);
     }
 }
