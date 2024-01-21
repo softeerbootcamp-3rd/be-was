@@ -23,7 +23,7 @@ public class UserService {
     }
 
     // 회원가입 요청을 처리하는 메소드
-    public void signUp(String request) {
+    public void join(String request) {
         User user = createUserEntity(request); // 회원정보를 담고 있는 User 객체 생성
 
         addUser(user); // 데이터베이스에 회원정보 저장
