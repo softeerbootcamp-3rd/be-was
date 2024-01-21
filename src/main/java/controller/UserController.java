@@ -3,7 +3,7 @@ package controller;
 import service.UserService;
 import util.StatusCode;
 
-import static util.RequestUrl.*;
+import static util.Uri.*;
 import static util.StatusCode.*;
 
 public class UserController implements Controller{

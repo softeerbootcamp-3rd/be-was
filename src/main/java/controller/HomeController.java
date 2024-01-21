@@ -2,7 +2,7 @@ package controller;
 
 import util.StatusCode;
 
-import static util.RequestUrl.*;
+import static util.Uri.*;
 import static util.StatusCode.*;
 
 public class HomeController implements Controller {
