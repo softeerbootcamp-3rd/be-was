@@ -30,7 +30,7 @@ public class RequestHandler implements Runnable {
             logger.debug("HTTP Request >>\n" + request.toString() + "\n" +
                     "Connected IP: {}, Port: {}", connection.getInetAddress(), connection.getPort() + "\n");
 
-            // Controller mapping
+            // mapping & executing Controller
             Controller controller = mappingController(request);
             HttpResponseDto httpResponse = controller.handleRequest(request);
 
@@ -44,6 +44,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    // mapping Controller by URL
     public Controller mappingController(HttpRequestDto request) {
         String uri = request.getUri();
         Controller controller;

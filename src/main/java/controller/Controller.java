@@ -13,6 +13,7 @@ import java.nio.file.Files;
 public interface Controller {
     public abstract HttpResponseDto handleRequest(HttpRequestDto request);
 
+    // 단순 리소스 요청 (GET) 처리 메서드
     default HttpResponseDto getPage(HttpRequestDto request, Logger logger) {
         byte[] body = null;
         try {

@@ -5,6 +5,7 @@ import dto.HttpResponseDtoBuilder;
 
 public class HttpResponseUtil {
 
+    // Build HTTP Response Message (String) from HttpResponseDto
     public static String responseHeaderBuilder(HttpResponseDto httpResponseDto) {
         StringBuilder stringBuilder = new StringBuilder();
         // Status line

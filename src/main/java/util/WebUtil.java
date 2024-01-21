@@ -38,7 +38,7 @@ public class WebUtil {
         MIME_CONTENT_TYPE.put("woff2", "font/woff2");
     }
 
-    // HTTP Request를 파싱해서 HttpRequestParam 객체로 리턴
+    // Parsing HTTP Request message into HttpRequestParams
     public static HttpRequestDto httpRequestParse(InputStream request) {
         BufferedReader br = new BufferedReader(new InputStreamReader(request));
         HttpRequestDto parsedRequest = null;
@@ -77,11 +77,13 @@ public class WebUtil {
         return parsedRequest;
     }
 
+    // Extract file extension from URI
     public static String getFileExtension(String uri) {
         String[] parsedUri = uri.split("\\.");
         return parsedUri[parsedUri.length - 1];
     }
 
+    // Get file path from URI
     public static String getPath(String uri) {
         String extension = getFileExtension(uri);
         if (extension.equals("html")) {
@@ -90,11 +92,13 @@ public class WebUtil {
         return "./src/main/resources/static" + uri;
     }
 
+    // Get Content-Type(MIME-Type) from URI
     public static String getContentType(String uri) {
         String extension = getFileExtension(uri);
         return MIME_CONTENT_TYPE.getOrDefault(extension, DEFAULT_MIME_TYPE);
     }
 
+    // Parsing query string from URI into Map<String, String> Object
     public static Map<String, String> parseQueryString(String uri) {
         Map<String, String> parameters = new HashMap<>();
         try {
