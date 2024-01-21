@@ -29,12 +29,12 @@ public class DispatcherServlet implements Runnable {
 
             HttpRequest httpRequest = new HttpRequest(br);
             String requestLine = httpRequest.getRequestLine();
-            String URI = httpRequest.getURI();
+            String URI = httpRequest.getUri();
 
 
             // request line 출력
             logger.debug("request method : {}, filePath : {}, http version : {}\n",
-                    httpRequest.getMethod(), httpRequest.getURI(), httpRequest.getHttpVersion());
+                    httpRequest.getMethod(), httpRequest.getUri(), httpRequest.getHttpVersion());
 
             StatusCode status = getStatus(requestLine); // 상태코드 반환
 
