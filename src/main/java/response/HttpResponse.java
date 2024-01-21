@@ -13,19 +13,19 @@ import static util.MimeType.getMimeType;
 public class HttpResponse {
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
     private final String contentType;
-    private final String redirectUrl;
+    private final String redirectUri;
     private final byte[] body;
 
     public HttpResponse(String path, String redirectUrl) {
         this.contentType = getContentType(path);
-        this.redirectUrl = redirectUrl;
+        this.redirectUri = redirectUrl;
         this.body = null;
     }
 
     public HttpResponse(String path) throws IOException {
         this.contentType = getContentType(path);
-        this.redirectUrl = null;
-        this.body = getContent(path);
+        this.redirectUri = null;
+        this.body = readFileInBytes(path);
     }
 
     public Integer getBodyLength() {
@@ -36,16 +36,15 @@ public class HttpResponse {
         return contentType;
     }
 
-    public String getRedirectUrl() {
-        return redirectUrl;
+    public String getRedirectUri() {
+        return redirectUri;
     }
 
     public byte[] getBody() {
         return body;
     }
 
-    private static byte[] getContent(String path) throws IOException { // path에 해당하는 파일을 읽어서 byte[]로 반환
-
+    private static byte[] readFileInBytes(String path) throws IOException { // 파일을 읽어서 byte[]로 반환
         Path filePath;
 
         if (path.endsWith(".html")) {
