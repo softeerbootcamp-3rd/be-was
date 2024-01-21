@@ -44,8 +44,8 @@ public class RequestHandler implements Runnable {
                 MethodMapper.execute(dos, requestDto);
             } else if (requestDto.getMethod().equals("GET") &&
                     (body = FileManager.getFileByPath(basePath, requestDto.getPath())) != null) {
-                String fileExtension = FileManager.getFileExtension(requestDto.getPath());
-                ResponseHandler.sendBody(dos, HttpStatus.OK, body, fileExtension);
+                String contentType = FileManager.getContentType(requestDto.getPath());
+                ResponseHandler.sendBody(dos, HttpStatus.OK, body, contentType);
             } else {
                 ResponseHandler.sendError(dos, ErrorCode.PAGE_NOT_FOUND);
             }
