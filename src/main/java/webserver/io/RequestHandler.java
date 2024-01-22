@@ -59,7 +59,7 @@ public class RequestHandler implements Runnable {
     }
 
     private MyHttpServletRequest printReceivedRequest(InputStream in) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(in,"UTF-8"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String line = URLDecoder.decode(br.readLine(), StandardCharsets.UTF_8);
         logger.debug("request line : {}",line);
         //Http Method & Version & URI 파싱
@@ -69,10 +69,16 @@ public class RequestHandler implements Runnable {
         //Http Header 파싱
         while(true){
             line=br.readLine();
-            if (line.equals(""))
+            if(line.equals(""))
                 break;
             logger.debug("header : {}",line);
             servletRequest.setFieldByName(line);
+        }
+        if(servletRequest.canReadBody()){
+            char[] httpBody = new char[servletRequest.getContentLength()];
+            br.read(httpBody);
+            String beforeDecoding = new String(httpBody);
+            servletRequest.setBody(URLDecoder.decode(beforeDecoding,StandardCharsets.UTF_8));
         }
         return servletRequest;
     }
