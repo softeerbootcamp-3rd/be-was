@@ -3,7 +3,8 @@ package webserver;
 import controller.Controller;
 import controller.HomeController;
 import controller.UserController;
-import dto.ResponseDto;
+import java.util.Arrays;
+import model.Response;
 import java.io.*;
 import java.net.Socket;
 
@@ -26,25 +27,32 @@ public class RequestHandler implements Runnable {
 
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request request = new Request(in, connection.getPort());
+            Request request = new Request(in);
 
-            logger.debug("port {} || method : {}, http : {}, url : {}", request.getPort(),
+            logger.debug("port {} || method : {}, http : {}, url : {}", connection.getPort(),
                     request.getMethod(), request.getHttp(), request.getUrl());
 
             String url = request.getUrl();
 
             Controller controller = getController(url);
-            ResponseDto responseDto = controller.route(url);
+            Response response = controller.route(url);
 
             DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes(HeaderBuilder.build(responseDto));
-            dos.write(responseDto.getBody(), 0, responseDto.getBody().length);
+            dos.writeBytes(HeaderBuilder.build(response));
+            if (response.getBody() != null) {
+                dos.write(response.getBody(), 0, response.getBody().length);
+            }
             dos.flush();
         } catch (Exception e) {
             logger.error("error in run", e);
         }
     }
 
+    /**
+     * 요청 url에 알맞는 컨트롤러를 반환합니다.
+     * @param url 요청 url
+     * @return url에 알맞는 컨트롤러
+     */
     private Controller getController(String url) {
         if (url.startsWith("/user")) {
             return userController;

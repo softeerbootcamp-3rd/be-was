@@ -13,6 +13,8 @@ Java Web Application Server 2023
 
 ### 1 주차
 
-[웹 서버 1단계 - index.html 응답](./docs/step1.md)
+[웹 서버 1단계 - index.html 응답](docs/step1.md)
 
-[웹 서버 2단계 - GET으로 회원가입](./docs/step2.md)
+[웹 서버 2단계 - GET으로 회원가입](docs/step2.md)
+
+[웹 서버 3단계 - 다양한 컨텐츠 타입 지원](docs/step3.md)
