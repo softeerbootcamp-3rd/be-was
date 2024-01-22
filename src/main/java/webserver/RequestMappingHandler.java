@@ -7,13 +7,14 @@ import dto.Response;
 import util.ControllerMapper;
 import util.ResourceLoader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,15 +53,28 @@ public class RequestMappingHandler {
             filePath = FILE_PATH + "/templates" + path;
         }
 
-
         File file = new File(filePath);
 
         if (file.exists()) {
-            byte[] body = Files.readAllBytes(file.toPath());
+            byte[] body = readAllBytes(file);
             return new Response(HttpStatus.OK, contentType, body);
         }
 
         return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
+    }
+
+    private static byte[] readAllBytes(File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            int size = (int) file.length();
+            byte[] buffer = new byte[size];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+            }
+
+            return bos.toByteArray();
+        }
     }
 
     private static Method findGETMethod(Class<?> controllerClass, String path) {
