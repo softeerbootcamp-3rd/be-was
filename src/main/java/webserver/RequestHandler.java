@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import controller.MainController;
@@ -10,6 +11,7 @@ import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.Util;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -119,19 +121,28 @@ public class RequestHandler implements Runnable {
             if(line == null || line.isEmpty()) break;
             String[] keyAndValue = line.split(": ");
             String key = keyAndValue[0], value = keyAndValue[1];
-            request.putHeader(key, value);
+            request.putHeader(key.toLowerCase(), value);
             if(printedKey.contains(key))
                 logger.debug(line);
         }
         return request;
     }
     private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
-        int contentLength = Integer.parseInt(request.getHeader().getOrDefault("Content-Length", "0"));
+        int contentLength = Integer.parseInt(request.getHeader().getOrDefault("content-length", "0"));
         if(contentLength == 0) return request;
+        String contentType = request.getHeader().get("content-type");
         char[] body = new char[contentLength];
         br.read(body);
-        String queryString = new String(body);
-        request.parsePostQueryString(queryString);
+
+        if("application/x-www-form-urlencoded".equals(contentType)) {
+            HashMap<String, String> hashMap = Util.parseQueryString(new String(body));
+            request.setBody(hashMap);
+        }
+        else if("application/json".equals(contentType)) {
+            HashMap<String, String> hashMap = Util.parseStringJson(new String(body));
+            request.setBody(hashMap);
+        }
+
         return request;
     }
 }

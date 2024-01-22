@@ -1,5 +1,6 @@
 package util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,19 @@ public class Util {
             int indexOfEqual = keyValue.indexOf("=");
             String key = keyValue.substring(0, indexOfEqual);
             String value = keyValue.substring(indexOfEqual+1);
+            hashMap.put(key, value);
+        }
+        return hashMap;
+    }
+
+    public static HashMap<String, String> parseStringJson(String json) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        json = json.substring(1, json.length()-1).trim();
+        String[] jsonArray = json.split(",");
+        for(String keyAndValue : jsonArray) {
+            String[] tokens = keyAndValue.split(":");
+            String key = tokens[0].trim().replace("\"", "");
+            String value = tokens[1].trim().replace("\"", "");
             hashMap.put(key, value);
         }
         return hashMap;
