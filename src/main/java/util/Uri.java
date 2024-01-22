@@ -1,6 +1,6 @@
 package util;
 
-public enum RequestUrl {
+public enum Uri {
     HOME("/"),
     USER_FORM("/user/form"),
     USER_LIST("/user/list"),
@@ -11,7 +11,7 @@ public enum RequestUrl {
 
     private final String url;
 
-    RequestUrl(String url) {
+    Uri(String url) {
         this.url = url;
     }
 

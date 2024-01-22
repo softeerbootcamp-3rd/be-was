@@ -1,15 +1,11 @@
 package controller;
 
+import util.StatusCode;
 
-import request.HttpRequest;
-import util.RequestUrl;
+import static util.Uri.*;
+import static util.StatusCode.*;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import static util.ResponseBuilder.response;
-
-public class HomeController {
+public class HomeController implements Controller {
     private volatile static HomeController instance;
 
     private HomeController() {
@@ -22,14 +18,15 @@ public class HomeController {
         return instance;
     }
 
-    public void route(HttpRequest httpRequest, OutputStream out) throws IOException {
-        String path = httpRequest.getPath();
+    @Override
+    public StatusCode handleUserRequest(String requestLine) {
+        String URI = requestLine.split(" ")[1];
 
-        if (path.equals(RequestUrl.HOME.getUrl())) {
-            response("302", "/index.html", out);
+        if (URI.equals(HOME.getUrl())) {
+            return FOUND;
         }
         else {
-            response("200", path, out);
+            return OK;
         }
     }
 }

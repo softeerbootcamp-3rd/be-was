@@ -10,7 +10,7 @@ Java Web Application Server 2023
 ## 1. 학습 목표 
 - HTTP를 학습하고 학습 지식을 기반으로 웹 서버를 구현한다.
 - Java 멀티스레드 프로그래밍을 경험한다.
-- 유지보수에 좋은 구조에 대해 고민하고 코드를 개선해 본다.
+- 유지보수에 좋은 구조에 대해 고민하고 코드를 개선 해 본다.
 
 ---
 
@@ -77,3 +77,4 @@ Java Web Application Server 2023
   >- HTTP Request, Response header 구조
   >- HTTP Request, Response header에 포함되는 정보
   >- 학습 내용 정리: https://velog.io/@taegon1998/HTTP-Header
+  >- 
