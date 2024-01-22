@@ -45,6 +45,8 @@ public class RequestData {
         return headers.get(headerName);
     }
 
+    public String getBody() { return body; }
+
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
