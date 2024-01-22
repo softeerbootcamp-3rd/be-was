@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -58,16 +59,39 @@ public class MainController {
             }
         }
         else if(method.equals("POST")) {
-            User user = UserService.create(new UserInfo(request.getBody()));
-            if (user != null) {
-                statusCode = "302";
-                redirectUrl = "/index.html";
-                logger.debug("회원가입 성공!  " + user.toString());
+            if(path.equals("/user/create")) {
+                User user = UserService.create(new UserInfo(request.getBody()));
+                if (user != null) {
+                    statusCode = "302";
+                    redirectUrl = "/index.html";
+                    logger.debug("회원가입 성공!  " + user.toString());
+                }
+                else {
+                    statusCode = "200";
+                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
+                    logger.debug("회원가입 실패!");
+                }
             }
-            else {
-                statusCode = "200";
-                body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
-                logger.debug("회원가입 실패!");
+            else if(path.equals("/user/login")) {
+                String target = request.getBody().getOrDefault("userId", "");
+                User user = Database.findUserById(target);
+                if(user == null) {
+                    statusCode = "200";
+                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/login_failed.html").toPath());
+                    logger.debug("로그인 실패!");
+                }
+                else {
+                    if(user.getPassword().equals(request.getBody().getOrDefault("password", ""))) {
+                        statusCode = "302";
+                        redirectUrl = "/index.html";
+                        logger.debug("로그인!  " + user.toString());
+                    }
+                    else {
+                        statusCode = "200";
+                        body = Files.readAllBytes(new File("./src/main/resources/templates/user/login_failed.html").toPath());
+                        logger.debug("로그인 실패!");
+                    }
+                }
             }
         }
         else if(method.equals("PATCH")) {
