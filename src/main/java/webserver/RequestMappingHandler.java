@@ -28,7 +28,7 @@ public class RequestMappingHandler {
 
         Method method = findMethod(controllerClass, request.getPath());
         if (method == null) {
-            return new Response.Builder().httpStatus(HttpStatus.BAD_REQUEST).build();
+            return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
         }
 
         Object[] params = createParams(method, request.getParams());
@@ -52,7 +52,7 @@ public class RequestMappingHandler {
             return new Response(HttpStatus.OK, contentType, body);
         }
 
-        return new Response.Builder().httpStatus(HttpStatus.BAD_REQUEST).build();
+        return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
     }
 
     private static Method findMethod(Class<?> controllerClass, String path) {
