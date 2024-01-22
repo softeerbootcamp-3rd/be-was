@@ -32,6 +32,8 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 executorService.execute(new HttpConnectionHandler(connection));
             }
+        }finally {
+            executorService.shutdown();
         }
     }
 }
