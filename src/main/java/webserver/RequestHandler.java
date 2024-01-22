@@ -2,9 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +18,8 @@ public class RequestHandler implements Runnable {
     private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
 
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
+    private final String RESOURCES_STATIC_URL = "src/main/resources/static";
+    private final String DEFAULT_URL = "/index.html";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -35,39 +34,31 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequest request = new HttpRequest(in); //http request 정복 가져오기
+            HttpRequest request = new HttpRequest(in); //http request 정보 가져오기
             request.print(); //http request 정보 출력
 
             HttpResponse response = new HttpResponse(dos);
 
-            Map<String, Object> view = new HashMap<>();
-            Path filePath = null;
-
+            String path;
             Controller controller = controllerMap.get(request.getUrl());
             if (controller == null) { //.html
                 if (request.getUrl().endsWith(".html")) {
-                    filePath = Paths.get(RESOURCES_TEMPLATES_URL + request.getUrl());
+                    path = RESOURCES_TEMPLATES_URL + request.getUrl();
 
                 } else { //.js .css ...
-                    ;
+                    path = RESOURCES_STATIC_URL + request.getUrl();
                 }
             } else {
-                String path = controller.process(request.getRequestParam());
-                filePath = Paths.get(path + ".html");
+                path = controller.process(request.getRequestParam()) + ".html";
             }
 
             byte[] body = null;
 
-            if (filePath == null) {
-                response.respond404();
-            } else if (filePath.toString().startsWith("redirect:")) {
-                String path=filePath.toString();
-                response.response301RedirectHeader(path.substring("redirect:".length(),path.length()));
+            if (path.startsWith("redirect:")) {
+                response.response301RedirectHeader(path.substring("redirect:".length()));
                 response.responseBody(body);
             } else {
-                body = Files.readAllBytes(filePath);
-                response.response200Header(body.length);
-                response.responseBody(body);
+                response.response200Header(path);
             }
 
         } catch (IOException e) {

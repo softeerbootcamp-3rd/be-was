@@ -14,6 +14,6 @@ public class UserController implements Controller{
         User user = new User(paramMap.get("userId"), paramMap.get("password"), paramMap.get("name"), paramMap.get("email"));
         database.addUser(user);
 
-        return "redirect:/user/login"; //로그인 페이지로 //동작 안됨
+        return "redirect:/user/login";
     }
 }
