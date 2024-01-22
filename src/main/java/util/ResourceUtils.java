@@ -3,7 +3,6 @@ package util;
 import util.http.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,13 +23,17 @@ public class ResourceUtils {
                     .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
                     .body(body);
         } catch (NotFoundException e) {
-            byte[] body = Files.readAllBytes(getFilePath("/notfound.html"));
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
-                    .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
-                    .body(body);
+            return notFoundExceptionHandler();
         }
+    }
+
+    private static ResponseEntity<?> notFoundExceptionHandler() throws IOException {
+        byte[] body = Files.readAllBytes(getFilePath("/notfound.html"));
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
+                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .body(body);
     }
 
     private static Path getFilePath(String path) {
