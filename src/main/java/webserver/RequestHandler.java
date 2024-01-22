@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.net.Socket;
 
-import dto.RequestHeaderDto;
 import dto.RequestLineDto;
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
@@ -38,9 +37,14 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            RequestLineDto requestLineDto = parseRequestLine(br);
-            RequestHeaderDto requestHeaderDto = parseRequestHeader(br);
-            printRequest(requestLineDto, requestHeaderDto);
+
+            String line = br.readLine();
+            RequestLineDto requestLineDto = parseRequestLine(line);
+            printRequest(requestLineDto);
+
+            while (!line.equals("")) {
+                line = br.readLine();
+            }
 
             String queryString = requestLineDto.getQueryString();
 
