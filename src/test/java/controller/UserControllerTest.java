@@ -18,7 +18,7 @@ public class UserControllerTest {
         String name = "TestName";
         String email = "test@example.com";
 
-        createUser(userId, password, name, email);
+        createUser(new User(userId, password, name, email));
 
         User expectedUser = new User("testUser", "testPassword", "TestName", "test@example.com");
         assertEquals(expectedUser, Database.findUserById("testUser"));

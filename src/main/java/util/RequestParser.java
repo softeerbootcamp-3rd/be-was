@@ -1,18 +1,20 @@
 package util;
 
+import constant.ParamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class URIParser {
+public class RequestParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(URIParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
     public static String extractPath(String url) {
         try {
@@ -34,11 +36,11 @@ public class URIParser {
         }
     }
 
-    public static Map<String, String> parseQueryString(String queryString) {
+    public static Map<String, String> parseQueryString(String queryString) throws UnsupportedEncodingException {
         Map<String, String> paramMap = new HashMap<>();
 
         if (queryString != null && !queryString.isEmpty()) {
-            queryString = decodeUrl(queryString);
+            queryString = decodeUri(queryString);
             String[] params = queryString.split("&");
 
             for (String param : params) {
@@ -54,7 +56,28 @@ public class URIParser {
         return paramMap;
     }
 
-    public static String decodeUrl(String encodedUrl) {
-        return URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8);
+    public static String decodeUri(String encodedUrl) throws UnsupportedEncodingException {
+        return URLDecoder.decode(encodedUrl, "UTF-8");
+    }
+
+    public static <T> T mapToClass(Map<String, String> userInfo, Class<T> destClass) {
+        try {
+            T result = destClass.getDeclaredConstructor().newInstance();
+
+            for (Map.Entry<String, String> entry : userInfo.entrySet()) {
+                String fieldName = entry.getKey();
+                String fieldValue = entry.getValue();
+
+                Field field = destClass.getDeclaredField(fieldName);
+                field.setAccessible(true);
+
+                ParamType paramType = ParamType.getByClass(field.getType());
+                field.set(result, paramType.map(fieldValue));
+            }
+
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

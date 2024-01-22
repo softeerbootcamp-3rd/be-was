@@ -21,15 +21,15 @@ public enum HttpStatus {
     }
 
     public String getCode() {
-        return code;
+        return this.code;
     }
 
     public String getMessage() {
-        return message;
+        return this.message;
     }
 
     public String getFullMessage() {
-        return code + " " + message;
+        return this.code + " " + this.message;
     }
 
     public static HttpStatus getByCode(String code) {

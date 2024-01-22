@@ -1,38 +1,23 @@
 package util;
 
 import constant.HttpStatus;
+import constant.MimeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ResourceLoader {
-    private static final Map<String, String> CONTENT_TYPE_MAP = new HashMap<>();
 
-    static {
-        CONTENT_TYPE_MAP.put("html", "text/html;charset=utf-8");
-        CONTENT_TYPE_MAP.put("css", "text/css");
-        CONTENT_TYPE_MAP.put("js", "application/javascript");
-        CONTENT_TYPE_MAP.put("png", "image/png");
-        CONTENT_TYPE_MAP.put("jpg", "image/jpeg");
-        CONTENT_TYPE_MAP.put("jpeg", "image/jpeg");
-        CONTENT_TYPE_MAP.put("gif", "image/gif");
-        CONTENT_TYPE_MAP.put("ico", "image/x-icon");
-        CONTENT_TYPE_MAP.put("eot", "application/vnd.ms-fontobject");
-        CONTENT_TYPE_MAP.put("svg", "image/svg+xml");
-        CONTENT_TYPE_MAP.put("ttf", "font/ttf");
-        CONTENT_TYPE_MAP.put("woff", "font/woff");
-        CONTENT_TYPE_MAP.put("woff2", "woff2");
-    }
+    private static final Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
 
-    public static String getContentType(String path) {
+    public static String getMimeType(String path) {
         String extension = extractFileExtension(path);
-        return CONTENT_TYPE_MAP.getOrDefault(extension, "application/octet-stream");
+        return MimeType.getByExtension(extension).getMimeType();
     }
 
     private static String extractFileExtension(String filePath) {
@@ -50,14 +35,23 @@ public class ResourceLoader {
                 || request.getPath().startsWith("/images/") || request.getPath().startsWith("/js/"))
             basePath = "src/main/resources/static";
 
-        Path filePath = Paths.get(basePath + request.getPath());
-        if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
-            byte[] content = Files.readAllBytes(filePath);
-            return HttpResponse.builder()
-                    .status(HttpStatus.OK)
-                    .addHeader("Content-Type", getContentType(request.getPath()))
-                    .body(content)
-                    .build();
+        File file = new File(basePath + request.getPath());
+        if (file.exists() && file.isFile()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] content = new byte[(int) file.length()];
+                fis.read(content);
+                return HttpResponse.builder()
+                        .status(HttpStatus.OK)
+                        .addHeader("Content-Type", getMimeType(request.getPath()))
+                        .body(content)
+                        .build();
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                return HttpResponse.builder()
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(HttpStatus.INTERNAL_SERVER_ERROR.getFullMessage())
+                        .build();
+            }
         } else {
             return HttpResponse.builder()
                     .status(HttpStatus.NOT_FOUND)
