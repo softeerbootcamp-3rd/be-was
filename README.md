@@ -1,12 +1,21 @@
 # Step-1
 
+## Thread
+### Multi-thread
+- Multi-thread 환경에서 thread-safety는 race condition방지와 data consistency 관점에서 매우 중요하다.
+  - thread safe code는 data integrity를 보장
+
+### JAVA Concurrent Class
+- synchronization mechanisms
+  - thread-safe
+
+
 ## HTTP
 ### HTTP 메세지
 1. 시작줄(start-line): 수행할 요청(Request), 혹은 요청된 수행에 대한 성공/실패(Response)를 기록함
 2. Http Header 세트: 요청에 대한 설명, 메세지 본문에 대한 설명
 3. 빈 줄(‘blank line’): 모든 메타 정보의 전송 완료를 알림
 4. Body: 요청과 관련된 내용이나 응답과 관련된 문서
-
 
 <img width="716" alt="스크린샷 2024-01-16 오전 10 23 58" src="https://github.com/ddrongy/be-was/assets/97080154/5ccc8382-ea08-454f-8c75-50d4317fb099">
 
@@ -40,5 +49,4 @@
 - HTML폼 데이터를 요청하는 POST요청과 같은 일부 요청은 업데이트 하기 위해 서버에 데이터를 전송함
 1. 단일-리소스 본문 : 헤더두개(Content-Type, Content-Length)로 구성
 2. 다중 리소스 본문: HTML폼과 관련 있음
-
 
