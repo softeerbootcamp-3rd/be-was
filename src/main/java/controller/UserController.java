@@ -1,11 +1,9 @@
 package controller;
 
 import model.Response;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
 import service.UserService;
+import utils.PageReader;
 import utils.ParamBuilder;
 
 public class UserController implements Controller {
@@ -29,14 +27,7 @@ public class UserController implements Controller {
      */
     private Response getPage(String url) {
         String filePath = "src/main/resources/templates" + url;
-
-        try {
-            byte[] body = Files.readAllBytes(new File(filePath).toPath());
-            return new Response(200, url, body);
-        } catch (IOException e) {
-            byte[] body = "404 Not Found".getBytes();
-            return new Response(404, body);
-        }
+        return PageReader.getPage(filePath, filePath);
     }
 
     /**
