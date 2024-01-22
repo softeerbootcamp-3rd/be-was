@@ -53,7 +53,7 @@ public class UserController implements Controller {
             return new Response(400, body);
         }
 
-        String location = "/";
+        String location = "/index.html";
         return new Response(302, location);
     }
 }
