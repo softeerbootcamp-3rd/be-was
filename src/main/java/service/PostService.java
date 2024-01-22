@@ -12,7 +12,7 @@ public class PostService {
     ///////////////////////////// POST 요청 처리 ///////////////////////////////////
 
     // 회원가입 요청 처리
-    public static HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
+    public HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
         if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getBody() == null)
             return new HTTPResponseDto(404, "Bad Request".getBytes());
         String body = httpRequestDto.getBody();
@@ -49,7 +49,7 @@ public class PostService {
     }
 
     // 로그인 요청 처리
-    public static HTTPResponseDto login(HTTPRequestDto httpRequestDto) {
+    public HTTPResponseDto login(HTTPRequestDto httpRequestDto) {
         // 1. request body가 null 일 경우
         if(httpRequestDto.getBody() == null)
             return new HTTPResponseDto(404, "Bad Request".getBytes());

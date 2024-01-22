@@ -1,5 +1,6 @@
 package service;
 
+import config.Config;
 import db.Database;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
@@ -20,7 +21,7 @@ class PostServiceTest {
         String body = "userId=login&password=fail";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
                 "HTTP/1.1", "localhost:8080", "text/html", body.length(), body);
-        HTTPResponseDto actual = PostService.login(httpRequestDto);
+        HTTPResponseDto actual = Config.postService.login(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -35,7 +36,7 @@ class PostServiceTest {
         String body = "userId=hello&password=world";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
                 "HTTP/1.1", "localhost:8080", "text/html", body.length(), body);
-        HTTPResponseDto actual = PostService.login(httpRequestDto);
+        HTTPResponseDto actual = Config.postService.login(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
