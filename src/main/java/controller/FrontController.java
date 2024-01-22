@@ -1,6 +1,7 @@
 package controller;
 
 import dto.ResourceDto;
+import exception.ExceptionHandler;
 import exception.SourceException;
 import model.CommonResponse;
 import util.ResourceHandler;
@@ -33,7 +34,7 @@ public class FrontController {
             ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
             response = CommonResponse.onOk(resource.getHttpStatus(), ResourceHandler.resolveResource(resource), resource.getExtension());
         } catch (SourceException e) {
-            response = CommonResponse.onFail(e.getErrorCode().getHttpStatus(), e.getMessage());
+            response = ExceptionHandler.handleGeneralException(e);
         } finally {
             return response;
         }
