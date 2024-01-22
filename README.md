@@ -37,9 +37,20 @@ Java Web Application Server 2023
     - [x] 단위테스트 작성
 
 ### 학습 내역
-- GET
-- Java Reflection
+- [GET 요청의 동작 과정](https://github.com/jiaeYoon/softeer3-be-was/wiki/HTTP-%7C-GET)
+- [Java Reflection](https://github.com/jiaeYoon/softeer3-be-was/wiki/JAVA-%7C-Reflection)
 - Controller의 역할
+
+# 3단계
+### 요구사항
+- 다양한 컨텐츠 타입을 지원하도록 코드 개선하기
+
+### 체크리스트
+- [x] css, js, favicon 등의 컨텐츠 타입 적용
+- [x] style.css 수정
+
+### 학습 내역
+- [HTTP Response와 MIME Type](https://github.com/jiaeYoon/softeer3-be-was/wiki/HTTP-%7C-HTTP-Response%EC%99%80-MIME-Type)
 
 <hr>
 
