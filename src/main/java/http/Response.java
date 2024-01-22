@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
     private String location;
-    private HttpStatus status;
+    private HttpStatus status = HttpStatus.OK;
     private String contentType = "";
     //constructors
     public Response(){
