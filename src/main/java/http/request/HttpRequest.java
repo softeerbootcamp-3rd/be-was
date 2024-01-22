@@ -24,7 +24,7 @@ public class HttpRequest {
         generalHeader = new GeneralHeader();
 
         while (!(line = br.readLine()).isEmpty()) {
-            tokens = Parser.parsing(line, ": ", 2);
+            tokens = line.split(": ", 2);
             String key = tokens[0], value = tokens[1];
             if (generalHeader.checkGeneralHeader(key)) {
                 generalHeader.addGeneralHeader(key, value);

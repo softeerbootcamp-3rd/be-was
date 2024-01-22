@@ -5,13 +5,6 @@ import java.util.Map;
 
 public class Parser {
 
-    public static String[] parsing(String request, String delimiter, int limit) {
-        if (limit < 0) {
-            return request.split(delimiter);
-        }
-        return request.split(delimiter, limit);
-    }
-
     public static Map<String, String> splitRequestList(String request) {
         // " "로 request line 파싱
         String[] tokens = request.split(" ", 3);
