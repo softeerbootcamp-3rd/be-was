@@ -1,18 +1,19 @@
 package controller;
 
+import model.Request;
 import model.Response;
 import utils.PageReader;
 
 public class HomeController implements Controller {
 
-    public Response route(String url) {
-        if (url.equals("/")) {
+    public Response route(Request request) {
+        if (request.getUrl().equals("/")) {
             return redirectIndex();
         }
-        if (url.equals("/index.html")) {
-            return getIndex(url);
+        if (request.getUrl().equals("/index.html")) {
+            return getIndex(request.getUrl());
         }
-        return getStatic(url);
+        return getStatic(request.getUrl());
     }
 
     /**

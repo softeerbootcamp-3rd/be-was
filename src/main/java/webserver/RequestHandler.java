@@ -34,7 +34,7 @@ public class RequestHandler implements Runnable {
             String url = request.getUrl();
 
             Controller controller = getController(url);
-            Response response = controller.route(url);
+            Response response = controller.route(request);
 
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes(HeaderBuilder.build(response));
