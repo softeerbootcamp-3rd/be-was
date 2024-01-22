@@ -10,6 +10,7 @@ public enum ContentType {
     JAVASCRIPT("application/javascript", "js"),
     WOFF("application/x-font-woff", "woff"),
     WOFF2("application/x-font/woff2", "woff2"),
+    TTF("application/x-font/ttf", "ttf"),
     ICO("image/x-icon", "ico"),
     PNG("image/png", "png"),
     JPG("image/jpg", "jpg");

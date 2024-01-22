@@ -21,7 +21,7 @@ import static config.AppConfig.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final List<String> dynamicElements = List.of("/user/create?");
+    private static final List<String> dynamicElements = List.of("/user/create");
     private final Socket connection;
     private final HttpResponseFactory httpResponseFactory;
     private final HttpResponseSendService httpResponseSendService;
