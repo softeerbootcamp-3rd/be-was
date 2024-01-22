@@ -30,6 +30,8 @@ public class Request {
     public String getLocation() {return location;}
     public Map<String, String> getRequestParam() {return requestParam;}
 
+    public String getMethod() {return method;}
+
     public void setMethod(String method) {this.method = method;}
     public void setRequestParam(String[] params){
         for (String param : params) {
