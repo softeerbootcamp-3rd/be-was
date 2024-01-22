@@ -171,6 +171,40 @@ assertThat(new UserDTO(~~)).isEqualTo(RequestParser.parseUserInfo())처럼 isEqu
 - null을 리턴하거나, 인수로 받지 말자.
     - 예외를 던지거나, null에 대응하는 다른 객체 돌려주기
 
+## 💡 MIME 타입
+
+> 인터넷에서 컨텐츠의 타입을 정의하기 위해 사용되는 식별자
+>
+
+웹 서버와 클라이언트 간 전송되는 문서의 형식
+
+브라우저가 이 정보를 써서 리소스 표시/처리
+
+> 형식
+>
+
+`타입/서브타입`
+
+- **텍스트 문서:**
+    - **`text/plain`**: 일반 텍스트 문서
+    - **`text/html`**: HTML 문서
+- **이미지:**
+    - **`image/jpeg`**: JPEG 이미지
+    - **`image/png`**: PNG 이미지
+    - **`image/gif`**: GIF 이미지
+- **오디오/비디오:**
+    - **`audio/mpeg`**: MP3 오디오
+    - **`video/mp4`**: MP4 비디오
+- **응용 프로그램:**
+    - **`application/pdf`**: PDF 문서
+    - **`application/json`**: JSON 데이터
+
+
+> 웹 서버
+>
+
+Content-Type 필드를 통해 MIME 타입 전송
+
 ## 🐧 STEP 1 구현 방법
 >### 💡 정적인 html 파일 응답
 FileReader 유틸클래스에서 Files.readAllBytes를 통해 html 파일 읽어옴.
@@ -190,3 +224,15 @@ html, css, js 같은 파일 읽어오는 요청과 유저 생성 요청을 분�
 userId, password, email, name을 해시맵에 저장함. </br>
 이 정보를 꺼내서 Database에 저장
 
+</br>
+
+## 🐧 STEP 3 구현 방법
+>### 💡다양한 컨텐츠 타입 지원
+HttpRequest 클래스에서 해당 요청이 어떤 타입의 응답을 요청하는지 알려주는 get함수
+- path에서 확장자를 extract </br>
+
+FileLoader에서 HttpRequest에서 가져온 확장자에 따라 중간경로를 설정 후 파일 로드
+- 각 확장자의 중간 경로를 해시맵에 저장해놓음
+
+HttpResponseSender에서 MIME-Type에 맞게 헤더의 Content-Type을 작성하여 응답
+- 각 MIME type의 Content type 또한 해시맵에 저장해놓음

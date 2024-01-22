@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
-import dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -42,13 +41,15 @@ public class RequestHandler implements Runnable {
 
             //TODO 파일을 읽어오는 요청이 아닌 경우(예: 회원가입의 가입 버튼)
             String path = httpRequest.getPath();
+            logger.debug("Path: {}", path);
             if (isUserRegistrationRequest(path)) {
                 userService.registerUser(httpRequest.toUserDto());
                 logger.debug("New User Registered!");
                 responseSender.redirectToHomePage(dos);
             } else {
-                byte[] body = FileLoader.loadFileContent(path);
-                responseSender.sendHttpResponse(dos, body.length, body);
+                logger.debug("MIME: {}", httpRequest.getResponseMimeType());
+                byte[] body = new FileLoader().loadFileContent(path, httpRequest.getResponseMimeType());
+                responseSender.sendHttpResponse(dos, body.length, body, httpRequest.getResponseMimeType());
             }
 
         } catch (IOException e) {

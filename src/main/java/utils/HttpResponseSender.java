@@ -5,13 +5,32 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponseSender {
+    private static final Map<String, String> MIME_TYPE = new HashMap<>();
     private static final String INDEX_HTML_PATH = "/index.html";
     private static final Logger logger = LoggerFactory.getLogger(HttpResponseSender.class);
 
-    public void sendHttpResponse(DataOutputStream dos, int lengthOfBodyContent, byte[] body) {
-        create200OKResponseHeader(dos, lengthOfBodyContent);
+    public HttpResponseSender() {
+        this.setMimeType();
+    }
+
+    private void setMimeType() {
+        MIME_TYPE.put("eot", "font/eot");
+        MIME_TYPE.put("svg", "image/svg+xml");
+        MIME_TYPE.put("ttf", "font/ttf");
+        MIME_TYPE.put("woff", "font/woff");
+        MIME_TYPE.put("woff2", "font/woff2");
+        MIME_TYPE.put("css", "text/css");
+        MIME_TYPE.put("png", "image/png");
+        MIME_TYPE.put("js", "application/javascript");
+        MIME_TYPE.put("ico", "image/x-icon");
+    }
+
+    public void sendHttpResponse(DataOutputStream dos, int lengthOfBodyContent, byte[] body, String mimeType) {
+        create200OKResponseHeader(dos, lengthOfBodyContent, mimeType);
         createResponseBody(dos, body);
         flushResponse(dos);
     }
@@ -21,10 +40,10 @@ public class HttpResponseSender {
         flushResponse(dos);
     }
 
-    private void create200OKResponseHeader(DataOutputStream dos, int lengthOfBodyContent) {
+    private void create200OKResponseHeader(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + MIME_TYPE.get(mimeType) + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
