@@ -46,14 +46,19 @@ public class UserSignUpDto {
         return name;
     }
 
-    public static UserSignUpDto fromUrlParameters(String pathUrl) {
+    public static UserSignUpDto fromRequestBody(byte[] requestBody) {
         try {
             HashMap<String, String> map = new HashMap<>();
-            String[] splitUrl = pathUrl.split("\\?");
-            String[] parameters = splitUrl[1].split("&");
-            for (String param : parameters) {
-                String[] value = param.split("=");
-                map.put(value[0], value[1]);
+            String body = new String(requestBody);
+            if (!body.isEmpty()) {
+                String[] pairs = body.split("&");
+
+                for (String pair : pairs) {
+                    String[] keyValue = pair.split("=");
+                    String key = keyValue[0];
+                    String value = keyValue[1];
+                    map.put(key, value);
+                }
             }
             return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
         } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
