@@ -75,10 +75,8 @@ public class RequestParserUtil {
     }
 
     public static Map<String, String> parseUserRegisterQuery(String url) {
-        String userQuery = url.split("\\?")[1];
-
         // HTTP 요청으로부터 사용자 데이터 추출
-        String[] pairs = userQuery.split("&");
+        String[] pairs = url.split("&");
 
         Map<String, String> userProps = new HashMap<>();
         for (String pair : pairs) {
