@@ -70,7 +70,7 @@ public class WebUtilTest {
 
     @Test()
     @DisplayName("WebUtil.parseQueryString() Test")
-    public void pasrseQueryStringTest() {
+    public void parseQueryStringTest() {
         // given
         String uri = "/user/create?userId=userId&password=password&name=testName&email=softeer@example.com";
         String encodedUri = URLEncoder.encode(uri, StandardCharsets.UTF_8);
@@ -83,5 +83,21 @@ public class WebUtilTest {
         Assertions.assertThat(parsedUri.get("password")).isEqualTo("password");
         Assertions.assertThat(parsedUri.get("name")).isEqualTo("testName");
         Assertions.assertThat(parsedUri.get("email")).isEqualTo("softeer@example.com");
+    }
+
+    @Test()
+    @DisplayName("WebUtil.parseRequestBody() Test")
+    public void parseRequestBodyTest() {
+        // given
+        String body = "userId=1&password=hello&name=suji&email=example%40softeer.com";
+
+        // when
+        Map<String, String> parsedBody = WebUtil.parseRequestBody(body);
+
+        // then
+        Assertions.assertThat(parsedBody.get("userId")).isEqualTo("1");
+        Assertions.assertThat(parsedBody.get("password")).isEqualTo("hello");
+        Assertions.assertThat(parsedBody.get("name")).isEqualTo("suji");
+        Assertions.assertThat(parsedBody.get("email")).isEqualTo("example@softeer.com");
     }
 }

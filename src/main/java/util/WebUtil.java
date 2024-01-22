@@ -116,4 +116,20 @@ public class WebUtil {
 
         return parameters;
     }
+
+    // Parsing Request Body into Map<String, Stirng> Object
+    public static Map<String, String> parseRequestBody(String body) {
+        Map<String, String> parameters = new HashMap<>();
+        String encodedBody = URLDecoder.decode(body, StandardCharsets.UTF_8);
+        String[] pairs = encodedBody.split("&");
+
+        for (String pair: pairs) {
+            String[] keyValue = pair.split("=");
+            if (keyValue.length == 2) {
+                parameters.put(keyValue[0], keyValue[1]);
+            }
+        }
+
+        return parameters;
+    }
 }
