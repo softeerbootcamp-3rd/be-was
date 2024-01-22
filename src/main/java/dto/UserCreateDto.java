@@ -12,6 +12,8 @@ public class UserCreateDto {
     @NotEmpty
     private String email;
 
+    public UserCreateDto() {}
+
     public UserCreateDto(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;

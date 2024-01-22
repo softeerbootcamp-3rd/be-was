@@ -22,9 +22,12 @@ public class ResourceController {
         String sid = RequestParser.parseCookie(request.getHeader().get("Cookie")).get("SID");
         User user;
         if (sid != null && (user = SessionManager.getUserBySessionId(sid)) != null) {
-            response.setBody(fileContent.replace("{user-name}", user.getName()));
+            response.setBody(fileContent.replace("{user-name}", user.getName())
+                    .replace("{login-btn}", ""));
         } else {
-            response.setBody(fileContent.replace("{user-name}", ""));
+            response.setBody(fileContent.replace("{user-name}", "")
+                    .replace("{login-btn}",
+                            "<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>"));
         }
         return response;
     }
