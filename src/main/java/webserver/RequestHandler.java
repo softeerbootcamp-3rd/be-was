@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +42,6 @@ public class RequestHandler implements Runnable {
 
             if(splitHeader[1].contains("create")) {
                 String[] userInfo = splitHeader[1].split("&");
-                //System.out.println("userInfo : " + userInfo[0] + " " + userInfo[1]
-                                                 //+ " " + userInfo[2] + " " + userInfo[3]);
                 String[] idSplit = userInfo[0].split("=");
                 String userId = idSplit[1];
 
@@ -56,8 +55,12 @@ public class RequestHandler implements Runnable {
                 String userEmail = emailSplit[1];
 
                 User user = new User(userId, userPwd, userName, userEmail);
-                //System.out.println("result : " + userId + " " + userPwd + " " + userName + " " + userEmail);
-                System.out.println(user.getUserId());
+                Database.addUser(user);
+
+                logger.debug("UserId : " + user.getUserId());
+                logger.debug("UserPwd : " + user.getPassword());
+                logger.debug("UserName : " + user.getName());
+                logger.debug("UserEmail : " + user.getEmail());
             }
 
             //System.out.println(reqPath);
