@@ -2,46 +2,37 @@ package model;
 
 import db.Database;
 
+import java.util.HashMap;
+
 public class User {
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
 
-    public User(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+    private UserInfo userInfo;
+
+    public User(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
+    public UserInfo getUserInfo() {return this.userInfo;}
+    public String getUserId() {return this.userInfo.getInfo().get("userId");}
+    public String getPassword() {return this.userInfo.getInfo().get("password");}
+    public String getName() {return this.userInfo.getInfo().get("name");}
+    public String getEmail() {return this.userInfo.getInfo().get("email");}
     @Override
     public String toString() {
+        String userId = this.userInfo.getInfo().get("userId");
+        String password = this.userInfo.getInfo().get("password");
+        String name = this.userInfo.getInfo().get("name");
+        String email = this.userInfo.getInfo().get("email");
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
 
-    public static String verifyUser(User user) {
-        if(user.getUserId().isEmpty()
-                || user.getEmail().isEmpty()
-                || user.getName().isEmpty()
-                || user.getPassword().isEmpty()) return "입력란에 공백이 존재하면 안됩니다.";
-        else if(Database.findUserById(user.getUserId()) != null) return "중복되는 아이디 입니다.";
-        return "성공";
+    public boolean verifyUser() {
+        String userId = this.userInfo.getInfo().get("userId");
+        String password = this.userInfo.getInfo().get("password");
+        String name = this.userInfo.getInfo().get("name");
+        String email = this.userInfo.getInfo().get("email");
+        if(userId.isEmpty() || password.isEmpty()
+                || name.isEmpty() || email.isEmpty()) return false;
+        if(Database.findUserById(userId) != null) return false;
+        return true;
     }
 }

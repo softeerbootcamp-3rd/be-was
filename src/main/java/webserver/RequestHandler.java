@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import controller.MainController;
@@ -30,15 +29,14 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
-            Request request = readRequest(br);
+            Request request = handleRequest(br);
             Response response = MainController.control(request);
             responseProcess(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    private void responseProcess(DataOutputStream dos,
-                          Response response) {
+    private void responseProcess(DataOutputStream dos, Response response) {
         String statusCode = response.getStatusCode();
         if(statusCode.equals("200")) {
             byte[] body = response.getBody();
@@ -47,11 +45,12 @@ public class RequestHandler implements Runnable {
             responseBody(dos, body);
         }
         else if(statusCode.equals("302")) {
-            response302Header(dos);
+            response302Header(dos, response.getRedirectUrl());
         }
-        else {
+        else if(statusCode.equals("404")){
             byte[] body = response.getBody();
-            response200Header(dos, "text/html", body.length);
+            String mimeType = response.getMimeType();
+            response404Header(dos, mimeType, body.length);
             responseBody(dos, body);
         }
     }
@@ -69,11 +68,22 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void response302Header(DataOutputStream dos) {
-        String location = "/index.html";
+    private void response302Header(DataOutputStream dos, String redirectUrl) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location);
+            dos.writeBytes("Location: " + redirectUrl);
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    private void response404Header(DataOutputStream dos,
+                                   String mimeType,
+                                   int lengthOfBodyContent) {
+        try {
+            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
+            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -88,20 +98,36 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-    private Request readRequest(BufferedReader br) throws IOException {
+    private Request handleRequest(BufferedReader br) throws IOException {
         Request request = new Request();
+        request = handleRequestStartLine(br, request); // startLine 처리
+        request = handleRequestHeader(br, request); // header 처리
+        request = handleRequestBody(br, request); // body 처리
+        return request;
+    }
+    private Request handleRequestStartLine(BufferedReader br, Request request) throws IOException {
         String line = br.readLine();
         request.parseStartLine(line);
         logger.debug(request.toString());
+        return request;
+    }
+    private Request handleRequestHeader(BufferedReader br, Request request) throws IOException {
+        String line;
         while(true) {
             line = br.readLine();
-            if(line.isEmpty()) break;
+            if(line == null || line.isEmpty()) break;
             String[] keyAndValue = line.split(": ");
             String key = keyAndValue[0], value = keyAndValue[1];
             request.putHeader(key, value);
             if(printedKey.contains(key))
                 logger.debug(line);
         }
+        return request;
+    }
+    private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
+        String contentLength = request.getHeader().getOrDefault("Content-Length", "0");
+        if(contentLength.equals("0")) return request;
+        //TODO
         return request;
     }
 }

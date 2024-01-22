@@ -4,6 +4,9 @@ import db.Database;
 import model.Request;
 import model.Response;
 import model.User;
+import model.UserInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.UserService;
 
 import java.io.File;
@@ -11,53 +14,62 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class MainController {
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     public static Response control(Request request) throws IOException {
-        byte[] body = Files.readAllBytes(new File("./src/main/resources/templates/404error.html").toPath());
-        String statusCode = "404";
-        String method = request.getMethod();
-        String url = request.getUrl();
+        String statusCode = null;
+        byte[] body = null;
         String mimeType = request.getMimeType();
+        String redirectUrl = null;
+        String base = "./src/main/resources";
+        String path = request.getPath();
+        String method = request.getMethod();
 
         if(method.equals("GET")) {
-            if (url.equals("/")) {
-                body = Files.readAllBytes(new File("./src/main/resources/templates/index.html").toPath());
+            if (path.equals("/")) {
                 statusCode = "302";
-            } else if (url.equals("/user/create")) {
-                User user = UserService.create(request.getParam());
+                redirectUrl = "/index.html";
+            } else if (path.equals("/user/create")) {
+                User user = UserService.create(new UserInfo(request.getParam()));
                 if (user != null) {
-                    Database.addUser(user);
                     statusCode = "302";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/index.html").toPath());
+                    redirectUrl = "/index.html";
+                    logger.debug("회원가입 성공!  " + user.toString());
                 }
                 else {
                     statusCode = "200";
                     body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
+                    logger.debug("회원가입 실패!");
                 }
             } else {
-                if (mimeType.equals("text/html"))
-                    url = "./src/main/resources/templates" + url;
+                if (request.getFile() != null && request.getFile().getType().equals("html"))
+                    path = "./src/main/resources/templates" + path;
                 else
-                    url = "./src/main/resources/static" + url;
-                File searchedFile = new File(url);
+                    path = "./src/main/resources/static" + path;
+                File searchedFile = new File(path);
                 if(searchedFile.exists()) {
-                    body = Files.readAllBytes(new File(url).toPath());
                     statusCode = "200";
+                    body = Files.readAllBytes(new File(path).toPath());
+                }
+                else {
+                    statusCode = "404";
+                    body = Files.readAllBytes(new File(base + "/templates/error404.html").toPath());
                 }
             }
         }
         else if(method.equals("POST")) {
-            // 추후 작성
+            //TODO
         }
         else if(method.equals("PATCH")) {
-            // 추후 작성
+            //TODO
         }
         else if(method.equals("PUT")) {
-            // 추후 작성
+            //TODO
         }
         else if(method.equals("DELETE")) {
-            // 추후 작성
+            //TODO
         }
-        return new Response(statusCode, body, mimeType);
+
+        return new Response(statusCode, body, mimeType, redirectUrl);
     }
 }
