@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class HttpRequestParser {
         messageElement.put("HTTP version", firstLineParts[2]);
         //다른 헤더 추출
         String line;
-        while (!(line = reader.readLine()).isEmpty()) {
+        while((line=reader.readLine()) != null && !line.isEmpty()) {
             String[] headerParts = line.split(": ");
             if (headerParts.length == 2) {
                 messageElement.put(headerParts[0], headerParts[1]);
@@ -33,15 +34,13 @@ public class HttpRequestParser {
         }
 
         // 바디 추출
-        StringBuilder bodyBuilder = new StringBuilder();
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {
-            bodyBuilder.append(line).append("\n");
+        if(messageElement.get("Method").equals("POST")){
+            //TODO: Integer.getInt랑 Integer.parseInt 차이
+            char[] body = new char[Integer.parseInt(messageElement.get("Content-Length"))];
+            reader.read(body);
+            messageElement.put("Body", Arrays.toString(body));
         }
-        //마지막 개행 문자 제거
-        if (bodyBuilder.length() > 0) {
-            bodyBuilder.setLength(bodyBuilder.length() - 1);
-        }
-        messageElement.put("Body", bodyBuilder.toString());
+
         return messageElement;
     }
 
