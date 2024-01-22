@@ -14,7 +14,11 @@ public class UserController implements Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    private static final UserService userService = new UserService();
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public HttpResponseDto handleRequest(HttpRequestDto request) {

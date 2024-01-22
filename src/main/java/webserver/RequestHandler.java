@@ -10,6 +10,7 @@ import dto.HttpRequestDto;
 import dto.HttpResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 import util.HttpResponseUtil;
 import util.WebUtil;
 
@@ -49,7 +50,7 @@ public class RequestHandler implements Runnable {
         String uri = request.getUri();
         Controller controller;
         if (uri.startsWith("/user")) {
-            controller = new UserController();
+            controller = new UserController(new UserService());
         } else {
             controller = new DefaultController();
         }
