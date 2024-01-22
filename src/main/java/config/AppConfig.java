@@ -29,7 +29,7 @@ public class AppConfig {
         return HttpRequestFactoryImpl.getInstance();
     }
 
-    public static StaticResponseHandler staticResponseBuilder() {
+    public static StaticResponseHandler staticResponseHandler() {
         return StaticResponseHandlerImpl.getInstance();
     }
 
@@ -37,7 +37,7 @@ public class AppConfig {
         return UserControllerImpl.getInstance();
     }
 
-    public static DynamicResponseHandler dynamicResponseBuilder() {
+    public static DynamicResponseHandler dynamicResponseHandler() {
         return DynamicResponseHandlerImpl.getInstance();
     }
 

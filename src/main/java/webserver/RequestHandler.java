@@ -1,6 +1,5 @@
 package webserver;
 
-import config.AppConfig;
 import dto.HttpResponseDto;
 import factory.HttpRequestFactory;
 import factory.HttpResponseFactory;
@@ -27,15 +26,15 @@ public class RequestHandler implements Runnable {
     private final HttpResponseSendService httpResponseSendService;
     private final HttpRequestFactory httpRequestFactory;
     private final StaticResponseHandler staticResponseHandler;
-    private final DynamicResponseHandler dynamicResponseBuilder;
+    private final DynamicResponseHandler dynamicResponseHandler;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpResponseFactory = httpResponseFactory();
         this.httpResponseSendService = httpResponseSendService();
         this.httpRequestFactory = httpRequestFactory();
-        this.staticResponseHandler = staticResponseBuilder();
-        this.dynamicResponseBuilder = dynamicResponseBuilder();
+        this.staticResponseHandler = staticResponseHandler();
+        this.dynamicResponseHandler = dynamicResponseHandler();
     }
 
     public void run() {
@@ -53,7 +52,7 @@ public class RequestHandler implements Runnable {
             boolean isDynamic = dynamicElements.stream().anyMatch(httpRequest.getStartLine().getPathUrl()::startsWith);
             if (isDynamic) {
                 logger.debug("동적인 response 전달");
-                dynamicResponseBuilder.handle(httpRequest, httpResponseDto);
+                dynamicResponseHandler.handle(httpRequest, httpResponseDto);
             } else {
                 logger.debug("정적인 response 전달");
                 staticResponseHandler.handle(httpRequest, httpResponseDto);
