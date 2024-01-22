@@ -7,34 +7,33 @@ import java.util.Map;
 public class HttpRequest {
     private static Long numberOfRequests = 0L;
     private final Long requestId;
-    private Map<String, String> header;
+    private Map<String, String> info;
 
-    public HttpRequest(Map<String, String> header){
+    public HttpRequest(Map<String, String> messageElement){
         this.requestId = ++numberOfRequests;
-        this.header = header;
+        this.info = messageElement;
     }
 
     public String toString(){
         StringBuilder requestInfo = new StringBuilder();
         requestInfo.append("Request ID: ").append(requestId)
-                .append(" [Method: ").append(header.get("Method")).append(", ")
-                .append("Host: ").append(header.get("Host")).append(", ")
-                .append("Path: ").append(header.get("Path")).append("]");
+                .append(" [Method: ").append(info.get("Method")).append(", ")
+                .append("Host: ").append(info.get("Host")).append(", ")
+                .append("Path: ").append(info.get("Path")).append("]");
 
         return requestInfo.toString();
     }
 
     public String getPath(){
-        return header.get("Path");
+        return info.get("Path");
     }
 
     private void extractAndAddUserInfoToHeader(){
-        String[] pathParts = getPath().split("\\?");
-        String[] userInfo = pathParts[1].split("&");
+        String[] userInfo = info.get("Body").split("&");
 
         for (String s : userInfo) {
             String[] details = s.split("=");
-            header.put(details[0], details[1]);
+            info.put(details[0], details[1]);
         }
     }
 
@@ -45,10 +44,10 @@ public class HttpRequest {
 
     public UserDTO toUserDto(){
         extractAndAddUserInfoToHeader();
-        return new UserDTO(header.get("userId"), header.get("password"), header.get("name"), header.get("email"));
+        return new UserDTO(info.get("userId"), info.get("password"), info.get("name"), info.get("email"));
     }
 
     public String getMethod() {
-        return header.get("Method");
+        return info.get("Method");
     }
 }
