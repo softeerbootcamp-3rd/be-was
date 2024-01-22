@@ -39,6 +39,8 @@ public class RequestParserUtil {
                 requestBody = new String(buffer);
 
                 logger.debug("requestBody: {}", requestBody);
+
+                return new RequestData(tokens[0], tokens[1], tokens[2], headers, requestBody);
             }
         }
 
