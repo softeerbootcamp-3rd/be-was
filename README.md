@@ -175,7 +175,7 @@ dependencies {
 - usingRecursiveComparison: 실제 객체와 expected 객체의 필드를 재귀적으로 비교
 
 -----------------------------------------------
-## STEP 3. index.html 응답
+## STEP 3. 다양한 컨텐츠 타입 지원
 
 ### 1. MIME
 - Multipurpose Internet Mail Extensions의 약자
@@ -194,19 +194,7 @@ dependencies {
 
 ## 웹 서버 1주차 추가 공부
 
-### 1. request body 추출
-
-- http request를 bufferedreader로 읽는 과정에서, body가 포함되어 있을 경우 read 과정이 끝나지 않는 문제가 발생
-- Header와 Body 사이의 CRLF를 받아온 뒤로 stream이 body를 받아오지 않고 어딘가에서 끝없이 대기
-- 원인
-  - readLine() 메소드는 EOF를 만나거나 \r, \n, \r\n 셋 중 하나를 만나야 문장의 끝이라고 판단
-  - HTTP Request Message의 끝에는 캐리지 리턴이나 라인 피드가 없음
-  - 따라서 bufferedreader는 문장이 끝났음을 인지하지 못하고 무한 대기하는 것
-- 헤결 방법
-  - request header 중 Content-Length가 존재
-  - body의 길이를 나타내는 해당 값을 저장해두고, 해당 길이 만큼 body를 읽어와야 함
-
-### 2. Java Reflection
+### 1. Java Reflection
 
 - 프로그램이 자기 자신을 검사하고, 자신의 구조를 동적으로 분석하고 수정할 수 있는 능력
 - 장점
@@ -253,3 +241,18 @@ dependencies {
   ```
   - setAccessible(true) 
     - 접근 제어자에 상관없이 해당 멤버(필드, 메서드, 생성자 등)에 접근할 수 있도록 접근성(accessibility)을 설정
+
+  -----------------------------------------------
+## STEP 4. POST로 회원가입하기
+
+### 1. request body 추출
+
+- http request를 bufferedreader로 읽는 과정에서, body가 포함되어 있을 경우 read 과정이 끝나지 않는 문제가 발생
+- Header와 Body 사이의 CRLF를 받아온 뒤로 stream이 body를 받아오지 않고 어딘가에서 끝없이 대기
+- 원인
+  - readLine() 메소드는 EOF를 만나거나 \r, \n, \r\n 셋 중 하나를 만나야 문장의 끝이라고 판단
+  - HTTP Request Message의 끝에는 캐리지 리턴이나 라인 피드가 없음
+  - 따라서 bufferedreader는 문장이 끝났음을 인지하지 못하고 무한 대기하는 것
+- 헤결 방법
+  - request header 중 Content-Length가 존재
+  - body의 길이를 나타내는 해당 값을 저장해두고, 해당 길이 만큼 body를 읽어와야 함
