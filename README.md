@@ -1,4 +1,9 @@
-# Softeer bootcamp 3rd 학습사항 정리
+# java-was-2023
+Java Web Application Server 2023
+
+## 프로젝트 정보
+이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 를 참고하여 작성되었습니다.
+
 ## STEP 1 - index.html 응답
 
 ### Hardware Thread vs Software Thread
