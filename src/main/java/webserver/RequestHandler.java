@@ -13,7 +13,6 @@ import service.HttpResponseSendService;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static config.AppConfig.*;
@@ -42,7 +41,7 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
-            BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             HttpRequest httpRequest = httpRequestFactory.create(inBufferedReader);
             HttpResponseDto httpResponseDto = new HttpResponseDto();

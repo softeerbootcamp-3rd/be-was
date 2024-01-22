@@ -2,8 +2,8 @@ package dto;
 
 import exception.BadRequestException;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class UserSignUpDto {
     private final String name;
     private final String email;
 
-    public UserSignUpDto(String id, String password, String name, String email) {
+    public UserSignUpDto(String id, String password, String name, String email) throws UnsupportedEncodingException {
         validateNotNullOrEmpty(id, "User ID");
         validateNotNullOrEmpty(password, "Password");
         validateNotNullOrEmpty(name, "Name");
@@ -21,7 +21,7 @@ public class UserSignUpDto {
         this.id = id;
         this.password = password;
         this.name = name;
-        this.email = URLDecoder.decode(email, StandardCharsets.UTF_8);
+        this.email = URLDecoder.decode(email, "UTF-8");
     }
 
     private void validateNotNullOrEmpty(String value, String fieldName) {
@@ -61,7 +61,7 @@ public class UserSignUpDto {
                 }
             }
             return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
-        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+        } catch (IndexOutOfBoundsException | IllegalArgumentException | UnsupportedEncodingException e) {
             throw new BadRequestException("Please fill in all the necessary factors", e);
         }
     }
