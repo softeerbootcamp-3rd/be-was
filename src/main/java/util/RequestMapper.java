@@ -74,7 +74,9 @@ public class RequestMapper {
         IntStream.range(0, parameters.length)
                 .forEach(i -> {
                     Parameter parameter = parameters[i];
-                    if(parameter.isAnnotationPresent(RequestParam.class)){
+                    if (parameter.getType().equals(HttpRequest.class)) {
+                        params[i] = request;
+                    } else if (parameter.isAnnotationPresent(RequestParam.class)){
                         ParamType paramType = ParamType.getByClass(parameter.getType());
                         RequestParam annotation = parameter.getAnnotation(RequestParam.class);
                         String requestParam = request.getParamMap().get(annotation.value());

@@ -20,6 +20,11 @@ public class HttpResponse {
         this.header = new HashMap<>();
     }
 
+    public void setBody(String body) {
+        this.body = body.getBytes();
+        this.header.put("Content-Length", Integer.toString(this.body.length));
+    }
+
     public static HttpResponseBuilder builder() {
         return new HttpResponseBuilder();
     }

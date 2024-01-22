@@ -25,7 +25,6 @@ public class HttpRequest {
 
         String s;
         while ((s = reader.readLine()) != null && !s.isEmpty()) {
-            System.out.println(s);
             requestParts = s.split(":\\s*", 2);
             if (requestParts.length == 2) {
                 this.header.put(requestParts[0], requestParts[1]);
