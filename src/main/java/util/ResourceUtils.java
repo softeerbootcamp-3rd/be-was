@@ -3,6 +3,7 @@ package util;
 import util.http.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +12,7 @@ public class ResourceUtils {
     private static final String TEMPLATES = "./src/main/resources/templates";
     private static final String STATIC = "./src/main/resources/static";
 
-    public static ResponseEntity<?> getStaticResource(HttpRequest httpRequest) {
+    public static ResponseEntity<?> getStaticResource(HttpRequest httpRequest) throws IOException {
         try {
             String path = httpRequest.getPath();
 
@@ -22,9 +23,12 @@ public class ResourceUtils {
                     .header(HttpHeaders.CONTENT_TYPE, contentType)
                     .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
                     .body(body);
-        } catch (IOException e) {
-            byte[] body = "page not found".getBytes();
+        } catch (NotFoundException e) {
+            byte[] body = Files.readAllBytes(getFilePath("/notfound.html"));
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
+                    .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
                     .body(body);
         }
     }
@@ -42,6 +46,9 @@ public class ResourceUtils {
                 file = new File(STATIC + path);
         } else
             file = new File(STATIC + path);
+
+        if (!file.exists())
+            throw new NotFoundException();
 
         return file.toPath();
     }

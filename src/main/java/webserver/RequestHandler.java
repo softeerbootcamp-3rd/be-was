@@ -30,7 +30,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void route(HttpRequest httpRequest, OutputStream out) {
+    private void route(HttpRequest httpRequest, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
         String path = httpRequest.getPath();
 
