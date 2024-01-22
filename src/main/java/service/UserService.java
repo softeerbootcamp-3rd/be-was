@@ -13,7 +13,7 @@ import java.util.Map;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public void createUser(QueryParams queryParams) {
+    public User createUser(QueryParams queryParams) {
         User user = new User();
         Map<String, String> paramMap = queryParams.getParamMap();
         for (String key: paramMap.keySet()) {
@@ -25,6 +25,7 @@ public class UserService {
         }
         Database.addUser(user);
         logger.debug("DataBase Size = {}", Database.findAll().size());
+        return user;
     }
 
 }
