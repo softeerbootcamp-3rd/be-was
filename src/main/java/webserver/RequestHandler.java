@@ -39,14 +39,15 @@ public class RequestHandler implements Runnable {
             HttpResponseSender responseSender = new HttpResponseSender();
             logger.debug(httpRequest.toString());
 
-            //TODO 파일을 읽어오는 요청이 아닌 경우(예: 회원가입의 가입 버튼)
-            String path = httpRequest.getPath();
-            logger.debug("Path: {}", path);
-            if (isUserRegistrationRequest(path)) {
+            //TODO: GET, POST 분리
+            if(httpRequest.getMethod().equals("POST")){ //회원가입
                 userService.registerUser(httpRequest.toUserDto());
                 logger.debug("New User Registered!");
                 responseSender.redirectToHomePage(dos);
-            } else {
+            }
+            else{
+                String path = httpRequest.getPath();
+                logger.debug("Path: {}", path);
                 logger.debug("MIME: {}", httpRequest.getResponseMimeType());
                 byte[] body = new FileLoader().loadFileContent(path, httpRequest.getResponseMimeType());
                 responseSender.sendHttpResponse(dos, body.length, body, httpRequest.getResponseMimeType());
