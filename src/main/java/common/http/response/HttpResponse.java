@@ -1,4 +1,7 @@
-package http.response;
+package common.http.response;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponse {
 
@@ -16,8 +19,16 @@ public class HttpResponse {
         return startLine;
     }
 
+    public void setStartLine(HttpStatusCode httpStatusCode) {
+        this.startLine = new HttpResponseStartLine(httpStatusCode);
+    }
+
     public HttpResponseHeader getHeader() {
         return header;
+    }
+
+    public void setHeader(Map<String, String> headers) {
+        this.header = new HttpResponseHeader(headers);
     }
 
     public byte[] getBody() {
@@ -40,6 +51,14 @@ public class HttpResponse {
         System.arraycopy(body, 0, response, startLine.length + header.length, body.length);
 
         return response;
+    }
+
+    public static HttpResponse responseBuilder(HttpStatusCode httpStatusCode, HashMap<String, String> headers, byte[] body) {
+        return new HttpResponse(
+            new HttpResponseStartLine(httpStatusCode),
+            new HttpResponseHeader(headers),
+            body
+        );
     }
 
 }

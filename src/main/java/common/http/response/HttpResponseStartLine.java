@@ -1,4 +1,4 @@
-package http.response;
+package common.http.response;
 
 public class HttpResponseStartLine {
 

@@ -1,4 +1,4 @@
-package http.request;
+package common.http.request;
 
 import java.util.Map;
 
@@ -12,6 +12,13 @@ public class HttpRequestBody {
 
     public Map<String, String> getBody() {
         return body;
+    }
+
+    @Override
+    public String toString() {
+        return "HttpRequestBody{" +
+            "body=" + body +
+            '}';
     }
 
 }

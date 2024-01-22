@@ -1,4 +1,4 @@
-package http.request;
+package common.http.request;
 
 public enum StaticResourceExtension {
     HTML(".html"),

@@ -1,4 +1,4 @@
-package http.response;
+package common.http.response;
 
 public enum ContentType {
     HTML("text/html;charset=utf-8"),

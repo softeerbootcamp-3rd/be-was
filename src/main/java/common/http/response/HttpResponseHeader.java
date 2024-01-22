@@ -1,13 +1,16 @@
-package http.response;
+package common.http.response;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponseHeader {
 
     private Map<String, String> headers;
 
-    public HttpResponseHeader(HashMap<String, String> headers) {
+    public HttpResponseHeader(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
 
