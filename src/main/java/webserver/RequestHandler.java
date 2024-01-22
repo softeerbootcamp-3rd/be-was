@@ -31,12 +31,13 @@ public class RequestHandler implements Runnable {
 
             Request request = handleRequest(br);
             Response response = MainController.control(request);
-            responseProcess(dos, response);
+            handleResponse(dos, response);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    private void responseProcess(DataOutputStream dos, Response response) {
+    private void handleResponse(DataOutputStream dos, Response response) {
         String statusCode = response.getStatusCode();
         if(statusCode.equals("200")) {
             byte[] body = response.getBody();
@@ -125,9 +126,12 @@ public class RequestHandler implements Runnable {
         return request;
     }
     private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
-        String contentLength = request.getHeader().getOrDefault("Content-Length", "0");
-        if(contentLength.equals("0")) return request;
-        //TODO
+        int contentLength = Integer.parseInt(request.getHeader().getOrDefault("Content-Length", "0"));
+        if(contentLength == 0) return request;
+        char[] body = new char[contentLength];
+        br.read(body);
+        String queryString = new String(body);
+        request.parsePostQueryString(queryString);
         return request;
     }
 }

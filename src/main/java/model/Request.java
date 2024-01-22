@@ -1,5 +1,7 @@
 package model;
 
+import util.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,7 +52,7 @@ public class Request {
             param = new HashMap<>();
             String queryString = target.substring(indexOfParameter + 1);
             if(!queryString.isEmpty())
-                this.parseQueryString(queryString);
+                this.param = Util.parseQueryString(queryString);
             target = target.substring(0, indexOfParameter);
         }
         return target;
@@ -88,14 +90,14 @@ public class Request {
     public String toString() {
         return "[method= " + method + ", target= " + target + ", version= " + version + "]";
     }
-
-    private void parseQueryString(String queryString) {
+    public void parsePostQueryString(String queryString) {
+        body = new HashMap<>();
         String[] keyAndValue = queryString.split("&");
         for(String keyValue : keyAndValue) {
             int indexOfEqual = keyValue.indexOf("=");
             String key = keyValue.substring(0, indexOfEqual);
             String value = keyValue.substring(indexOfEqual+1);
-            param.put(key, value);
+            body.put(key, value);
         }
     }
 }
