@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import http.response.HttpResponse;
-import http.ContentType;
 import http.request.HttpRequest;
 import http.HttpStatus;
 import utils.*;
@@ -50,9 +49,10 @@ public class RequestHandler implements Runnable {
                 Path filePath = Path.of(basePath + requestUrl);
                 // 파일 존재할 경우 해당 파일 반환
                 if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
-                    String extension = FileReader.getFileExtension(filePath);
+                    // Request 헤더의 Accept 필드를 참고하여 반환할 타입 지정
+                    String contentType = httpRequest.getEtcHeaders().get("Accept").split(",")[0];
                     byte[] body = FileReader.readFile(requestUrl);
-                    response = HttpResponse.of(HttpStatus.OK, ContentType.getContentType(extension), body);
+                    response = HttpResponse.of(HttpStatus.OK, contentType, body);
                 } else {
                     // 파일 존재하지 않을 경우 404 not found 반환
                     logger.info("404 not found");

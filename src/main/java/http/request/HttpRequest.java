@@ -60,4 +60,8 @@ public class HttpRequest {
     public RequestLine getRequestLine() {
         return requestLine;
     }
+
+    public Map<String, String> getEtcHeaders() {
+        return etcHeaders;
+    }
 }

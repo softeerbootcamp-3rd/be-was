@@ -1,6 +1,5 @@
 package http.response;
 
-import http.ContentType;
 import http.HttpStatus;
 import http.request.HttpRequest;
 import org.slf4j.Logger;
@@ -22,9 +21,9 @@ public class HttpResponse {
         responseHeader.put("Location", redirect);
     }
 
-    public HttpResponse(HttpStatus status, ContentType content, byte[] body) {
+    public HttpResponse(HttpStatus status, String contentType, byte[] body) {
         this.status = status;
-        responseHeader.put("Content-Type", content.getType() + ";charset=utf-8");
+        responseHeader.put("Content-Type", contentType + ";charset=utf-8");
         responseHeader.put("Content-Length", String.valueOf(body.length));
         this.body = body;
     }
@@ -37,8 +36,8 @@ public class HttpResponse {
         return new HttpResponse(status, redirect);
     }
 
-    public static HttpResponse of(HttpStatus status, ContentType content, byte[] body) {
-        return new HttpResponse(status, content, body);
+    public static HttpResponse of(HttpStatus status, String contentType, byte[] body) {
+        return new HttpResponse(status, contentType, body);
     }
 
     public static HttpResponse of(HttpStatus status) {
