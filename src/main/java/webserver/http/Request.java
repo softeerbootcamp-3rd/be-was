@@ -44,14 +44,11 @@ public class Request {
         }
     }
     private void parseRequestBody() {
+        System.out.println("parsed request body size : " + bodyContent.size());
         for(int i = 0;i < bodyContent.size();i++) {
             if(bodyContent.get(i).isEmpty())
                 break;
-
-            String[] keyValue = bodyContent.get(i).split(" ");
-            String key = keyValue[0].substring(0, keyValue[0].length() - 1);
-            String val = keyValue[1];
-            requestBody.put(key, val);
+            
         }
     }
 
@@ -72,23 +69,23 @@ public class Request {
 
     private void parseRequest(BufferedReader br) throws IOException {
         String line;
+        boolean headerFinished = false;
         boolean hasBody = false;
-        int blankCount = 0;
+
         while ((line = br.readLine()) != null) {
-            if (line.contains("Content-Length")) {
-                hasBody = true;
-            }
-            if (!hasBody && line.isEmpty()) {
-                break;
-            }
-            if (blankCount == 1 && line.isEmpty()) {
-                break;
-            }
             if (line.isEmpty()) {
-                blankCount++;
+                headerFinished = true;
+                if (hasBody) {
+                    continue;
+                } else {
+                    break;
+                }
             }
 
-            if (blankCount < 1) {
+            if (!headerFinished) {
+                if (line.contains("Content-Length")) {
+                    hasBody = true;
+                }
                 headerContent.add(line);
             } else {
                 bodyContent.add(line);
