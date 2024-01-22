@@ -12,15 +12,9 @@ public class ControllerMappingMap {
     }
 
     public static Controller getController(String url) {
-        if (url.contains("?")) {
-            url = url.substring(0, url.indexOf("?"));
-        }
         if (url.contains(".")) {
             return controllerMappingMap.get("resource");
         }
         return controllerMappingMap.get(url);
     }
-
-
-
 }

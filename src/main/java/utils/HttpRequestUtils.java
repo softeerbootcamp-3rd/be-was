@@ -19,7 +19,7 @@ public class HttpRequestUtils {
         parseHeader(br, request);
         parseBody(request, br);
 
-        if (request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
+        if (!request.getMethod().equals("GET") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
             Map<String, String> params = parseQueryString(request.getBody());
             request.setParams(params);
         }
@@ -37,10 +37,12 @@ public class HttpRequestUtils {
         request.setUrl(url);
         request.setVersion(version);
 
+
         if (url.contains("?")) {
             String queryString = url.substring(url.indexOf("?") + 1);
             Map<String, String> params = parseQueryString(queryString);
             request.setParams(params);
+            request.setUrl(url.substring(0, url.indexOf("?")));
         }
     }
 
