@@ -45,7 +45,8 @@ public class RequestData {
         return headers.get(headerName);
     }
 
-    public String formatForOutput() {
+    @Override
+    public String toString() {
         StringBuilder output = new StringBuilder();
         output.append("\n===\n");
         output.append("Method: ").append(method).append("\n");
