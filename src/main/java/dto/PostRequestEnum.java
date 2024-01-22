@@ -5,6 +5,12 @@ import service.PostService;
 import java.util.Arrays;
 
 public enum PostRequestEnum {
+    SIGNUP("/user/create") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return PostService.signup(httpRequestDto);
+        }
+    },
     LOGIN("/user/login") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {

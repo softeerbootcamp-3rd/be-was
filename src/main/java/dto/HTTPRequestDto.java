@@ -79,4 +79,15 @@ public class HTTPRequestDto {
     public void addRequestParam(String key, String value) {
         this.requestParams.put(key, value);
     }
+
+    public HashMap<String, String> bodyParsing() {
+        HashMap<String, String> bodyMap = new HashMap<>();
+        String[] tokens = body.split("&");
+        for(int i = 0; i < tokens.length; i++) {
+            String key = tokens[i].substring(0, tokens[i].indexOf("="));
+            String value = tokens[i].substring(tokens[i].indexOf("=") + 1);
+            bodyMap.put(key, value);
+        }
+        return bodyMap;
+    }
 }

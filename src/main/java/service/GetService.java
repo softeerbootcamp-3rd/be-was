@@ -4,6 +4,8 @@ import db.Database;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
 import model.User;
+import webserver.RequestHandler;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +30,7 @@ public class GetService {
 
         // 필요한 정보가 제대로 들어오지 않았을 경우
         // 네가지 정보 모두 기입해야 회원가입 가능
-        if(!(!user.getUserId().equals("") && !user.getPassword().equals("") && !user.getName().equals("") && !user.getEmail().equals("")))
+        if(user.getUserId().equals("") || user.getPassword().equals("") || user.getName().equals("") || user.getEmail().equals(""))
             return new HTTPResponseDto(404, "모든 정보를 기입해주세요.".getBytes());
 
         // 중복 아이디 처리
@@ -41,7 +43,7 @@ public class GetService {
         System.out.println("새로운 유저: " + user.toString());
         System.out.println("전체 DB: " + Database.findAll());
         // /index.html로 리다이렉트
-        return new HTTPResponseDto(303, "/index.html".getBytes());
+        return new HTTPResponseDto(302, "/index.html".getBytes());
     }
 
     // 파일 불러오기 요청
@@ -65,7 +67,7 @@ public class GetService {
 
     // index.html로 리다이렉트
     public static HTTPResponseDto showIndex(HTTPRequestDto httpRequestDto) {
-        return new HTTPResponseDto(303, "/index.html".getBytes());
+        return new HTTPResponseDto(302, "/index.html".getBytes());
     }
 
 }
