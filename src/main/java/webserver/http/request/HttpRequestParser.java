@@ -24,7 +24,7 @@ public class HttpRequestParser {
         String queryString = pathParts.length > 1 ? pathParts[1] : "";
         Map<String, String> queryParams = parseQueryParams(queryString);
         Map<String, String> headers = parseHeaders(br);
-        String body = parseBody(br, headers);
+        Map<String, String> body = parseBody(br, headers);
 
         return new HttpRequest(method, pathParts[0], protocolVersion, queryParams, headers, body);
     }
@@ -53,7 +53,7 @@ public class HttpRequestParser {
         return headers;
     }
 
-    private String parseBody(BufferedReader br, Map<String, String> headers) throws IOException {
+    private Map<String, String> parseBody(BufferedReader br, Map<String, String> headers) throws IOException {
         StringBuilder body = new StringBuilder();
         if (headers.containsKey("Content-Length")) {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
@@ -61,6 +61,6 @@ public class HttpRequestParser {
                 body.append((char) br.read());
             }
         }
-        return body.toString();
+        return parseQueryParams(body.toString());
     }
 }

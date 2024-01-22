@@ -74,7 +74,8 @@ public class RequestHandler implements Runnable {
                     logMessage.append("Header: ").append(key).append(" = ").append(value).append("\n"));
         }
         if (!httpRequest.getBody().isEmpty()) {
-            logMessage.append("Body: ").append(httpRequest.getBody()).append("\n");
+            httpRequest.getBody().forEach((key, value) ->
+                    logMessage.append("Body: ").append(key).append(" = ").append(value).append("\n"));
         }
         logMessage.append("==================================");
 

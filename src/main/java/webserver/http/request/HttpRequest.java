@@ -8,10 +8,9 @@ public class HttpRequest {
     private String protocolVersion;
     private Map<String, String> queryParams;
     private Map<String, String> headers;
+    private Map<String, String> body;
 
-    private String body;
-
-    public HttpRequest(HttpMethod method, String path, String protocolVersion, Map<String, String> queryParams, Map<String, String> headers, String body) {
+    public HttpRequest(HttpMethod method, String path, String protocolVersion, Map<String, String> queryParams, Map<String, String> headers, Map<String, String> body) {
         this.method = method;
         this.path = path;
         this.protocolVersion = protocolVersion;
@@ -40,7 +39,7 @@ public class HttpRequest {
         return headers;
     }
 
-    public String getBody(){
+    public Map<String, String> getBody(){
         return body;
     }
 
