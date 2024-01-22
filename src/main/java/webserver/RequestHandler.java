@@ -5,9 +5,6 @@ import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import dto.RequestHeaderDto;
 import dto.RequestLineDto;
@@ -17,8 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static common.config.WebServerConfig.userController;
+import static webserver.Response.getMimeType;
 import static common.response.Status.*;
-import static common.response.Response.createResponse;
+import static webserver.Response.createResponse;
 import static common.view.OutputView.*;
 import static webserver.RequestParser.*;
 
@@ -46,8 +44,7 @@ public class RequestHandler implements Runnable {
 
             String queryString = requestLineDto.getQueryString();
 
-            Path source = Paths.get(requestLineDto.getPath());
-            String mimeType = Files.probeContentType(source);
+            String mimeType = getMimeType(requestLineDto.getPath());
 
             if (queryString == null) {
                 createResponse(out, SUCCESS, mimeType, requestLineDto.getPath());

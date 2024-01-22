@@ -1,10 +1,14 @@
-package common.response;
+package webserver;
+
+import common.response.Status;
 
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static common.response.Status.REDIRECT;
 
@@ -57,5 +61,10 @@ public class Response {
     private static void responseBody(DataOutputStream dos, byte[] body) throws IOException {
         dos.write(body, 0, body.length);
         dos.flush();
+    }
+
+    public static String getMimeType(String path) throws IOException {
+        Path source = Paths.get(path);
+        return Files.probeContentType(source);
     }
 }
