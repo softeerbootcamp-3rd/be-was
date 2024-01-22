@@ -3,7 +3,6 @@ package webserver;
 import controller.Controller;
 import controller.HomeController;
 import controller.UserController;
-import java.util.Arrays;
 import model.Response;
 import java.io.*;
 import java.net.Socket;
