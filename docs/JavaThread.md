@@ -24,8 +24,14 @@
 * 기존 JAVA의 Thread Model: OS의 도움을 받아 **JVM**이 스레드를 관리하는 모델 (many-to-many 모델)
 * JAVA의 유저 스레드를 만들면 **Java Native Interface(JNI)**를 통해 커널 영역을 호출하여 **OS가 커널 스레드를 생성하고 매핑**하여 작업을 수행
 * **OS의 도움을 받아 JVM이 스레드를 관리하는 모델**
+* 커널은 현재 활동 중인 thread만 관리해야 한다.
 
 👉 서버의 요청량이 급격하게 증가하며 스레드가 많아졌고, 함께 증가하는 Context Switching 비용을 줄이기 위해 경량 스레드 모델인 Virtual Thread 등장
+
+#### Native Thread의 장단점
+* Native Thread 모델 이전에 JVM이 사용하던 Green Thread Model (many-to-one) 은 OS 지원 없이 완벽하게 JVM이 user thread를 관리하는 방식으로 멀티 코어(CPU) 환경에서 동작하더라도 그 장점을 전혀 이용할 수 없고 한 번에 하나의 thread만 kernel에 접근하여 처리될 수 있다. 따라서 user thread 중 하나만 block되어도 다른 모든 user thread가 block되는 현상이 발생한다.
+* Native Thread는 many-to-many 모델로 멀티 코어(CPU)의 이점을 활용할 수 있으므로 Green Thread에서 하나의 user thread가 block되면 다른 모든 user thread도 block되는 병목 현상을 해결할 수 있고, 한 번에 여러 user thread가 요청을 처리할 수 있다
+* 하지만 Native Thread는 커널 스레드에 매핑되기 때문에 스레드를 생성하고 중지하는 데 비용이 많이 든다는 단점이 있다.
 
 ### Virtual Thread
 ![Virtual-Thread](https://techblog.woowahan.com/wp-content/uploads/2023/12/5.png)
@@ -90,6 +96,8 @@ void future() {
 > Future에 처리 결과에 대한 콜백을 정의해 문제를 해결할 수 있는데, 이를 보완하여 Java8에 추가된 것 -> `CompletableFuture`
 
 ## JAVA Concurrent 패키지
+### 등장 이유
+* 동시성 프로그래밍(병렬 프로그래밍)을 지원하기 위한 패키지로 멀티스레드 환경에서 작업을 동기화하고 조율하는 데 사용되며, 스레드 간의 안전한 데이터 공유와 병렬 처리를 위한 다양한 도구와 구조를 제공
 
 ### Executor Framework
 #### `Executor` 인터페이스
@@ -140,3 +148,5 @@ static class StartExecutor implements Executor {
 - [[Java] Thread와 Runnable에 대한 이해 및 사용법 출처](https://mangkyu.tistory.com/258)
 
 - [[Java] Callable, Future 및 Executors, Executor, ExecutorService, ScheduledExecutorService에 대한 이해 및 사용법](https://mangkyu.tistory.com/259)
+
+- [[Java] Java 에서의 Thread, Light Weight Process](https://blogshine.tistory.com/338)

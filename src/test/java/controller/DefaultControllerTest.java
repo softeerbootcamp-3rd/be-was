@@ -2,68 +2,45 @@ package controller;
 
 import dto.HttpRequestDto;
 import dto.HttpRequestDtoBuilder;
+import dto.HttpResponseDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 public class DefaultControllerTest {
     private final DefaultController defaultController = new DefaultController();
 
     private final Logger logger = LoggerFactory.getLogger(DefaultControllerTest.class);
 
-    @Test()
+    @ParameterizedTest
+    @MethodSource("handleRequestParams")
     @DisplayName("DefaultController.handleRequest() Test")
-    public void handleRequestTest() {
+    public void handleRequestTest(String method, String uri, String expectedStatus) {
         // given
-        HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1").build();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(byteArrayOutputStream);
+        HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder(method, uri, "HTTP/1.1").build();
 
         // when
-        defaultController.handleRequest(httpRequestDto, dos);
+        HttpResponseDto httpResponseDto = defaultController.handleRequest(httpRequestDto);
 
         // then
-        String response = byteArrayOutputStream.toString();
-        logger.debug(response);
-        Assertions.assertThat(response).contains("HTTP/1.1 200 OK");
+        logger.debug(httpRequestDto.toString());
+        logger.debug(new String(httpResponseDto.getBody(), StandardCharsets.UTF_8));
+        Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo(expectedStatus);
+
     }
 
-    @Test()
-    @DisplayName("DefaultController.handleRequest() Test - root(/) path")
-    public void handleRequestRootTest() {
-        // given
-        HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder("GET", "/", "HTTP/1.1").build();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(byteArrayOutputStream);
-
-        // when
-        defaultController.handleRequest(httpRequestDto, dos);
-
-        // then
-        String response = byteArrayOutputStream.toString();
-        logger.debug(response);
-        Assertions.assertThat(response).contains("HTTP/1.1 302 Found");
-    }
-
-    @Test()
-    @DisplayName("DefaultController.handleRequest() Test - 404 Not Found")
-    public void handleRequest404Test() {
-        // given
-        HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder("GET", "/hello", "HTTP/1.1").build();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(byteArrayOutputStream);
-
-        // when
-        defaultController.handleRequest(httpRequestDto, dos);
-
-        // then
-        String response = byteArrayOutputStream.toString();
-        logger.debug(response);
-        Assertions.assertThat(response).contains("HTTP/1.1 404 Not Found");
+    private static Stream<Arguments> handleRequestParams() {
+        return Stream.of(
+                Arguments.of("GET", "/index.html", "200"),
+                Arguments.of("GET", "/", "302"),
+                Arguments.of("GET", "/hello", "404")
+        );
     }
 }

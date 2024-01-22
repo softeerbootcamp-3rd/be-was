@@ -41,6 +41,8 @@ public class HttpRequestDto {
         return this.body;
     }
 
+    // HTTP Request 로그 출력 용 코드
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Requeset Line: ").append(this.method + " " + this.uri + " " + this.httpVersion);

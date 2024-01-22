@@ -165,9 +165,15 @@ Keep-Alive: timeout=15, max=100
 
 ### Content-Type Negotiation (MIME type)
 
-- 서버는 **MIME Configuration 파일**(`conf\mime.types`)을 이용해서 파일 확장을 특정 media type에 매핑
+- 서버는 주로 요청된 리소스의 확장자를 기반으로 **MIME Configuration 파일**(`conf\mime.types`)을 이용해서 파일 확장을 특정 media type에 매핑
     - ex) file extensions `.html` → MIME type `text/html` , `.jpg`, `.jpeg` → `image/jpeg`
 - 서버에 여러 타입의 파일이 존재하는 경우, 클라이언트의 요청 헤더의 `Accept` 값에 따라 선호하는 타입을 보내준다
+- 서버의 Default MIME-Type 은 서버마다 다른데, 2.2.7 이전의 Apache Web Server의 경우에는 `text/plain` 혹은 `application/octet-stream`을 알 수 없는 컨텐트 타입에 사용하였고, Apache Web Server 최근 버전에서는 `none` 을 사용한다. Nginx는 `text/plain`을 default content type으로 사용한다.
+
+#### Content-Type을 왜 지정해주어야 할까?
+* 웹 서버에서 잘못된 Content-Type을 지정해주거나 Content-Type을 지정해주지 않으면 웹 브라우저는 서버의 의도를 알 수 없기 때문에 예상하지 못한 동작이 발생할 수 있음
+* Loss of Control: 브라우저에서 Content-Type을 추측하게 되면 웹 어플리케이션의 작성자가 자신의 컨텐트가 어떻게 처리되는지에 대한 control 권한을 잃어버리게 된다
+* Security: 일부 Content-Type은 본질적으로 안전하지 않기 때문에 브라우저에서의 수행하는 작업을 제안해야 한다
 
 ## Non-Persistent HTTP vs. Persistent HTTP
 
@@ -214,6 +220,35 @@ Keep-Alive: timeout=15, max=100
 - 이 같은 단점을 보완하기 위해 MVC 기반 개발을 지원하는 프레임워크가 등장
 - 많은 기반 코드를 구현해 제공함으로써 개발자들이 구현할 부분을 최소화해 생산성을 높이는 효과
 
+## Spring MVC 패턴
+![](https://velog.velcdn.com/images/choidongkuen/post/04e2d8a0-5bcf-4dbe-b430-420d4bad9f11/image.png)
+
+### Spring MVC 동작 패턴
+1. 클라이언트의 요청이 DispatcherServlet에 도착
+2. DispatcherServlet은 Handler Mapping을 통해 해당 요청을 처리할 컨트롤러를 탐색
+3. 찾은 컨트롤러의 메서드가 실행되어 비즈니스 로직이 수행
+4. 컨트롤러에서는 모델을 업데이트하고, 뷰의 이름을 반환
+5. DispatcherServlet은 View Resolver를 통해 해당 뷰를 찾고, 모델 데이터를 뷰에 전달
+6. 뷰는 최종적인 응답을 생성하여 클라이언트에 반환
+
+### Layered Architecture
+![](https://camo.githubusercontent.com/d0ab6054d2169349e92ce94d8349a49f77b717e6288c541a80c282f03e16f87d/68747470733a2f2f637068696e662e707374617469632e6e65742f6d6f6f632f32303138303231395f3238332f3135313930303931323134383675334c6b445f504e472f322e706e67)
+* 소프트웨어를 여러 계층으로 나누어 각 계층이 특정 역할을 수행하도록 설계하는 소프트웨어 아키텍처 디자인 패턴
+
+#### Service
+* 비지니스 메소드를 별도의 Service 객체에서 구현하도록 하고 Controller는 Service 객체를 사용
+* Service: 비지니스 로직(Business logic)을 수행하는 메소드를 가지고 있는 객체 
+  * 보통 하나의 비지니스 로직은 하나의 트랜잭션으로 동작
+
+#### Repository
+* 데이터 액세스 메소드를 구현하는 객체, Service는 Repository 객체를 사용
+
+#### Layered Architecture 장점
+* 모듈화와 유지보수성: 각 계층을 모듈화하여 코드의 유지보수성을 향상시키고 특정 계층의 변경이 다른 계층에 미치는 영향을 최소화
+* 재사용성: 각 계층이 독립적으로 구성되어 있어서 특정 계층을 다른 프로젝트나 모듈에서 재사용하기 쉬움
+* 테스트 용이성: 각 계층을 독립적으로 테스트 가능
+
 ***
 ## Reference
 [HTTP (HyperText Transfer Protocol) - Basics](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html)
+[Properly configuring server MIME types - MDN](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Configuring_server_MIME_types)
