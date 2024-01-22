@@ -13,16 +13,38 @@ import java.util.Map;
 public class HttpRequestUtils {
 
     public static HttpRequest makeHttpRequest(InputStream in) throws IOException {
-
-
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        HttpRequest request = new HttpRequest();
+        parseRequestLine(br, request);
+        parseHeader(br, request);
+        parseBody(request, br);
+
+        if (request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
+            Map<String, String> params = parseQueryString(request.getBody());
+            request.setParams(params);
+        }
+
+        return request;
+    }
+
+    private static void parseRequestLine(BufferedReader br, HttpRequest request) throws IOException {
         String requestLine = br.readLine();
         String[] values = requestLine.split(" ");
         String method = values[0];
         String url = values[1];
         String version = values[2];
-        HttpRequest request = new HttpRequest(method, url ,version);
+        request.setMethod(method);
+        request.setUrl(url);
+        request.setVersion(version);
 
+        if (url.contains("?")) {
+            String queryString = url.substring(url.indexOf("?") + 1);
+            Map<String, String> params = parseQueryString(queryString);
+            request.setParams(params);
+        }
+    }
+
+    private static void parseHeader(BufferedReader br, HttpRequest request) throws IOException {
         String headerLine;
         while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
             String[] pair = headerLine.split(":");
@@ -32,7 +54,9 @@ public class HttpRequestUtils {
                 request.getHeaders().put(fieldName, value);
             }
         }
+    }
 
+    private static void parseBody(HttpRequest request, BufferedReader br) throws IOException {
         StringBuilder bodyBuilder = new StringBuilder();
         int contentLength = getContentLength(request);
         if (contentLength > 0) {
@@ -44,10 +68,10 @@ public class HttpRequestUtils {
                 totalBytesRead += bytesRead;
             }
         }
-
         request.setBody(bodyBuilder.toString());
-        return request;
     }
+
+
 
     private static int getContentLength(HttpRequest request) {
         String contentLengthHeader = request.getHeaders().get("Content-Length");
@@ -59,6 +83,16 @@ public class HttpRequestUtils {
             }
         }
         return 0;
+    }
+
+    public static Map<String, String> parseQueryString(String query) {
+        Map<String, String> params = new HashMap<>();
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=");
+            params.put(keyValue[0], keyValue[1]);
+        }
+        return params;
     }
 
 }
