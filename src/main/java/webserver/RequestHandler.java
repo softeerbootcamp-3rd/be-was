@@ -29,8 +29,18 @@ public class RequestHandler implements Runnable {
             logger.debug("request line ; {}", line);
             System.out.println("header : " + line);
 
+            String[] splitHeader = line.split(" ");
+            String reqPath = "src/main/resources/templates";
+
+            // extract path
+            if(splitHeader[1].contains("html")) {
+                System.out.println("splitHeader: " + splitHeader[1]);
+                reqPath += splitHeader[1];
+            }
+
+            //System.out.println(reqPath);
             DataOutputStream dos = new DataOutputStream(out);
-            String readResult = readFile("src/main/resources/templates/index.html");
+            String readResult = readFile(reqPath);
 
             byte[] body = readResult.getBytes();
             response200Header(dos, body.length);
