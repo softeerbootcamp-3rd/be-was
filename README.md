@@ -205,6 +205,30 @@ assertThat(new UserDTO(~~)).isEqualTo(RequestParser.parseUserInfo())처럼 isEqu
 
 Content-Type 필드를 통해 MIME 타입 전송
 
+## 💡 POST
+
+출처 https://http.dev/post
+
+send data to a server and is typically utilized for interacting with a specific resource
+
+- 서버에게 바라는 message body의 표현 방법은 Content-Type에 명시됨.
+
+    ```bash
+    application/x-www-form-urlencodedCopied !
+    ```
+
+    - 디폴트 content-type
+        - key-value pairs(key=value)
+        - 각 pair는 &로 구분됨
+- POST는 PUT method와 비슷.
+    - PUT은 멱등성이 있지만, POST는 아님.
+- Uses of POST
+    - HTML form으로 받은 데이터 블락 전송
+    - 이미 존재하는 자원의 데이터 추가 또는 변경
+    - 서버가 클라이언트에게 어떤 정보를 보내고 이를 나중에 다시 가져올 수 있도록 하려면, 서버는 200 OK 상태 코드와 함께 Content-Location 헤더를 사용하여 클라이언트에게 해당 정보가 위치한 곳을 알려줌. 이를 통해 클라이언트는 필요할 때 해당 위치로 가서 정보를 가져올 수 있습니다.
+    - 서버에게 어떤 task를 시작하거나 멈추게 명령
+    - 새로운 리소스 생성. → 201 created status code
+
 ## 🐧 STEP 1 구현 방법
 >### 💡 정적인 html 파일 응답
 FileReader 유틸클래스에서 Files.readAllBytes를 통해 html 파일 읽어옴.
@@ -236,3 +260,9 @@ FileLoader에서 HttpRequest에서 가져온 확장자에 따라 중간경로를
 
 HttpResponseSender에서 MIME-Type에 맞게 헤더의 Content-Type을 작성하여 응답
 - 각 MIME type의 Content type 또한 해시맵에 저장해놓음
+
+## 🐧 STEP 4 구현 방법
+>### 💡 POST로 회원가입
+RequestHandler에서 요청 메소드로 분리(POST, GET)
+HttpRequestParser에서 요청 메시지 헤더와 바디 저장
+- 바디 저장시 Content-Length 값만큼만 읽어서 무한으로 읽어오는 것 방지
