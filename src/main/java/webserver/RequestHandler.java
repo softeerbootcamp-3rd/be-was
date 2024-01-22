@@ -20,9 +20,6 @@ import webserver.routing.StaticRoutingManager;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-    private static final byte[] METHOD_NOT_FOUND = "Method Not Found".getBytes(StandardCharsets.UTF_8);
-
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -40,16 +37,11 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse;
 
-            // GET 메소드
-            if (httpRequest.getMethod() == HttpMethod.GET){
-                // 정적 로직 라우팅
-                httpResponse = StaticRoutingManager.handleRequest(httpRequest);
-                // 동적 로직 라우팅
-                if(httpResponse == null){
-                    httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
-                }
-            } else {
-                httpResponse = new HttpResponseBuilder().createErrorResponse(HttpStatus.BAD_REQUEST, METHOD_NOT_FOUND);
+            // 정적 로직 라우팅
+            httpResponse = StaticRoutingManager.handleRequest(httpRequest);
+            // 동적 로직 라우팅
+            if(httpResponse == null){
+                httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
             }
 
             new HttpResponseSender().sendResponse(httpResponse, dos);
