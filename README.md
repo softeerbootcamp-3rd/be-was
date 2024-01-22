@@ -354,6 +354,104 @@ Content-Type: text/html; charset=iso-8859-1
 ### 5. 추가 학습 내용
 [좋은 회고란?](https://velog.io/@tin9oo/%EC%A2%8B%EC%9D%80-%ED%9A%8C%EA%B3%A0%EB%9E%80)
 
+</details>
+
 ---
 
+<details>
+    <summary><b>Step 4 - POST로 회원가입</b></summary>
+
+## 1. 학습 목표
+> - HTTP POST의 동작 방식을 이해하고 이를 이용해 회원가입을 구현할 수 있다.
+> - HTTP Redirection 기능을 이해하고 회원가입 후 페이지 이동에 적용한다.
+
+## 2. 기능 요구사항
+> - 회원가입을 GET에서 POST로 수정 후 정상 동작하도록 구현한다.
+> - 가입을 완료하면 `/index.html`페이지로 이동한다.
+
+## 3. 프로그래밍 요구사항
+> - 불필요한 외부 의존성 제거
+> - java.nio를 java.io로 변환
+
+## 4. 학습 내용
+### 1. HTTP POST
+- POST
+> - 서버로 데이터를 전송함
+> - 요청에 본문이 포함됨
+> - 요청 본문의 유형은 `Content-Type` 헤더로 나타냄
+>   - `application/x-www-form-urlencode`
+>   - `multipart/form-data`
+> ```http request
+> POST / HTTP/1.1
+> Host: foo.com
+> Content-Type: application/x-www-form-urlencoded
+> Content-Length: 13
+> 
+> say=Hi&to=Mom
+> ```
+
+### 2. 302 FOUND
+- 302 Found
+> 요청한 리소스가 다른 위치에 있어 리다이렉션이 필요할 때 사용
+> - 보통 접근을 막거나 사용자의 동작을 제어하기 위해 사용한다
+> - `Location` 헤더에 목적지 경로를 포함하여 응답한다
+
+```http request
+HTTP/1.1 302 Found
+Content-Type: text/html; charset=iso-8859-1
+Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
+```
+
+### 3. java.nio vs java.io
+| 구분     | java.io    | java.nio          |
+|--------|------------|-------------------|
+| 입출력 방식 | 스트림        | 채널                |
+| 버퍼 방식  | Non-Buffer | Buffer            |
+| 비동기 방식 | 지원 안 함     | 지원                |
+| 블로킹 방식 | 블로킹 방식만 지원 | 블로킹/논블로킹 방식 모두 지원 |
+
+- 입출력 방식
+> 스트림
+> - 스트림은 입력과 출력이 구분되어있다.
+> - 각각의 동작을 위해 입력과 출력을 따로 생성해야한다.
+
+> 채널
+> - 양방향으로 입출력이 가능하다.
+> - 입력과 출력을 위한 별도의 채널을 만들지 않아도 된다.
+
+- 버퍼 방식
+> IO Non-Buffer
+> - 출력 스트림이 1바이트를 쓰면, 입력 스트림이 1바이트를 읽는다.
+> - 이런 시스템은 느리기 때문에 Buffer를 사용해 복수의 바이트를 한번에 입력받고 출력하는 것이 좋다.
+> - 그래서 IO는 버퍼를 제공하는 BufferedInputStream, BufferedOutputStream을 연결해서 사용하기도 한다.
+
+> NIO Buffer
+> - NIO는 기본적으로 버퍼를 사용하여 입출력을 한다.
+> - 채널은 버퍼에 저장된 데이터를 출력하고, 입력된 데이터를 버퍼에 저장한다.
+
+![img.png](doc/img_ioBuffer.png)
+
+- 블로킹 방식
+> IO는 블로킹된다.
+> - 입력 스트림의 read()를 호출하면 데이터 입력 전까지 스레드는 블로킹(대기상태)된다.
+> - 출력 스트림의 write()를 호출하면 데이터 출력 전까지 스레드는 블로킹된다.
+
+> NIO는 블로킹과 논블로킹 특징을 모두 가진다.
+> - NIO 블로킹은 스레드를 인터럽트하여 빠져나올 수 있다.
+> - NIO 논블로킹은 입출력 작업 시 스레드가 블로킹되지 않는다.
+
+## 5. Trouble Shooting
+- 요청의 바디를 읽는 어떻게 읽어야하지?
+> - HTTP 요청은 헤더 다음에 빈 행(`\r\n`)을 하나 두고 바디가 있음
+> - 따라서, `BufferedReader`로 빈 행(`\r\n`)을 만날 때 까지 앍어서 `Status Line`, `Headers`까지만 읽음
+> - 이를 해결하기 위해 요청의 헤더까지 읽은 후, 헤더의 `Content-Length` 길이만큼 바디를 읽도록 코드를 작성하여 해결함
+
+- `java.nio`를 `java.io`로 수정
+> - 기존에는 파일 전체를 읽는 `java.nio`를 사용함
+> - WAS는 파일 송수신이 빈번한데 파일의 크기가 얼마나 커질지 알 수 없음
+> - 파일을 라인 단위로 읽는 `java.io`를 사용하는 것이 적합함
+> - 화면 출력에는 문제가 없지만 아이콘 출력에 문제가 있어서 `java.io`를 사용한 파일 전체를 읽는 방식 사용함
+
 </details>
+
+---
