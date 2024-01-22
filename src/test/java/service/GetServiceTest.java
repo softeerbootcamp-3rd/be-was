@@ -4,9 +4,8 @@ import config.Config;
 import db.Database;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
-import model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +14,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetServiceTest {
+
+    @AfterEach
+    void clearDB() {
+        Config.logger.debug("DB: {}", Database.findAll());
+        Database.clear();
+    }
 
     // 쿼리 스트링에 null 값이 들어왔을 경우 회원가입 테스트
     @Test
@@ -48,10 +53,10 @@ class GetServiceTest {
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/user/create",
                 "HTTP/1.1", "localhost:8080", "text/html", null, null);
-        httpRequestDto.addRequestParam("userId", "bonnie1");
+        httpRequestDto.addRequestParam("userId", "hello");
         httpRequestDto.addRequestParam("password", "1111");
-        httpRequestDto.addRequestParam("name", "장보경");
-        httpRequestDto.addRequestParam("email", "bonnie@gmail.com");
+        httpRequestDto.addRequestParam("name", "hello");
+        httpRequestDto.addRequestParam("email", "hello@gmail.com");
         HTTPResponseDto actual = Config.getService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
