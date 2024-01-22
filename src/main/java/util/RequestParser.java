@@ -39,23 +39,10 @@ public class RequestParser {
     }
 
     public static Map<String, String> parseQueryString(String queryString) throws UnsupportedEncodingException {
-        Map<String, String> paramMap = new HashMap<>();
-
-        if (queryString != null && !queryString.isEmpty()) {
-            queryString = decodeUri(queryString);
-            String[] params = queryString.split("&");
-
-            for (String param : params) {
-                String[] keyValue = param.split("=");
-                if (keyValue.length == 2) {
-                    String key = keyValue[0];
-                    String value = keyValue[1];
-                    paramMap.put(key, value);
-                }
-            }
-        }
-
-        return paramMap;
+        if (queryString == null || queryString.isEmpty())
+            return new HashMap<>();
+        queryString = decodeUri(queryString);
+        return extractKeyValue(queryString, "&", "=");
     }
 
     public static String decodeUri(String encodedUrl) throws UnsupportedEncodingException {
@@ -74,6 +61,24 @@ public class RequestParser {
             if (fieldValue != null) {
                 ParamType paramType = ParamType.getByClass(field.getType());
                 field.set(result, paramType.map(fieldValue));
+            }
+        }
+        return result;
+    }
+
+    public static Map<String, String> parseCookie(String cookieString) {
+        if (cookieString == null || cookieString.isEmpty())
+            return new HashMap<>();
+        return extractKeyValue(cookieString, "; ", "=");
+    }
+
+    private static Map<String, String> extractKeyValue(String input, String delimiter1, String delimiter2) {
+        Map<String, String> result = new HashMap<>();
+        String[] entries = input.split(delimiter1);
+        for (String entry : entries) {
+            String[] parts = entry.split(delimiter2);
+            if (parts.length == 2) {
+                result.put(parts[0], parts[1]);
             }
         }
         return result;
