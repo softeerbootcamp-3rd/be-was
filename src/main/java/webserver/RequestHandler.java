@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,27 @@ public class RequestHandler implements Runnable {
             if(splitHeader[1].contains("html")) {
                 System.out.println("splitHeader: " + splitHeader[1]);
                 reqPath += splitHeader[1];
+            }
+
+            if(splitHeader[1].contains("create")) {
+                String[] userInfo = splitHeader[1].split("&");
+                //System.out.println("userInfo : " + userInfo[0] + " " + userInfo[1]
+                                                 //+ " " + userInfo[2] + " " + userInfo[3]);
+                String[] idSplit = userInfo[0].split("=");
+                String userId = idSplit[1];
+
+                String[] pwdSplit = userInfo[1].split("=");
+                String userPwd = pwdSplit[1];
+
+                String[] nameSplit = userInfo[2].split("=");
+                String userName = nameSplit[1];
+
+                String[] emailSplit = userInfo[3].split("=");
+                String userEmail = emailSplit[1];
+
+                User user = new User(userId, userPwd, userName, userEmail);
+                //System.out.println("result : " + userId + " " + userPwd + " " + userName + " " + userEmail);
+                System.out.println(user.getUserId());
             }
 
             //System.out.println(reqPath);
