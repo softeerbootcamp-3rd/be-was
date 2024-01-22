@@ -1,5 +1,6 @@
 package controller;
 
+import request.HttpRequest;
 import service.UserService;
 import util.StatusCode;
 
@@ -23,9 +24,9 @@ public class UserController implements Controller{
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public StatusCode handleUserRequest(String requestLine) {
+    public StatusCode handleUserRequest(HttpRequest httpRequest) {
 
-        String URI = requestLine.split(" ")[1];
+        String URI = httpRequest.getUri();
 
         if (URI.startsWith(USER_FORM.getUrl()) ||
             URI.startsWith(USER_LIST.getUrl()) ||
@@ -35,7 +36,7 @@ public class UserController implements Controller{
         )
             return OK;
         else if (URI.startsWith(USER_CREATE.getUrl())) {
-            signUp(requestLine);
+            signUp(httpRequest.getRequestLine());
             return FOUND;
         }
         return NOT_FOUND;
