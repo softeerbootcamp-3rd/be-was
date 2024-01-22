@@ -2,7 +2,7 @@ package common.response;
 
 public enum Status {
 
-    SUCCESS("200", "OK"),
+    OK("200", "OK"),
     REDIRECT("302", "Found"),
     BAD_REQUEST("400", "Bad Request"),
     CONFLICT("409", "Conflict");

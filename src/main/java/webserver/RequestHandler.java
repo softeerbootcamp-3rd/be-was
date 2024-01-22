@@ -47,7 +47,7 @@ public class RequestHandler implements Runnable {
             String mimeType = getMimeType(requestLineDto.getPath());
 
             if (queryString == null) {
-                createResponse(out, SUCCESS, mimeType, requestLineDto.getPath());
+                createResponse(out, OK, mimeType, requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
                 try {
