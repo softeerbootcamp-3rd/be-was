@@ -76,9 +76,10 @@ public class HTTPRequest{
         if(this.head.get("Content-Length")!=null) {
             int length = Integer.parseInt(this.head.get("Content-Length"));
             char[] bodyChars = new char[length];
+
             br.read(bodyChars, 0, length);
             String bodyString = String.valueOf(bodyChars);
-            System.out.println("[["+bodyString+"]]");
+
             for(String str:bodyString.split("&")){
                 tokens = str.split("=");
                 if(tokens.length<2)
@@ -86,24 +87,6 @@ public class HTTPRequest{
                 body.put(tokens[0],tokens[1]);
                 logger.debug("body : {}", tokens[0] + " " +tokens[1]);
             }
-
-        }
-//        while(line != null && !line.isEmpty()) {
-//            line = br.readLine();
-//            tokens = line.split(": ");
-//            body.put(tokens[0], tokens[1]);
-//
-//        }
-
-    }
-    public void print(){
-        for(Map.Entry<String,String> entry : head.entrySet()){
-            System.out.println(entry.getKey()+": "+entry.getValue());
-        }
-        System.out.println();
-        for(Map.Entry<String,String> entry : body.entrySet()){
-            System.out.println(entry.getKey()+": "+entry.getValue());
         }
     }
-
 }

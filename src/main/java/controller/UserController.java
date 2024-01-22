@@ -15,8 +15,6 @@ public class UserController {
     public static HTTPResponse createAccount(HTTPRequest request) {
         HTTPResponse response = null;
         try {
-
-
             String userId = request.getBody().get("userId");
             String password = request.getBody().get("password");
             String name = request.getBody().get("name");
@@ -30,14 +28,13 @@ public class UserController {
                     "Content-Type: "+ request.getHead().get("Accept").split(",")[0] +"\r\n"+
                     "Location: /index.html" + "\r\n" +
                     "Content-Length: " + body.length  + "\r\n").getBytes();
-            System.out.println("OK3");
 
             response = new HTTPResponse("HTTP/1.1",ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
 
         }
         catch(Exception e){
             byte[] body = new byte[0];
-            byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + ResponseCode.SERVER_ERROR +" \r\n"+
+            byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + " " + ResponseCode.SERVER_ERROR +" \r\n"+
                     "Content-Type: text/html;charset=utf-8\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
             response = new HTTPResponse("HTTP/1.1",ResponseCode.SERVER_ERROR.code, ResponseCode.SERVER_ERROR.toString(), head, body);

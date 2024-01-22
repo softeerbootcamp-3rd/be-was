@@ -32,21 +32,21 @@ public class PageController {
         try {
 
             byte[] body = Files.readAllBytes(path);
-            byte[] head = ("HTTP/1.1" + ResponseCode.OK.code + ResponseCode.OK +" \r\n"+
+            byte[] head = ("HTTP/1.1" + ResponseCode.OK.code +" "+ ResponseCode.OK +" \r\n"+
                     "Content-Type: "+request.getHead().get("Accept").split(",")[0]+"\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
             response = new HTTPResponse("HTTP/1.1",ResponseCode.OK.code, ResponseCode.OK.toString(), head, body);
         }
         catch (IOException e){
             byte[] body = new byte[0];
-            byte[] head = ("HTTP/1.1" + ResponseCode.NOT_FOUND.code + ResponseCode.NOT_FOUND +" \r\n"+
+            byte[] head = ("HTTP/1.1" + ResponseCode.NOT_FOUND.code + " " + ResponseCode.NOT_FOUND +" \r\n"+
                     "Content-Type: "+request.getHead().get("Accept").split(",")[0]+"\r\n"+
                     "Content-Length: " + body.length + "\r\n").getBytes();
             response = new HTTPResponse("HTTP/1.1",ResponseCode.NOT_FOUND.code, ResponseCode.NOT_FOUND.toString(), head, body);
         }
         catch (Exception e){
             byte[] body = new byte[0];
-            byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + ResponseCode.SERVER_ERROR +" \r\n"+
+            byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + " " + ResponseCode.SERVER_ERROR +" \r\n"+
                     "Content-Type: "+request.getHead().get("Accept").split(",")[0]+"\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
             response = new HTTPResponse("HTTP/1.1",ResponseCode.SERVER_ERROR.code, ResponseCode.SERVER_ERROR.toString(), head, body);
