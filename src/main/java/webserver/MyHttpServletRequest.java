@@ -19,6 +19,7 @@ public class MyHttpServletRequest {
   private String connection;
   private String contentLength;
   private final HashMap<String,String> queryParameters = new HashMap<>();
+  private final HashMap<String,String> body = new HashMap<>();
 
   public static MyHttpServletRequest init(String requestLine){
     String[] requests = requestLine.split(" ");
@@ -40,17 +41,10 @@ public class MyHttpServletRequest {
     return uri;
   }
   private void setQueryParameters(String queryString){
-    String[] queries = queryString.split("&");
-    for(String q : queries){
-      String[] queryPair = q.split("=");
-      String key = queryPair[0];
-      if(queryPair.length<2){
-        queryParameters.put(key,null);
-        continue;
-      }
-      String value = queryPair[1];
-      queryParameters.put(key,value);
-    }
+    insertToHashMap(queryString,this.queryParameters);
+  }
+  public void setBody(String bodyString){
+    insertToHashMap(bodyString,this.body);
   }
   public MyHttpServletRequest(String method,String fullUri,String version){
     this.method=method;
@@ -102,5 +96,26 @@ public class MyHttpServletRequest {
       }
     }
     return result.toString();
+  }
+
+  public boolean canReadBody(){
+    return contentLength!=null;
+  }
+  public int getContentLength(){
+    return Integer.parseInt(this.contentLength);
+  }
+
+  public void insertToHashMap(String paramString,HashMap<String,String> map){
+    String[] queries = paramString.split("&");
+    for(String q : queries){
+      String[] queryPair = q.split("=");
+      String key = queryPair[0];
+      if(queryPair.length<2){
+        map.put(key,null);
+        continue;
+      }
+      String value = queryPair[1];
+      map.put(key,value);
+    }
   }
 }
