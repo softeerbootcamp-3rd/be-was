@@ -1,9 +1,13 @@
 package model;
 
+import annotation.NotEmpty;
+
 import java.util.Objects;
 
 public class User {
+    @NotEmpty
     private String userId;
+    @NotEmpty
     private String password;
     private String name;
     private String email;

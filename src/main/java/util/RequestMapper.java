@@ -52,7 +52,6 @@ public class RequestMapper {
             Object result = method.invoke(instance, mapParams(method, request));
             if (result instanceof HttpResponse) return (HttpResponse) result;
         } catch (IllegalArgumentException e) {
-            logger.error(e.getMessage());
             return HttpResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage())
@@ -90,7 +89,8 @@ public class RequestMapper {
                         try {
                             Map<String, String> queryMap = RequestParser.parseQueryString(new String(request.getBody()));
                             params[i] = RequestParser.mapToClass(queryMap, parameter.getType());
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (UnsupportedEncodingException | InvocationTargetException | IllegalAccessException
+                                | NoSuchMethodException | InstantiationException e) {
                             throw new RuntimeException(e);
                         }
                     }
