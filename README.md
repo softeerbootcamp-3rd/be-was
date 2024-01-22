@@ -263,3 +263,97 @@ Content-Type: text/html; charset=iso-8859-1
 
 ---
 
+<details>
+    <summary><b>Step 3 - 다양한 컨텐츠 타입 지원</b></summary>
+
+### 1. 학습 목표
+> - HTTP Response에 대해 학습한다.
+> - MIME 타입에 대해 이해하고 이를 적용할 수 있다.
+
+### 2. 기능 요구사항
+- 구현
+> - 지금까지의 코드는 stylesheet와 파비콘을 지원하지 못한다. 다양한 컨텐츠 타입을 지원하도록 개한다.
+>   - html
+>   - css
+>   - js
+>   - ico
+>   - png
+>   - jpg
+
+- 테스트
+>  - static 폴더의 정적 컨텐츠 요청이 정상적으로 처리되는지 확인
+
+### 3. 학습 내용
+#### 1. MIME Type
+- MIME 타입이란?
+> - 웹에서 파일의 형식을 지정하기 위한 식별자
+> - HTTP에서는 리소스의 종류를 나타냄
+> - 주로 확장자를 기반으로 결정
+
+- MIME 타입의 구조
+> - 슬래시(`/`)로 구분된 `type`과 `subtype` 두 부분으로 구성된다
+>   - `type/subtype`
+>   - 반드시 둘 다 있어야한다
+> 
+> 
+> - `type`은 video나 text같이 데이터 타입이 속하는 일반 카테고리를 나눈다
+> 
+> 
+> - `subtype`은 MIME 타입이 나타내는 정확한 데이터 종류를 식별한다
+>   - `text`가 `type`이라면 `plain`(평문), `html`(html 소스코드)가 있다
+> 
+> 
+> - 세부 정보를 제공하기 위해 선택적 매개변수를 추가할 수 있다
+>   - `type/subtype;parameter=value`
+>   - `text/plain;charset=UTF-8`
+> 
+> 
+> - MIME 타입은 대소문자를 구분하지 않지만 소문자를 사용한다
+>   - 매개변수는 대소문자를 구분한다
+
+- Content-Type
+> - `html`: `text/html`
+> - `css`: `text/css`
+> - `js`: `application/javascript`
+> - `ico`: `image/ico`
+> - `png`: `image/png`
+> - `jpg`: `image/jpg`
+
+#### 2. Concurrent
+- 공유자원 접근 문제
+> - 여러 스레드가 공유 자원에 동시 접근하며, 데이터 불일치나 예측할 수 없는 동작을 수행함
+> - 이를 해결하기 위해 개발자는 명시적 동기화 기법을 사용해야하나, 이는 복잡하고 오류 발생 가능성이 높음
+
+- Concurrent 패키지
+> - Java 5 부터 도입
+> - 여러 작업을 동시에 할 수 있도록 함
+> - 동시성 문제를 해결하기 위한 패키지
+
+- Concurrent 패키지 사용
+> - Executors
+>   - 고수준 Concurrency 프로그래밍
+>   - Thread 생성/관리
+>   - 작업 처리 및 실행
+>   - Executor : 스레드 생성
+>   - ExecutorService : Executor 상속받은 인터페이스, 실행 종료에 관여
+> - Concurrent Collections : 동시성을지원하는 다양한 컬렉션 클래스 제공
+
+
+### 4. Trouble Shooting
+- 스타일 시트 인식 오류
+> - 스타일 시트 파일을 브라우저에 보내도 반영이 되지 않음
+> - MIME 타입을 참고하여 확장자에 따른 Content-Type을 응답에 담아 보내야함
+> - 각 확장자에 맞는 Content-Type을 매핑하여 응답에 담아 보내어 해결함.
+
+- 라우팅 코드의 가독성과 유지보수 개선
+> - 기존에는 모든 확장자에 대한 리소스 경로를 조건문으로 매핑해야함
+> - 가독성도 좋지 않다고 판단함
+> - 해시맵에 각 진입 경로에 따른 값을 매핑하여 클래스로 격리
+>   - 진입 가능한 경우에 대한 처리를 책입 분리하여 컨트롤러가 하는 일에 집중하여 변경의 사유를 하나만 가지게 만듬
+
+### 5. 추가 학습 내용
+[좋은 회고란?](https://velog.io/@tin9oo/%EC%A2%8B%EC%9D%80-%ED%9A%8C%EA%B3%A0%EB%9E%80)
+
+---
+
+</details>
