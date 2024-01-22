@@ -10,6 +10,12 @@ public class HttpRequest {
     private Map<String, String> headers = new HashMap<>();
     private String body;
 
+    public HttpRequest(String method, String url, String version) {
+        this.method = method;
+        this.url = url;
+        this.version = version;
+    }
+
     public String getMethod() {
         return method;
     }
