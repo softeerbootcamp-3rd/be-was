@@ -47,4 +47,8 @@ public class HttpRequest {
         extractAndAddUserInfoToHeader();
         return new UserDTO(header.get("userId"), header.get("password"), header.get("name"), header.get("email"));
     }
+
+    public String getMethod() {
+        return header.get("Method");
+    }
 }
