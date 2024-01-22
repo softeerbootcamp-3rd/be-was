@@ -14,6 +14,17 @@
 
 ## 3. 학습 내용
 
+### 1. POST Method
+
+POST 메소드는 주로 새로운 리소스를 생성(create)할 때 사용됩니다.
+
+- `Idempotent`
+  > POST 요청은 같은 요청을 반복했을 때 항상 같은 결과물이 나오는 것을 보장하지 않기 때문에 Idempotent하지 않습니다.
+
+- vs. GET
+  > - GET : 서버의 리소스에서 데이터를 요청할 때 사용하며, URL 파라미터에 요청하는 데이터를 담아 보내기 때문에 HTTP 메시지에 body가 없습니다.
+  > - POST : 서버의 리소스를 새로 생성하거나 업데이트할 때 사용하며, HTTP 메시지의 body를 통해 데이터를 보냅니다.
+
 ---
 
 ## 4. 문제 해결
@@ -34,11 +45,14 @@
 - 해결
   > Content-Length 헤더 정보를 통해 body의 바이트 수를 알 수 있기 때문에 byte 자료형인 char와
   > Buffered Reader의 read() 함수로 읽었습니다.
-  > 
 
 ---
 
 ## 5. 기록
+
+[HTTP POST Method](http/post-method.md)
+
+[Step 3 / Redirect](http/redirect.md)
 
 ---
 
