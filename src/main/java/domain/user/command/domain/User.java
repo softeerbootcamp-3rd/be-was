@@ -1,4 +1,4 @@
-package model;
+package domain.user.command.domain;
 
 public class User {
 
