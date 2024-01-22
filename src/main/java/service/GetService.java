@@ -16,7 +16,7 @@ public class GetService {
     ///////////////////////////// GET 요청 처리 ///////////////////////////////////
 
     // 회원가입 처리
-    public static HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
+    public HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
 
         if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getRequestParams().size() != 4)
             return new HTTPResponseDto(404, "Bad Request".getBytes());
@@ -47,7 +47,7 @@ public class GetService {
     }
 
     // 파일 불러오기 요청
-    public static HTTPResponseDto requestFile(HTTPRequestDto httpRequestDto) throws IOException {
+    public HTTPResponseDto requestFile(HTTPRequestDto httpRequestDto) throws IOException {
         if(httpRequestDto.getRequestTarget() == null)
             return new HTTPResponseDto(404, "Bad Request".getBytes());
         // 해당 파일을 읽고 응답
@@ -66,7 +66,7 @@ public class GetService {
     }
 
     // index.html로 리다이렉트
-    public static HTTPResponseDto showIndex(HTTPRequestDto httpRequestDto) {
+    public HTTPResponseDto showIndex(HTTPRequestDto httpRequestDto) {
         return new HTTPResponseDto(302, "/index.html".getBytes());
     }
 
