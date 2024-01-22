@@ -13,6 +13,7 @@ public class Response {
     private final HashMap<String, String> responseHeader= new HashMap<>();
     private final ResponseHandler responseHandler = new ResponseHandler();
     private byte[] responseBody;
+    private final String locString = "Location";
 
     public Response(Request request) {
         this.httpVersion = request.getHttpVersion();
@@ -26,12 +27,12 @@ public class Response {
         responseHeader.put("Server", "MyServer/1.0" );
         responseHeader.put("Content-Length", Integer.toString(responseBody.length));
         responseHeader.put("Content-Type", request.getRequestHeader().get("Accept").split(",")[0]);
-        Optional.ofNullable(request.getRequestHeader().get("Location"))
-                .ifPresent(location -> responseHeader.put("Location", location));
+        Optional.ofNullable(request.getRequestHeader().get(locString))
+                .ifPresent(location -> responseHeader.put(locString, location));
     }
 
     public void setStatusCode(Request request) {
-        if(request.getRequestHeader().get("Location")!=null){
+        if(request.getRequestHeader().get(locString)!=null){
             this.statusCode = StatusCode.FOUND.getCode();
             this.statusText = StatusCode.FOUND.name();
             return;
