@@ -1,12 +1,11 @@
-import controller.Controller;
-import controller.ResourceController;
+import controller.BasicController;
 import http.HttpStatus;
 import http.Request;
 import http.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.ModelAndView;
-import webserver.MyView;
+import webserver.view.InternalResourceView;
 import webserver.ViewResolver;
 import webserver.adaptor.MyHandlerAdapter;
 
@@ -33,11 +32,11 @@ public class TemplateTest {
         //given
         Request req = new Request("GET","/index.html");
         Response res = new Response();
-        Controller handler = new ResourceController();
+        BasicController handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);
-        MyView view = viewResolver.resolve(mv.getViewName());
+        InternalResourceView view = viewResolver.resolve(mv.getViewName());
         view.render(dos, req, res);
         //then
         assertEquals(HttpStatus.OK,res.getStatus());
@@ -50,11 +49,11 @@ public class TemplateTest {
         //given
         Request req = new Request("GET","/index1.html");
         Response res = new Response();
-        Controller handler = new ResourceController();
+        BasicController handler = new ResourceController();
 
         //when
         ModelAndView mv = adapter.handle(req, res, handler);
-        MyView view = viewResolver.resolve(mv.getViewName());
+        InternalResourceView view = viewResolver.resolve(mv.getViewName());
         view.render(dos, req, res);
         //then
         assertEquals(HttpStatus.NOT_FOUND,res.getStatus());
