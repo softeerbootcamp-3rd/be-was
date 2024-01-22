@@ -48,7 +48,7 @@ class UserControllerImplTest {
         assertThat(userServiceMock.wasMethodCalled("signUp")).isTrue();
         assertThat(httpResponseDtoMock.getStatus()).isEqualTo(Status.REDIRECT);
         assertThat(httpResponseDtoMock.getOptionHeader().containsKey("Location")).isTrue();
-        assertThat(httpResponseDtoMock.getOptionHeader().get("Location")).isEqualTo("/user/login.html");
+        assertThat(httpResponseDtoMock.getOptionHeader().get("Location")).isEqualTo("/index.html");
     }
 
     @Test
