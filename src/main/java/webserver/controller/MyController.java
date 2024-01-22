@@ -7,18 +7,22 @@ import org.slf4j.LoggerFactory;
 
 public class MyController {
   private final Logger logger = LoggerFactory.getLogger(MyController.class);
-  @Controller(uri = "/user/form.html")
+  @GetMapping(uri = "/user/form.html")
   public String joinForm(String word,Integer age){
     logger.info("Controller executed word : {}, age :{}",word,age);
     return "/user/form.html";
   }
-  ///create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
-  @Controller(uri = "/user/create")
-  public String join(String userId,String password,String email,String name){
-    if(Database.findUserById(userId)==null)
-      Database.addUser(new User(userId, password, name, email));
+  @GetMapping(uri = "/index.html")
+  public String mainPage(){
+    return "/index.html";
+  }
+  @PostMapping(uri = "/user/create")
+  public String join(@RequestBody UserForm userForm){
+    if(Database.findUserById(userForm.getUserId())==null)
+      Database.addUser(new User(userForm.getUserId(), userForm.getPassword(), userForm.getName(), userForm.getEmail()));
     else
       throw new DuplicateUserException();
-    return "redirect:/user/form.html";
+    return "redirect:/index.html";
   }
+
 }
