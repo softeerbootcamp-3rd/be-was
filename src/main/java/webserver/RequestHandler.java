@@ -41,24 +41,11 @@ public class RequestHandler implements Runnable {
 
             RequestHeader requestHeader = readRequest(br);
 
-            UserController controller = FrontController.getController(requestHeader.getPath());
+            CommonResponse response = FrontController.service(requestHeader);
 
-            CommonResponse response = getResponse(requestHeader, controller);
-            ResponseBuilder.sendResponse(dos, response.getBody(), response.getHttpStatus());
+            ResponseBuilder.sendResponse(dos, response.getBody(), response.getHttpStatus(), response.getExtension());
         } catch (ClassNotFoundException | IOException e) {
             logger.error(e.getMessage());
-        }
-    }
-
-    private static CommonResponse getResponse(RequestHeader requestHeader, UserController controller) throws IOException {
-        CommonResponse response = null;
-        try {
-            ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
-            response = CommonResponse.onOk(resource.getHttpStatus(), ResourceHandler.resolveResource(resource));
-        } catch (SourceException e) {
-            response = CommonResponse.onFail(e.getErrorCode().getHttpStatus(), e.getMessage());
-        } finally {
-            return response;
         }
     }
 
