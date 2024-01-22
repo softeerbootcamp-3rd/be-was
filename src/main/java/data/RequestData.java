@@ -7,12 +7,22 @@ public class RequestData {
     private final String requestContent;
     private final String httpVersion;
     private final Map<String, String> headers;
+    private final String body;
+
 
     public RequestData(String method, String requestContent, String httpVersion, Map<String, String> headers) {
         this.method = method;
         this.requestContent = requestContent;
         this.httpVersion = httpVersion;
         this.headers = headers;
+        this.body = null;
+    }
+    public RequestData(String method, String requestContent, String httpVersion, Map<String, String> headers, String body) {
+        this.method = method;
+        this.requestContent = requestContent;
+        this.httpVersion = httpVersion;
+        this.headers = headers;
+        this.body = body;
     }
 
     public String getMethod() {
