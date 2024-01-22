@@ -1,5 +1,6 @@
 package service;
 
+import config.Config;
 import db.Database;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
@@ -40,8 +41,8 @@ public class GetService {
         // 성공적인 회원가입 처리
         // 데이터베이스에 저장
         Database.addUser(user);
-        System.out.println("새로운 유저: " + user.toString());
-        System.out.println("전체 DB: " + Database.findAll());
+        Config.logger.debug("새로운 유저: {}", user.toString());
+        Config.logger.debug("전체 DB: {}", Database.findAll());
         // /index.html로 리다이렉트
         return new HTTPResponseDto(302, "/index.html".getBytes());
     }
@@ -61,7 +62,7 @@ public class GetService {
         else {
             path += "/static" + httpRequestDto.getRequestTarget();
         }
-        System.out.println("file path: " + path);
+        Config.logger.debug("file path: {}", path);
         return new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
     }
 

@@ -11,5 +11,4 @@ public class Config {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     public static final GetService getService = new GetService();
     public static final PostService postService = new PostService();
-
 }
