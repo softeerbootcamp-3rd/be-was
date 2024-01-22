@@ -79,10 +79,14 @@ public class MyHttpServletRequest {
   public String getUri(){
     return this.uri;
   }
+  public String getMethod(){
+    return this.method;
+  }
   public String getAccept(){return  this.accept;}
   public String getQueryParameterValue(String parameterName){
     return queryParameters.get(parameterName);
   }
+  public String getBodyValue(String bodyName){ return body.get(bodyName);}
 
   private String toCamelCase(String rawString){
     String[] parts = rawString.split("-");
