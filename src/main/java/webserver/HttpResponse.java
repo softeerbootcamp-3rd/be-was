@@ -67,7 +67,7 @@ public class HttpResponse {
 
             dos.writeBytes(redirectResponse + "\r\n");
 
-            return redirectResponse;
+            return ", " + redirectResponse;
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
