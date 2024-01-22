@@ -29,6 +29,19 @@ public class RequestParserUtil {
 
         Map<String, String> headers = parseHeaders(br);
 
+        String requestBody = "";
+
+        if(tokens[0].equals("POST")) {
+            int contentLength = Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
+            if (contentLength > 0) {
+                char[] buffer = new char[contentLength];
+                br.read(buffer, 0, contentLength);
+                requestBody = new String(buffer);
+
+                logger.debug("requestBody: {}", requestBody);
+            }
+        }
+
         return new RequestData(tokens[0], tokens[1], tokens[2], headers);
     }
 
