@@ -21,7 +21,7 @@ public class UserHandlerTest {
     @DisplayName("쿼리문이 제대로 전달되지 않은 경우 BadRequest를 전달한다.")
     @ValueSource(strings = {"invalidQuery"})
     public void testBadRequest(String query) {
-
+        
         Response response = userHandler.handleUserCreation(query, dataOutputStream);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
     }

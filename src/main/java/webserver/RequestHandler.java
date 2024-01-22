@@ -2,14 +2,14 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import model.HttpStatus;
-import model.Request;
+import model.HttpRequest.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestGenerator;
 
 import static util.HttpResponse.*;
 
@@ -18,6 +18,7 @@ public class RequestHandler implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
     private final UserHandler userHandler = new UserHandler();
+    private final HttpRequestGenerator httpRequestGenerator = new HttpRequestGenerator();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -37,15 +38,9 @@ public class RequestHandler implements Runnable {
     }
 
     private Request getRequest(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-
-        String line = br.readLine();
-        Request request = new Request(line);
+        Request request = httpRequestGenerator.createHttpRequest(in);
         logger.debug("request : {}", request.toString());
 
-        while ((line = br.readLine()) != null && !line.isEmpty()) {
-            request.addHeader(line);
-        }
         return request;
     }
 

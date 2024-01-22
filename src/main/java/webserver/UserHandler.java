@@ -3,9 +3,8 @@ package webserver;
 import controller.UserController;
 import dto.UserCreateRequestDto;
 import model.HttpStatus;
-import model.Request;
+import model.HttpRequest.Request;
 import model.Response;
-import util.UrlParser;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

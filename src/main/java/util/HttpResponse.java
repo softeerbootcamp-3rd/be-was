@@ -1,6 +1,6 @@
 package util;
 
-import model.Request;
+import model.HttpRequest.Request;
 import model.Response;
 
 import java.io.DataOutputStream;
