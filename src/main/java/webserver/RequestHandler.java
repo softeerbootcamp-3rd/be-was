@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String FILE_PATH = "src/main/resources";
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
