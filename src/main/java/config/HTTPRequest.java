@@ -62,7 +62,7 @@ public class HTTPRequest{
 
         line = br.readLine();
 
-        while(line != null && !line.isEmpty() && !line.equals("\n")){
+        while(line != null && !line.isEmpty() && !line.equals("\r\n")){
             tokens = line.split(": ");
             if(tokens.length<2){
                 br.readLine();
@@ -73,12 +73,27 @@ public class HTTPRequest{
             line = br.readLine();
         }
 
-        while(line != null && !line.isEmpty()) {
-            line = br.readLine();
-            tokens = line.split(": ");
-            body.put(tokens[0], tokens[1]);
-            logger.debug("body : {}", line);
+        if(this.head.get("Content-Length")!=null) {
+            int length = Integer.parseInt(this.head.get("Content-Length"));
+            char[] bodyChars = new char[length];
+            br.read(bodyChars, 0, length);
+            String bodyString = String.valueOf(bodyChars);
+            System.out.println("[["+bodyString+"]]");
+            for(String str:bodyString.split("&")){
+                tokens = str.split("=");
+                if(tokens.length<2)
+                    continue;
+                body.put(tokens[0],tokens[1]);
+                logger.debug("body : {}", tokens[0] + " " +tokens[1]);
+            }
+
         }
+//        while(line != null && !line.isEmpty()) {
+//            line = br.readLine();
+//            tokens = line.split(": ");
+//            body.put(tokens[0], tokens[1]);
+//
+//        }
 
     }
     public void print(){

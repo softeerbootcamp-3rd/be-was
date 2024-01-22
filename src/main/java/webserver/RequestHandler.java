@@ -66,7 +66,6 @@ public class RequestHandler implements Runnable {
 
             byte[] head = response.getHead();
             byte[] body = response.getBody();
-            System.out.println("[[["+response.toString()+"]]]");
             dos.write(head, 0, head.length);
             dos.writeBytes("\r\n");
             dos.write(body, 0, body.length);

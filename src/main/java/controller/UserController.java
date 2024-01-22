@@ -15,17 +15,24 @@ public class UserController {
     public static HTTPResponse createAccount(HTTPRequest request) {
         HTTPResponse response = null;
         try {
-            String url = request.getUrl();
-            String data = url.split("/")[2].split("\\?")[1];
-            System.out.println("전달 받은 파라미터 원형: " + data);
-            Map<String, String> map = querytoMap(data);
-            User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+
+
+            String userId = request.getBody().get("userId");
+            String password = request.getBody().get("password");
+            String name = request.getBody().get("name");
+            String email = request.getBody().get("email");
+
+            User user = new User(userId, password, name, email);
             Database.addUser(user);
+
             byte[] body = user.toString().getBytes();
-            byte[] head = ("HTTP/1.1" + ResponseCode.OK.code + ResponseCode.OK +" \r\n"+
-                    "Content-Type: text/html;charset=utf-8\r\n"+
+            byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code+ " " + ResponseCode.REDIRECT +"\r\n"+
+                    "Content-Type: "+ request.getHead().get("Accept").split(",")[0] +"\r\n"+
+                    "Location: /index.html" + "\r\n" +
                     "Content-Length: " + body.length  + "\r\n").getBytes();
-            response = new HTTPResponse("HTTP/1.1",ResponseCode.OK.code, ResponseCode.OK.toString(), head, body);
+            System.out.println("OK3");
+
+            response = new HTTPResponse("HTTP/1.1",ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
 
         }
         catch(Exception e){
