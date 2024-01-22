@@ -99,6 +99,8 @@ public class RequestMappingHandler {
                     params[index++] = Double.parseDouble(originParams.get(paramName));
                 } else if (paramType == Long.class || paramType == long.class) {
                     params[index++] = Long.parseLong(originParams.get(paramName));
+                } else if (paramType == Boolean.class || paramType == boolean.class) {
+                    params[index++] = Boolean.parseBoolean(originParams.get(paramName));
                 }
             }
         }
