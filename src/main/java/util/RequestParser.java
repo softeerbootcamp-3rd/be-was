@@ -1,11 +1,13 @@
 package util;
 
+import annotation.NotEmpty;
 import constant.ParamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -60,27 +62,20 @@ public class RequestParser {
         return URLDecoder.decode(encodedUrl, "UTF-8");
     }
 
-    public static <T> T mapToClass(Map<String, String> userInfo, Class<T> destClass) {
-        try {
-            T result = destClass.getDeclaredConstructor().newInstance();
-
-            for (Map.Entry<String, String> entry : userInfo.entrySet()) {
-                String fieldName = entry.getKey();
-                String fieldValue = entry.getValue();
-
-                try {
-                    Field field = destClass.getDeclaredField(fieldName);
-                    field.setAccessible(true);
-
-                    ParamType paramType = ParamType.getByClass(field.getType());
-                    field.set(result, paramType.map(fieldValue));
-                } catch (NoSuchFieldException ignored) {}
+    public static <T> T mapToClass(Map<String, String> mapInfo, Class<T> destClass)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+        T result = destClass.getDeclaredConstructor().newInstance();
+        for (Field field : destClass.getDeclaredFields()) {
+            field.setAccessible(true);
+            String fieldValue = mapInfo.get(field.getName());
+            NotEmpty notEmptyAnnotation = field.getDeclaredAnnotation(NotEmpty.class);
+            if (notEmptyAnnotation != null && (fieldValue == null || fieldValue.isEmpty()))
+                throw new IllegalArgumentException("Field '" + field.getName() + "' cannot be null");
+            if (fieldValue != null) {
+                ParamType paramType = ParamType.getByClass(field.getType());
+                field.set(result, paramType.map(fieldValue));
             }
-
-            return result;
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return null;
         }
+        return result;
     }
 }
