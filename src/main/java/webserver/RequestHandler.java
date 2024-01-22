@@ -2,13 +2,20 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
-import java.nio.file.Files;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import controller.FrontController;
+import controller.UserController;
+import dto.ResourceDto;
+import exception.SourceException;
+import model.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ResourceHandler;
+import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,70 +32,66 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
+//        public static final Map<String, Function<P, R>> REQUEST_MAP = new HashMap<>();
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String path = requestHeader(br);
-            URL resource = null;
 
-            if (path.contains("html")) {
-                resource = getResource("./templates" + path);
-            } else {
-                resource = getResource("./static" + path);
-            }
-            byte[] body = Files.readAllBytes(new File(resource.getPath()).toPath());
+            RequestHeader requestHeader = readRequest(br);
 
-            //byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
+            UserController controller = FrontController.getController(requestHeader.getPath());
+
+            CommonResponse response = getResponse(requestHeader, controller);
+            ResponseBuilder.sendResponse(dos, response.getBody(), response.getHttpStatus());
+        } catch (ClassNotFoundException | IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private String requestHeader(BufferedReader br) throws IOException {
-        writeLock.lock();
-        String line = null;
-
-        String url = null;
-        logger.debug("===== request start ====");
-        while (!(line = br.readLine()).equals("")) {
-            logger.debug("header = {}", line);
-            if (line.contains("GET")) {
-                String firstHeader = line.split(" ")[1];
-                url = firstHeader.split("\\?")[0];
-            }
+    private static CommonResponse getResponse(RequestHeader requestHeader, UserController controller) throws IOException {
+        CommonResponse response = null;
+        try {
+            ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
+            response = CommonResponse.onOk(resource.getHttpStatus(), ResourceHandler.resolveResource(resource));
+        } catch (SourceException e) {
+            response = CommonResponse.onFail(e.getErrorCode().getHttpStatus(), e.getMessage());
+        } finally {
+            return response;
         }
-        logger.debug("===== request end ====");
+    }
+
+    private RequestHeader readRequest(BufferedReader br) throws IOException, ClassNotFoundException {
+        writeLock.lock();
+        RequestHeader requestHeader = getRequestUrl(br);
+        String line;
+
+        logger.debug("===== request start =====");
+        while ((line = br.readLine()) != null) {
+            if (line.isBlank()) {
+                break;
+            }
+            parseHeader(line, requestHeader);
+        }
+        requestHeader.printHeader();
+        logger.debug("===== request end =====");
         writeLock.unlock();
 
-        return url;
+        return requestHeader;
     }
 
-    private URL getResource(String path) {
-        URL resource = getClass().getClassLoader().getResource(path);
-        return resource;
+    private static RequestHeader getRequestUrl(BufferedReader br) throws IOException {
+        String line = URLDecoder.decode(br.readLine(), StandardCharsets.UTF_8);
+        String[] firstHeader = line.split(" ");
+        return new RequestHeader(firstHeader[0], firstHeader[1], firstHeader[2]);
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private void parseHeader(String line, RequestHeader requestHeader) {
+        String[] header = line.split(": ");
+        String parseKey = header[0].replace("-", "");
+        String key = parseKey.substring(0, 1).toLowerCase() + parseKey.substring(1);
+        String value = header[1];
+        RequestHeader.setHeader(requestHeader, key, value);
     }
 }
