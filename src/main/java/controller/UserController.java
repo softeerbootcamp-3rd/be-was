@@ -1,6 +1,7 @@
 package controller;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
 import annotation.RequestParam;
 import db.Database;
 import dto.Response;
@@ -10,7 +11,7 @@ import webserver.HttpStatus;
 
 public class UserController {
 
-    @GetMapping(path = "/user/create")
+    @PostMapping(path = "/user/create")
     public static Response signup(@RequestParam(name = "userId") String userId,
                                   @RequestParam(name = "password") String password,
                                   @RequestParam(name = "name") String name,

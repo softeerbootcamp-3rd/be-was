@@ -14,7 +14,7 @@ public class ControllerMapper {
     }
 
     public static Class<?> getController(String path) {
-        String mappingPath = path.split("/")[0];
+        String mappingPath = path.split("/")[1];
         return CONTROLLER_MAP.get(mappingPath);
     }
 

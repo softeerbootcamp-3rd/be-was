@@ -1,5 +1,7 @@
 package webserver;
 
+import util.URIParer;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,11 +9,14 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class HttpRequest {
 
     private Map<String, String> header;
     private Map<String, String> params;
+    private Map<String, String> body;
 
     public HttpRequest(Socket socket, InputStream in) throws IndexOutOfBoundsException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -22,17 +27,10 @@ public class HttpRequest {
         headerMap.put("port", String.valueOf(socket.getPort()));
 
         String[] array = line.split(" ");
-        headerMap.put("httpMethod", array[0]);
-        String[] uri = array[1].split("\\?");
-        headerMap.put("path", uri[0]);
+        String httpMethod = array[0];
+        headerMap.put("httpMethod", httpMethod);
+        headerMap.put("path", array[1]);
         headerMap.put("httpVersion", array[2]);
-
-        Map<String, String> paramsMap = new HashMap<>();
-        if (uri.length > 1) {
-            for (String param : uri[1].split("&")) {
-                paramsMap.put(param.split("=")[0], param.split("=")[1]);
-            }
-        }
 
         while (!(line = br.readLine()).isEmpty()) {
             String[] components = line.split(":", 2);
@@ -42,8 +40,26 @@ public class HttpRequest {
             headerMap.put(components[0], components[1]);
         }
 
+        if (httpMethod.equals("GET")) {
+            String[] uri = array[1].split("\\?");
+            Map<String, String> paramsMap = new HashMap<>();
+            if (uri.length > 1) {
+                paramsMap = URIParer.parserKeyValue(uri[1]);
+            }
+            this.params = paramsMap;
+        } else if (httpMethod.equals("POST")) {
+            Map<String, String> bodyMap = new HashMap<>();
+            Integer bodySize = Integer.parseInt(headerMap.get("Content-Length"));
+
+            char[] bodyArr = new char[bodySize];
+            String bodyStr = "";
+            if ((br.read(bodyArr, 0, bodySize)) != -1) {
+                bodyStr = new String(bodyArr, 0, bodySize);
+            }
+            bodyMap = URIParer.parserKeyValue(bodyStr);
+            this.body = bodyMap;
+        }
         this.header = headerMap;
-        this.params = paramsMap;
     }
 
     public String getHttpMethod() {
@@ -55,7 +71,11 @@ public class HttpRequest {
     }
 
     public Map<String, String> getParams() {
-        return params;
+        if (params != null)
+            return params;
+        if (body != null)
+            return body;
+        return null;
     }
 
     @Override

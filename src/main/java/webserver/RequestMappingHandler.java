@@ -1,6 +1,7 @@
 package webserver;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
 import annotation.RequestParam;
 import dto.Response;
 import util.ControllerMapper;
@@ -28,7 +29,14 @@ public class RequestMappingHandler {
         }
 
         Class<?> controllerClass = ControllerMapper.getController(request.getPath());
-        Method method = findMethod(controllerClass, request.getPath());
+        Method method = null;
+
+        if (request.getHttpMethod().equals("GET")) {
+            method = findGETMethod(controllerClass, request.getPath());
+        } else if (request.getHttpMethod().equals("POST")) {
+            method = findPOSTMethod(controllerClass, request.getPath());
+        }
+
         if (method == null) {
             return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
         }
@@ -57,13 +65,25 @@ public class RequestMappingHandler {
         return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
     }
 
-    private static Method findMethod(Class<?> controllerClass, String path) {
+    private static Method findGETMethod(Class<?> controllerClass, String path) {
         // [ 피드백 ] 아예 처음부터 맵핑해놓고 시작하기
         Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
         for (Method method : methods) {
             if (method.isAnnotationPresent(GetMapping.class)) {
                 GetMapping getMapping = method.getAnnotation(GetMapping.class);
                 if (getMapping.path().equals(path))
+                    return method;
+            }
+        }
+        return null;
+    }
+
+    private static Method findPOSTMethod(Class<?> controllerClass, String path) {
+        Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(PostMapping.class)) {
+                PostMapping postMapping = method.getAnnotation(PostMapping.class);
+                if (postMapping.path().equals(path))
                     return method;
             }
         }
