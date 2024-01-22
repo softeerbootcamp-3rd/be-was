@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import webserver.HttpStatus;
 
-public class GetControllerTest {
+public class UserControllerTest {
 
     @Test
     public void signupTest() {

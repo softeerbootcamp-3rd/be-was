@@ -3,6 +3,7 @@ package webserver;
 import annotation.GetMapping;
 import annotation.RequestParam;
 import dto.Response;
+import util.ControllerMapper;
 import util.ResourceLoader;
 
 import java.io.File;
@@ -21,11 +22,12 @@ public class RequestMappingHandler {
     private static final String FILE_PATH = "src/main/resources";
 
     // RequestHandler에서 컨트롤러 전송
-    public static Response handleRequest(Class<?> controllerClass, HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
+    public static Response handleRequest(HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
         if (request.getPath().contains(".") || request.getPath().equals("/")) {
             return handleStaticResource(request);
         }
 
+        Class<?> controllerClass = ControllerMapper.getController(request.getPath());
         Method method = findMethod(controllerClass, request.getPath());
         if (method == null) {
             return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();

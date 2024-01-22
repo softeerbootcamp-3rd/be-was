@@ -39,8 +39,7 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = new HttpRequest(connection, in);
             logger.debug(httpRequest.toString());
 
-            Class<?> controllerClass = ControllerMapper.getController(httpRequest.getHttpMethod());
-            Response response = RequestMappingHandler.handleRequest(controllerClass, httpRequest);
+            Response response = RequestMappingHandler.handleRequest(httpRequest);
             HttpResponse.response(dos, response);
         } catch (IndexOutOfBoundsException e) {
             HttpResponse.response(dos, new Response(HttpStatus.BAD_REQUEST));

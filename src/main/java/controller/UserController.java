@@ -8,7 +8,7 @@ import model.User;
 import webserver.HttpStatus;
 
 
-public class GetController {
+public class UserController {
 
     @GetMapping(path = "/user/create")
     public static Response signup(@RequestParam(name = "userId") String userId,
