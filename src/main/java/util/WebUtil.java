@@ -5,10 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dto.HttpRequestDto;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,8 +100,9 @@ public class WebUtil {
     // Parsing query string from URI into Map<String, String> Object
     public static Map<String, String> parseQueryString(String uri) {
         Map<String, String> parameters = new HashMap<>();
+        String encodedUri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
         try {
-            String queryString = uri.split("\\?")[1];
+            String queryString = encodedUri.split("\\?")[1];
             String[] pairs = queryString.split("&");
             for (String pair: pairs) {
                 String[] keyValue = pair.split("=");
