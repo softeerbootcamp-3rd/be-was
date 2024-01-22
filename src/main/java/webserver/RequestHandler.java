@@ -6,6 +6,9 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileReader;
+import java.io.IOException;
+
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -26,15 +29,10 @@ public class RequestHandler implements Runnable {
             logger.debug("request line ; {}", line);
             System.out.println("request : " + line);
 
-            while(!line.equals("")) {
-                line = br.readLine();
-                System.out.println("request : " + line);
-                logger.debug("header : {}", line);
-            }
-
-
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+            String readResult = readFile("src/main/resources/templates/index.html");
+
+            byte[] body = readResult.getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -60,5 +58,25 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    public String readFile(String filePath) {
+        BufferedReader br = null;
+        StringBuffer sb = new StringBuffer();
+        try {
+            br = new BufferedReader(new FileReader(filePath));
+            String ln = null;
+
+            while((ln = br.readLine()) != null) {
+                sb.append(ln);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if(br != null) br.close();
+            } catch (Exception e) {}
+        }
+        return sb.toString();
     }
 }
