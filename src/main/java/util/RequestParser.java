@@ -68,15 +68,18 @@ public class RequestParser {
                 String fieldName = entry.getKey();
                 String fieldValue = entry.getValue();
 
-                Field field = destClass.getDeclaredField(fieldName);
-                field.setAccessible(true);
+                try {
+                    Field field = destClass.getDeclaredField(fieldName);
+                    field.setAccessible(true);
 
-                ParamType paramType = ParamType.getByClass(field.getType());
-                field.set(result, paramType.map(fieldValue));
+                    ParamType paramType = ParamType.getByClass(field.getType());
+                    field.set(result, paramType.map(fieldValue));
+                } catch (NoSuchFieldException ignored) {}
             }
 
             return result;
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
     }
