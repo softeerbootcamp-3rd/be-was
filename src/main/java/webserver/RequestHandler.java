@@ -27,7 +27,7 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String line = br.readLine();
             logger.debug("request line ; {}", line);
-            System.out.println("request : " + line);
+            System.out.println("header : " + line);
 
             DataOutputStream dos = new DataOutputStream(out);
             String readResult = readFile("src/main/resources/templates/index.html");
