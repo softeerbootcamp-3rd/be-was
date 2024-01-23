@@ -1,5 +1,6 @@
 package util;
 
+import controller.HttpStatusCode;
 import controller.ResourceMapping;
 import data.Response;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ public class ResponseBuilder {
     public static void buildResponse(OutputStream out, Response response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        String statusCode = response.getStatus();
+        HttpStatusCode statusCode = response.getStatus();
         String targetPath = response.getPath();
         String cookie = response.getCookie();
 
@@ -25,17 +26,17 @@ public class ResponseBuilder {
 
         byte[] body;
 
-        if(statusCode.equals("200")) {
+        if(statusCode == HttpStatusCode.OK) {
             body = ResourceLoader.loadResource(targetPath);
             response200Header(dos, body.length, contentType);
             responseBody(dos, body);
-        } else if(statusCode.equals("302")) {
+        } else if(statusCode == HttpStatusCode.FOUND) {
             response302Header(dos, targetPath, cookie);
-        } else if (statusCode.equals("400")) {
+        } else if (statusCode == HttpStatusCode.BAD_REQUEST) {
             body = ResourceLoader.loadResource(targetPath);
             response400Header(dos);
             responseBody(dos, body);
-        } else if (statusCode.equals("404")) {
+        } else if (statusCode == HttpStatusCode.NOT_FOUND) {
             body = ResourceLoader.loadResource(targetPath);
             response404Header(dos);
             responseBody(dos, body);

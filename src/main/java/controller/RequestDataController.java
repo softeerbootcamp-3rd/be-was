@@ -40,42 +40,42 @@ public class RequestDataController {
                     if (url.equals("/user/login.html")) {
                         if (requestData.getHeaderValue("Cookie") != null) {
                             if (UserService.isLoggedIn(requestData)) {
-                                return new Response("302", "/index.html");
+                                return new Response(HttpStatusCode.FOUND, "/index.html");
                             }
                         }
                     }
-                    return new Response("200", url);
+                    return new Response(HttpStatusCode.OK, url);
                 } else {
                     logger.debug("유효하지 않은 파일 경로입니다.");
-                    return new Response("404", "/error/notfound.html");
+                    return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
                 }
             } else if (fileOrApi.equals("API")) {
                 if (url.equals("/")) {
-                    return new Response("302", "/index.html");
+                    return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.startsWith("/user/create")) {
                     userService.registerUser(requestData);
-                    return new Response("302", "/index.html");
+                    return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
                     String sessionId = UserService.login(requestData);
                     if (sessionId != null) {
-                        return new Response("302", "/index.html", sessionId);
+                        return new Response(HttpStatusCode.FOUND, "/index.html", sessionId);
                     }
-                    return new Response("302", "/index.html");
+                    return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.equals("/user/logout")) {
                     logger.debug("[API] /user/logout");
                     String cookieHeader = UserService.logout(requestData);
-                    return new Response("302", "/index.html", cookieHeader);
+                    return new Response(HttpStatusCode.FOUND, "/index.html", cookieHeader);
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
-                    return new Response("404", "/error/notfound.html");
+                    return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
                 }
             } else {
-                return new Response("404", "/error/notfound.html");
+                return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
             }
         } catch (IllegalArgumentException e) {
             logger.debug("IllegalArgumentException caught: {}", e.getMessage());
-            return new Response("400", "/error/badrequest.html");
+            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
         }
     }
 }
