@@ -1,8 +1,8 @@
-package webserver.handler;
+package webserver.adapter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.header.RequestHeader;
+import webserver.adapter.ResourceAdapter;
 import webserver.response.Response;
 
 import java.io.File;
@@ -12,16 +12,16 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ResourceHandlerTest {
-    private final URL HTML_BASE_URL = ResourceHandler.class.getClassLoader().getResource("./templates");
-    private final URL OTHERS_BASE_URL = ResourceHandler.class.getClassLoader().getResource("./static");
+class ResourceAdapterTest {
+    private final URL HTML_BASE_URL = ResourceAdapter.class.getClassLoader().getResource("./templates");
+    private final URL OTHERS_BASE_URL = ResourceAdapter.class.getClassLoader().getResource("./static");
 
     @Test
     @DisplayName("/index.html 파일을 요청할 때 테스트")
     void requestIndexHtml() throws IOException {
         RequestHeader requestHeader = RequestHeader.of("GET", "/index.html", "HTTP/1.1");
 
-        Response response = ResourceHandler.run(requestHeader);
+        Response response = ResourceAdapter.run(requestHeader);
 
         File file = new File(HTML_BASE_URL.getPath() + "/index.html");
         byte[] fileBytes = Files.readAllBytes(file.toPath());
@@ -34,7 +34,7 @@ class ResourceHandlerTest {
     void requestStyleCss() throws IOException {
         RequestHeader requestHeader = RequestHeader.of("GET", "/css/styles.css", "HTTP/1.1");
 
-        Response response = ResourceHandler.run(requestHeader);
+        Response response = ResourceAdapter.run(requestHeader);
 
         File file = new File(OTHERS_BASE_URL.getPath() + "/css/styles.css");
         byte[] fileBytes = Files.readAllBytes(file.toPath());
@@ -47,7 +47,7 @@ class ResourceHandlerTest {
     void requestIndex1Html() throws IOException {
         RequestHeader requestHeader = RequestHeader.of("GET", "/index1.html", "HTTP/1.1");
 
-        Response response = ResourceHandler.run(requestHeader);
+        Response response = ResourceAdapter.run(requestHeader);
 
         assertNull(response);
     }

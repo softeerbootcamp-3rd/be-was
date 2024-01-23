@@ -1,7 +1,8 @@
-package webserver.handler;
+package webserver.adapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.handler.RequestHandler;
 import webserver.request.Request;
 import webserver.response.Response;
 import webserver.type.ContentType;
@@ -11,11 +12,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 
-public class ResourceHandler {
+public class ResourceAdapter {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private static final URL HTML_BASE_URL = ResourceHandler.class.getClassLoader().getResource("./templates");
-    private static final URL OTHERS_BASE_URL = ResourceHandler.class.getClassLoader().getResource("./static");
+    private static final URL HTML_BASE_URL = ResourceAdapter.class.getClassLoader().getResource("./templates");
+    private static final URL OTHERS_BASE_URL = ResourceAdapter.class.getClassLoader().getResource("./static");
 
     public static Response run(Request request) throws IOException {
         String path = request.getPath();

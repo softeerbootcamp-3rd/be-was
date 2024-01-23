@@ -1,21 +1,19 @@
-package webserver.handler;
+package webserver.adapter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.parser.GetRequestParser;
-import webserver.handler.GetRequestHandler;
-import webserver.request.GetRequest;
+import webserver.adapter.GetRequestAdapter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GetRequestHandlerTest {
+class GetRequestAdapterTest {
     @Test
     @DisplayName("/test를 요청할 시 정상적으로 TestController의 test()가 실행되는지 테스트")
     void requestTestMethodTest() throws Throwable {
         String request = "/test";
-        GetRequest getRequest = GetRequestParser.parse(request);
+        GetRequest getRequest = RequestParameterParser.parse(request);
 
-        Object object = GetRequestHandler.run(getRequest);
+        Object object = GetRequestAdapter.run(getRequest);
         String result = (String) object;
 
         assertEquals("test", result);

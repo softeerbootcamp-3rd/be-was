@@ -1,4 +1,4 @@
-package webserver.handler;
+package webserver.adapter;
 
 import webserver.annotation.GetMapping;
 import webserver.annotation.RequestParam;
@@ -16,10 +16,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class GetRequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(GetRequestHandler.class);
+public class GetRequestAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(GetRequestAdapter.class);
 
     public static Object run(Request request) throws Throwable {
         List<Class<?>> classes = getControllerClasses();
