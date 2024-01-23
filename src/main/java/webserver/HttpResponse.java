@@ -25,7 +25,7 @@ public class HttpResponse {
             dos.writeBytes("\r\n");
             responseBody(dos, response);
         } else if (httpStatus == HttpStatus.FOUND) {
-            sb.append(redirect(dos, response.getBody()));
+            sb.append(redirect(dos, response));
         }
 
         dos.writeBytes("\r\n");
@@ -42,6 +42,13 @@ public class HttpResponse {
 
             dos.writeBytes(contentType + "\r\n");
             dos.writeBytes(contentLength + "\r\n");
+
+            if (response.getCookie() != null) {
+                String cookie = "Set-Cookie: sid=" + response.getCookie() + "; Path=/";
+                dos.writeBytes(cookie + "\r\n");
+
+                return ", " + contentType + ", " + contentLength + ", " + cookie;
+            }
 
             return ", " + contentType + ", " + contentLength;
         } catch (IOException e) {
@@ -60,12 +67,19 @@ public class HttpResponse {
 
     }
 
-    private static String redirect(DataOutputStream dos, byte[] body) {
+    private static String redirect(DataOutputStream dos, Response response) {
         try {
-            String redirectUrl = new String(body);
+            String redirectUrl = new String(response.getBody());
             String redirectResponse = "Location: " + redirectUrl;
 
             dos.writeBytes(redirectResponse + "\r\n");
+
+            if (response.getCookie() != null) {
+                String cookie = "Set-Cookie: sid=" + response.getCookie() + "; Path=/";
+                dos.writeBytes(cookie + "\r\n");
+
+                return ", " + redirectResponse + ", " + cookie;
+            }
 
             return ", " + redirectResponse;
         } catch (IOException e) {

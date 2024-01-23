@@ -7,6 +7,8 @@ import dto.Response;
 import model.User;
 import webserver.HttpStatus;
 
+import java.util.UUID;
+
 
 public class UserController {
 
@@ -37,8 +39,11 @@ public class UserController {
                     .build();
         }
 
+        String sid = UUID.randomUUID().toString();
+
         return new Response.Builder()
                 .httpStatus(HttpStatus.FOUND)
+                .cookie(sid)
                 .body("/index.html")
                 .build();
     }
