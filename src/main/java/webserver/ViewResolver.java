@@ -12,8 +12,6 @@ public class ViewResolver {
     private static final Logger logger = LoggerFactory.getLogger(dispatcherServlet.class);
 
     public static View resolve(String viewName) {
-        logger.debug("viewName = {}",viewName);
-        logger.debug("isRedirect(viewname) = {}",isRedirect(viewName));
         if (isRedirect(viewName)){
             return new RedirectView(viewName);
         }
