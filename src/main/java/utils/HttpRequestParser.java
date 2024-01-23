@@ -35,10 +35,9 @@ public class HttpRequestParser {
 
         // 바디 추출
         if(messageElement.get("Method").equals("POST")){
-            //TODO: Integer.getInt랑 Integer.parseInt 차이
             char[] body = new char[Integer.parseInt(messageElement.get("Content-Length"))];
             reader.read(body);
-            messageElement.put("Body", Arrays.toString(body));
+            messageElement.put("Body", new String(body));
         }
 
         return messageElement;
