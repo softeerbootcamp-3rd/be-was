@@ -74,7 +74,7 @@ public class SessionManager {
     }
 
     // 세션 존재하는 지 확인
-    public static boolean checkSessionAvailable(String sessionId) {
+    public static boolean isSessionPresent(String sessionId) {
         return sessions.containsKey(sessionId) ? true : false;
     }
 

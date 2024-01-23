@@ -42,7 +42,7 @@ public class RequestHandler implements Runnable {
             if (httpRequest.getPath().equals("/user/login.html") && httpRequest.getCookie() != null) {
                 // 유효한 세션인지 검증
                 String sid = httpRequest.getCookie().split("=")[1];
-                if (SessionManager.checkSessionAvailable(sid) && !SessionManager.checkSessionTimeout(sid)) {
+                if (SessionManager.isSessionPresent(sid) && !SessionManager.checkSessionTimeout(sid)) {
                     Response response = new Response.Builder()
                             .httpStatus(HttpStatus.FOUND)
                             .body("/index.html")
