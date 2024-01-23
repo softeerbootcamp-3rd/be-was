@@ -2,12 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.function.BiConsumer;
 
 import constant.ErrorCode;
+import constant.FilePath;
 import constant.HttpStatus;
 import dto.RequestDto;
-import exception.WebServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.FileManager;
@@ -35,21 +34,18 @@ public class RequestHandler implements Runnable {
             RequestDto requestDto = RequestParser.getRequestDto(in);
             DataOutputStream dos = new DataOutputStream(out);
 
-            BiConsumer<DataOutputStream, RequestDto> method;
+            FilePath basePath = FilePath.HTML_BASE;
             byte[] body;
 
-            if (requestDto.getPath().equals("/")) {
-                requestDto.setPath(MAIN_PAGE.getPath());
-            }
+            if (requestDto.getPath().equals("/")) { requestDto.setPath(MAIN_PAGE.getPath()); }
+            if (!requestDto.getPath().endsWith(".html")) { basePath = FilePath.SUPPORT_FILE_BASE; }
 
-            if ((method = MethodMapper.getMethod(requestDto.getMethodAndPath())) != null) {
-                try {
-                    method.accept(dos, requestDto);
-                } catch (WebServerException e) {
-                    ResponseHandler.sendError(dos, e.getErrorCode());
-                }
-            } else if (requestDto.getMethod().equals("GET") && (body = FileManager.getFileByPath(requestDto.getPath())) != null) {
-                ResponseHandler.sendBody(dos, HttpStatus.OK, body);
+            if (MethodMapper.hasMethod(requestDto.getMethodAndPath())) {
+                MethodMapper.execute(dos, requestDto);
+            } else if (requestDto.getMethod().equals("GET") &&
+                    (body = FileManager.getFileByPath(basePath, requestDto.getPath())) != null) {
+                String contentType = FileManager.getContentType(requestDto.getPath());
+                ResponseHandler.sendBody(dos, HttpStatus.OK, body, contentType);
             } else {
                 ResponseHandler.sendError(dos, ErrorCode.PAGE_NOT_FOUND);
             }

@@ -2,15 +2,12 @@ package service;
 
 import db.Database;
 import exception.WebServerException;
-import model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
