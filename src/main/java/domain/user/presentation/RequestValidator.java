@@ -12,8 +12,8 @@ public class RequestValidator {
             userCreateRequest.getName() == null ||
             userCreateRequest.getEmail() == null) {
             ResponseThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, new HashMap<>(), "userId is null".getBytes());
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }
