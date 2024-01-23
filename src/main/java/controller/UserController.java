@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class UserController implements BasicController {
+public class UserController implements RequestController {
     private final UserService userService = UserService.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private Map<String, Method> getMap = new HashMap<>();

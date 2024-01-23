@@ -1,6 +1,7 @@
 package webserver.adaptor;
 
 import controller.BasicController;
+import controller.RequestController;
 import http.Request;
 import http.Response;
 import webserver.ModelAndView;
@@ -11,5 +12,5 @@ import java.lang.reflect.InvocationTargetException;
 public interface HandlerAdapter {
     boolean supports(BasicController handler);
 
-    ModelAndView handle(Request req, Response res, BasicController handler) throws IOException, InvocationTargetException, IllegalAccessException;
+    ModelAndView handle(Request req, Response res, BasicController handler);
 }
