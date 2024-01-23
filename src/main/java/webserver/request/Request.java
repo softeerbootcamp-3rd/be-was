@@ -72,6 +72,14 @@ public class Request {
             sb.append(String.format("%s: %s", key, headers.get(key))).append("\n");
         }
 
+        for(String key: params.keySet()){
+            sb.append(String.format("%s: %s", key, params.get(key))).append("\n");
+        }
+
+        for(String key: body.keySet()){
+            sb.append(String.format("%s: %s", key, body.get(key))).append("\n");
+        }
+
         return sb.toString();
     }
 }
