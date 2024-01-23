@@ -93,7 +93,11 @@ public class HttpRequestUtils {
         String[] pairs = query.split("&");
         for (String pair : pairs) {
             String[] keyValue = pair.split("=");
-            params.put(keyValue[0], keyValue[1]);
+            if (keyValue.length == 1) {
+                params.put(keyValue[0], "");
+            } else {
+                params.put(keyValue[0], keyValue[1]);
+            }
         }
         return params;
     }
