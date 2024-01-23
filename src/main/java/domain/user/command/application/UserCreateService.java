@@ -37,7 +37,7 @@ public class UserCreateService {
     }
 
     private boolean checkDuplicateUserId(String userId) {
-        return userRepository.findUserById(userId) != null;
+        return userRepository.findUserById(userId).isPresent();
     }
 
     private void saveUser(User user) {
