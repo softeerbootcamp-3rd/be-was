@@ -28,7 +28,7 @@ public class SessionManager {
         return getUserBySessionId(sid);
     }
 
-    private static User getUserBySessionId(String sessionId) {
+    public static User getUserBySessionId(String sessionId) {
         if (sessionId == null) return null;
         return sessionMap.get(sessionId);
     }
