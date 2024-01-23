@@ -35,7 +35,8 @@ public class FileReader {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             // 파일 내용을 읽어와서 ByteArrayOutputStream에 쓰기
-            byte[] buffer = new byte[1024];
+            // 고민사항 : file.length()는 long 형 인데 이를 int 형으로 형변환하면 나중에 큰 파일을 읽어온다고 했을 때 정보가 누락될 수 있음...
+            byte[] buffer = new byte[(int) file.length()];
             int bytesRead;
             while ((bytesRead = fis.read(buffer)) != -1) {
                 bos.write(buffer, 0, bytesRead);
