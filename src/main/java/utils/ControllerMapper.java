@@ -24,7 +24,7 @@ public class ControllerMapper {
     public static final Map<String, Function<HttpRequest, HttpResponse>> CONTROLLER = new HashMap<>();
 
     static {
-        CONTROLLER.put("GET /user/create", UserController::signup);
+        CONTROLLER.put("POST /user/create", UserController::signup);
     }
 
     public static Function<HttpRequest, HttpResponse> getController(HttpRequest request) {
