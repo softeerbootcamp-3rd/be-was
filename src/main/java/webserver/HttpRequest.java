@@ -1,5 +1,6 @@
 package webserver;
 
+import dto.Login;
 import dto.UserDTO;
 
 import java.util.Map;
@@ -49,5 +50,14 @@ public class HttpRequest {
 
     public String getMethod() {
         return info.get("Method");
+    }
+
+    public Login getLoginInfo(){
+        String[] loginInfo = info.get("Body").split("&");
+        String[] userIdPart = loginInfo[0].split("=");
+        String[] passwordPart = loginInfo[1].split("=");
+        String userId = userIdPart[1];
+        String password = passwordPart[1];
+        return new Login(userId, password);
     }
 }
