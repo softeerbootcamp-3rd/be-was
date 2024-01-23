@@ -30,5 +30,19 @@ public class ResponseUtils {
         return header;
     }
 
+    public static HashMap<String, String> makeLoginFailedHeader() {
+        HashMap<String, String> header = new HashMap<>();
+        header.put("Location", "/user/login_failed.html");
+        return header;
+    }
+
+    public static HashMap<String, String> makeLoginHeader(String sessionId) {
+        HashMap<String, String> header = new HashMap<>();
+        header.put("Location", "/index.html");
+        header.put("Content-Type", "text/html");
+        header.put("Set-Cookie", "sid=" + sessionId + "; Path=/");
+        return header;
+    }
+
 
 }
