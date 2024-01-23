@@ -87,10 +87,11 @@ public class Request {
         if(indexOfFile == -1) return;
         this.file = new File(lastToken);
     }
-//    public void parseCookie() {
-//        String cookies = this.header.get("cookie");
-//        this.cookie = Util.parseSemicolon(cookies);
-//    }
+    public void parseCookie() {
+        String cookies = this.header.get("cookie");
+        if(cookies == null) return;
+        this.cookie = Util.parseSemicolon(cookies);
+    }
     @Override
     public String toString() {
         return "[method= " + method + ", target= " + target + ", version= " + version + "]";

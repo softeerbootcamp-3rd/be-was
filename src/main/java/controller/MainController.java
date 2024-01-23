@@ -25,6 +25,7 @@ public class MainController {
         String path = request.getPath();
         String method = request.getMethod();
 
+
         if(method.equals("GET")) {
             if (path.equals("/")) {
                 statusCode = "302";

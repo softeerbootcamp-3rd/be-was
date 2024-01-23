@@ -35,13 +35,14 @@ public class Util {
         return hashMap;
     }
 
-    public static HashMap<String, String> parseCookie(String cookie) {
+    public static HashMap<String, String> parseSemicolon(String semicolon) {
         HashMap<String, String> hashMap = new HashMap<>();
-        String[] cookies = cookie.split("; ");
-        for(String token : cookies) {
-            String[] keyAndValue = token.split("=");
-            String key = keyAndValue[0];
-            String value = keyAndValue[1];
+        String[] tokens = semicolon.split("; ");
+        for(String token : tokens) {
+            int indexOfEqual = token.indexOf("=");
+            if(indexOfEqual == -1) continue;
+            String key = token.substring(0, indexOfEqual);
+            String value = token.substring(indexOfEqual+1);
             hashMap.put(key, value);
         }
         return hashMap;

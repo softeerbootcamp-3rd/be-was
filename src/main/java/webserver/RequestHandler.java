@@ -65,6 +65,7 @@ public class RequestHandler implements Runnable {
             if(printedKey.contains(key))
                 logger.debug(line);
         }
+        request.parseCookie();
         return request;
     }
     private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
