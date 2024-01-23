@@ -7,14 +7,14 @@ import http.request.Request;
 import http.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestGenerator;
-import util.HttpResponseGenerator;
+import util.RequestGenerator;
+import util.ResponseGenerator;
 
 public class RequestHandler implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
-    private final HttpRequestGenerator httpRequestGenerator = new HttpRequestGenerator();
-    private final HttpResponseGenerator httpResponseGenerator = new HttpResponseGenerator();
+    private final RequestGenerator httpRequestGenerator = new RequestGenerator();
+    private final ResponseGenerator httpResponseGenerator = new ResponseGenerator();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;

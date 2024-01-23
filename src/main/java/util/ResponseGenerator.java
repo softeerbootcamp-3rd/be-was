@@ -4,7 +4,7 @@ import http.response.Response;
 
 import java.io.*;
 
-public class HttpResponseGenerator {
+public class ResponseGenerator {
     public Response createHttpResponse(OutputStream out) throws IOException {
         return new Response(new DataOutputStream(out));
     }
