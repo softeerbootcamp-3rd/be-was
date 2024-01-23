@@ -76,7 +76,9 @@ public class RequestHandler implements Runnable {
                 httpRequestDto.getRequestTarget(),
                 httpRequestDto.getHTTPVersion());
 
-        // header 읽기
+        // header 파싱
+        String key;
+        String value;
         // host, accept 출력
         while(line != null) {
             line = br.readLine();
@@ -85,31 +87,44 @@ public class RequestHandler implements Runnable {
                 break;
             if(line.contains("Host:")) {
                 // Host 추출
-                httpRequestDto.setHost(line.substring("Host: ".length()));
-                logger.debug("Host: {}", httpRequestDto.getHost());
+                key = "Host";
+                value = line.substring("Host: ".length());
+                httpRequestDto.addHeader(key, value);
+                logger.debug("Host: {}",  value);
                 continue;
             }
             if(line.contains("Accept:")) {
                 // Accept 추출
-                String accept = line.substring("Accept: ".length());
+                key = "Accept";
+                value = line.substring("Accept: ".length());
                 if(line.contains(","))
-                    accept = accept.substring(0, accept.indexOf(","));
-                httpRequestDto.setAccept(accept);
-                logger.debug("Accept: {}", httpRequestDto.getAccept());
+                    value = value.substring(0, value.indexOf(","));
+                httpRequestDto.addHeader(key, value);
+                logger.debug("Accept: {}", value);
+                continue;
+            }
+            if(line.contains("Connection:")) {
+                // Connection 추출
+                key = "Connection";
+                value = line.substring("Connection: ".length());
+                httpRequestDto.addHeader(key, value);
+                logger.debug("Connection: {}", value);
                 continue;
             }
             if(line.contains("Content-Length:")) {
                 // Content-Length 추출
-                Integer contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
-                httpRequestDto.setContentLength(contentLength);
-                logger.debug("Content-Length: {}", httpRequestDto.getContentLength());
+                key = "Content-Length";
+                value = line.substring("Content-Length: ".length());
+                httpRequestDto.addHeader(key, value);
+                logger.debug("Content-Length: {}", value);
                 continue;
             }
         }
 
         // body 읽기
-        if(httpRequestDto.getContentLength() != null) {
-            char[] body = new char[httpRequestDto.getContentLength()];
+        Integer length;
+        if( (length = httpRequestDto.getContentLength()) != null) {
+            char[] body = new char[length];
             br.read(body);
 
             // 한글 파라미터 decoding 후 body 저장
