@@ -5,6 +5,7 @@ public class User {
     private String password;
     private String name;
     private String email;
+    private String sessionId;
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
@@ -14,23 +15,31 @@ public class User {
     }
 
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+        return "User [userId=" + this.userId + ", password=" + this.password + ", name=" + this.name + ", email=" + this.email + "]";
     }
 }
