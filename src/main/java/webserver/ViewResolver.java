@@ -3,7 +3,6 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import response.HttpResponse;
-import util.StatusCode;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,25 +12,23 @@ public final class ViewResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(ViewResolver.class);
 
-    public static void response(StatusCode status, String filePath, OutputStream out) throws IOException {
+    public static void response(HttpResponse httpResponse, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        if (status.getStatus() == 200) {
-            HttpResponse httpResponse = new HttpResponse(filePath);
+        if (httpResponse.getStatusCode() == 200) {
             response200Header(dos, httpResponse.getBodyLength(), httpResponse.getContentType());
             responseBody(dos, httpResponse.getBody());
             return;
         }
-        if (status.getStatus() == 302) {
-            HttpResponse httpResponse = new HttpResponse("text/html", "/index.html"); //todo: redirectUri를 어떻게 처리할지 고민
+        if (httpResponse.getStatusCode() == 302) {
             response302Header(dos, httpResponse.getRedirectUri());
             return;
         }
-        if (status.getStatus() == 404) {
+        if (httpResponse.getStatusCode() == 404) {
             response404Header(dos);
+            responseBody(dos, httpResponse.getBody());
         }
     }
-
 
     private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
