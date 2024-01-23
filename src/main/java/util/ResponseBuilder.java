@@ -71,7 +71,7 @@ public class ResponseBuilder {
             dos.writeBytes("Location: " + redirectLocation + "\r\n");
 
             if(cookieHeader != null && !cookieHeader.isEmpty()) {
-                dos.writeBytes("Set-Cookie: sid=" + cookieHeader + "; Path=/" + "\r\n");
+                dos.writeBytes("Set-Cookie: sid=" + cookieHeader + "; Max-Age=60; Path=/" + "\r\n");
             }
 
             dos.writeBytes("\r\n");
