@@ -49,7 +49,7 @@ public class RequestDto {
     }
 
     public void setBody(Map<String, String> body) {
-        this.body = params;
+        this.body = body;
     }
 
     public void addHeader(String key, String value) {

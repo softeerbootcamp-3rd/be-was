@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,14 +51,16 @@ public class RequestParser {
 
         char[] body = new char[length];
         br.read(body, 0, length);
-        String bodyStr = Arrays.toString(body);
+
+        String bodyStr = new String(body);
         requestDto.setBody(getMapFromQueryStr(bodyStr));
     }
 
     private static Map<String, String> getMapFromQueryStr(String str) {
         Map<String, String> result = new HashMap<>();
-        for (String param : str.split("&")) {
-            String[] keyAndValue = param.split("=");
+
+        for (String s : str.split("&")) {
+            String[] keyAndValue = s.split("=");
             result.put(keyAndValue[0], keyAndValue[1]);
         }
         return result;

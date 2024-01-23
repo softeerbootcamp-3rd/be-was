@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum FileContentType {
+    TXT (".txt", "text/plain"),
     HTML (".html", "text/html"),
     CSS (".css", "text/css"),
     JS (".js", "text/javascript"),

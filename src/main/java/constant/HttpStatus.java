@@ -16,7 +16,7 @@ public enum HttpStatus {
         this.message = message;
     }
 
-    public String getStatus() {
+    public String toString() {
         return code + " " + message;
     }
 }
