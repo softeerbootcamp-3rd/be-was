@@ -2,7 +2,6 @@ package service;
 
 import httpmessage.Request.HttpRequest;
 import httpmessage.Response.HttpResponse;
-import httpmessage.View.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
