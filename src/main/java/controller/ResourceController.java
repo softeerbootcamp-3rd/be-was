@@ -12,14 +12,18 @@ public class ResourceController {
     }
 
     public ModelView process(String uri) {
-        uri = getResourcePath(uri);
+        if (isTemplatesResourceType(uri)) {
+            return new ModelView("/templates" + uri);
+        }
+
+        uri = getStaticResourcePath(uri);
         return new ModelView("/static" + uri);
     }
 
-    private String getResourcePath(String uri) {
+    private String getStaticResourcePath(String uri) {
         String[] uriToken = uri.split("/");
         for (int i = 0; i < uriToken.length; i++) {
-            if (isResourceType(uriToken[i])) {
+            if (isStaticResourceType(uriToken[i])) {
                 if (uriToken[i].equals("favicon.ico")) {
                     return "/" + uriToken[i];
                 }
@@ -29,11 +33,15 @@ public class ResourceController {
         return "";
     }
 
-    private boolean isResourceType(String type) {
+    private boolean isStaticResourceType(String type) {
         return type.contains("css")
                 || type.contains("fonts")
                 || type.contains("images")
                 || type.contains("js")
                 || type.contains("favicon.ico");
+    }
+
+    private boolean isTemplatesResourceType(String type) {
+        return type.contains(".html");
     }
 }

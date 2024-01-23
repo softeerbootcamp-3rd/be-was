@@ -31,10 +31,9 @@ public class FrontController {
         handlerMappingMap.put("images", new ResourceController("images"));
         handlerMappingMap.put("js", new ResourceController("js"));
         handlerMappingMap.put("ico", new ResourceController("ico"));
+        handlerMappingMap.put("html", new ResourceController("html"));
 
-        handlerMappingMap.put("/user/form.html", new UserFormController());
         handlerMappingMap.put("/user/create", new UserCreateController());
-        handlerMappingMap.put("/user/login.html", new UserLoginController());
 
         // qna 추가
     }
@@ -100,6 +99,8 @@ public class FrontController {
             return "js";
         if (requestURI.contains("ico"))
             return "ico";
+        if (requestURI.contains("html"))
+            return "html";
 
         return "";
     }
@@ -109,7 +110,8 @@ public class FrontController {
                 || uri.contains("fonts")
                 || uri.contains(".images")
                 || uri.contains(".js")
-                || uri.contains(".ico");
+                || uri.contains(".ico")
+                || uri.contains(".html");
     }
 
 }
