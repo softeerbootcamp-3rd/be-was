@@ -53,7 +53,7 @@ public class RequestDataController {
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
                     if(UserService.login(requestData)) {
-                        return redirectTo("/index.html");
+                        return redirectTo("/index.html", "123456");
                     }
                     return redirectTo("/user/login_failed.html");
                 } else {
@@ -70,11 +70,11 @@ public class RequestDataController {
     }
 
     private static String redirectHome() {
-        return "302 /index.html";
+        return "302 /index.html none";
     }
 
     private static String redirectTo(String path) {
-        return "302 " + path;
+        return "302 " + path + " none";
     }
 
     private static String redirectTo(String path, String Cookie) {
@@ -82,14 +82,14 @@ public class RequestDataController {
     }
 
     private static String getFilePath(String filePath) {
-        return "200 " + filePath;
+        return "200 " + filePath + " none";
     }
 
     private static String notFound() {
-        return "404 /error/notfound.html";
+        return "404 /error/notfound.html none";
     }
 
     private static String badRequest() {
-        return "400 /error/badrequest.html";
+        return "400 /error/badrequest.html none";
     }
 }
