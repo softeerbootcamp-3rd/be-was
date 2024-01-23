@@ -34,6 +34,20 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = new HttpRequest(connection, in);
             logger.debug(httpRequest.toString());
 
+            // 로그인 했는데 또 로그인 할 경우, 메인 페이지로 redirect
+            if (httpRequest.getPath().equals("/user/login.html") && httpRequest.getCookie() != null) {
+                // 유효한 세션인지 검증
+                String sid = httpRequest.getCookie().split("=")[1];
+                if (SessionManager.checkSessionAvailable(sid) && !SessionManager.checkSessionTimeout(sid)) {
+                    Response response = new Response.Builder()
+                            .httpStatus(HttpStatus.FOUND)
+                            .body("/index.html")
+                            .build();
+                    HttpResponse.response(dos, response);
+                    return;
+                }
+            }
+
             Response response = RequestMappingHandler.handleRequest(httpRequest);
             HttpResponse.response(dos, response);
         } catch (IndexOutOfBoundsException e) {
