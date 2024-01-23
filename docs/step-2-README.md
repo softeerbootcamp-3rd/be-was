@@ -96,4 +96,3 @@ Java Web Application Server 2023
   >- Status Code 종류
   >- Status Code에 따른 브라우저의 동작 차이
   >- 학습 내용 정리: https://velog.io/@taegon1998/HTTP-Status-Code
-  >- 
