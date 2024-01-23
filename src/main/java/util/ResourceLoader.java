@@ -1,5 +1,9 @@
 package util;
 
+import controller.ResourcePathMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,10 +14,17 @@ import static util.RequestParserUtil.getFileExtension;
 
 public class ResourceLoader {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
+
     public static final String url = "/Users/admin/Softeer/be-was/src/main/resources";
 
     public static byte[] loadResource(String resourcePath) throws IOException {
-        return Files.readAllBytes(Paths.get( url+ "/templates" + resourcePath));
+        logger.debug("resourcePath: " + resourcePath);
+
+        String extension = getFileExtension(resourcePath);
+        String directory = ResourcePathMapping.getDirectory(extension);
+
+        return Files.readAllBytes(Paths.get( url + directory + resourcePath));
     }
 
     public static String getResourceType(String targetUrl) {

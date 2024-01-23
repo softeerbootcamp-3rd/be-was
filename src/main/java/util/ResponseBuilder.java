@@ -1,5 +1,6 @@
 package util;
 
+import controller.ResourcePathMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +21,14 @@ public class ResponseBuilder {
         String statusCode = tokens[0];
         String targetPath = tokens[1];
 
+        String extension = RequestParserUtil.getFileExtension(targetPath);
+        String contentType = ResourcePathMapping.getContentType(extension);
+
         byte[] body;
 
         if(statusCode.equals("200")) {
             body = ResourceLoader.loadResource(targetPath);
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } else if(statusCode.equals("302")) {
             response302Header(dos, targetPath);
@@ -41,10 +45,10 @@ public class ResponseBuilder {
             return;
         }
     }
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

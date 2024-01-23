@@ -26,8 +26,14 @@ public class RequestDataController {
     public static String routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
 
+        String extension = getFileExtension(url);
+
         try {
-            File file = new File(ResourceLoader.url + "/templates" + url);
+            File file;
+
+            String directory = ResourcePathMapping.getDirectory(extension);
+
+            file = new File(ResourceLoader.url + directory + url);
 
             String fileOrApi = getResourceType(url); // URL이 FILE을 나타내는지 API를 나타내는지 문자열로 반환
 
