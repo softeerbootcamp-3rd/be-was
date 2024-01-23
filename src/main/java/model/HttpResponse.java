@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,9 +73,7 @@ public class HttpResponse {
         return new HttpResponse(httpStatus, header, errorMessageBytes);
     }
 
-    public static HttpResponse response200(HttpRequest httpRequest, HttpStatus httpStatus) throws IOException {
-        String path = httpRequest.getUri().getPath();
-        String extension = path.split(EXTENSION_DELIMITER)[EXTENSION_POS];
+    public static HttpResponse response200(HttpStatus httpStatus, String extension, String path) throws IOException {
         byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
 
         Map<String, String> header = new HashMap<>();

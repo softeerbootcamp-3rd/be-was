@@ -26,7 +26,7 @@ class UserControllerTest {
     @Test
     void userController() throws IOException {
         //given
-        HttpRequest mockRequest = createMockRequest("GET /user/create?userId=user1&password=1234&name=test&email=test%40naver.com HTTP/1.1");
+        HttpRequest mockRequest = createMockRequest("user1", "1234", "name", "soeun@naver.com");
 
         //when
         HttpResponse httpResponse = UserController.createUser(mockRequest);
@@ -40,7 +40,7 @@ class UserControllerTest {
     @Test
     void userControllerSameUserId() throws IOException {
         //given
-        HttpRequest mockRequest = createMockRequest("GET /user/create?userId=userId&password=1234&name=name&email=test%40naver.com HTTP/1.1");
+        HttpRequest mockRequest = createMockRequest("userId", "1234", "name", "soeun@naver.com");
 
         //when
         HttpResponse httpResponse = UserController.createUser(mockRequest);
@@ -50,8 +50,23 @@ class UserControllerTest {
         assertThat(responseToString).isEqualTo("HttpResponse{httpStatus=BAD_REQUEST, body=이미 존재하는 아이디입니다.}");
     }
 
-    private static HttpRequest createMockRequest(String requestLine) throws IOException {
-        String mockRequest = requestLine + "\n" +
+    @DisplayName("회원 가입 시 아이디가 없는 경우 ErrorResponse를 보낸다.")
+    @Test
+    void userControllerSameUserIdWithoutUserId() throws IOException {
+        //given
+        HttpRequest mockRequest = createMockRequest("", "1234", "name", "soeun@naver.com");
+
+        //when
+        HttpResponse httpResponse = UserController.createUser(mockRequest);
+
+        //then
+        String responseToString = httpResponse.toString();
+        assertThat(responseToString).isEqualTo("HttpResponse{httpStatus=BAD_REQUEST, body=userId는 필수입니다.}");
+    }
+
+    private static HttpRequest createMockRequest(String userId, String password, String name, String email) throws IOException {
+        String mockRequest = "GET /user/create?userId=" + userId + "&password=" + password +
+                "&name=" + name + "&email=" + email + " HTTP/1.1" + "\n" +
                 "Host: localhost:8080\n" +
                 "Connection: keep-alive\n" +
                 "Accept: */*\n" +
@@ -62,5 +77,4 @@ class UserControllerTest {
 
         return HttpRequest.from(in);
     }
-
 }

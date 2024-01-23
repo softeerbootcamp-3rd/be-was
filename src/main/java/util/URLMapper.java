@@ -1,5 +1,6 @@
 package util;
 
+import controller.ResourceController;
 import controller.UserController;
 import model.HttpRequest;
 import model.HttpResponse;
@@ -16,8 +17,10 @@ public class URLMapper {
         URL_MAPPING.put("GET /user/create", UserController::createUser);
     }
 
+    //찾으면 찾은 컨트롤러 반환, 못 찾으면 ResourceController 반환
     public static Function<HttpRequest, HttpResponse> getController(HttpRequest httpRequest) {
-        return URL_MAPPING.get(httpRequest.getMethod() + " " + httpRequest.getUri().getPath());
-    }
+        String findController = httpRequest.getMethod() + " " + httpRequest.getUri().getPath();
 
+        return URL_MAPPING.getOrDefault(findController, ResourceController::serveStaticFile);
+    }
 }
