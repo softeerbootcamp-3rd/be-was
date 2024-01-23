@@ -8,8 +8,8 @@ public class Session {
     public static void addSession(String sessionId, User user) {
         sessionStorage.put(sessionId, user);
     }
-
     public static User findBySessionId(String sessionId) {
         return sessionStorage.get(sessionId);
     }
+    public static boolean containsSessionId(String sessionId) {return sessionStorage.containsKey(sessionId);}
 }
