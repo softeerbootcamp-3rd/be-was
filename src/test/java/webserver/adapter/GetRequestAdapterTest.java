@@ -3,19 +3,51 @@ package webserver.adapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.adapter.GetRequestAdapter;
+import webserver.request.Request;
+import webserver.response.Response;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetRequestAdapterTest {
+    private final GetRequestAdapter getRequestAdapter = GetRequestAdapter.getInstance();
+
     @Test
     @DisplayName("/test를 요청할 시 정상적으로 TestController의 test()가 실행되는지 테스트")
     void requestTestMethodTest() throws Throwable {
-        String request = "/test";
-        GetRequest getRequest = RequestParameterParser.parse(request);
+        Request request = Request.of("GET", "/test", "HTTP/1.1");
 
-        Object object = GetRequestAdapter.run(getRequest);
-        String result = (String) object;
+        Response result = getRequestAdapter.run(request);
 
-        assertEquals("test", result);
+        assertEquals(true, isSame("test".getBytes(), result.getBody()));
+    }
+
+    @Test
+    @DisplayName("GET /test를 요청할 때 canRun() 테스트")
+    void requestTestCanRunTest() {
+        Request request = Request.of("GET", "/test", "HTTP/1.1");
+
+        assertEquals(true, getRequestAdapter.canRun(request));
+    }
+
+    @Test
+    @DisplayName("POST /test를 요청할 때 canRun() 테스트")
+    void requestTestCannotRunTest() {
+        Request request = Request.of("POST", "/test", "HTTP/1.1");
+
+        assertEquals(false, getRequestAdapter.canRun(request));
+    }
+
+    private boolean isSame(byte[] expected, byte[] actual){
+        if(expected.length != actual.length){
+            return false;
+        }
+
+        for(int i = 0; i < expected.length; i++){
+            if(expected[i] != actual[i]){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
