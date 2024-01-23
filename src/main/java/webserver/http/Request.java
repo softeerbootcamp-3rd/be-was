@@ -1,7 +1,5 @@
 package webserver.http;
 
-import webserver.HttpConnectionHandler;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,29 +9,22 @@ import java.util.Map;
 import static webserver.http.Mime.convertMime;
 
 public class Request {
-    String httpMethod;
-    String requestTarget;
-    String httpVersion;
-    Float httpVersionNum;
-    Mime responseMimeType;
-    private final ArrayList<String> headerContent;
-    private final ArrayList<String> bodyContent;
-    HashMap<String, String> requestHeader;
-    HashMap<String, String> requestBody;
-    RequestHandler requestHandler;
+    private String httpMethod;
+    private String requestTarget;
+    private String httpVersion;
+    private Float httpVersionNum;
+    private Mime responseMimeType;
+    private final ArrayList<String> headerContent = new ArrayList<>();
+    private final ArrayList<String> bodyContent= new ArrayList<>();
+    private final HashMap<String, String> requestHeader = new HashMap<>();
+    private final HashMap<String, String> requestBody = new HashMap<>();;
 
     public Request(BufferedReader br) throws IOException {
-        headerContent = new ArrayList<>();
-        bodyContent = new ArrayList<>();
         parseRequest(br);
-        requestHeader = new HashMap<>();
-        requestBody = new HashMap<>();
-
         parseRequestStartLine(headerContent.get(0));
         parseRequestHeader();
         parseRequestBody();
-
-        requestHandler = new RequestHandler();
+        RequestHandler requestHandler = new RequestHandler();
         requestHandler.handleRequest(this);
     }
 
@@ -136,4 +127,7 @@ public class Request {
         return requestHeader;
     }
 
+    public String getHttpVersion() {
+        return httpVersion;
+    }
 }

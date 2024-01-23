@@ -11,15 +11,14 @@ import java.util.function.Consumer;
 
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private final Map<String, Consumer<Request>> routeHandlers;
+    private final Map<String, Consumer<Request>> routeHandlers= new HashMap<>();
 
     public RequestHandler() {
-        this.routeHandlers = new HashMap<>();
         initializeRoutes();
     }
 
     private void initializeRoutes() {
-        routeHandlers.put("/user/create", this::handleUserCreate);
+        routeHandlers.put("/user/create", (Request r)-> handleUserCreate(r));
     }
 
     public void handleRequest(Request request) {
@@ -34,7 +33,7 @@ public class RequestHandler {
     private void handleUserCreate(Request request) {
         String data = request.getRequestTarget().split("\\?")[1];
         UserFormDataParser userFormDataParser = new UserFormDataParser(data);
-        HashMap<String,String> formData = userFormDataParser.ParseData();
+        HashMap<String,String> formData = new HashMap<>(userFormDataParser.parseData());
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
         System.out.println(user.toString());
         //리다이렉션 헤더에 넣기
