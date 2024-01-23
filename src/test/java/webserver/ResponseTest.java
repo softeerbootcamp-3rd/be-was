@@ -16,7 +16,7 @@ class ResponseTest {
         String path = "/css/bootstrap.min.css";
 
         //when
-        String mimeType = Response.getMimeType(path);
+        String mimeType = Response.getContentType(path);
 
         //then
         Assertions.assertThat(mimeType).isEqualTo("text/css");

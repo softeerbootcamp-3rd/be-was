@@ -50,23 +50,23 @@ public class RequestHandler implements Runnable {
                 }
             }
 
-            String mimeType = getMimeType(requestLineDto.getPath());
+            String contentType = getContentType(requestLineDto.getPath());
 
             if (contentLength == 0) {
-                createResponse(out, OK, mimeType, requestLineDto.getPath());
+                createResponse(out, OK, contentType, requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/create")) {
                 String body = getRequestBody(br, contentLength);
                 try {
                     userController.create(body);
-                    createResponse(out, REDIRECT, mimeType, INDEX_FILE_PATH);
+                    createResponse(out, REDIRECT, contentType, INDEX_FILE_PATH);
                 } catch (EmptyFormException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, BAD_REQUEST, mimeType, USER_CREATE_FORM_FAIL_FILE_PATH);
+                    createResponse(out, BAD_REQUEST, contentType, USER_CREATE_FORM_FAIL_FILE_PATH);
                 }
                 catch (DuplicateUserIdException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, CONFLICT, mimeType, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
+                    createResponse(out, CONFLICT, contentType, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
         } catch (Exception e) {

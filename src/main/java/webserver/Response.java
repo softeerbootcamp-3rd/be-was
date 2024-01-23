@@ -63,8 +63,14 @@ public class Response {
         dos.flush();
     }
 
-    public static String getMimeType(String path) throws IOException {
-        Path source = Paths.get(path);
-        return Files.probeContentType(source);
+    public static String getContentType(String path) throws IOException {
+        String extension = getFileExtension(path);
+        return ContentType.getMimeType(extension);
+    }
+
+    private static String getFileExtension(String path) {
+        File file = new File(path);
+        String name = file.getName();
+        return name.substring(name.lastIndexOf(".") + 1);
     }
 }
