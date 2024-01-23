@@ -2,14 +2,13 @@ package service;
 
 import db.Database;
 import http.response.HttpResponse;
-import dto.UserDto;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import http.ContentType;
-import utils.FileReader;
 import http.HttpStatus;
 import webserver.RequestHandler;
+
+import java.util.Map;
 
 /**
  * 서비스 로직 구현
@@ -17,24 +16,35 @@ import webserver.RequestHandler;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     // 회원가입
-    public HttpResponse createUser(UserDto userDto) {
-        User user = new User(userDto.getUserId(), userDto.getPassword(),
-                    userDto.getName(), userDto.getEmail());
-        // 유저 아이디 중복 검사
-        if (validateDuplicated(user)) {
-            Database.addUser(user);
-            logger.info(Database.findAll().toString());
-
-            byte[] body = Database.findUserById(user.getUserId()).toString().getBytes();
-            return HttpResponse.of(HttpStatus.REDIRECT, ContentType.HTML, "/index.html", body);
+    public HttpResponse createUser(Map<String, String> params) {
+        // userId, password, name, email 값이 잘 들어왔는지 확인
+        if (!params.containsKey("userId") || !params.containsKey("password")
+                || !params.containsKey("name") || !params.containsKey("email")) {
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
         }
-        byte[] body = FileReader.readFile("/user/form.html");
-        return HttpResponse.of(HttpStatus.BAD_REQUEST, ContentType.HTML, body);
+
+        String userId = params.get("userId"), password = params.get("password");
+        String name = params.get("name"), email = params.get("email");
+
+        // userId, password, name, email 빈 값 검사
+        if (userId.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new User(userId, password, name, email);
+
+        // 유저 아이디 중복 검사
+        if (!validateDuplicated(userId)) {
+            // 고민사항 : BAD_REQUEST를 반환해야 할지 회원가입 폼으로 REDIRECT 시켜야 할지
+            return HttpResponse.of(HttpStatus.REDIRECT, "/user/form.html");
+        }
+
+        Database.addUser(user);
+        logger.info(Database.findAll().toString());
+        return HttpResponse.of(HttpStatus.REDIRECT, "/index.html");
     }
 
-    private boolean validateDuplicated(User user) {
-        return Database.findUserById(user.getUserId()) == null;
+    private boolean validateDuplicated(String userId) {
+        return Database.findUserById(userId) == null;
     }
-
-
 }

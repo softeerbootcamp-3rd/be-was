@@ -1,6 +1,5 @@
 package http.response;
 
-import http.ContentType;
 import http.HttpStatus;
 import http.request.HttpRequest;
 import org.slf4j.Logger;
@@ -17,17 +16,14 @@ public class HttpResponse {
     private Map<String, String> responseHeader = new HashMap<>();
     private byte[] body;
 
-    public HttpResponse(HttpStatus status, ContentType content, String redirect, byte[] body) {
+    public HttpResponse(HttpStatus status, String redirect) {
         this.status = status;
-        responseHeader.put("Content-Type", content.getType());
         responseHeader.put("Location", redirect);
-        responseHeader.put("Content-Length", String.valueOf(body.length));
-        this.body = body;
     }
 
-    public HttpResponse(HttpStatus status, ContentType content, byte[] body) {
+    public HttpResponse(HttpStatus status, String contentType, byte[] body) {
         this.status = status;
-        responseHeader.put("Content-Type", content.getType() + ";charset=utf-8");
+        responseHeader.put("Content-Type", contentType + ";charset=utf-8");
         responseHeader.put("Content-Length", String.valueOf(body.length));
         this.body = body;
     }
@@ -36,12 +32,12 @@ public class HttpResponse {
         this.status = status;
     }
 
-    public static HttpResponse of(HttpStatus status, ContentType content, String redirect, byte[] body) {
-        return new HttpResponse(status, content, redirect, body);
+    public static HttpResponse of(HttpStatus status, String redirect) {
+        return new HttpResponse(status, redirect);
     }
 
-    public static HttpResponse of(HttpStatus status, ContentType content, byte[] body) {
-        return new HttpResponse(status, content, body);
+    public static HttpResponse of(HttpStatus status, String contentType, byte[] body) {
+        return new HttpResponse(status, contentType, body);
     }
 
     public static HttpResponse of(HttpStatus status) {
@@ -67,7 +63,9 @@ public class HttpResponse {
                 }
             });
             dos.writeBytes("\r\n");
-            dos.write(body, 0, body.length);
+            if (body != null) {
+                dos.write(body, 0, body.length);
+            }
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());

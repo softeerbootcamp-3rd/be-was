@@ -10,25 +10,26 @@ import java.util.Map;
 public class HttpRequest {
     private final RequestLine requestLine;
     private final GeneralHeader generalHeader;
-    private Map<String, String> etc = new HashMap<>();
+    private Map<String, String> etcHeaders = new HashMap<>();
+    private Map<String, String> params = new HashMap<>();
 
     // TODO : POST 추가할 때 body 필드 추가하기~~
 
     public HttpRequest(BufferedReader br) throws IOException {
         // method, url, version 파싱
         String line = br.readLine();
-        String[] tokens = Parser.parsing(line, " ", 3);
+        String[] tokens;
 
-        requestLine = new RequestLine(tokens[0], tokens[1], tokens[2]);
+        requestLine = new RequestLine(Parser.splitRequestList(line));
         generalHeader = new GeneralHeader();
 
         while (!(line = br.readLine()).isEmpty()) {
-            tokens = Parser.parsing(line, ": ", 2);
+            tokens = line.split(": ", 2);
             String key = tokens[0], value = tokens[1];
             if (generalHeader.checkGeneralHeader(key)) {
                 generalHeader.addGeneralHeader(key, value);
             } else {
-                etc.put(key, value);
+                etcHeaders.put(key, value);
             }
         }
     }
@@ -42,9 +43,8 @@ public class HttpRequest {
                 "\n- General Header" +
                 mapToString(generalHeader.getGeneralHeaders()) +
                 "\n- 기타 헤더" +
-                "\n" + mapToString(etc);
+                "\n" + mapToString(etcHeaders);
     }
-
 
     public String mapToString(Map<String, String> map) {
         StringBuilder sb = new StringBuilder();
@@ -59,5 +59,9 @@ public class HttpRequest {
 
     public RequestLine getRequestLine() {
         return requestLine;
+    }
+
+    public Map<String, String> getEtcHeaders() {
+        return etcHeaders;
     }
 }

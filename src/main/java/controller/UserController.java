@@ -1,11 +1,11 @@
 package controller;
 
 import http.response.HttpResponse;
-import dto.UserDto;
 import http.request.HttpRequest;
 import service.UserService;
-import http.HttpStatus;
 import utils.Parser;
+
+import java.util.Map;
 
 /**
  * 스프링의 controller 역할
@@ -15,38 +15,9 @@ public class UserController {
     private static final UserService userService = new UserService();
 
     public static HttpResponse signup(HttpRequest request) {
-        // query 추출
-        String query = Parser.extractQuery(request.getRequestLine().getUri());
-        String[] params = Parser.parsing(query, "&", -1);
-        String userId = "", password = "", name = "", email = "";
+        // request의 uri로 param 맵 추출하기
+        Map<String, String> params = Parser.extractParams(request.getRequestLine().getUri());
 
-        for (String param : params) {
-            String[] p = Parser.parsing(param, "=", 2);
-            String key = p[0];
-            String value = p[1];
-            switch (key) {
-                case "userId":
-                    userId = value;
-                    break;
-                case "password":
-                    password = value;
-                    break;
-                case "name":
-                    name = value;
-                    break;
-                case "email":
-                    email = value;
-                    break;
-                default:
-                    return new HttpResponse(HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        if (userId.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
-            return new HttpResponse(HttpStatus.BAD_REQUEST);
-        }
-
-        UserDto userDto = new UserDto(userId, password, name, email);
-        return userService.createUser(userDto);
+        return userService.createUser(params);
     }
 }

@@ -1,11 +1,12 @@
 package service;
 
 import db.Database;
-import dto.UserDto;
 import model.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,28 +16,41 @@ class UserServiceTest {
     @Test
     void 회원가입_서비스() {
         // given
-        UserDto userDto = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", "ossu1975");
+        params.put("password", "ossu1975");
+        params.put("name", "ossu");
+        params.put("email", "ossu1975@gmail.com");
 
         // when
-        userService.createUser(userDto);
+        userService.createUser(params);
 
         // then
-        User user = Database.findUserById(userDto.getUserId());
-        assertEquals(userDto.getName(), user.getName());
-        assertEquals(userDto.getEmail(), user.getEmail());
-        assertEquals(userDto.getPassword(), user.getPassword());
+        User findUser = Database.findUserById(params.get("userId"));
+        assertEquals(params.get("name"), findUser.getName());
+        assertEquals(params.get("email"), findUser.getEmail());
+        assertEquals(params.get("password"), findUser.getPassword());
         assertEquals(1, Database.findAll().size());
     }
 
     @Test
     void 중복_아이디_검증() {
         // given
-        UserDto userDto1 = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
-        UserDto userDto2 = new UserDto("ossu1975", "1234", "ossu", "ossu@gmail.com");
+        Map<String, String> params1 = new HashMap<>();
+        params1.put("userId", "ossu1975");
+        params1.put("password", "ossu1975");
+        params1.put("name", "ossu");
+        params1.put("email", "ossu1975@gmail.com");
+
+        Map<String, String> params2 = new HashMap<>();
+        params2.put("userId", "ossu1975");
+        params2.put("password", "ossu1975");
+        params2.put("name", "ossu");
+        params2.put("email", "ossu1975@gmail.com");
 
         // when
-        userService.createUser(userDto1);
-        userService.createUser(userDto2);
+        userService.createUser(params1);
+        userService.createUser(params2);
 
         // then
         Collection<User> users = Database.findAll();

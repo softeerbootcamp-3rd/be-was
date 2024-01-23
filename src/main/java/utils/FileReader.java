@@ -36,7 +36,11 @@ public class FileReader {
                 requestURL.startsWith("/js/") || requestURL.contains(".ico"))
             return STATIC;
 
-        return TEMPLATE;
+        if (requestURL.contains(".html") || requestURL.contains(".xml")) {
+            return TEMPLATE;
+        }
+
+        return "";
     }
 
     public static byte[] readFile(String path) {
