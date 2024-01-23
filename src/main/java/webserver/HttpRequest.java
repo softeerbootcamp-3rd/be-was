@@ -18,7 +18,10 @@ public class HttpRequest {
     private String host;
     private String connection;
     private String accept;
+    private Integer contentLength;
     private Map<String, String> requestParam = new HashMap<>();
+
+    private Map<String, String> formData = new HashMap<>();
 
     public String getMethod() {
         return method;
@@ -44,7 +47,11 @@ public class HttpRequest {
         return accept;
     }
 
+    public Integer getContentLength() { return contentLength; }
+
     public Map<String, String> getRequestParam() { return requestParam; }
+
+    public Map<String, String> getFormData() { return formData; }
 
 
     public HttpRequest (InputStream inputStream) throws IOException {
@@ -53,6 +60,7 @@ public class HttpRequest {
     }
 
     private void getRequestInfo(BufferedReader br) throws IOException {
+
         String line = br.readLine();
         if (line != null) {
             String[] lines = line.split(" ");
@@ -72,8 +80,15 @@ public class HttpRequest {
                     connection=line.substring("Connection: ".length());
                 } else if (line.startsWith("Host:")) {
                     host=line.substring("Host: ".length());
+                } else if (line.startsWith("Content-Length: ")) {
+                    contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
                 }
             }
+            if (method.equals("POST")) {
+                String body = getBody(br, contentLength);
+                getFormData(body);
+            }
+
         }
     }
 
@@ -85,6 +100,30 @@ public class HttpRequest {
             requestParam.put(p[0], decode(p[1]));
         }
     }
+
+    private void getFormData(String body) {
+        String[] objects = body.split("&");
+        for (String object : objects) {
+            String[] o = object.split("=");
+            formData.put(o[0], decode(o[1]));
+        }
+    }
+
+    private String getBody(BufferedReader br, int contentLength) throws IOException {
+        StringBuilder bodyBuilder = new StringBuilder();
+        int read;
+        int totalRead = 0;
+        char[] buffer = new char[1024];
+
+        // 읽을 바이트 수가 Content-Length와 일치할 때까지 읽기
+        while (totalRead < contentLength && (read = br.read(buffer, 0, Math.min(buffer.length, contentLength - totalRead))) != -1) {
+            bodyBuilder.append(buffer, 0, read);
+            totalRead += read;
+        }
+
+        return bodyBuilder.toString();
+    }
+
 
     public void print() {
         StringBuilder sb = new StringBuilder();
@@ -98,13 +137,6 @@ public class HttpRequest {
     }
 
     private String decode(String encodedString) {
-        try {
-            String decodedString = URLDecoder.decode(encodedString, StandardCharsets.UTF_8.toString());
-            System.out.println("Decoded String: " + decodedString);
-            return decodedString;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return "error"; //에러처리 해야함
+        return URLDecoder.decode(encodedString, StandardCharsets.UTF_8);
     }
 }

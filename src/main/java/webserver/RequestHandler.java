@@ -49,7 +49,13 @@ public class RequestHandler implements Runnable {
                     path = RESOURCES_STATIC_URL + request.getUrl();
                 }
             } else {
-                path = controller.process(request.getRequestParam()) + ".html";
+                if (request.getMethod().equals("GET")) {
+                    path = controller.process(request.getRequestParam()) + ".html";
+                } else if (request.getMethod().equals("POST")) {
+                    path = controller.process(request.getFormData()) + ".html";
+                } else {
+                    path=null;
+                }
             }
 
             byte[] body = null;
