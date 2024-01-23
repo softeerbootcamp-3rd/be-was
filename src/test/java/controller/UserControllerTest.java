@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import request.HttpRequest;
-import util.StatusCode;
+import response.HttpResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.io.StringReader;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static util.StatusCode.*;
 
 @DisplayName("UserControllerTest 클래스")
 class UserControllerTest {
@@ -36,10 +35,10 @@ class UserControllerTest {
     void return_status_200(HttpRequest httpRequest) throws Exception {
 
         // when
-        StatusCode status = userController.handleUserRequest(httpRequest);
+        HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(status).isEqualTo(OK);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(200);
     }
 
     @ParameterizedTest
@@ -48,14 +47,14 @@ class UserControllerTest {
     void return_status_302(HttpRequest httpRequest) throws Exception {
 
         // when
-        StatusCode statusCode = userController.handleUserRequest(httpRequest);
+        HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
         User findUser = database.findUserById("test");
 
         // then
         assertThat(findUser).isNotNull()
                 .extracting("userId", "password", "name", "email")
                 .contains(findUser.getUserId(), findUser.getPassword(), findUser.getName(), findUser.getEmail());
-        assertThat(statusCode).isEqualTo(FOUND);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
     }
 
     @ParameterizedTest
@@ -64,10 +63,10 @@ class UserControllerTest {
     void return_status_404(HttpRequest httpRequest) throws Exception {
 
         // when
-        StatusCode status = userController.handleUserRequest(httpRequest);
+        HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(status).isEqualTo(NOT_FOUND);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(404);
     }
 
     private static Stream<Arguments> status_200_Parameters() throws IOException {
