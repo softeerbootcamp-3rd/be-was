@@ -7,7 +7,7 @@ public class HttpResponse {
     Integer statusCode;
     String statusLine;
     String contentType;
-    String path;
+    String redirectPath;
 
 
     public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
@@ -18,7 +18,7 @@ public class HttpResponse {
     }
 
     public void setPath(String path) {
-        this.path = path;
+        this.redirectPath = path;
     }
 
     public void setBody(byte[] body) {
@@ -49,5 +49,5 @@ public class HttpResponse {
         return statusLine;
     }
 
-    public String getPath() { return this.path; }
+    public String getPath() { return this.redirectPath; }
 }

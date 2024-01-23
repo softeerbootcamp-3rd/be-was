@@ -7,10 +7,15 @@ import webserver.RequestHandler;
 import java.io.*;
 
 import java.io.BufferedReader;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class HttpMesssageReader {
 
     private RequestHeader rh;
+    private Parameter parameter;
+
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     public HttpMesssageReader(BufferedReader br) throws IOException {
@@ -54,8 +59,28 @@ public class HttpMesssageReader {
         if(postUrl) {
             StringBuilder bodyJson = new StringBuilder();
             char[] buffer = new char[contentLength];
+            HashMap<String,String> map = new HashMap<>();
+
             br.read(buffer);
             bodyJson.append(buffer);
+            String path = bodyJson.toString();
+
+            String[] userInformation = path.split("&");
+
+            for (int i = 0; i < userInformation.length; i++) {
+                String key = userInformation[i].split("=")[0];
+
+                if(userInformation[i].split("=").length==1) {
+                    map.put(key,null);
+                    continue;
+                }
+
+                String value = userInformation[i].split("=")[1];
+                String decodeValue = URLDecoder.decode(value, StandardCharsets.UTF_8);
+                map.put(key,decodeValue);
+
+            }
+            this.parameter = new Parameter(map);
             rh.setBody(bodyJson);
         }
     }
@@ -69,6 +94,9 @@ public class HttpMesssageReader {
     }
     public RequestHeader getRequestHeader() {
         return this.rh;
+    }
+    public Parameter getParameter() {
+        return this.parameter;
     }
 
 }

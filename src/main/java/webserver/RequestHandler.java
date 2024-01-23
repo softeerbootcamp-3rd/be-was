@@ -40,6 +40,7 @@ public class RequestHandler implements Runnable {
 
             if(httpResponse.getStatusCode()==302){
                 response302Header(dos,httpResponse);
+
             }
             else {
                 responseHeader(dos, httpResponse);
@@ -50,7 +51,6 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
 
     private void responseHeader(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
 
