@@ -3,11 +3,8 @@ package controller;
 import model.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
+
+import java.io.*;
 
 public class View {
     private static final Logger logger = LoggerFactory.getLogger(View.class);
@@ -20,7 +17,11 @@ public class View {
     public void render(Request request, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        byte[] body = Files.readAllBytes(new File(viewPath).toPath());
+        File file = new File(viewPath);
+        byte[] body = new byte[(int) file.length()];
+        FileInputStream fileInputStream = new FileInputStream(file);
+        fileInputStream.read(body);
+
         //todo /user/create가 성공하면 index로 실패하면 form_failed로 가도록 fix 필요
         if (request.getURI().startsWith("/user/create")) {
             response302Header(dos);
@@ -33,7 +34,11 @@ public class View {
     public void render(Request request, OutputStream out, String type) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        byte[] body = Files.readAllBytes(new File(viewPath).toPath());
+        File file = new File(viewPath);
+        byte[] body = new byte[(int) file.length()];
+        FileInputStream fileInputStream = new FileInputStream(file);
+        fileInputStream.read(body);
+
         response200HeaderContent(dos, body.length, type);
         responseBody(dos, body);
     }
