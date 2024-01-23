@@ -15,9 +15,9 @@ public class Response {
 
     private static final String RESOURCES_PATH = "src/main/resources/";
 
-    public static void createResponse(OutputStream out, Status status, String contentType, String url) throws IOException {
+    public static void createResponse(OutputStream out, Status status, String contentType, String url) {
         try (FileInputStream fileInputStream = new FileInputStream(getFilePath(url))) {
-            DataOutputStream dos = new DataOutputStream(out);;
+            DataOutputStream dos = new DataOutputStream(out);
             byte[] body = fileInputStream.readAllBytes();
             if (status == REDIRECT) {
                 response302Header(dos, url);
@@ -66,7 +66,7 @@ public class Response {
         dos.flush();
     }
 
-    public static String getContentType(String path) throws IOException {
+    public static String getContentType(String path) {
         String extension = getFileExtension(path);
         return ContentType.getMimeType(extension);
     }
