@@ -5,7 +5,7 @@ import util.HttpStatus;
 public class CommonResponse {
     private HttpStatus httpStatus;
     private byte[] body;
-    private String extension = ".html";
+    private String extension = "html";
 
     private CommonResponse(HttpStatus httpStatus, byte[] body, String extension){
         this.httpStatus = httpStatus;
