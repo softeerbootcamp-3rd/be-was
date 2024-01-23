@@ -2,6 +2,7 @@ package util;
 
 
 import model.User;
+import webserver.HttpRequest;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,7 +19,16 @@ public class SessionManager {
         sessionMap.put(sessionId, user);
     }
 
-    public static User getUserBySessionId(String sessionId) {
+    public static boolean isLoggedIn(HttpRequest request) {
+        return getLoggedInUser(request) != null;
+    }
+
+    public static User getLoggedInUser(HttpRequest request) {
+        String sid = RequestParser.parseCookie(request.getHeader().get("Cookie")).get("SID");
+        return getUserBySessionId(sid);
+    }
+
+    private static User getUserBySessionId(String sessionId) {
         if (sessionId == null) return null;
         return sessionMap.get(sessionId);
     }
@@ -26,4 +36,5 @@ public class SessionManager {
     public static void removeSession(String sessionId) {
         sessionMap.remove(sessionId);
     }
+
 }

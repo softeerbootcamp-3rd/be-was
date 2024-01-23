@@ -13,7 +13,7 @@ public class HttpResponse {
 
     private HttpStatus status;
     private final Map<String, String> header;
-    private String body;
+    private byte[] body;
 
     public HttpResponse() {
         this.status = HttpStatus.OK;
@@ -21,8 +21,8 @@ public class HttpResponse {
     }
 
     public void setBody(String body) {
-        this.body = body;
-        this.header.put("Content-Length", Integer.toString(this.body.length()));
+        this.body = body.getBytes();
+        this.header.put("Content-Length", Integer.toString(this.body.length));
     }
 
     public static HttpResponseBuilder builder() {
@@ -37,7 +37,7 @@ public class HttpResponse {
         return this.header;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return this.body;
     }
 
@@ -59,13 +59,13 @@ public class HttpResponse {
         }
 
         public HttpResponseBuilder body(String body) {
-            this.httpResponse.body = body;
-            addHeader("Content-Length", Integer.toString(this.httpResponse.body.length()));
+            this.httpResponse.body = body.getBytes();
+            addHeader("Content-Length", Integer.toString(this.httpResponse.body.length));
             return this;
         }
 
         public HttpResponseBuilder body(byte[] body) {
-            this.httpResponse.body = new String(body);
+            this.httpResponse.body = body;
             addHeader("Content-Length", Integer.toString(body.length));
             return this;
         }
@@ -88,7 +88,7 @@ public class HttpResponse {
                 dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
             }
             dos.writeBytes("\r\n");
-            dos.writeBytes(body);
+            dos.write(this.body, 0, this.body.length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
