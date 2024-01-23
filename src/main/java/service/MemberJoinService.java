@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class MemberJoinService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    List<User> userList = new ArrayList<>();
+    private static List<User> userList = new ArrayList<>();
 
     public void createUser(Map<String, String> params) {
         String userId = params.get("userId");
@@ -23,5 +23,9 @@ public class MemberJoinService {
         User user = new User(userId, password, name, email);
         logger.debug("New User : {}", user);
         userList.add(user);
+    }
+
+    public List<User> getUserList() {
+        return userList;
     }
 }

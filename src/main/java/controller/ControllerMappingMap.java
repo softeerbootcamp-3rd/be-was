@@ -7,18 +7,18 @@ public class ControllerMappingMap {
     private static final Map<String, Controller> controllerMappingMap = new HashMap<>();
 
     static {
-        controllerMappingMap.put("html", new HtmlController());
+        controllerMappingMap.put("resource", new ResourceController());
         controllerMappingMap.put("/user/create", new MemberJoinController());
     }
 
     public static Controller getController(String url) {
-        if (url.endsWith(".html")) {
-            return controllerMappingMap.get("html");
-        }
         if (url.contains("?")) {
-            return controllerMappingMap.get(url.substring(0, url.indexOf("?")));
+            url = url.substring(0, url.indexOf("?"));
         }
-        return null;
+        if (url.contains(".")) {
+            return controllerMappingMap.get("resource");
+        }
+        return controllerMappingMap.get(url);
     }
 
 
