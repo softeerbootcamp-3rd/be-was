@@ -6,9 +6,6 @@ import http.Request;
 import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.dispatcher.dispatcherServlet;
-
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,16 +26,19 @@ public class InternalResourceView implements View{
         return null;
     }
     @Override
-    public void render(DataOutputStream dos,Request request, Response response) throws IOException {
-        logger.debug("viewPath = {}",viewPath);
-        forward(request,response,viewPath,dos);
+    public void render(Request request, Response response){
+        try {
+            forward(request, response, viewPath);
+        } catch (IOException e){
+            return;
+        }
     }
 
     public String getViewPath() {
         return viewPath;
     }
 
-    private void forward(Request request, Response response, String viewPath,DataOutputStream dos) throws IOException {
+    private void forward(Request request, Response response, String viewPath) throws IOException {
         File file = new File(viewPath);
         byte[] body;
         if (file.exists() && file.isFile()) {
@@ -49,7 +49,7 @@ public class InternalResourceView implements View{
             body = Files.readAllBytes(new File("/not-found.html").toPath());
             response.setStatus(HttpStatus.NOT_FOUND);
         }
-        response.send(dos,body,request);
+        response.send(body,request);
     }
 
 }

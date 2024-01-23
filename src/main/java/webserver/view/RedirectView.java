@@ -6,7 +6,6 @@ import http.Request;
 import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.dispatcher.dispatcherServlet;
 
 import java.io.DataOutputStream;
 
@@ -29,15 +28,15 @@ public class RedirectView implements View{
     }
 
     @Override
-    public void render(DataOutputStream dos, Request request, Response response) throws Exception {
+    public void render(Request request, Response response) {
         viewPath = viewPath.substring("redirect:".length());
         logger.debug("viewPath = {}",viewPath);
-        sendRedirect(request,response,viewPath,dos);
+        sendRedirect(request,response,viewPath);
     }
 
-    private void sendRedirect(Request request, Response response, String viewPath, DataOutputStream dos) {
+    private void sendRedirect(Request request, Response response, String viewPath) {
         response.setLocation(viewPath);
         response.setStatus(HttpStatus.MOVED_PERMANENTLY);
-        response.send(dos,request);
+        response.send(request);
     }
 }
