@@ -1,7 +1,10 @@
 package dto;
 
 import model.http.ContentType;
+import model.http.Header;
 import model.http.Status;
+
+import java.util.HashMap;
 
 public class HttpResponseDto {
     public static final String HTTP_VERSION = "HTTP/1.1";
@@ -11,13 +14,14 @@ public class HttpResponseDto {
     private ContentType contentType;
     private final String charSet;
     private Integer contentLength;
-    private String location;
+    private final HashMap<String, String> optionHeader;
     private byte[] content;
 
     public HttpResponseDto() {
         this.version = HTTP_VERSION;
         this.charSet = UTF_8;
         this.status = Status.OK;
+        this.optionHeader = new HashMap<>();
     }
 
     public String getVersion() {
@@ -44,20 +48,19 @@ public class HttpResponseDto {
         return charSet;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public Integer getContentLength() {
         return contentLength;
     }
 
+    public void addHeader(String header, String content) {
+        optionHeader.put(header, content);
+    }
     public byte[] getContent() {
         return content;
+    }
+
+    public HashMap<String, String> getOptionHeader() {
+        return optionHeader;
     }
 
     public void setContent(byte[] content) {

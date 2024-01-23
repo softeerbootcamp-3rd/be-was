@@ -17,6 +17,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static config.AppConfig.*;
+
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final List<String> dynamicElements = List.of("/user/create?");
@@ -29,18 +31,18 @@ public class RequestHandler implements Runnable {
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.httpResponseFactory = AppConfig.httpResponseFactory();
-        this.httpResponseSendService = AppConfig.httpResponseSendService();
-        this.httpRequestFactory = AppConfig.httpRequestFactory();
-        this.staticResponseHandler = AppConfig.staticResponseBuilder();
-        this.dynamicResponseBuilder = AppConfig.dynamicResponseBuilder();
+        this.httpResponseFactory = httpResponseFactory();
+        this.httpResponseSendService = httpResponseSendService();
+        this.httpRequestFactory = httpRequestFactory();
+        this.staticResponseHandler = staticResponseBuilder();
+        this.dynamicResponseBuilder = dynamicResponseBuilder();
     }
 
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-
+        try (InputStream in = connection.getInputStream();
+             OutputStream out = connection.getOutputStream()) {
             BufferedReader inBufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = httpRequestFactory.create(inBufferedReader);

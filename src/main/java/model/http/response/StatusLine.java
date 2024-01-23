@@ -11,6 +11,10 @@ public class StatusLine {
         this.status = status;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
     public String getStatusHeader() {
         return version + " " + status.getStatusCode() + " " + status.getStatusText() + " \r\n";
     }

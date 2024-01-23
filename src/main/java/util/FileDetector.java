@@ -1,5 +1,6 @@
 package util;
 
+import exception.BadRequestException;
 import exception.NotFound;
 import model.http.ContentType;
 
@@ -12,7 +13,6 @@ public class FileDetector {
     private static class FileDetectorHolder {
         private static final FileDetector INSTANCE = new FileDetector();
     }
-
     public static FileDetector getInstance() {
         return FileDetectorHolder.INSTANCE;
     }
@@ -20,27 +20,22 @@ public class FileDetector {
     public static final String TEMPLATES_RESOURCE = "src/main/resources/templates";
     public static final String STATIC_RESOURCES = "src/main/resources/static";
 
-    public ContentType getContentType(String contentType) {
-        if (contentType.contains("css")) {
-            return ContentType.CSS;
-        }
-        if (contentType.contains("js")) {
-            return ContentType.JAVASCRIPT;
-        }
-        if (contentType.contains("html")) {
-            return ContentType.HTML;
-        }
-        return ContentType.MIME;
-    }
-
-    public byte[] getNotFound() {
+    public ContentType getContentType(String accept, String pathUrl) {
         try {
-            return Files.readAllBytes(new File(TEMPLATES_RESOURCE + "/error/not_found.html").toPath());
-        } catch (IOException e) {
-            throw new NotFound("파일을 찾을 수 없습니다.");
+            return ContentType.getContentTypeByAccept(accept);
+        } catch (BadRequestException e) {
+            return ContentType.getContentTypeByExtension(parseFileExtension(pathUrl));
         }
     }
 
+    private String parseFileExtension(String url) {
+        String[] pathSegments = url.split("/");
+        String lastSegment = pathSegments[pathSegments.length - 1];
+
+        // 파일 확장자 추출, 없을시 "" return
+        int lastDotIndex = lastSegment.lastIndexOf('.');
+        return (lastDotIndex != -1) ? lastSegment.substring(lastDotIndex + 1) : "";
+    }
     private Path getFilePath(String filePath) {
         if (filePath.equals("/")) {
             return new File(TEMPLATES_RESOURCE + "/index.html").toPath();

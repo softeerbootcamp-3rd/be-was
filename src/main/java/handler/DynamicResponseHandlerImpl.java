@@ -11,6 +11,8 @@ import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static config.AppConfig.*;
+
 public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     private static class DynamicResponseHandlerHolder {
         private static final DynamicResponseHandler INSTANCE = new DynamicResponseHandlerImpl();
@@ -22,16 +24,23 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     @Override
     public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try{
-        UserController userController = AppConfig.userController();
+        UserController userController = userController();
         userController.doGet(httpRequest, httpResponseDto);
         } catch (BadRequestException e) {
-            httpResponseDto.setStatus(Status.BAD_REQUEST);
-            httpResponseDto.setContentType(ContentType.PLAIN);
-            httpResponseDto.setContent(e.getMessage().getBytes());
-            logger.error("Bad_Request 발생" + e.getMessage());
+            handleBadRequestException(e, httpResponseDto);
         }catch (InternalServerError e){
-            httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
-            logger.error("InternalServerError 발생, " + e.getMessage());
+            handleInternalServerError(e, httpResponseDto);
         }
+    }
+    private void handleBadRequestException(BadRequestException e, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setStatus(Status.BAD_REQUEST);
+        httpResponseDto.setContentType(ContentType.PLAIN);
+        httpResponseDto.setContent(e.getMessage().getBytes());
+        logger.error("Bad_Request 발생", e);
+    }
+
+    private void handleInternalServerError(InternalServerError e, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
+        logger.error("InternalServerError 발생", e);
     }
 }

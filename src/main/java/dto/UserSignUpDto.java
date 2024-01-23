@@ -1,7 +1,10 @@
 package dto;
 
+import exception.BadRequestException;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class UserSignUpDto {
@@ -23,7 +26,7 @@ public class UserSignUpDto {
 
     private void validateNotNullOrEmpty(String value, String fieldName) {
         if (Objects.isNull(value)) {
-            throw new IllegalArgumentException(fieldName + " cannot be null or empty");
+            throw new IllegalArgumentException(fieldName + " 파일이 비어있을 수 없습니다.");
         }
     }
 
@@ -41,5 +44,20 @@ public class UserSignUpDto {
 
     public String getName() {
         return name;
+    }
+
+    public static UserSignUpDto fromUrlParameters(String pathUrl) {
+        try {
+            HashMap<String, String> map = new HashMap<>();
+            String[] splitUrl = pathUrl.split("\\?");
+            String[] parameters = splitUrl[1].split("&");
+            for (String param : parameters) {
+                String[] value = param.split("=");
+                map.put(value[0], value[1]);
+            }
+            return new UserSignUpDto(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+            throw new BadRequestException("Please fill in all the necessary factors", e);
+        }
     }
 }
