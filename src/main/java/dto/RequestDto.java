@@ -11,11 +11,11 @@ public class RequestDto {
     private Map<String, String> headers;
     private Map<String, String> body;
 
-    public RequestDto(String methodAndpath) {
-        String[] MAndP = methodAndpath.split(" ");
-        this.method = MAndP[0];
-        this.path = MAndP[1];
-        this.methodAndPath = methodAndpath;
+    public RequestDto(String methodAndPath) {
+        String[] arr = methodAndPath.split(" ");
+        this.method = arr[0];
+        this.path = arr[1];
+        this.methodAndPath = methodAndPath;
         this.params = new HashMap<>();
         this.headers = new HashMap<>();
     }
