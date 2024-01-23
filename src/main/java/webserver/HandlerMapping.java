@@ -15,11 +15,10 @@ public class HandlerMapping {
     }
 
     public Controller findController(String url) {
-        for (String key : controllers.keySet()) {
-            if (url.startsWith(key)) {
-                return controllers.get(key);
-            }
-        }
-        return new ResourceController();
+        return controllers.keySet().stream()
+                .filter(url::startsWith)
+                .findFirst()
+                .map(controllers::get)
+                .orElse(new ResourceController());
     }
 }
