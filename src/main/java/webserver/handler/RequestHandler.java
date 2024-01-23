@@ -2,7 +2,11 @@ package webserver.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.parser.RequestHeaderParser;
+import webserver.adapter.Adapter;
+import webserver.adapter.GetRequestAdapter;
+import webserver.adapter.PostRequestAdapter;
+import webserver.adapter.ResourceAdapter;
+import webserver.parser.RequestParser;
 import webserver.request.Request;
 import webserver.response.Response;
 import webserver.status.HttpStatus;
@@ -10,9 +14,16 @@ import webserver.type.ContentType;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final List<Adapter> adapters = List.of(
+            ResourceAdapter.getInstance(),
+            GetRequestAdapter.getInstance(),
+            PostRequestAdapter.getInstance()
+    );
+
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -27,7 +38,7 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            Request request = RequestHeaderParser.parse(in);
+            Request request = RequestParser.parse(in);
 
             Response response = handleRequest(request);
             sendResponse(dos, response);
@@ -38,25 +49,14 @@ public class RequestHandler implements Runnable {
 
     private Response handleRequest(Request request) {
         Response response = null;
-        Object result = null;
 
         try{
-            String method = request.getMethod();
+            for(Adapter adapter: adapters){
+                if(adapter.canRun(request)){
+                    response = adapter.run(request);
 
-            if(method.equals("GET")){
-                response = ResourceHandler.run(request);
-
-                if(response == null){
-                    result = GetRequestHandler.run(request);
+                    break;
                 }
-            } else if(method.equals("POST")){
-                result = PostRequestHandler.run();
-            }
-
-            if (result instanceof Response) {
-                response = (Response) result;
-            } else if(result instanceof String){
-
             }
 
             return response;
