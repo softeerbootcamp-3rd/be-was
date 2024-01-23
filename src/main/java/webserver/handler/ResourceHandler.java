@@ -2,7 +2,7 @@ package webserver.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.header.RequestHeader;
+import webserver.request.Request;
 import webserver.response.Response;
 import webserver.type.ContentType;
 
@@ -17,8 +17,8 @@ public class ResourceHandler {
     private static final URL HTML_BASE_URL = ResourceHandler.class.getClassLoader().getResource("./templates");
     private static final URL OTHERS_BASE_URL = ResourceHandler.class.getClassLoader().getResource("./static");
 
-    public static Response run(RequestHeader requestHeader) throws IOException {
-        String path = requestHeader.getPath();
+    public static Response run(Request request) throws IOException {
+        String path = request.getPath();
         String requestFileExtension = getRequestFileExtension(path);
 
         logger.debug(requestFileExtension);

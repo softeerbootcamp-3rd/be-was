@@ -1,10 +1,9 @@
 package webserver.handler;
 
-import webserver.header.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.parser.GetRequestParser;
 import webserver.parser.RequestHeaderParser;
+import webserver.request.Request;
 import webserver.response.Response;
 import webserver.status.HttpStatus;
 import webserver.type.ContentType;
@@ -28,29 +27,36 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            RequestHeader requestHeader = RequestHeaderParser.parse(in);
+            Request request = RequestHeaderParser.parse(in);
 
-            Response response = handleRequest(requestHeader);
+            Response response = handleRequest(request);
             sendResponse(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private Response handleRequest(RequestHeader requestHeader) {
+    private Response handleRequest(Request request) {
         Response response = null;
+        Object result = null;
 
         try{
-            if(requestHeader.getMethod().equals("GET")){
-                response = ResourceHandler.run(requestHeader);
+            String method = request.getMethod();
+
+            if(method.equals("GET")){
+                response = ResourceHandler.run(request);
 
                 if(response == null){
-                    Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
-
-                    if (result instanceof Response) {
-                        response = (Response) result;
-                    }
+                    result = GetRequestHandler.run(request);
                 }
+            } else if(method.equals("POST")){
+                result = PostRequestHandler.run();
+            }
+
+            if (result instanceof Response) {
+                response = (Response) result;
+            } else if(result instanceof String){
+
             }
 
             return response;

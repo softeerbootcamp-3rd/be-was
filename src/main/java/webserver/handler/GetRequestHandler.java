@@ -7,7 +7,7 @@ import controller.UserController;
 import webserver.exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.request.GetRequest;
+import webserver.request.Request;
 import webserver.status.ErrorCode;
 
 import java.lang.annotation.Annotation;
@@ -21,15 +21,15 @@ import java.util.Map;
 public class GetRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(GetRequestHandler.class);
 
-    public static Object run(GetRequest getRequest) throws Throwable {
+    public static Object run(Request request) throws Throwable {
         List<Class<?>> classes = getControllerClasses();
-        Method method = findMethod(classes, getRequest.getPath());
+        Method method = findMethod(classes, request.getPath());
 
         if(method == null){
             throw new GeneralException(ErrorCode.RESOURCE_NOT_FOUND_ERROR);
         }
 
-        Object[] params = createParams(method, getRequest.getParamsMap());
+        Object[] params = createParams(method, request);
 
         try {
             return executeMethod(method, params);
@@ -45,7 +45,7 @@ public class GetRequestHandler {
         return method.invoke(instance, params);
     }
 
-    private static Object[] createParams(Method method, Map<String, String> originParams){
+    private static Object[] createParams(Method method, Request request){
         Class<? extends Annotation> requestParam = RequestParam.class;
         Parameter[] parameters = method.getParameters();
 
@@ -55,7 +55,7 @@ public class GetRequestHandler {
         for(Parameter parameter: parameters){
             if(parameter.isAnnotationPresent(requestParam)){
                 RequestParam annotation = (RequestParam) parameter.getAnnotation(requestParam);
-                params[index++]= originParams.getOrDefault(annotation.name(), null);
+                params[index++]= request.getParam(annotation.name());
             }
 
             if(params[index - 1] == null){
