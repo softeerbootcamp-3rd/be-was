@@ -38,10 +38,19 @@ public class HttpResponse {
     private static String response200Header(DataOutputStream dos, Response response) {
         try {
             String contentType = "Content-Type: " + response.getContentType();
-            String contentLength = "Content-Length: " + response.getBody().length;
+            long bodyLength = response.getBody() != null ? response.getBody().length : 0;
+            String contentLength = "Content-Length: " + bodyLength;
 
             dos.writeBytes(contentType + "\r\n");
             dos.writeBytes(contentLength + "\r\n");
+
+            if (response.getCookie() != null) {
+                String cookie = "Set-Cookie: sid=" + response.getCookie().getSid()
+                        + "; Max-Age=" + response.getCookie().getMaxAge() + "; Path=/";
+                dos.writeBytes(cookie + "\r\n");
+
+                return ", " + contentType + ", " + contentLength + ", " + cookie;
+            }
 
             return ", " + contentType + ", " + contentLength;
         } catch (IOException e) {

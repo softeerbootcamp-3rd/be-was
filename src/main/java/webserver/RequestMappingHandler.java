@@ -40,6 +40,10 @@ public class RequestMappingHandler {
             return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
         }
 
+        if (request.getPath().equals("/user/logout")) {
+            return invokeMethod(method, request);
+        }
+
         Object[] params = createParams(method, request.getParams());
         return invokeMethod(method, params);
     }
@@ -107,6 +111,13 @@ public class RequestMappingHandler {
         Object instance = c.getDeclaredConstructor().newInstance();
 
         return (Response) method.invoke(instance, params);
+    }
+
+    private static Response invokeMethod(Method method, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> c = method.getDeclaringClass();
+        Object instance = c.getDeclaredConstructor().newInstance();
+
+        return (Response) method.invoke(instance, httpRequest);
     }
 
 
