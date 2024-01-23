@@ -11,7 +11,7 @@ import javax.xml.crypto.Data;
 
 
 public class UserService {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public void addUser(String userId, String password, String name, String email) {
         User userById = Database.findUserById(userId);
