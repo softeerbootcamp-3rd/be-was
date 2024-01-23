@@ -17,7 +17,7 @@ public class Request {
     private final ArrayList<String> headerContent = new ArrayList<>();
     private final ArrayList<String> bodyContent= new ArrayList<>();
     private final HashMap<String, String> requestHeader = new HashMap<>();
-    private final HashMap<String, String> requestBody = new HashMap<>();;
+    private final HashMap<String, String> requestBody = new HashMap<>();
 
     public Request(BufferedReader br) throws IOException {
         parseRequest(br);
@@ -48,7 +48,8 @@ public class Request {
         for(int i = 0;i < bodyContent.size();i++) {
             if(bodyContent.get(i).isEmpty())
                 break;
-            
+
+
         }
     }
 
