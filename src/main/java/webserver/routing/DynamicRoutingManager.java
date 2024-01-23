@@ -7,10 +7,8 @@ import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
 import webserver.http.response.enums.HttpStatus;
 
-import java.nio.charset.StandardCharsets;
-
 public class DynamicRoutingManager {
-    public static final byte[] NOT_FOUND_MESSAGE = "The requested resource was not found on this server.".getBytes(StandardCharsets.UTF_8);
+    public static final byte[] NOT_FOUND_MESSAGE = "The requested resource was not found on this server.".getBytes();
     public static HttpResponse handleRequest(HttpRequest httpRequest) {
         String path = httpRequest.getPath();
         if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/create")) {

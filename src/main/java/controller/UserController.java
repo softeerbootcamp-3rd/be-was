@@ -6,7 +6,6 @@ import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
 import webserver.http.response.enums.HttpStatus;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class UserController {
@@ -20,7 +19,7 @@ public class UserController {
             return responseBuilder.createRedirectResponse(HttpStatus.FOUND, "/index.html");
         }
         // 회원가입 실패
-        return responseBuilder.createErrorResponse(HttpStatus.BAD_REQUEST, "SignUp Failed".getBytes(StandardCharsets.UTF_8));
+        return responseBuilder.createErrorResponse(HttpStatus.BAD_REQUEST, "SignUp Failed".getBytes());
     }
 
 }
