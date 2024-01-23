@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.HashMap;
 import model.Request;
 import model.Response;
 import java.util.Map;
@@ -34,9 +35,9 @@ public class UserController implements Controller {
             String location = "/user/login_failed.html";
             return new Response(302, location);
         }
-        // todo 로그인 성공 로직
-        String location = "/index.html";
-        return new Response(302, location);
+        String sid = "123456";
+        String location = "/";
+        return new Response(302, location, Map.of("sid", sid));
     }
 
     /**

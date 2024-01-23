@@ -1,10 +1,20 @@
 package model;
 
+import java.util.Map;
+
 public class Response {
 
     private final int code;
     private String url;
     private byte[] body;
+
+    private Map<String, String> cookie;
+
+    public Response(int code, String url, Map<String, String> cookie) {
+        this.code = code;
+        this.url = url;
+        this.cookie = cookie;
+    }
 
     public Response(int code, String url) {
         this.code = code;
@@ -32,5 +42,9 @@ public class Response {
 
     public byte[] getBody() {
         return body;
+    }
+
+    public Map<String, String> getCookie() {
+        return cookie;
     }
 }

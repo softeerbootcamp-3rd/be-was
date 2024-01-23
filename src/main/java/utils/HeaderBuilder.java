@@ -28,9 +28,16 @@ public class HeaderBuilder {
     }
 
     private static String header302(Response response) {
-        return "HTTP/1.1 302 Found \n"
-                + "Location: " + response.getUrl() + "\r\n"
-                + "\r\n";
+        String header = "HTTP/1.1 302 Found \n"
+                + "Location: " + response.getUrl() + "\r\n";
+
+        if (response.getCookie() != null) {
+            header += "Set-Cookie: " + "sid=" + response.getCookie().get("sid") +"; "
+                    + "Path=" + "/ " + "\r\n";
+        }
+        header += "\r\n";
+
+        return header;
     }
 
     private static String header200(Response response) {
