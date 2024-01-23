@@ -37,4 +37,22 @@ public class UserService {
 
         logger.debug(newUser.toString());
     }
+
+    public static void login(RequestData requestData) {
+        logger.debug("login() method");
+
+        Map<String, String> loginData = RequestParserUtil.parseUserRegisterQuery(requestData.getBody());
+
+        String id = loginData.get("userId");
+        String password = loginData.get("password");
+
+        User user = Database.findUserById(loginData.get("userId"));
+
+        if(user != null && user.getPassword().equals(password)) {
+            logger.debug("사용자 " + user.getUserId() + " 의 로그인이 성공했습니다.");
+        } else {
+            logger.debug("ID 입력값 " + id + " 으로 비정상적인 접근이 있었습니다.");
+        }
+
+    }
 }

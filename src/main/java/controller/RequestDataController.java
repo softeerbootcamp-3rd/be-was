@@ -52,6 +52,7 @@ public class RequestDataController {
                     return redirectHome();
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
+                    UserService.login(requestData);
                     return redirectHome();
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
