@@ -1,11 +1,11 @@
 package service;
 
-import config.Config;
 import db.Database;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
 import model.User;
-import webserver.RequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,8 @@ import java.nio.file.Files;
 public class GetService {
 
     ///////////////////////////// GET 요청 처리 ///////////////////////////////////
+
+    private static final Logger logger = LoggerFactory.getLogger(GetService.class);
 
     // 회원가입 처리
     public HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
@@ -41,8 +43,8 @@ public class GetService {
         // 성공적인 회원가입 처리
         // 데이터베이스에 저장
         Database.addUser(user);
-        Config.logger.debug("새로운 유저: {}", user.toString());
-        Config.logger.debug("전체 DB: {}", Database.findAll());
+        logger.debug("새로운 유저: {}", user.toString());
+        logger.debug("전체 DB: {}", Database.findAll());
         // /index.html로 리다이렉트
         return new HTTPResponseDto(302, "/index.html".getBytes());
     }
@@ -62,7 +64,7 @@ public class GetService {
         else {
             path += "/static" + httpRequestDto.getRequestTarget();
         }
-        Config.logger.debug("file path: {}", path);
+        logger.debug("file path: {}", path);
         return new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
     }
 

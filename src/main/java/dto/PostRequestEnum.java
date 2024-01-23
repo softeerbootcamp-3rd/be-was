@@ -1,7 +1,6 @@
 package dto;
 
 import config.Config;
-import service.PostService;
 
 import java.util.Arrays;
 

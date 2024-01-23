@@ -4,15 +4,17 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
 
-import config.Config;
 import controller.Controller;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
 import dto.ResponseEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
 
     private Socket connection;
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
 
@@ -21,7 +23,7 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        Config.logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -50,7 +52,7 @@ public class RequestHandler implements Runnable {
             responseEnum.writeResponse(httpResponseDto, httpRequestDto, dos);
 
         } catch (IOException e) {
-            Config.logger.error(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
@@ -69,7 +71,7 @@ public class RequestHandler implements Runnable {
         httpRequestDto.setRequestTarget(tokens[1]);
         httpRequestDto.setHTTPVersion(tokens[2]);
 
-        Config.logger.debug("HTTP Method: {}, Request Target: {}, Version: {}",
+        logger.debug("HTTP Method: {}, Request Target: {}, Version: {}",
                 httpRequestDto.getHTTPMethod(),
                 httpRequestDto.getRequestTarget(),
                 httpRequestDto.getHTTPVersion());
@@ -84,7 +86,7 @@ public class RequestHandler implements Runnable {
             if(line.contains("Host:")) {
                 // Host 추출
                 httpRequestDto.setHost(line.substring("Host: ".length()));
-                Config.logger.debug("Host: {}", httpRequestDto.getHost());
+                logger.debug("Host: {}", httpRequestDto.getHost());
                 continue;
             }
             if(line.contains("Accept:")) {
@@ -93,14 +95,14 @@ public class RequestHandler implements Runnable {
                 if(line.contains(","))
                     accept = accept.substring(0, accept.indexOf(","));
                 httpRequestDto.setAccept(accept);
-                Config.logger.debug("Accept: {}", httpRequestDto.getAccept());
+                logger.debug("Accept: {}", httpRequestDto.getAccept());
                 continue;
             }
             if(line.contains("Content-Length:")) {
                 // Content-Length 추출
                 Integer contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
                 httpRequestDto.setContentLength(contentLength);
-                Config.logger.debug("Content-Length: {}", httpRequestDto.getContentLength());
+                logger.debug("Content-Length: {}", httpRequestDto.getContentLength());
                 continue;
             }
         }
@@ -112,7 +114,7 @@ public class RequestHandler implements Runnable {
 
             // 한글 파라미터 decoding 후 body 저장
             httpRequestDto.setBody(URLDecoder.decode(new String(body), "UTF-8"));
-            Config.logger.debug("Request Body: {}", httpRequestDto.getBody());
+            logger.debug("Request Body: {}", httpRequestDto.getBody());
         }
     }
 
