@@ -1,8 +1,5 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.request.HttpRequest;
@@ -11,6 +8,12 @@ import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseSender;
 import webserver.routing.DynamicRoutingManager;
 import webserver.routing.StaticRoutingManager;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -38,6 +41,7 @@ public class RequestHandler implements Runnable {
                 httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
             }
 
+            responseLogging(httpResponse);
             new HttpResponseSender().sendResponse(httpResponse, dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -62,6 +66,21 @@ public class RequestHandler implements Runnable {
         if (!httpRequest.getBody().isEmpty()) {
             httpRequest.getBody().forEach((key, value) ->
                     logMessage.append("Body: ").append(key).append(" = ").append(value).append("\n"));
+        }
+        logMessage.append("==================================");
+
+        logger.debug(logMessage.toString());
+    }
+
+    private void responseLogging(HttpResponse httpResponse){
+        StringBuilder logMessage = new StringBuilder();
+
+        logMessage.append("\n========== HTTP Response ==========\n");
+        logMessage.append("HTTP Version: ").append(httpResponse.getHttpVersion()).append("\n");
+        logMessage.append("Status: ").append(httpResponse.getStatusCode()).append(" ").append(httpResponse.getStatusText()).append("\n");
+        if (httpResponse.getHeaders() != null) {
+            httpResponse.getHeaders().forEach((key, value) ->
+                    logMessage.append("Header: ").append(key).append(" = ").append(value).append("\n"));
         }
         logMessage.append("==================================");
 
