@@ -2,6 +2,7 @@ package service;
 
 import data.RequestData;
 import db.Database;
+import db.Session;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class UserService {
         logger.debug(newUser.toString());
     }
 
-    public static boolean login(RequestData requestData) {
+    public static String login(RequestData requestData) {
         logger.debug("login() method");
 
         Map<String, String> loginData = RequestParserUtil.parseUserRegisterQuery(requestData.getBody());
@@ -50,10 +51,10 @@ public class UserService {
 
         if(user != null && user.getPassword().equals(password)) {
             logger.debug("사용자 " + user.getUserId() + " 의 로그인이 성공했습니다.");
-            return true;
+            return Session.createSession(user.getUserId());
         } else {
             logger.debug("ID 입력값 " + id + " 으로 비정상적인 접근이 있었습니다.");
-            return false;
+            return "";
         }
 
     }

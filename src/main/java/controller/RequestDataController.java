@@ -52,8 +52,9 @@ public class RequestDataController {
                     return redirectHome();
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
-                    if(UserService.login(requestData)) {
-                        return redirectTo("/index.html", "123456");
+                    String sessionId = UserService.login(requestData);
+                    if(!sessionId.isEmpty()) {
+                        return redirectTo("/index.html", sessionId);
                     }
                     return redirectTo("/user/login_failed.html");
                 } else {
