@@ -30,7 +30,7 @@ class GetServiceTest {
     @Test
     void testSignUpNullParams() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
         // when
         HTTPResponseDto actual = Config.getService.signup(null);
         // then
@@ -41,7 +41,7 @@ class GetServiceTest {
     @Test
     void testSignUpInvalidParams() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto();
         httpRequestDto.addRequestParam("hello", "world");
@@ -54,10 +54,10 @@ class GetServiceTest {
     @Test
     void testSignUpValidParams() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                "HTTP/1.1",  null);
         httpRequestDto.addRequestParam("userId", "hello");
         httpRequestDto.addRequestParam("password", "1111");
         httpRequestDto.addRequestParam("name", "hello");
@@ -73,9 +73,7 @@ class GetServiceTest {
         // given
         HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
         // when
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
-        HTTPResponseDto actual = Config.getService.showIndex(httpRequestDto);
+        HTTPResponseDto actual = Config.getService.showIndex();
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -85,7 +83,7 @@ class GetServiceTest {
     void testRequestNullFile() {
         try {
             // given
-            HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
+            HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
             HTTPResponseDto actual = Config.getService.requestFile(httpRequestDto);
@@ -103,10 +101,11 @@ class GetServiceTest {
         try {
             // given
             String path = "./src/main/resources/templates/index.html";
-            HTTPResponseDto expected = new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
+            HTTPResponseDto expected = new HTTPResponseDto(200, "text/html", Files.readAllBytes(new File(path).toPath()));
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/index.html",
-                    "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                    "HTTP/1.1", null);
+            httpRequestDto.addHeader("Accept", "text/html");
             HTTPResponseDto actual = Config.getService.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -122,10 +121,11 @@ class GetServiceTest {
         try {
             // given
             String path = "./src/main/resources/static/css/styles.css";
-            HTTPResponseDto expected = new HTTPResponseDto(200, Files.readAllBytes(new File(path).toPath()));
+            HTTPResponseDto expected = new HTTPResponseDto(200, "text/css", Files.readAllBytes(new File(path).toPath()));
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/css/styles.css",
-                    "HTTP/1.1", "localhost:8080", "text/css", null, null);
+                    "HTTP/1.1", null);
+            httpRequestDto.addHeader("Accept", "text/css");
             HTTPResponseDto actual = Config.getService.requestFile(httpRequestDto);
             // then
             assertThat(actual).usingRecursiveComparison().isEqualTo(expected);

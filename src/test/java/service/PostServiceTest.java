@@ -27,10 +27,10 @@ class PostServiceTest {
     @Test
     void testSignUpBadKeys() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(404, "Bad Request".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                "HTTP/1.1", null);
         String body = "userid=hello&password=1111&name=hello&email=hello@gmail.com";        // userid -> userId
         httpRequestDto.setBody(body);
         HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
@@ -42,10 +42,10 @@ class PostServiceTest {
     @Test
     void testSignUpBadValues() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(404, "모든 정보를 기입해주세요.".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                "HTTP/1.1", null);
         String body = "userId=hello&password=1111&name=hello&email=";       // email이 빈 문자열로 들어온 상황
         httpRequestDto.setBody(body);
         HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
@@ -57,17 +57,17 @@ class PostServiceTest {
     @Test
     void testSignUpAlreadyExists() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(200, "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
         // when
         // 첫 번째 유저 회원가입 처리
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                "HTTP/1.1", null);
         String body = "userId=hello&password=1111&name=hello&email=hello@gmail.com";
         httpRequestDto.setBody(body);
         Config.postService.signup(httpRequestDto);
         // 두 번째 유저 회원가입 처리
         httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                "HTTP/1.1", null);
         body = "userId=hello&password=2222&name=hello2&email=hello2@gmail.com";
         httpRequestDto.setBody(body);
         HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
@@ -79,10 +79,10 @@ class PostServiceTest {
     @Test
     void testSignUpSuccess() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", "localhost:8080", "text/html", null, null);
+                "HTTP/1.1",null);
         String body = "userId=hello&password=1111&name=hello&email=hello@gmail.com";
         httpRequestDto.setBody(body);
         HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
@@ -94,11 +94,11 @@ class PostServiceTest {
     @Test
     void testLoginFail() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/user/login_failed.html".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(302, "/user/login_failed.html", null);
         // when
         String body = "userId=login&password=fail";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
-                "HTTP/1.1", "localhost:8080", "text/html", body.length(), body);
+                "HTTP/1.1", body);
         HTTPResponseDto actual = Config.postService.login(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -108,12 +108,12 @@ class PostServiceTest {
     @Test
     void testLoginSuccess() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
         // when
         Database.addUser(new User("hello", "world", "hello", "world"));
         String body = "userId=hello&password=world";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
-                "HTTP/1.1", "localhost:8080", "text/html", body.length(), body);
+                "HTTP/1.1", body);
         HTTPResponseDto actual = Config.postService.login(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
