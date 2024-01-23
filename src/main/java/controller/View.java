@@ -21,7 +21,7 @@ public class View {
         DataOutputStream dos = new DataOutputStream(out);
 
         byte[] body = Files.readAllBytes(new File(viewPath).toPath());
-
+        //todo /user/create가 성공하면 index로 실패하면 form_failed로 가도록 fix 필요
         if (request.getURI().startsWith("/user/create")) {
             response302Header(dos);
         }
