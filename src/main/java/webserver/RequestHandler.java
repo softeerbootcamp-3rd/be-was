@@ -51,7 +51,11 @@ public class RequestHandler implements Runnable {
         String statusCode = response.getStatusCode();
         try {
             dos.writeBytes("HTTP/1.1 " + statusCode + " " + statusCodeMessage.get(statusCode) + " \r\n");
-            if(response.getBody() != null) {
+            if(response.getCookie() != null) {
+                dos.writeBytes("Set-Cookie: " + "sessionId=" + response.getCookie() + "; Path=/; Max-Age=3600\r\n");
+                dos.writeBytes("Location: " + response.getRedirectUrl());
+            }
+            else if(response.getBody() != null) {
                 dos.writeBytes("Content-Type: " + response.getMimeType() + ";charset=utf-8\r\n");
                 dos.writeBytes("Content-Length: " + response.getBody().length + "\r\n");
             }

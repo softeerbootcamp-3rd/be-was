@@ -22,7 +22,8 @@ public class User {
         String password = this.userInfo.getInfo().get("password");
         String name = this.userInfo.getInfo().get("name");
         String email = this.userInfo.getInfo().get("email");
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+        String sessionId = this.userInfo.getInfo().get("sessionId");
+        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + ", sessionId=" + sessionId + "]";
     }
 
     public boolean verifyUser() {

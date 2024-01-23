@@ -1,10 +1,7 @@
 package controller;
 
 import db.Database;
-import model.Request;
-import model.Response;
-import model.User;
-import model.UserInfo;
+import model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -13,6 +10,7 @@ import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -22,6 +20,7 @@ public class MainController {
         byte[] body = null;
         String mimeType = request.getMimeType();
         String redirectUrl = null;
+        String sessionId = null;
         String base = "./src/main/resources";
         String path = request.getPath();
         String method = request.getMethod();
@@ -84,6 +83,8 @@ public class MainController {
                     if(user.getPassword().equals(request.getBody().getOrDefault("password", ""))) {
                         statusCode = "302";
                         redirectUrl = "/index.html";
+                        sessionId = String.valueOf(UUID.randomUUID());
+                        Session.addSession(sessionId, user);
                         logger.debug("로그인!  " + user.toString());
                     }
                     else {
@@ -104,6 +105,6 @@ public class MainController {
             //TODO
         }
 
-        return new Response(statusCode, body, mimeType, redirectUrl);
+        return new Response(statusCode, body, mimeType, redirectUrl, sessionId);
     }
 }
