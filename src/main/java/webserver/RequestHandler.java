@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.net.Socket;
 
-import dto.RequestHeaderDto;
 import dto.RequestLineDto;
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
@@ -14,8 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static common.config.WebServerConfig.userController;
+import static webserver.Response.getMimeType;
 import static common.response.Status.*;
-import static common.response.Response.createResponse;
+import static webserver.Response.createResponse;
 import static common.view.OutputView.*;
 import static webserver.RequestParser.*;
 
@@ -37,25 +37,33 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            RequestLineDto requestLineDto = parseRequestLine(br);
-            RequestHeaderDto requestHeaderDto = parseRequestHeader(br);
-            printRequest(requestLineDto, requestHeaderDto);
+
+            String line = br.readLine();
+            RequestLineDto requestLineDto = parseRequestLine(line);
+            printRequest(requestLineDto);
+
+            while (!line.equals("")) {
+                line = br.readLine();
+            }
 
             String queryString = requestLineDto.getQueryString();
+
+            String mimeType = getMimeType(requestLineDto.getPath());
+
             if (queryString == null) {
-                createResponse(out, SUCCESS, requestLineDto.getPath());
+                createResponse(out, OK, mimeType, requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
                 try {
                     userController.create(requestLineDto.getQueryString());
-                    createResponse(out, REDIRECT, INDEX_FILE_PATH);
+                    createResponse(out, REDIRECT, mimeType, INDEX_FILE_PATH);
                 } catch (EmptyFormException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, BAD_REQUEST, USER_CREATE_FORM_FAIL_FILE_PATH);
+                    createResponse(out, BAD_REQUEST, mimeType, USER_CREATE_FORM_FAIL_FILE_PATH);
                 }
                 catch (DuplicateUserIdException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, CONFLICT, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
+                    createResponse(out, CONFLICT, mimeType, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
         } catch (Exception e) {

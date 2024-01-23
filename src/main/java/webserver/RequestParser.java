@@ -1,49 +1,31 @@
 package webserver;
 
-import dto.RequestHeaderDto;
 import dto.RequestLineDto;
-import common.util.Util;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import static common.util.Util.split;
+
 
 public class RequestParser {
 
-    public static RequestLineDto parseRequestLine(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        String[] methodAndURL = Util.splitRequestLineToMethodAndURL(line);
+    private static final String REQUEST_LINE_DELIMITER = " ";
+    private static final String REQUEST_HEADER_DELIMITER = ": ";
+    private static final String URL_DELIMITER = "\\?";
+    private static final String PARAMETERS_DELIMITER = "&";
+    private static final String PARAMETER_DELIMITER = "=";
+
+    public static RequestLineDto parseRequestLine(String line) throws IOException {
+        String[] methodAndURL = split(line, REQUEST_LINE_DELIMITER);
         if (isQueryStringExist(methodAndURL[1])) {
-            String[] pathAndQueryString = Util.splitUrlToPathAndQueryString(methodAndURL[1]);
+            String[] pathAndQueryString = split(methodAndURL[1], URL_DELIMITER);
             return new RequestLineDto(methodAndURL[0], pathAndQueryString[0], pathAndQueryString[1]);
         }
         return new RequestLineDto(methodAndURL[0], methodAndURL[1]);
     }
 
-    public static RequestHeaderDto parseRequestHeader(BufferedReader br) throws IOException {
-        Map<RequestHeader, String> requestHeaders = new HashMap<>();
-
-        String line = br.readLine();
-        while (!line.equals("")) {
-            String[] requestHeader = Util.splitRequestHeader(line);
-            RequestHeader property = RequestHeader.findProperty(requestHeader[0]);
-            if (property != RequestHeader.NONE) {
-                requestHeaders.put(property, requestHeader[1]);
-            }
-            line = br.readLine();
-        }
-
-        return new RequestHeaderDto(requestHeaders);
-    }
-
-    public static Map<String, String> parseParameters(String query) {
-        Map<String, String> parameters = new HashMap<>();
-        for (String parameter : Util.splitParamters(query)) {
-            String[] tokens = Util.splitParameter(parameter);
-            parameters.put(tokens[0], tokens[1]);
-        }
-        return parameters;
+    public static String[] parseRequestHeader(String line) {
+        return split(line, REQUEST_HEADER_DELIMITER);
     }
 
     private static boolean isQueryStringExist(String url) {
