@@ -1,20 +1,12 @@
-package model;
-
-import service.ParsingService;
+package httpmessage.Request;
 
 public class RequestHeader {
-    private String generalHeader;
     private String httpMethod;
     private String path;
     private String accpet;
     private String acceptEncoding;
     private String acceptLanguage;
     private String upgradeInsecureRequests;
-
-
-    public void setGeneralHeader(String generalHeader) {
-        this.generalHeader = generalHeader;
-    }
 
     public void setAccpet(String accpet) {
         this.accpet = accpet;
@@ -41,9 +33,6 @@ public class RequestHeader {
 
     public String getPath(){
         return this.path;
-    }
-    public String getGeneralHeader() {
-        return generalHeader;
     }
     public String getHttpMethod() {
         return httpMethod;

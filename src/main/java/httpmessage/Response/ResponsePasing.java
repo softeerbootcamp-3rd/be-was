@@ -1,15 +1,18 @@
-package service;
+package httpmessage.Response;
 
-import model.RequestHeader;
+import httpmessage.Request.HttpRequest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Objects;
 
-public class ResourceService {
+public class ResponsePasing {
 
     private static final String TEMPLATE_PATH = "./src/main/resources/templates";
     private static final String STATIC_PATH = "./src/main/resources/static";
     private final HashMap<String, String> extensionToPathMap = initializeExtensionToPathMap();
     private final HashMap<String, String> extensionToContentTypeMap = initializeExtensionToContentTypeMap();
+    private final HashMap<Integer, String> httpStatus = initializeHttpStatus();
 
     private HashMap<String, String> initializeExtensionToPathMap(){
         HashMap<String, String> map = new HashMap<>();
@@ -41,15 +44,27 @@ public class ResourceService {
         map.put("woff2", "font/woff2");
         return map;
     }
-    public String separatedFileExtension(RequestHeader rh){
-        String[] parts = rh.getPath().split("\\.");
-        return parts[parts.length-1];
+    private HashMap<Integer, String> initializeHttpStatus(){
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(200, "OK");
+        map.put(201, "Created");
+        map.put(302, "Moved Temporarily");
+        map.put(400, "Bad Request");
+        map.put(404, "Not Found");
+        return map;
     }
-    public String getDetailPath(String fileExtension, String path) {
+    public String getUrl(String path) {
+        String fileExtension = path.split("\\.")[path.split("\\.").length-1];
         return extensionToPathMap.getOrDefault(fileExtension, "404") + path;
     }
 
-    public String getContextType(String fileExtension){
-        return extensionToContentTypeMap.getOrDefault(fileExtension, "404");
+    public String getContentType(String path){
+        String fileExtension = path.split("\\.")[path.split("\\.").length-1];
+        return extensionToContentTypeMap.getOrDefault(fileExtension, "text/html;charset=utf-8");
     }
+
+    public String getSatusCode(int code) {
+        return httpStatus.getOrDefault(code, "해당 코드는 없습니다");
+    }
+
 }
