@@ -5,10 +5,8 @@ import config.HTTPResponse;
 import config.ResponseCode;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 
 public class PageController {
 
@@ -17,21 +15,23 @@ public class PageController {
 
     static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
     static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
-    static public HTTPResponse getPage(HTTPRequest request){
+    static public HTTPResponse getPage(HTTPRequest request) throws IOException {
 
         String url = request.getUrl();
-        Path path;
+        File file;
 
-        if(url.contains(".html"))
-            path = new File(TEMPLATE_FILE_PATH + url).toPath();
+        if (url.contains(".html"))
+            file = new File(TEMPLATE_FILE_PATH + url);
         else
-            path = new File(STATIC_FILE_PATH + url).toPath();
+            file = new File(STATIC_FILE_PATH + url);
 
         HTTPResponse response = null;
 
-        try {
 
-            byte[] body = Files.readAllBytes(path);
+
+        try(FileInputStream fis = new FileInputStream(file)) {
+            byte[] body = new byte[(int) file.length()];
+            fis.read(body);
             byte[] head = ("HTTP/1.1" + ResponseCode.OK.code +" "+ ResponseCode.OK +" \r\n"+
                     "Content-Type: "+request.getHead().get("Accept").split(",")[0]+"\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
