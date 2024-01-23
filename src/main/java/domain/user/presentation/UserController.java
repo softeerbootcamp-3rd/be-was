@@ -15,6 +15,9 @@ public class UserController {
             @RequestBody UserCreateRequest userCreateRequest
         )
     {
+        if (RequestValidator.userCreateRequestValidate(userCreateRequest)) {
+            return;
+        }
         userCreateService.makeNewUser(userCreateRequest);
     }
 }
