@@ -19,8 +19,12 @@ public class View {
 
         File file = new File(viewPath);
         byte[] body = new byte[(int) file.length()];
-        FileInputStream fileInputStream = new FileInputStream(file);
-        fileInputStream.read(body);
+
+        try (FileInputStream fileInputStream = new FileInputStream(file);) {
+            fileInputStream.read(body);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //todo /user/create가 성공하면 index로 실패하면 form_failed로 가도록 fix 필요
         if (request.getURI().startsWith("/user/create")) {
@@ -36,8 +40,12 @@ public class View {
 
         File file = new File(viewPath);
         byte[] body = new byte[(int) file.length()];
-        FileInputStream fileInputStream = new FileInputStream(file);
-        fileInputStream.read(body);
+
+        try (FileInputStream fileInputStream = new FileInputStream(file);) {
+            fileInputStream.read(body);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         response200HeaderContent(dos, body.length, type);
         responseBody(dos, body);
