@@ -1,6 +1,6 @@
 package webserver.http.response;
 
-import webserver.http.response.HttpResponse;
+import webserver.http.response.enums.HttpStatus;
 
 public class HttpResponseBuilder {
 

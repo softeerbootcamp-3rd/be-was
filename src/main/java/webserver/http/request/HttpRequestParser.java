@@ -1,19 +1,18 @@
 package webserver.http.request;
 
-import webserver.http.request.HttpRequest;
+import webserver.http.request.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestParser {
 
     public HttpRequest parse(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String requestLine = br.readLine();
 
         String[] requestParts = requestLine.split(" ");
@@ -24,7 +23,7 @@ public class HttpRequestParser {
         String queryString = pathParts.length > 1 ? pathParts[1] : "";
         Map<String, String> queryParams = parseQueryParams(queryString);
         Map<String, String> headers = parseHeaders(br);
-        String body = parseBody(br, headers);
+        Map<String, String> body = parseBody(br, headers);
 
         return new HttpRequest(method, pathParts[0], protocolVersion, queryParams, headers, body);
     }
@@ -53,7 +52,7 @@ public class HttpRequestParser {
         return headers;
     }
 
-    private String parseBody(BufferedReader br, Map<String, String> headers) throws IOException {
+    private Map<String, String> parseBody(BufferedReader br, Map<String, String> headers) throws IOException {
         StringBuilder body = new StringBuilder();
         if (headers.containsKey("Content-Length")) {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
@@ -61,6 +60,6 @@ public class HttpRequestParser {
                 body.append((char) br.read());
             }
         }
-        return body.toString();
+        return parseQueryParams(body.toString());
     }
 }

@@ -1,5 +1,7 @@
 package webserver.http.response;
 
+import webserver.http.response.enums.HttpStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 

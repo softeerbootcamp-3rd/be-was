@@ -2,27 +2,18 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
-import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.FileUtil;
-import webserver.http.request.HttpMethod;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestParser;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpResponseBuilder;
 import webserver.http.response.HttpResponseSender;
-import webserver.http.response.HttpStatus;
 import webserver.routing.DynamicRoutingManager;
 import webserver.routing.StaticRoutingManager;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-    private static final byte[] METHOD_NOT_FOUND = "Method Not Found".getBytes(StandardCharsets.UTF_8);
-
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -40,16 +31,11 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse;
 
-            // GET 메소드
-            if (httpRequest.getMethod() == HttpMethod.GET){
-                // 정적 로직 라우팅
-                httpResponse = StaticRoutingManager.handleRequest(httpRequest);
-                // 동적 로직 라우팅
-                if(httpResponse == null){
-                    httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
-                }
-            } else {
-                httpResponse = new HttpResponseBuilder().createErrorResponse(HttpStatus.BAD_REQUEST, METHOD_NOT_FOUND);
+            // 정적 로직 라우팅
+            httpResponse = StaticRoutingManager.handleRequest(httpRequest);
+            // 동적 로직 라우팅
+            if(httpResponse == null){
+                httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
             }
 
             new HttpResponseSender().sendResponse(httpResponse, dos);
@@ -74,7 +60,8 @@ public class RequestHandler implements Runnable {
                     logMessage.append("Header: ").append(key).append(" = ").append(value).append("\n"));
         }
         if (!httpRequest.getBody().isEmpty()) {
-            logMessage.append("Body: ").append(httpRequest.getBody()).append("\n");
+            httpRequest.getBody().forEach((key, value) ->
+                    logMessage.append("Body: ").append(key).append(" = ").append(value).append("\n"));
         }
         logMessage.append("==================================");
 
