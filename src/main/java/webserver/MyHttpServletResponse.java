@@ -2,10 +2,12 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.session.CustomSession;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class MyHttpServletResponse {
   private static final Logger logger = LoggerFactory.getLogger(MyHttpServletResponse.class);
@@ -66,5 +68,10 @@ public class MyHttpServletResponse {
     }catch (IOException ioException){
       logger.error(ioException.getMessage());
     }
+  }
+  public void addCookieHeader(){
+    UUID cookie = CustomSession.setCookie.get();
+    if(cookie!=null)
+      headers.put("Set-Cookie","sid="+cookie+"; PATH=/");
   }
 }
