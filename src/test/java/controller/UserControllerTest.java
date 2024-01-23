@@ -26,7 +26,7 @@ class UserControllerTest {
     @Test
     void userController() throws IOException {
         //given
-        HttpRequest mockRequest = createMockRequest("user1", "1234", "name", "soeun@naver.com");
+        HttpRequest mockRequest = createMockRequest("user1", "1234", "name", "soeun@naver.com", "64");
 
         //when
         HttpResponse httpResponse = UserController.createUser(mockRequest);
@@ -40,7 +40,7 @@ class UserControllerTest {
     @Test
     void userControllerSameUserId() throws IOException {
         //given
-        HttpRequest mockRequest = createMockRequest("userId", "1234", "name", "soeun@naver.com");
+        HttpRequest mockRequest = createMockRequest("userId", "1234", "name", "soeun@naver.com", "64");
 
         //when
         HttpResponse httpResponse = UserController.createUser(mockRequest);
@@ -54,7 +54,7 @@ class UserControllerTest {
     @Test
     void userControllerSameUserIdWithoutUserId() throws IOException {
         //given
-        HttpRequest mockRequest = createMockRequest("", "1234", "name", "soeun@naver.com");
+        HttpRequest mockRequest = createMockRequest("", "1234", "name", "soeun@naver.com", "82");
 
         //when
         HttpResponse httpResponse = UserController.createUser(mockRequest);
@@ -64,14 +64,13 @@ class UserControllerTest {
         assertThat(responseToString).isEqualTo("HttpResponse{httpStatus=BAD_REQUEST, body=userId는 필수입니다.}");
     }
 
-    private static HttpRequest createMockRequest(String userId, String password, String name, String email) throws IOException {
-        String mockRequest = "GET /user/create?userId=" + userId + "&password=" + password +
-                "&name=" + name + "&email=" + email + " HTTP/1.1" + "\n" +
+    private static HttpRequest createMockRequest(String userId, String password, String name, String email, String contentLength) throws IOException {
+        String mockRequest = "POST /user/create HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
                 "Connection: keep-alive\n" +
                 "Accept: */*\n" +
-                "Content-Length: 23\n\n" +
-                "request body";
+                "Content-Length: " + contentLength + "\n\n" +
+                "userId=" + userId + "&password=" + password + "&name=" + name + "&email=" + email;
 
         InputStream in = new ByteArrayInputStream(mockRequest.getBytes());
 
