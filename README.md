@@ -453,6 +453,12 @@ Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
 > - 라인 단위로 읽는 방식도 파일의 크기가 커지면 오버헤드가 클 것으로 예상함
 > - 파일을 바이트 단위로 읽도록 수정함
 
+- 파일을 라인단위로 읽으니 아이콘 인식을 못함
+> - 파일을 라인단위로 읽으면서 StringBuilder에 읽은 라인을 넣고 getBytes로 반환함
+> - html, css, js 는 정상적으로 출력되지만 폰트를 decode하는데 문제를 만남
+> - 파일을 StringBuilder에 작성하고 getBytes로 반환하는 과정에서 직접 통제할 수 있는 부분이 없다고 판단함
+> - 그래서 파일을 바이트 단위로 읽어서 버퍼에 저장하여 그대로 반환하도록 수정함
+
 </details>
 
 ---
