@@ -1,6 +1,7 @@
 package util;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
 import dto.RequestDto;
 import exception.WebServerException;
 import webserver.ResponseHandler;
@@ -69,8 +70,11 @@ public class MethodMapper {
                 if (method.isAnnotationPresent(GetMapping.class)) {
                     httpMethod = "GET";
                     path = (method.getAnnotation(GetMapping.class)).path();
+                } else if (method.isAnnotationPresent(PostMapping.class)) {
+                    httpMethod = "POST";
+                    path = (method.getAnnotation(PostMapping.class)).path();
                 }
-//             TODO : POST, PUT 등 다른 요청에 대한 처리 코드 추가
+//             TODO : DELETE 등 다른 요청에 대한 처리 코드 추가
 //                else if (method.isAnnotationPresent(PostMapping.class)) {
 //                }
 

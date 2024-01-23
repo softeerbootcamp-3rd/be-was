@@ -9,6 +9,7 @@ public class RequestDto {
     private String methodAndPath;
     private Map<String, String> params;
     private Map<String, String> headers;
+    private Map<String, String> body;
 
     public RequestDto(String methodAndpath) {
         String[] MAndP = methodAndpath.split(" ");
@@ -39,12 +40,28 @@ public class RequestDto {
         return params;
     }
 
-    public void addParam(String paramKey, String paramValue) {
-        this.params.put(paramKey, paramValue);
+    public Map<String, String> getBody() {
+        return body;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
+    public void setBody(Map<String, String> body) {
+        this.body = params;
     }
 
     public void addHeader(String key, String value) {
         this.headers.put(key, value);
+    }
+
+    public Integer getContentLength() {
+        String len;
+        if ((len = this.headers.get("Content-Length")) != null) {
+            return Integer.parseInt(len);
+        }
+        return  null;
     }
 
     public String headersToString() {
@@ -52,6 +69,7 @@ public class RequestDto {
                 ("http method: " + this.method + "\n") +
                 ("path: " + this.path + "\n") +
                 ("Host: " + headers.get("Host") + "\n") +
+                ("Accept: " + headers.get("Accept") + "\n") +
                 "-------------------------------------\n";
     }
 }
