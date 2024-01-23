@@ -2,11 +2,12 @@ package controller;
 
 import model.User;
 import request.HttpRequest;
+import response.HttpResponse;
 import service.UserService;
 import util.Parser;
-import util.StatusCode;
 
 import java.io.File;
+import java.io.IOException;
 
 import static util.Uri.*;
 import static util.StatusCode.*;
@@ -28,7 +29,7 @@ public class UserController implements Controller {
     private final UserService userService = UserService.getInstance();
 
     @Override
-    public StatusCode handleUserRequest(HttpRequest httpRequest)  {
+    public HttpResponse handleUserRequest(HttpRequest httpRequest) throws IOException {
 
         String uri = httpRequest.getUri();
         String filePath = httpRequest.getFilePath(uri);
@@ -37,7 +38,7 @@ public class UserController implements Controller {
         File file = new File(filePath);
 
         if (file.exists() && method.equals("GET")) {
-            return OK;
+            return new HttpResponse(OK, filePath);
         }
 
         if (method.equals("POST")) {
@@ -48,11 +49,12 @@ public class UserController implements Controller {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-                return FOUND;
+                return new HttpResponse(FOUND, "text/html", "/index.html");
+
             }
         }
 
-        return NOT_FOUND;
+        return new HttpResponse(NOT_FOUND);
     }
 
     // 회원가입 요청 처리

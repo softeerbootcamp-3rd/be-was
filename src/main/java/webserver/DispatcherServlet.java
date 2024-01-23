@@ -8,6 +8,7 @@ import controller.UserController;
 import request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import response.HttpResponse;
 import util.StatusCode;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -32,19 +33,16 @@ public class DispatcherServlet implements Runnable {
             logger.debug("request method : {}, filePath : {}, http version : {}\n",
                     httpRequest.getMethod(), httpRequest.getUri(), httpRequest.getHttpVersion()); // request line 출력
 
-            StatusCode status = findController(httpRequest); // request line을 통해 적절한 controller를 찾아서 처리 및 status 반환
-            String uri = httpRequest.getUri();
+            HttpResponse httpResponse = findController(httpRequest); // request line을 통해 적절한 controller를 찾아서 처리 및 status 반환
 
-            String filePath = httpRequest.getFilePath(uri);
-
-            response(status, filePath, out);
+            response(httpResponse, out);
 
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
 
-    public static StatusCode findController(HttpRequest httpRequest) throws Exception {
+    public static HttpResponse findController(HttpRequest httpRequest) throws Exception {
         String uri = httpRequest.getUri();
         if (uri.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
             return userController.handleUserRequest(httpRequest);
