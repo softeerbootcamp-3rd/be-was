@@ -1,11 +1,11 @@
 package util;
 
+import constant.FileContentType;
 import constant.FilePath;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class FileManager {
 
@@ -19,6 +19,7 @@ public class FileManager {
     }
 
     public static String getContentType(String path) throws IOException {
-        return Files.probeContentType(Paths.get(path));
+        int extensionPoint = path.lastIndexOf(".");
+        return FileContentType.of(path.substring(extensionPoint)).getContentType();
     }
 }
