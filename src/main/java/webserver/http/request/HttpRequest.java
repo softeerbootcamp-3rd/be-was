@@ -1,5 +1,7 @@
 package webserver.http.request;
 
+import webserver.http.request.enums.HttpMethod;
+
 import java.util.Map;
 
 public class HttpRequest {

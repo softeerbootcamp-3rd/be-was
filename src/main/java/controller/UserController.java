@@ -1,13 +1,11 @@
 package controller;
 
 import service.UserService;
-import utils.FileUtil;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
-import webserver.http.response.HttpStatus;
+import webserver.http.response.enums.HttpStatus;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 

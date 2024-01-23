@@ -2,19 +2,13 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
-import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.FileUtil;
-import webserver.http.request.HttpMethod;
 import webserver.http.request.HttpRequest;
 import webserver.http.request.HttpRequestParser;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpResponseBuilder;
 import webserver.http.response.HttpResponseSender;
-import webserver.http.response.HttpStatus;
 import webserver.routing.DynamicRoutingManager;
 import webserver.routing.StaticRoutingManager;
 

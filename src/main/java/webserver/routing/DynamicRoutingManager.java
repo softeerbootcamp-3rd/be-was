@@ -1,11 +1,11 @@
 package webserver.routing;
 
 import controller.UserController;
-import webserver.http.request.HttpMethod;
+import webserver.http.request.enums.HttpMethod;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
-import webserver.http.response.HttpStatus;
+import webserver.http.response.enums.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
 

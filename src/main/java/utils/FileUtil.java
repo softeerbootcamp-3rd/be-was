@@ -1,6 +1,6 @@
 package utils;
 
-import webserver.http.response.ContentType;
+import webserver.http.response.enums.ContentType;
 
 import java.io.File;
 import java.io.IOException;

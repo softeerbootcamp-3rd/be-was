@@ -1,6 +1,6 @@
 package webserver.http.request;
 
-import webserver.http.request.HttpRequest;
+import webserver.http.request.enums.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package webserver.http.response;
+package webserver.http.response.enums;
 
 public enum ContentType {
     HTML("html", "text/html"),
