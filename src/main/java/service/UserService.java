@@ -51,7 +51,7 @@ public class UserService {
 
         if(user != null && user.getPassword().equals(password)) {
             logger.debug("사용자 " + user.getUserId() + " 의 로그인이 성공했습니다.");
-            return Session.createSession(user.getUserId());
+            return Session.createSession(user.getUserId()) + "; Max-Age=360; ";
         } else {
             logger.debug("ID 입력값 " + id + " 으로 비정상적인 접근이 있었습니다.");
             return null;
@@ -81,5 +81,33 @@ public class UserService {
 
         logger.debug("Session already exists!");
         return true;
+    }
+
+    public static String logout(RequestData requestData) {
+        logger.debug("logout()");
+
+        String cookie = requestData.getHeaderValue("Cookie");
+
+        if (cookie != null) {
+            String[] tokens = cookie.split("=");
+
+            if (tokens.length >= 2) {
+                String cookieName = tokens[0];
+                String sid = tokens[1];
+
+                Session.removeSession(sid);
+                logger.debug("[Database]");
+                for (User user: Database.findAll()) {
+                    logger.debug(user.toString());
+                }
+                logger.debug("[Session]");
+                for (String sessionId: Session.getAllSessionId()) {
+                    logger.debug("sessionId: " + sessionId + ", userId: " + Session.getUserIdBySessionId(sessionId));
+                }
+                return sid + "; Max-Age=0; ";
+            }
+        }
+
+        return null;
     }
 }

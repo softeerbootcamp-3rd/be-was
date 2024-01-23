@@ -64,7 +64,11 @@ public class RequestDataController {
                     if (sessionId != null) {
                         return new Response("302", "/index.html", sessionId);
                     }
-                    return new Response("302", "/user/login_failed.html");
+                    return new Response("302", "/index.html");
+                } else if (url.equals("/user/logout")) {
+                    logger.debug("[API] /user/logout");
+                    String cookieHeader = UserService.logout(requestData);
+                    return new Response("302", "/index.html", cookieHeader);
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
                     return new Response("404", "/error/notfound.html");

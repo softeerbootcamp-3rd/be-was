@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Session {
     private static final Logger logger = LoggerFactory.getLogger(Session.class);
@@ -23,8 +21,18 @@ public class Session {
         return sessionId;
     }
 
+    public static void removeSession(String sessionId) {
+        logger.debug("removeSession()");
+        sessionData.remove(sessionId);
+    }
+
     public static String getUserIdBySessionId(String sessionId) {
         logger.debug("getUserIdBySessionId()");
         return sessionData.get(sessionId);
+    }
+
+    public static Collection<String> getAllSessionId() {
+        logger.debug("getAllSessions()");
+        return new ArrayList<>(sessionData.keySet());
     }
 }
