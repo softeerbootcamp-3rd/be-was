@@ -7,6 +7,7 @@ import java.net.URL;
 import controller.RequestDataController;
 import data.RequestData;
 
+import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +44,9 @@ public class RequestHandler implements Runnable {
 //                url = "/index.html";
 //            }
 
-            String statusCodeUrl = RequestDataController.routeRequest(requestData);
+            Response response = RequestDataController.routeRequest(requestData);
 
-            ResponseBuilder.buildResponse(out, statusCodeUrl);
+            ResponseBuilder.buildResponse(out, response);
 
         } catch (IOException e) {
             logger.error(e.getMessage());

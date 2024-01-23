@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import service.UserService;
 import util.ResourceLoader;
 import webserver.RequestHandler;
+import data.Response;
 
 import java.io.File;
 
@@ -23,7 +24,7 @@ public class RequestDataController {
         userService = new UserService();
     }
 
-    public static String routeRequest(RequestData requestData) {
+    public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
 
         String extension = getFileExtension(url);
@@ -39,58 +40,34 @@ public class RequestDataController {
 
             if (fileOrApi.equals("FILE")) {
                 if (file.exists() && !file.isDirectory()) {
-                    return getFilePath(url);
+                    return new Response("200", url);
                 } else {
                     logger.debug("유효하지 않은 파일 경로입니다.");
-                    return notFound();
+                    return new Response("404", "/error/notfound.html");
                 }
             } else if (fileOrApi.equals("API")) {
                 if (url.equals("/")) {
-                    return redirectHome();
+                    return new Response("302", "/index.html");
                 } else if (url.startsWith("/user/create")) {
                     userService.registerUser(requestData);
-                    return redirectHome();
+                    return new Response("302", "/index.html");
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
                     String sessionId = UserService.login(requestData);
-                    if(!sessionId.isEmpty()) {
-                        return redirectTo("/index.html", sessionId);
+                    if (!sessionId.isEmpty()) {
+                        return new Response("302", "/index.html", sessionId);
                     }
-                    return redirectTo("/user/login_failed.html");
+                    return new Response("302", "/user/login_failed.html");
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
-                    return notFound();
+                    return new Response("404", "/error/notfound.html");
                 }
             } else {
-                return notFound();
+                return new Response("404", "/error/notfound.html");
             }
         } catch (IllegalArgumentException e) {
             logger.debug("IllegalArgumentException caught: {}", e.getMessage());
-            return badRequest();
+            return new Response("400", "/error/badrequest.html");
         }
-    }
-
-    private static String redirectHome() {
-        return "302 /index.html none";
-    }
-
-    private static String redirectTo(String path) {
-        return "302 " + path + " none";
-    }
-
-    private static String redirectTo(String path, String Cookie) {
-        return "302 " + path + " " + Cookie;
-    }
-
-    private static String getFilePath(String filePath) {
-        return "200 " + filePath + " none";
-    }
-
-    private static String notFound() {
-        return "404 /error/notfound.html none";
-    }
-
-    private static String badRequest() {
-        return "400 /error/badrequest.html none";
     }
 }

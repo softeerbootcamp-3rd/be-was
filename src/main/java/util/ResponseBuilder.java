@@ -1,6 +1,7 @@
 package util;
 
 import controller.ResourcePathMapping;
+import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,13 +13,12 @@ public class ResponseBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static void buildResponse(OutputStream out, String StatusCodeUrl) throws IOException {
+    public static void buildResponse(OutputStream out, Response response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
-        String[] tokens = StatusCodeUrl.split(" ");
-        String statusCode = tokens[0];
-        String targetPath = tokens[1];
-        String cookie = tokens[2].equals("none") ? "" : tokens[2];
+        String statusCode = response.getStatus();
+        String targetPath = response.getPath();
+        String cookie = response.getCookie();
 
         String extension = RequestParserUtil.getFileExtension(targetPath);
         String contentType = ResourcePathMapping.getContentType(extension);
