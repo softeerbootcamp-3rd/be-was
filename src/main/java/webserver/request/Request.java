@@ -52,6 +52,14 @@ public class Request {
         body.put(key, value);
     }
 
+    public boolean existsParam(String key){
+        return params.containsKey(key);
+    }
+
+    public boolean existsBody(String key){
+        return body.containsKey(key);
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
