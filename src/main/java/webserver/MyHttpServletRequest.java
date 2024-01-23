@@ -87,6 +87,9 @@ public class MyHttpServletRequest {
     return queryParameters.get(parameterName);
   }
   public String getBodyValue(String bodyName){ return body.get(bodyName);}
+  public String getCookie(){
+    return this.cookie;
+  }
 
   private String toCamelCase(String rawString){
     String[] parts = rawString.split("-");
