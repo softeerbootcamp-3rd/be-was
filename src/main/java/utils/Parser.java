@@ -18,11 +18,9 @@ public class Parser {
         return result;
     }
 
-    public static Map<String, String> extractParams(String uri) {
-        // uri에서 쿼리 부분 파싱
-        String query = uri.split("\\?", 2)[1];
-        // 쿼리에서 param 단위로 파싱
-        String[] tokens = query.split("&");
+    public static Map<String, String> extractParams(String request) {
+        // 요청에서 param 단위로 파싱
+        String[] tokens = request.split("&");
 
         // 맵에 param값 저장
         Map<String, String> result = new HashMap<>();
@@ -34,5 +32,10 @@ public class Parser {
         }
 
         return result;
+    }
+
+    public static String extractQuery(String uri) {
+        // uri에서 쿼리 부분 파싱
+        return uri.split("\\?", 2)[1];
     }
 }
