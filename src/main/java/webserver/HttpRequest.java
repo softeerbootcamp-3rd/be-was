@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +69,7 @@ public class HttpRequest {
         }
     }
 
-    private void getQueryParam(String url) {
+    private void getQueryParam(String url) throws UnsupportedEncodingException {
         String paramLine = url.substring(url.indexOf('?')+1);
         String[] params = paramLine.split("&");
         for (String param : params) {
@@ -79,7 +78,7 @@ public class HttpRequest {
         }
     }
 
-    private void getFormData(String body) {
+    private void getFormData(String body) throws UnsupportedEncodingException {
         String[] objects = body.split("&");
         for (String object : objects) {
             String[] o = object.split("=");
@@ -114,7 +113,7 @@ public class HttpRequest {
         logger.debug(sb.toString());
     }
 
-    private String decode(String encodedString) {
-        return URLDecoder.decode(encodedString, StandardCharsets.UTF_8);
+    private String decode(String encodedString) throws UnsupportedEncodingException {
+        return URLDecoder.decode(encodedString, "UTF-8");
     }
 }

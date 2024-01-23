@@ -3,11 +3,8 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
+import java.io.*;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class HttpResponse {
 
@@ -18,13 +15,15 @@ public class HttpResponse {
         this.dos = dos;
     }
 
-    public void response200Header(String path) {
-        Path filePath = Paths.get(path);
+    public void response200Header(String path) throws IOException {
+
         byte[] body = null;
-        try {
-            body = Files.readAllBytes(filePath);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+        File file = new File(path);
+        if (file != null && file.exists()) {
+            FileInputStream fis = new FileInputStream(file);
+            body = new byte[(int) file.length()];
+            fis.read(body);
+            fis.close();
         }
 
         try {
