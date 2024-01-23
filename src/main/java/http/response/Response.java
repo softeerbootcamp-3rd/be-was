@@ -24,17 +24,26 @@ public class Response {
         return body.getBody();
     }
 
-    public void addHeader(String header, String value){
+    public void addHeader(String header, String value) {
         headers.addHeader(header, value);
     }
 
-    public void forward(String filePath) {
+    public void ok(String filePath) {
         addStatusLine("HTTP/1.1", HttpStatus.OK);
-        logger.debug("filePath : {}", filePath);
         addResponseBody(filePath);
-
         addHeader("Content-Length", body.getBodyLength());
-        writeResponseMessage();
+        writeStatusAndHeader();
+        body.writeBody(dos);
+
+        logger.debug("filePath : {}", filePath);
+    }
+
+    public void redirect(String redirectPath) {
+        addStatusLine("HTTP/1.1", HttpStatus.REDIRECT);
+        addHeader("Location", redirectPath);
+        writeStatusAndHeader();
+
+        logger.debug("redirectPath : {}", redirectPath);
     }
 
     private void addStatusLine(String httpVersion, HttpStatus status) {
@@ -42,23 +51,22 @@ public class Response {
     }
 
     private void addResponseBody(String url) {
-        try{
+        try {
             File file = new File(url);
             if (!file.exists()) {
                 this.body = new Body("404 File Not Found".getBytes());
             }
-            if (file.exists()){
+            if (file.exists()) {
                 this.body = new Body(Files.readAllBytes(file.toPath()));
             }
-        } catch (IOException e){
-            logger.debug(e + "파일 생성 오류 발생");
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
         }
     }
 
-    private void writeResponseMessage() {
+    private void writeStatusAndHeader() {
         statusLine.writeStatusLine(dos);
         headers.writeHeader(dos);
-        body.writeBody(dos);
     }
 
 }

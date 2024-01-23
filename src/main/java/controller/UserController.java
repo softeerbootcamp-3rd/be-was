@@ -5,19 +5,18 @@ import http.request.Request;
 import http.response.Response;
 import model.User;
 
-public class UserController extends Controller{
+import java.util.Map;
 
-    @Override
-    public void doGet(Request request, Response response) {
-        // TO DO: 회원 가입
-        User user = new User("1", "1", "rr", "rr@ss");
-        Database.addUser(user);
+import static util.UrlParser.parseQueryString;
 
-//        response.
-    }
-
+public class UserController extends Controller {
     @Override
     public void doPost(Request request, Response response) {
+        Map<String, String> queryParams = parseQueryString(request.getBody());
+        User user = new User(queryParams.get("userId"),
+                queryParams.get("password"), queryParams.get("name"), queryParams.get("email"));
+        Database.addUser(user);
 
+        response.redirect("/index.html");
     }
 }

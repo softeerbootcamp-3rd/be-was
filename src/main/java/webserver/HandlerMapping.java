@@ -11,7 +11,7 @@ public class HandlerMapping {
     private static Map<String, Controller> controllers = new HashMap<>();
 
     static {
-        controllers.put("/users/create", new UserController());
+        controllers.put("/user/create", new UserController());
     }
 
     public Controller findController(String url) {
