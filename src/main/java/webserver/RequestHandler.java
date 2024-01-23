@@ -19,7 +19,6 @@ public class RequestHandler implements Runnable {
             new HashSet<>(Arrays.asList("Accept", "Host", "User-Agent", "Cookie"));
     private static final HashMap<String, String> statusCodeMessage = new HashMap<>() {{
         put("200", "OK"); put("302", "Found"); put("404", "Not Found"); }};
-
     private Socket connection;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -41,6 +40,33 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+    private Request handleRequest(BufferedReader br) throws IOException {
+        Request request = new Request();
+        request = handleRequestStartLine(br, request);
+        request = handleRequestHeader(br, request);
+        request = handleRequestBody(br, request);
+        return request;
+    }
+    private Request handleRequestStartLine(BufferedReader br, Request request) throws IOException {
+        String line = br.readLine();
+        request.parseStartLine(line);
+        logger.debug(request.toString());
+        return request;
+    }
+    private Request handleRequestHeader(BufferedReader br, Request request) throws IOException {
+        String line;
+        while(true) {
+            line = br.readLine();
+            if(line == null || line.isEmpty()) break;
+            String[] keyAndValue = line.split(": ");
+            String key = keyAndValue[0], value = keyAndValue[1];
+            request.putHeader(key.toLowerCase(), value);
+            if(printedKey.contains(key))
+                logger.debug(line);
+        }
+        request.parseSessionId();
+        return request;
     }
     private void handleResponse(DataOutputStream dos, Response response) {
         responseHeader(dos, response);
@@ -75,32 +101,6 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-    private Request handleRequest(BufferedReader br) throws IOException {
-        Request request = new Request();
-        request = handleRequestStartLine(br, request); // startLine 처리
-        request = handleRequestHeader(br, request); // header 처리
-        request = handleRequestBody(br, request); // body 처리
-        return request;
-    }
-    private Request handleRequestStartLine(BufferedReader br, Request request) throws IOException {
-        String line = br.readLine();
-        request.parseStartLine(line);
-        logger.debug(request.toString());
-        return request;
-    }
-    private Request handleRequestHeader(BufferedReader br, Request request) throws IOException {
-        String line;
-        while(true) {
-            line = br.readLine();
-            if(line == null || line.isEmpty()) break;
-            String[] keyAndValue = line.split(": ");
-            String key = keyAndValue[0], value = keyAndValue[1];
-            request.putHeader(key.toLowerCase(), value);
-            if(printedKey.contains(key))
-                logger.debug(line);
-        }
-        return request;
     }
     private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
         int contentLength = Integer.parseInt(request.getHeader().getOrDefault("content-length", "0"));

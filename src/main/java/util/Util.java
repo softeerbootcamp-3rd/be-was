@@ -35,10 +35,10 @@ public class Util {
         return hashMap;
     }
 
-    public static HashMap<String, String> parseCookie(String cookie) {
+    public static HashMap<String, String> parseSemicolon(String semicolonString) {
         HashMap<String, String> hashMap = new HashMap<>();
-        String[] cookies = cookie.split("; ");
-        for(String token : cookies) {
+        String[] tokens = semicolonString.split("; ");
+        for(String token : tokens) {
             String[] keyAndValue = token.split("=");
             String key = keyAndValue[0];
             String value = keyAndValue[1];

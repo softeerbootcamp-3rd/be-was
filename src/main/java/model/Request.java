@@ -17,6 +17,7 @@ public class Request {
     private String fragment;
     private String mimeType;
     private File file;
+    private HashMap<String, String> cookie;
 
     public String getMethod() {return this.method;}
     public String getTarget() {return this.target;}
@@ -27,6 +28,7 @@ public class Request {
     public HashMap<String, String> getBody() {return this.body;}
     public String getMimeType() {return this.mimeType;}
     public File getFile() {return this.file;}
+    public HashMap<String, String> getCookie() {return this.cookie;}
 
     public Request() {
         this.header = new HashMap<>();
@@ -84,6 +86,11 @@ public class Request {
         int indexOfFile = lastToken.lastIndexOf(".");
         if(indexOfFile == -1) return;
         this.file = new File(lastToken);
+    }
+    public void parseSessionId() {
+        String cookies = this.header.get("cookie");
+        if(cookies == null) return;
+        this.cookie = Util.parseSemicolon(cookies);
     }
 
     @Override
