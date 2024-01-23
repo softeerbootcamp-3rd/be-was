@@ -8,9 +8,9 @@ import static common.config.WebServerConfig.userService;
 
 public class UserController {
 
-    public String create(String userInfoQueryString) throws Exception {
-        InputValidate.validateUserInfo(userInfoQueryString);
-        User user = bindQueryStringToObject(userInfoQueryString, User.class);
+    public String create(String userInfo) throws Exception {
+        InputValidate.validateUserInfo(userInfo);
+        User user = bindQueryStringToObject(userInfo, User.class);
         return userService.create(user);
     }
 }
