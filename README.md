@@ -42,4 +42,72 @@ Java Web Application Server 2023
 
 ### ControllerMappingMap
 - Http 요청의 Method와 URL을 해당 컨트롤러와 매핑
+
+# 공부 내용 정리
+## JAVA ExecutorService
+
+### About ExecutorService
+
+- 병렬 작업 시 여러 개의 작업을 효율적으로 처리하기 위해 제공되는 JAVA 라이브러리
+- Thread를 직접 생성하고 제거하는 작업이 불필요
+- Executor Service에 Task를 지정해주면 쓰레드풀을 통해 알아서 실행하고 관리
+- Task의 관리 방식
+    - Queue
+    - 쓰레드 풀의 쓰레드 수보다 Task가 많으면 큐에 저장되었다가 쓰레드가 할당되면 순차적 수행
+
+### 사용
+
+1. ThreadPoolExecutor로 객체 생성 
+
+```java
+ExecutorService executorService = new ThreadPoolExecutor(...);
+```
+
+1. Executor 클래스에서 제공하는 Static Factory Method 사용
+
+```java
+ExecutorService executorService = Executors.newFixedThreadPool(int nThreads);
+```
+
+- CachedThreadPool
+    - 쓰레드를 캐싱
+    - 쓰레드 제한 없이 생성 & 해당 쓰레드 60초간 작업 없으면 Pool 제거
+    - 작업이 계속적으로 쌓이는 환경에서 쓰레드 수 폭발적 증가할 가능성
+- FixedThreadPool
+    - 고정된 개수의 쓰레드 풀
+- SingleThreadExecutor
+    - 한 개의 쓰레드로 작업 처리
+    - race-condition 같은 부분 알아서 처리
+
+### ExecutorService에 Task 할당
+
+- ThreadPool의 쓰레드들이 각자 본인의 Task 수행, 개발자는 쓰레드 생명주기 관리 필요 X
+- Method
+    - execute()
+    - submit()
+    - invokeAny()
+    - invokeAll()
+
+### 종료
+
+- Method
+    - shutdown() : 실행 중인 모든 Task가 수행되면 종료
+    - shutdownNow() : 실행 중인 쓰레드들 즉시 종료하려 시도, 모든 쓰레드 동시 종료 보장X, 실행되지 않은 Task 반환
+
+## Http Request Body Parsing
+
+### BufferedReader read vs readLine
+
+- readLine
+    - 한 줄씩 읽어옴
+    - 각 줄을 문자열로 변환하는 overhead
+    - 내부적 버퍼 사용
+- read
+    - 바이트 단위로 읽어옴
+    - 별도의 문자열 변환 필요 X
+    - 직접 버퍼 관리가 가능, 성능 최적화
+
+- Http Header처럼 각 헤더가 한줄로 되어 있는 경우 readLine으로 처리하기 좋음. 하지만 Body처럼 큰 데이터의 경우 readLine에서는 한 줄을 읽을 때까지 block되기 때문에 비효율적임.
+- 그래도 Http Body가 텍스트 or 멀티파트 형태인 경우 readLine 사용을 고려해볼만 함.
+
    
