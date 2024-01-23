@@ -15,7 +15,28 @@ public class UserController implements Controller {
         if (request.getUrl().startsWith("/user/create")) {
             return createUser(request);
         }
+        if (request.getUrl().startsWith("/user/login") && !request.getUrl().contains(".")) {
+            return loginUser(request);
+        }
         return getPage(request.getUrl());
+    }
+
+    /**
+     * 사용자 로그인 결과에 따라 페이지를 이동시킵니다.
+     *
+     * <p> 로그인 성공시 메인 화면으로 이동하며, 실패시 실패 화면으로 이동합니다.
+     * @param request 요청 정보
+     * @return 요청을 수행한 결과를 담은 응답
+     */
+    private Response loginUser(Request request) {
+        Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
+        if (userService.loginFail(params)) {
+            String location = "/user/login_failed.html";
+            return new Response(302, location);
+        }
+        // todo 로그인 성공 로직
+        String location = "/index.html";
+        return new Response(302, location);
     }
 
     /**

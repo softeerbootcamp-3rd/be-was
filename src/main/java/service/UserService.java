@@ -29,4 +29,26 @@ public class UserService {
             throw new IllegalArgumentException();
         }
     }
+
+    /**
+     * 로그인 정보가 올바르지 않은지 확인합니다.
+     *
+     * <p> 로그인 정보가 없거나 해당하는 사용자가 없다면 true를 반환합니다.
+     *
+     * @param params 로그인 정보 파라미터
+     * @return 정보가 올바르면 false, 올바르지 않으면 true
+     */
+    public boolean loginFail(Map<String, String> params) {
+        try {
+            String userId = params.get("userId");
+            String password = params.get("password");
+            if (userId.isEmpty() || password.isEmpty()) {
+                return true;
+            }
+            User user = Database.findUserById(userId);
+            return !user.getPassword().equals(password);
+        } catch (NullPointerException e) {
+            return true;
+        }
+    }
 }
