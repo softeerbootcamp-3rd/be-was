@@ -1,6 +1,6 @@
 package controller;
 
-import java.util.HashMap;
+import java.io.IOException;
 import model.Request;
 import model.Response;
 import java.util.Map;
@@ -14,14 +14,16 @@ public class UserController implements Controller {
 
     private static final UserService userService = new UserService();
 
-    public Response route(Request request) {
+    public void route(Request request, Response response) {
         if (request.getUrl().startsWith("/user/create")) {
-            return createUser(request);
+            createUser(request, response);
+            return;
         }
         if (request.getUrl().startsWith("/user/login") && !request.getUrl().contains(".")) {
-            return loginUser(request);
+            loginUser(request, response);
+            return;
         }
-        return getPage(request.getUrl());
+        getPage(request.getUrl(), response);
     }
 
     /**
@@ -31,17 +33,20 @@ public class UserController implements Controller {
      * @param request 요청 정보
      * @return 요청을 수행한 결과를 담은 응답
      */
-    private Response loginUser(Request request) {
+    private void loginUser(Request request, Response response) {
         Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
+
         try {
             User user = userService.findUser(params);
             String sid = Session.generateSessionId();
             Session.addSession(sid, user);
-            String location = "/";
-            return new Response(302, location, Map.of("sid", sid));
+
+            response.setCode(302);
+            response.addHeader("Location", "/");
+            response.addHeader("Set-Cookie", sid + "; Path=/");
         } catch (Exception e) {
-            String location = "/user/login_failed.html";
-            return new Response(302, location);
+            response.setCode(302);
+            response.addHeader("location", "/user/login_failed.html");
         }
     }
 
@@ -53,9 +58,18 @@ public class UserController implements Controller {
      * @param url 요청 정보
      * @return 요청을 수행한 결과를 담은 응답
      */
-    private Response getPage(String url) {
+    private void getPage(String url, Response response) {
         String filePath = "src/main/resources/templates" + url;
-        return PageReader.getPage(filePath, filePath);
+
+        try{
+            byte[] body = PageReader.getPage(filePath);
+            response.setCode(200);
+            response.setBody(body);
+            response.addHeader("Content-Type", "text/html");
+        } catch (IOException e) {
+            response.setCode(404);
+            response.setBody(e.getMessage());
+        }
     }
 
     /**
@@ -67,20 +81,18 @@ public class UserController implements Controller {
      * @param request 요청 정보
      * @return 요청을 수행한 결과를 담은 응답
      */
-    private Response createUser(Request request) {
+    private void createUser(Request request, Response response) {
         Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
 
         try {
             userService.createUser(params);
-        } catch (NullPointerException e) {
-            byte[] body = "cannot find parameter.".getBytes();
-            return new Response(400, body);
-        } catch (IllegalArgumentException e) {
-            byte[] body = "user id already exists.".getBytes();
-            return new Response(400, body);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            response.setCode(400);
+            response.setBody(e.getMessage());
+            return;
         }
 
-        String location = "/index.html";
-        return new Response(302, location);
+        response.setCode(302);
+        response.addHeader("Location", "/index.html");
     }
 }

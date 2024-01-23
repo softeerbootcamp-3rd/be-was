@@ -1,19 +1,23 @@
 package controller;
 
+import constants.ContentType;
+import java.io.IOException;
 import model.Request;
 import model.Response;
 import utils.PageReader;
 
 public class HomeController implements Controller {
 
-    public Response route(Request request) {
+    public void route(Request request, Response response) {
         if (request.getUrl().equals("/")) {
-            return redirectIndex();
+            redirectIndex(response);
+            return;
         }
         if (request.getUrl().equals("/index.html")) {
-            return getIndex(request.getUrl());
+            getIndex(response);
+            return;
         }
-        return getStatic(request.getUrl());
+        getStatic(request.getUrl(), response);
     }
 
     /**
@@ -21,8 +25,9 @@ public class HomeController implements Controller {
      *
      * @return /index.html 리다이렉션 응답
      */
-    private Response redirectIndex() {
-        return new Response(302, "/index.html");
+    private void redirectIndex(Response response) {
+        response.setCode(302);
+        response.addHeader("location", "/index.html");
     }
 
     /**
@@ -30,12 +35,20 @@ public class HomeController implements Controller {
      *
      * <p> 요청한 파일을 찾을 수 있는 경우 200 응답을 반환하며, 요청한 파일을 찾을 수 없는 경우 404 응답을 반환합니다.
      *
-     * @param url 요청 타겟
      * @return 요청을 수행한 결과를 담은 응답
      */
-    private Response getIndex(String url) {
+    private void getIndex(Response response) {
         String filePath = "src/main/resources/templates/index.html";
-        return PageReader.getPage(url, filePath);
+
+        try{
+            byte[] body = PageReader.getPage(filePath);
+            response.setCode(200);
+            response.setBody(body);
+            response.addHeader("Content-Type", ContentType.findContentType(filePath));
+        } catch (IOException e) {
+            response.setCode(404);
+            response.setBody(e.getMessage());
+        }
     }
 
     /**
@@ -46,8 +59,17 @@ public class HomeController implements Controller {
      * @param url 요청 타겟
      * @return 요청을 수행한 결과를 담은 응답
      */
-    private Response getStatic(String url) {
+    private void getStatic(String url, Response response) {
         String filePath = "src/main/resources/static" + url;
-        return PageReader.getPage(url, filePath);
+
+        try{
+            byte[] body = PageReader.getPage(filePath);
+            response.setCode(200);
+            response.setBody(body);
+            response.addHeader("Content-Type", ContentType.findContentType(filePath));
+        } catch (IOException e) {
+            response.setCode(404);
+            response.setBody(e.getMessage());
+        }
     }
 }

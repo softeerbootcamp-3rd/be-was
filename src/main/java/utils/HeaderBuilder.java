@@ -1,51 +1,27 @@
 package utils;
 
+import constants.StatusCode;
+import java.util.Map;
 import model.Response;
 
 public class HeaderBuilder {
 
+    /**
+     * 응답 메시지의 시작 줄과 헤더를 문자열로 만듭니다.
+     *
+     * @param response 요청을 수행한 결과 응답
+     * @return 응답 메시지의 수작 줄과 헤더 문자열
+     */
     public static String build(Response response) {
-        if (response.getCode() == 400) {
-            return header400();
+        StringBuilder header = new StringBuilder(
+                "HTTP/1.1 " + response.getCode() + " " + StatusCode.getCodeName(response.getCode())
+                        + " \r\n");
+        Map<String, String> headerKey = response.getHeaderKey();
+        for (String key : headerKey.keySet()) {
+            header.append(key).append(": ").append(headerKey.get(key)).append(" \r\n");
         }
-        if (response.getCode() == 404) {
-            return header404();
-        }
-        if (response.getCode() == 302) {
-            return header302(response);
-        }
-        return header200(response);
-    }
+        header.append("\r\n");
 
-    private static String header400() {
-        return "HTTP/1.1 400 Bad Request \r\n"
-                + "\r\n";
-    }
-
-    private static String header404() {
-        return "HTTP/1.1 404 Not Found \r\n"
-                + "\r\n";
-    }
-
-    private static String header302(Response response) {
-        String header = "HTTP/1.1 302 Found \n"
-                + "Location: " + response.getUrl() + "\r\n";
-
-        if (response.getCookie() != null) {
-            header += "Set-Cookie: " + "sid=" + response.getCookie().get("sid") +"; "
-                    + "Path=" + "/ " + "\r\n";
-        }
-        header += "\r\n";
-
-        return header;
-    }
-
-    private static String header200(Response response) {
-        return "HTTP/1.1 200 OK \n"
-                + "HTTP/1.1 200 OK \r\n"
-                + "Content-Type: " + ContentType.findContentType(response.getUrl())
-                + ";charset=utf-8\r\n"
-                + "Content-Length: " + response.getBody().length + "\r\n"
-                + "\r\n";
+        return header.toString();
     }
 }

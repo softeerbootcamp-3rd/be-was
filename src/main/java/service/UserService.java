@@ -20,13 +20,13 @@ public class UserService {
         try {
             if (params.get("userId").isEmpty() || params.get("password").isEmpty() || params.get(
                     "name").isEmpty()) {
-                throw new NullPointerException();
+                throw new NullPointerException("cannot find params.");
             }
             User user = new User(params.get("userId"), params.get("password"), params.get("name"),
                     params.get("email"));
             Database.addUser(user);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("user id already exists.");
         }
     }
 
