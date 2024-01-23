@@ -5,7 +5,7 @@ import model.HttpRequest;
 import model.HttpResponse;
 import service.UserService;
 
-import static webserver.HttpStatus.BAD_REQUEST;
+import static model.HttpStatus.BAD_REQUEST;
 
 public class UserController {
     public static HttpResponse createUser(HttpRequest httpRequest){

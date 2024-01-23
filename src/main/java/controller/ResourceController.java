@@ -5,7 +5,7 @@ import model.HttpResponse;
 
 import java.io.IOException;
 
-import static webserver.HttpStatus.INTERNAL_SERVER_ERROR;
+import static model.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class ResourceController {
     public static HttpResponse serveStaticFile(HttpRequest httpRequest) {
