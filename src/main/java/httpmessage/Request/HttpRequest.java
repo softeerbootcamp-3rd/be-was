@@ -11,11 +11,15 @@ public class HttpRequest {
     public void setPath(String path){
         this.requestHeader.setPath(path);
     }
+
     public String getPath(){
         return this.requestHeader.getPath();
     }
     public String getHttpMethod() {
         return this.requestHeader.getHttpMethod();
+    }
+    public StringBuilder getBody() {
+        return this.requestHeader.getBody();
     }
 
     public String getAcceptEncoding() {

@@ -7,6 +7,7 @@ public class HttpResponse {
     Integer statusCode;
     String statusLine;
     String contentType;
+    String path;
 
 
     public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
@@ -15,6 +16,11 @@ public class HttpResponse {
         this.statusLine = statusLine;
         this.contentType = contentType;
     }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public void setBody(byte[] body) {
         this.body = body;
     }
@@ -42,4 +48,6 @@ public class HttpResponse {
     public String getStatusLine() {
         return statusLine;
     }
+
+    public String getPath() { return this.path; }
 }

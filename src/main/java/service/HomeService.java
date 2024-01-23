@@ -29,7 +29,6 @@ public class HomeService implements Service {
         String contentType = responsePasing.getContentType(path);
         String statusLine;
         int statusCode;
-
         byte[] body;
 
         if (url.contains("404")) {
@@ -37,8 +36,8 @@ public class HomeService implements Service {
             String errorPageContent = "<html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1></body></html>";
             statusLine = responsePasing.getSatusCode(statusCode);
             body = errorPageContent.getBytes(StandardCharsets.UTF_8);
-
-        } else {
+        }
+        else {
             statusCode = 200;
             statusLine = responsePasing.getSatusCode(statusCode);
             body = Files.readAllBytes(new File(url).toPath());

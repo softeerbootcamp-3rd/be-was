@@ -17,35 +17,33 @@ import java.nio.file.Files;
 
 public class UserCreateService implements Service{
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private String path;
+
     public void process(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String path = httpRequest.getPath();
-        logger.debug("ㅎㅇㅎㅇ");
+        String path = httpRequest.getBody().toString();
         try {
-            String[] userInformation = path.split("\\?")[1].split("&");
+            String[] userInformation = path.split("&");
             String[] information = new String[4];
 
             for (int i = 0; i < userInformation.length; i++) {
                 String key = userInformation[i].split("=")[0];
-                String value = userInformation[i].split("=")[1];
-                if (value!=null){
-                    String decodeValue = URLDecoder.decode(value, StandardCharsets.UTF_8);
-                    information[i] = decodeValue;
-                }
-                else{
+
+                if(userInformation[i].split("=").length==1)
                     throw new NullPointerException("Value is null for key: " + key);
-                }
+
+                String value = userInformation[i].split("=")[1];
+
+                String decodeValue = URLDecoder.decode(value, StandardCharsets.UTF_8);
+                information[i] = decodeValue;
+
             }
             makeUser(information,httpRequest);
         }
         catch (NullPointerException e) {
-            httpRequest.setPath("/user/form_failed.html");
+            this.path = "/user/form_failed.html";
             logger.error("Null value detected in user information", e);
         }
-        catch (Exception e) {
-            // 기타 예외들에 대한 처리 (NullPointerException 외의 다른 예외들)
-            httpRequest.setPath("/user/form_failed.html");
-            logger.error("An unexpected error occurred", e);
-        }
+        makeHttpReponse(httpResponse);
     }
     public void makeUser(String[] userInformation,HttpRequest httpRequest){
         Database db = new Database();
@@ -61,11 +59,21 @@ public class UserCreateService implements Service{
         if (userFind == null) {
             logger.debug("user : {}",user);
             db.addUser(user);
-            httpRequest.setPath("/index.html");
+            this.path = "/index.html";
         }
         else {
             logger.debug(">>중복된 UserId : {}",userId);
-            httpRequest.setPath("/user/form_failed.html");
+            this.path = "/user/form_failed.html";
         }
     }
+
+    public void makeHttpReponse(HttpResponse httpResponse) throws IOException {
+
+        ResponsePasing responsePasing = new ResponsePasing();
+        int statusCode = 302;
+        httpResponse.setPath(this.path);
+        httpResponse.setStatusCode(statusCode);
+
+    }
+
 }

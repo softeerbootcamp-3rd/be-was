@@ -8,6 +8,10 @@ public class RequestHeader {
     private String acceptLanguage;
     private String upgradeInsecureRequests;
 
+    private StringBuilder body;
+
+
+
     public void setAccpet(String accpet) {
         this.accpet = accpet;
     }
@@ -31,28 +35,36 @@ public class RequestHeader {
         this.path = path;
     }
 
+    public void setBody(StringBuilder body) {
+        this.body = body;
+    }
+
+    public StringBuilder getBody() {
+        return this.body;
+    }
+
     public String getPath(){
         return this.path;
     }
     public String getHttpMethod() {
-        return httpMethod;
+        return this.httpMethod;
     }
 
     public String getAcceptEncoding() {
-        return acceptEncoding;
+        return this.acceptEncoding;
     }
 
 
     public String getAcceptLanguage() {
-        return acceptLanguage;
+        return this.acceptLanguage;
     }
 
     public String getAccpet() {
-        return accpet;
+        return this.accpet;
     }
 
     public String getUpgradeInsecureRequests() {
-        return upgradeInsecureRequests;
+        return this.upgradeInsecureRequests;
     }
 
 
