@@ -48,9 +48,10 @@ public class RequestParser {
         while(br.ready()) {
             requestLine = br.readLine();
 
-            if(requestLine.isEmpty() && br.ready()){
-                parseBody(request, br.readLine());
-
+            if(requestLine.isEmpty()){
+                if(br.ready()) {
+                    parseBody(request, br.readLine());
+                }
                 continue;
             }
 
