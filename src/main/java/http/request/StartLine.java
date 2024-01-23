@@ -6,7 +6,7 @@ public class StartLine {
     private String httpVersion;
 
     public StartLine(String method, String url, String httpVersion) {
-        this.method = HttpMethod.valueOf(method);;
+        this.method = HttpMethod.valueOf(method);
         this.url = url;
         this.httpVersion = httpVersion;
     }

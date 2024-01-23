@@ -28,8 +28,8 @@ public class Database {
         return users.values();
     }
 
-    private static void validate(User user){
-        if (users.containsKey(user.getUserId())){
+    private static void validate(User user) {
+        if (users.containsKey(user.getUserId())) {
             throw new IllegalArgumentException("User ID already exists: " + user.getUserId());
         }
     }

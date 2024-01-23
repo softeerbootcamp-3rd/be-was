@@ -1,9 +1,13 @@
 package http.response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class StatusLine {
+    private final Logger logger = LoggerFactory.getLogger(StatusLine.class);
     private String httpVersion;
     private HttpStatus status;
 
@@ -13,10 +17,10 @@ public class StatusLine {
     }
 
     public void writeStatusLine(DataOutputStream dos) {
-        try{
+        try {
             dos.writeBytes(httpVersion + " " + status.getStatusCodeAndMessage() + "\r\n");
-        } catch (IOException e){
-
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
         }
     }
 }

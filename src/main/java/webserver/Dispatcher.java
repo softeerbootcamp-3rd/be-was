@@ -17,7 +17,7 @@ public class Dispatcher {
         this.response = response;
     }
 
-    public void dispatch(){
+    public void dispatch() {
         logger.debug("request : {}", request.toString());
         handlerMapping.findController(request.getUrl()).service(request, response);
     }

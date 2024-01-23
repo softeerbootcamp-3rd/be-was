@@ -37,4 +37,8 @@ public class Request {
     public String toString() {
         return "Request [method=" + startLine.getMethod() + ", url=" + startLine.getUrl() + ", body=" + body.getBody() + "]";
     }
+
+    public String getBody() {
+        return body.getBody();
+    }
 }

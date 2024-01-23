@@ -64,7 +64,6 @@ public class HttpRequestGenerator {
         StringBuilder bodyBuilder = new StringBuilder(contentLength);
         int charsToRead = contentLength;
         char[] buffer = new char[4098];
-
         while (charsToRead > 0) {
             int read = br.read(buffer, 0, Math.min(buffer.length, charsToRead));
             if (read == -1) {

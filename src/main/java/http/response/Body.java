@@ -26,6 +26,7 @@ public class Body {
             logger.error(e.getMessage());
         }
     }
+
     public String getBodyLength() {
         return String.valueOf(body.length);
     }
