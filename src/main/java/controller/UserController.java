@@ -1,6 +1,6 @@
 package controller;
 
-import annotation.GetMapping;
+import annotation.PostMapping;
 import dto.RequestDto;
 import service.UserService;
 import webserver.ResponseHandler;
@@ -11,9 +11,9 @@ import static constant.FilePath.MAIN_PAGE;
 
 public class UserController {
 
-    @GetMapping(path = "/user/create")
+    @PostMapping(path = "/user/create")
     public static void create(DataOutputStream dos, RequestDto requestDto) {
-        UserService.signUp(requestDto.getParams());
+        UserService.signUp(requestDto.getBody());
 
         ResponseHandler.sendRedirect(dos, MAIN_PAGE.getPath());
     }
