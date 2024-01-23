@@ -4,80 +4,46 @@ import db.Database;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
-import java.util.stream.Stream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DisplayName("UserServiceTest 클래스")
 class UserServiceTest {
-
     private UserService userService;
     private Database database;
+    private User user;
 
     @BeforeEach
-    void init() {
+    void init() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.userService = UserService.getInstance();
         this.database = new Database();
+
+        Constructor<User> constructor = User.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        this.user = constructor.newInstance();
+
+        Field[] fields = User.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            field.set(user, "test");
+        }
     }
 
-    @ParameterizedTest
-    @MethodSource("valid_User_Parameters")
+    @Test
     @DisplayName("회원가입이 정상적으로 처리되는지 확인")
-    void sign_up_success(String request) {
+    void sign_up_success() {
 
         // when
-        userService.join(request);
-        User findUser = database.findUserById("test2");
+        userService.join(user);
+        User findUser = database.findUserById("test");
 
         // then
         assertThat(findUser).isNotNull();
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalid_User_Parameters")
-    @DisplayName("회원가입 진행 중 매개변수가 유효하지 않으면 예외를 IllegalArgumentException 예외를 발생시키는지 확인")
-    void invalid_param(String request) {
-
-        assertThatThrownBy(() -> userService.join(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("회원가입에 실패하였습니다.");
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalid_Method_Parameters")
-    @DisplayName("회원가입 진행 중 요청 메소드가 GET이 아니면 예외를 IllegalArgumentException 예외를 발생시키는지 확인")
-    void invalid_method(String request) {
-
-        assertThatThrownBy(() -> userService.join(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("회원가입에 실패하였습니다.");
-    }
-
-
-    private static Stream<Arguments> valid_User_Parameters() {
-        return Stream.of(
-                Arguments.of("GET userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1")
-        );
-    }
-
-    private static Stream<Arguments> invalid_User_Parameters() {
-        return Stream.of(
-                Arguments.of("GET userId=test2&password=test2&name=test2 HTTP/1.1"), // email이 없는 경우
-                Arguments.of("GET password=test2&name=test2&email=test2@test.com HTTP/1.1"), // userId가 없는 경우
-                Arguments.of("GET userId=test2&name=test2&email=test2@test.com HTTP/1.1"), // password가 없는 경우
-                Arguments.of("GET userId=test2^password=test2&email=test2@test.com HTTP/1.1") // name이 없는 경우
-        );
-    }
-
-    private static Stream<Arguments> invalid_Method_Parameters() {
-        return Stream.of(
-                Arguments.of("POST userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1"), // POST 요청인 경우
-                Arguments.of("PUT userId=test2&password=test2&name=test2&email=test2@test.com HTTP/1.1") // PUT 요청인 경우
-        );
     }
 }
