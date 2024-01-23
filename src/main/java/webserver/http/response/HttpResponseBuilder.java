@@ -25,4 +25,9 @@ public class HttpResponseBuilder {
         response.addHeader("Location", redirectPath);
         return response;
     }
+
+    public HttpResponse setSessionId(HttpResponse response, String sessionId){
+        response.addHeader("Set-Cookie", sessionId);
+        return response;
+    }
 }
