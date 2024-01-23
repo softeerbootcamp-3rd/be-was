@@ -12,11 +12,26 @@ import static util.Parser.parseQueryString;
 public class UserController extends Controller {
     @Override
     public void doPost(Request request, Response response) {
-        Map<String, String> queryParams = parseQueryString(request.getBody());
-        User user = new User(queryParams.get("userId"),
-                queryParams.get("password"), queryParams.get("name"), queryParams.get("email"));
-        Database.addUser(user);
+        try{
+            Map<String, String> queryParams = parseQueryString(request.getBody());
+            validate(queryParams);
+            User user = new User(queryParams.get("userId"),
+                    queryParams.get("password"), queryParams.get("name"), queryParams.get("email"));
+            Database.addUser(user);
 
-        response.redirect("/index.html");
+            response.redirect("/index.html");
+        }
+        catch (IllegalArgumentException e){
+            response.redirect("/user/form_failed.html");
+        }
+    }
+
+    private void validate(Map<String, String> params){
+        if (!params.containsKey("userId") ||
+            !params.containsKey("password") ||
+            !params.containsKey("name") ||
+            !params.containsKey("email")) {
+            throw new IllegalArgumentException("Missing required parameters.");
+        }
     }
 }
