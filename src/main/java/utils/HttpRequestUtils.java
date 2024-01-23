@@ -19,7 +19,8 @@ public class HttpRequestUtils {
         parseHeader(br, request);
         parseBody(request, br);
 
-        if (!request.getMethod().equals("GET") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
+        // POST Form 방식 처리 구현
+        if (request.getMethod().equals("POST") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
             Map<String, String> params = parseQueryString(request.getBody());
             request.setParams(params);
         }
@@ -37,7 +38,7 @@ public class HttpRequestUtils {
         request.setUrl(url);
         request.setVersion(version);
 
-
+        // GET 방식 query string 처리 관련
         if (url.contains("?")) {
             String queryString = url.substring(url.indexOf("?") + 1);
             Map<String, String> params = parseQueryString(queryString);
