@@ -23,7 +23,7 @@ public class MemberJoinController implements Controller {
             }
         }
 
-        if (memberJoinService.getUserList().contains(params.get("userId"))) {
+        if (memberJoinService.getUserIds().contains(params.get("userId"))) {
             headers.put("Location", "/user/form.html");
             response.setResponse(HttpResponseStatus.FOUND, null, headers);
             return;
