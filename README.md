@@ -81,7 +81,7 @@ Java Web Application Server 2023
 
 ### 사용방법
 
-```java
+``` java
 1. 구현체 생성
 ExecutorService executorService = Executors.newSingleThreadExecutor(); //singleThread
 : Executors 클래스의 static Method를 활용하여 ExecutorService 구현체를 SingleThread 형태로 리턴
