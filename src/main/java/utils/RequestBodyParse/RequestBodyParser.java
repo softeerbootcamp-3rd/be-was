@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RequestBodyParser {
-    private final List<String> bodyContent;
-    public RequestBodyParser(List<String> bodyContent) {
+    private final char[] bodyContent;
+    public RequestBodyParser(char[] bodyContent) {
         this.bodyContent = bodyContent;
     }
 

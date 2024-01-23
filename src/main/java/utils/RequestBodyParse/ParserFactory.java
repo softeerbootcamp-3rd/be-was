@@ -2,39 +2,40 @@ package utils.RequestBodyParse;
 
 import webserver.http.ContentType;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ParserFactory {
     public interface ContentParser {
-        Map<String, String> parse(List<String> body);
+        Map<String, String> parse(char[] body);
     }
 
     public static class JsonParser implements ContentParser {
         @Override
-        public Map<String, String> parse(List<String> body) {
-            return Arrays.stream(body.get(0).split("&"))
-                    .map(it -> it.split("=", 2))
-                    .collect(Collectors.toMap(
-                            it -> it[0],
-                            it -> URLDecoder.decode(it.length > 1 ? it[1] : "", StandardCharsets.UTF_8),
-                            (existing, replacement) -> existing
-                    ));
+        public Map<String, String> parse(char[] body) {
+            return null;
         }
     }
 
     public static class FormUrlEncodedParser implements ContentParser {
         @Override
-        public Map<String, String> parse(List<String> body) {
-            return Arrays.stream(body.get(0).split("&"))
+        public Map<String, String> parse(char[] body) {
+            String bodyAsString = new String(body);
+            return Arrays.stream(bodyAsString.split("&"))
                     .map(it -> it.split("=", 2))
                     .collect(Collectors.toMap(
                             it -> it[0],
-                            it -> URLDecoder.decode(it.length > 1 ? it[1] : "", StandardCharsets.UTF_8),
+                            it -> {
+                                try {
+                                    return URLDecoder.decode(it.length > 1 ? it[1] : "", "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            },
                             (existing, replacement) -> existing
                     ));
         }

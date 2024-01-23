@@ -17,7 +17,7 @@ public class Request {
     private Float httpVersionNum;
     private Mime responseMimeType;
     private final ArrayList<String> headerContent = new ArrayList<>();
-    private final ArrayList<String> bodyContent= new ArrayList<>();
+    private char[] bodyContent;
     private final HashMap<String, String> requestHeader = new HashMap<>();
     private HashMap<String, String> requestBody;
 
@@ -46,7 +46,7 @@ public class Request {
         }
     }
     private void parseRequestBody() {
-        if(bodyContent.isEmpty())
+        if(bodyContent.length == 0)
         {
             requestBody = new HashMap<>();
             return;
@@ -73,28 +73,16 @@ public class Request {
 
     private void parseRequest(BufferedReader br) throws IOException {
         String line;
-        boolean headerFinished = false;
-        boolean hasBody = false;
-
-        while ((line = br.readLine()) != null) {
-            if (line.isEmpty()) {
-                headerFinished = true;
-                if (hasBody) {
-                    continue;
-                } else {
-                    break;
-                }
-            }
-
-            if (!headerFinished) {
-                if (line.contains("Content-Length")) {
-                    hasBody = true;
-                }
-                headerContent.add(line);
-            } else {
-                bodyContent.add(line);
+        int contentLength = 0;
+        while (!(line = br.readLine()).isEmpty()) {
+            headerContent.add(line);
+            if(line.contains("Content-Length")){
+                contentLength = Integer.parseInt(line.split(" ")[1]);
             }
         }
+
+        bodyContent = new char[contentLength];
+        br.read(bodyContent, 0, contentLength);
     }
 
     public void print()
@@ -110,8 +98,10 @@ public class Request {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("[ requestBody ]");
-        for (Map.Entry<String, String> entry : requestBody.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
+        if(!requestBody.isEmpty()){
+            for (Map.Entry<String, String> entry : requestBody.entrySet()) {
+                System.out.println(entry.getKey() + " : " + entry.getValue());
+            }
         }
         System.out.println("*******************************************");
     }
