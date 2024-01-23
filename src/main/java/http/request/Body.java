@@ -1,4 +1,4 @@
-package model.HttpRequest;
+package http.request;
 
 public class Body {
     private String body;

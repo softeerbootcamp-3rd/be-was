@@ -1,9 +1,9 @@
 package util;
 
-import model.HttpRequest.Body;
-import model.HttpRequest.Header;
-import model.HttpRequest.Request;
-import model.HttpRequest.StartLine;
+import http.request.Body;
+import http.request.Headers;
+import http.request.Request;
+import http.request.StartLine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class HttpRequestGenerator {
     public Request createHttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         StartLine startLine = createStartLine(br);
-        Header header = createHeader(br);
+        Headers header = createHeader(br);
         Body body = createBody(br, header.getHeaders());
 
         return new Request(startLine, header, body);
@@ -42,7 +42,7 @@ public class HttpRequestGenerator {
         return split;
     }
 
-    private Header createHeader(BufferedReader br) throws IOException {
+    private Headers createHeader(BufferedReader br) throws IOException {
         String headerLine;
         Map<String, String> headers = new HashMap<>();
         while ((headerLine = br.readLine()) != null && !headerLine.isEmpty()) {
@@ -52,7 +52,7 @@ public class HttpRequestGenerator {
             }
             headers.put(parts.get(0), parts.get(1));
         }
-        return new Header(headers);
+        return new Headers(headers);
     }
 
     private Body createBody(BufferedReader br, Map<String, String> headers) throws IOException {

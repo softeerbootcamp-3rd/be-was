@@ -1,4 +1,4 @@
-package model;
+package http.response;
 
 public enum HttpStatus {
     OK(200, "OK"),
@@ -15,11 +15,8 @@ public enum HttpStatus {
         this.message = message;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public String getStatusCodeAndMessage() {
+        return statusCode + message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

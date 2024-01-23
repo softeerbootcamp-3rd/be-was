@@ -1,17 +1,17 @@
-package model.HttpRequest;
+package http.request;
 
 public class StartLine {
-    private String method;
+    private HttpMethod method;
     private String url;
     private String httpVersion;
 
     public StartLine(String method, String url, String httpVersion) {
-        this.method = method;
+        this.method = HttpMethod.valueOf(method);;
         this.url = url;
         this.httpVersion = httpVersion;
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 

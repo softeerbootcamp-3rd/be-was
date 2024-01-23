@@ -1,13 +1,13 @@
-package model.HttpRequest;
+package http.request;
 
 public class Request {
     private static final String ROOT_PATH = "src/main/resources/";
 
     private final StartLine startLine;
-    private final Header header;
+    private final Headers header;
     private final Body body;
 
-    public Request(StartLine startLine, Header header, Body body) {
+    public Request(StartLine startLine, Headers header, Body body) {
         this.startLine = startLine;
         this.header = header;
         this.body = body;
@@ -27,6 +27,10 @@ public class Request {
             return ROOT_PATH + "templates" + url;
         }
         return ROOT_PATH + "static" + url;
+    }
+
+    public HttpMethod getMethod() {
+        return startLine.getMethod();
     }
 
     @Override

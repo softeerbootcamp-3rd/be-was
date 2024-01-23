@@ -1,11 +1,11 @@
-package model.HttpRequest;
+package http.request;
 
 import java.util.Map;
 
-public class Header {
+public class Headers {
     private Map<String, String> headers;
 
-    public Header(Map<String, String> headers) {
+    public Headers(Map<String, String> headers) {
         this.headers = headers;
     }
 
