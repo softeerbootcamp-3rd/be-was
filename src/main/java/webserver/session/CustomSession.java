@@ -11,6 +11,7 @@ import java.util.UUID;
 public class CustomSession {
   private static final HashMap<UUID,SessionValue> session = new HashMap<>();
   public static ThreadLocal<UUID> currentSession = new ThreadLocal<>();
+  public static ThreadLocal<UUID> setCookie = new ThreadLocal<>();
   public static void initCurrentSession(MyHttpServletRequest request){
     String rawCookie = request.getCookie();
     if(rawCookie==null)
@@ -22,6 +23,7 @@ public class CustomSession {
   }
   public static void finishCurrentSession(){
     currentSession.remove();
+    setCookie.remove();
   }
   public static String findCookieKey(String cookie){
     String[] cookieKeyValue = cookie.split("=");
