@@ -5,7 +5,7 @@ import webserver.HttpStatus;
 public class Response {
 
     private HttpStatus httpStatus;
-    private String cookie;
+    private Cookie cookie;
     private String contentType;
     private byte[] body;
 
@@ -23,7 +23,7 @@ public class Response {
         this.body = body;
     }
 
-    public Response(HttpStatus httpStatus, String cookie, String contentType, byte[] body) {
+    public Response(HttpStatus httpStatus, Cookie cookie, String contentType, byte[] body) {
         this.httpStatus = httpStatus;
         this.cookie = cookie;
         this.contentType = contentType;
@@ -45,7 +45,7 @@ public class Response {
         return contentType;
     }
 
-    public String getCookie() {
+    public Cookie getCookie() {
         return cookie;
     }
 
@@ -55,7 +55,7 @@ public class Response {
 
     static public class Builder {
         private HttpStatus httpStatus;
-        private String cookie;
+        private Cookie cookie;
         private String contentType;
         private byte[] body;
 
@@ -73,7 +73,7 @@ public class Response {
             return this;
         }
 
-        public Builder cookie(String cookie) {
+        public Builder cookie(Cookie cookie) {
             this.cookie = cookie;
             return this;
         }

@@ -3,8 +3,10 @@ package controller;
 import annotation.PostMapping;
 import annotation.RequestParam;
 import db.Database;
+import dto.Cookie;
 import dto.Response;
 import model.User;
+import util.SessionManager;
 import webserver.HttpStatus;
 
 import java.util.UUID;
@@ -39,14 +41,18 @@ public class UserController {
                     .build();
         }
 
-        String sid = UUID.randomUUID().toString();
+        String sid = SessionManager.createSession();
+        SessionManager.setAttribute(sid, "user", userId);
+        Cookie cookie = new Cookie(sid, SessionManager.getSessionTimeoutSeconds());
 
         return new Response.Builder()
                 .httpStatus(HttpStatus.FOUND)
-                .cookie(sid)
+                .cookie(cookie)
                 .body("/index.html")
                 .build();
     }
 
 }
+
+
 

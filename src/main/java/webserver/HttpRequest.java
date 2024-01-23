@@ -76,12 +76,18 @@ public class HttpRequest {
         return null;
     }
 
+    public String getCookie() {
+        if (header.containsKey("Cookie"))
+            return header.get("Cookie");
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Request [ip=" + header.get("ip") + ", port=" + header.get("port")
                 + ", method=" + header.get("httpMethod") + ", path=" + header.get("path")
                 + ", http_version=" + header.get("httpVersion") + ", host=" + header.get("Host")
-                + ", accept=" + header.get("Accept") + "]";
+                + ", accept=" + header.get("Accept") + ", cookie=" + getCookie() + "]";
     }
 
 
