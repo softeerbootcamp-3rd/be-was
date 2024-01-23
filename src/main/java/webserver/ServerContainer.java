@@ -1,10 +1,10 @@
 package webserver;
 
+import common.http.request.Body;
+import common.http.request.Header;
 import common.http.request.HttpMethod;
 import common.http.request.HttpRequest;
-import common.http.request.HttpRequestBody;
-import common.http.request.HttpRequestHeader;
-import common.http.request.HttpRequestStartLine;
+import common.http.request.StartLine;
 import common.http.response.HttpResponse;
 import common.http.response.HttpStatusCode;
 import common.logger.CustomLogger;
@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import webserver.container.Dispatcher;
@@ -45,7 +45,8 @@ public class ServerContainer implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
 
-            dos.write(httpResponse.convertResponseToByteArray(), 0, httpResponse.convertResponseToByteArray().length);
+            byte[] convertResponseToByteArray = httpResponse.convertResponseToByteArray();
+            dos.write(convertResponseToByteArray, 0, convertResponseToByteArray.length);
             ResponseThreadLocal.clearHttpResponse();
             dos.flush();
         } catch (Exception e) {
@@ -55,10 +56,10 @@ public class ServerContainer implements Runnable {
 
     private HttpRequest httpRequestParser(InputStream in) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(
-            new InputStreamReader(in, StandardCharsets.UTF_8));
+            new InputStreamReader(in, "UTF-8"));
 
         String line = bufferedReader.readLine();
-        HttpRequestStartLine httpRequestStartLine = parsingStringLine(line);
+        StartLine startLine = parsingStringLine(line);
 
         HashMap<String, String> headers = new HashMap<>();
         line = bufferedReader.readLine();
@@ -67,11 +68,11 @@ public class ServerContainer implements Runnable {
             line = bufferedReader.readLine();
         }
 
-        HttpRequestHeader httpRequestHeader = new HttpRequestHeader(headers);
+        Header header = new Header(headers);
 
         StringBuilder requestBodyBuilder = new StringBuilder();
-        if (httpRequestStartLine.getHttpMethod() == HttpMethod.POST) {
-            int contentLength = Integer.parseInt(httpRequestHeader.getSpecificHeader("Content-Length"));
+        if (startLine.getHttpMethod() == HttpMethod.POST) {
+            int contentLength = Integer.parseInt(header.getSpecificHeader("Content-Length"));
             char[] buffer = new char[1024];
             int bytesRead;
             while (contentLength > 0 && (bytesRead = bufferedReader.read(buffer, 0, Math.min(buffer.length, contentLength))) != -1) {
@@ -80,19 +81,20 @@ public class ServerContainer implements Runnable {
             }
         }
 
-        HttpRequestBody httpRequestBody = new HttpRequestBody(parseRequestBody(requestBodyBuilder.toString()));
-        return new HttpRequest(httpRequestStartLine, httpRequestHeader, httpRequestBody);
+        Body body = new Body(parseRequestBody(requestBodyBuilder.toString()));
+        return new HttpRequest(startLine, header, body);
     }
 
-    private Map<String, String> parseRequestBody(String requestBody) {
+    private Map<String, String> parseRequestBody(String requestBody)
+        throws UnsupportedEncodingException {
         Map<String, String> parsedBody = new HashMap<>();
         if (!requestBody.isEmpty()) {
             String[] pairs = requestBody.split("&");
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
                 if (keyValue.length == 2) {
-                    String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
-                    String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
+                    String key = URLDecoder.decode(keyValue[0], "UTF-8");
+                    String value = URLDecoder.decode(keyValue[1], "UTF-8");
                     parsedBody.put(key, value);
                 }
             }
@@ -101,9 +103,9 @@ public class ServerContainer implements Runnable {
     }
 
 
-    private HttpRequestStartLine parsingStringLine(String startLine) {
+    private StartLine parsingStringLine(String startLine) {
         String[] startLines = startLine.split(" ");
-        return new HttpRequestStartLine(startLines[0], startLines[1], startLines[2]);
+        return new StartLine(startLines[0], startLines[1], startLines[2]);
     }
 
     private HttpResponse createInitResponse() {
