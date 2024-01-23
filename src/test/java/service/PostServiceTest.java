@@ -27,7 +27,7 @@ class PostServiceTest {
     @Test
     void testSignUpBadKeys() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
                 "HTTP/1.1", null);
@@ -42,7 +42,7 @@ class PostServiceTest {
     @Test
     void testSignUpBadValues() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
                 "HTTP/1.1", null);
@@ -57,7 +57,7 @@ class PostServiceTest {
     @Test
     void testSignUpAlreadyExists() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
         // when
         // 첫 번째 유저 회원가입 처리
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
@@ -79,7 +79,8 @@ class PostServiceTest {
     @Test
     void testSignUpSuccess() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
+        expected.addHeader("Location", "/index.html");
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
                 "HTTP/1.1",null);
@@ -94,7 +95,8 @@ class PostServiceTest {
     @Test
     void testLoginFail() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/user/login_failed.html", null);
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
+        expected.addHeader("Location", "/user/login_failed.html");
         // when
         String body = "userId=login&password=fail";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
@@ -108,7 +110,8 @@ class PostServiceTest {
     @Test
     void testLoginSuccess() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
+        expected.addHeader("Location", "/index.html");
         // when
         Database.addUser(new User("hello", "world", "hello", "world"));
         String body = "userId=hello&password=world";

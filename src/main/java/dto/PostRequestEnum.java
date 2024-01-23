@@ -20,7 +20,7 @@ public enum PostRequestEnum {
     ERROR("wrong request") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return new HTTPResponseDto(404, "text/plain", "Bad Request".getBytes());
+            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
         }
     };
 

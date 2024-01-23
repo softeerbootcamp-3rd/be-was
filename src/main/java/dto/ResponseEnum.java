@@ -10,16 +10,8 @@ public enum ResponseEnum {
         public String getStatusline() {
             return STATUSLINE200;
         }
-
         @Override
-        public HashMap<String, String> addHeader(HashMap<String, String> header, String content, Integer contentLength) {
-            // Content-Type
-            if(content != null)
-                header.put("Content-Type", content + "; charset=utf-8");
-            // Content-Length
-            if(contentLength != null)
-                header.put("Content-Length", "" + contentLength);
-            // Connection
+        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
             header.put("Connection", "keep-alive");
             return header;
         }
@@ -29,13 +21,8 @@ public enum ResponseEnum {
         public String getStatusline() {
             return STATUSLINE302;
         }
-
         @Override
-        public HashMap<String, String> addHeader(HashMap<String, String> header, String content, Integer contentLength) {
-            // Location
-            if(content != null)
-                header.put("Location", content);
-            // connection
+        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
             header.put("Connection", "close");
             return header;
         }
@@ -45,16 +32,8 @@ public enum ResponseEnum {
         public String getStatusline() {
             return STATUSLINE400;
         }
-
         @Override
-        public HashMap<String, String> addHeader(HashMap<String, String> header, String content, Integer contentLength) {
-            // Content-Type
-            if(content != null)
-                header.put("Content-Type", content + "; charset=utf-8");
-            // Content-Length
-            if(contentLength != null)
-                header.put("Content-Length", "" + contentLength);
-            // Connection
+        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
             header.put("Connection", "keep-alive");
             return header;
         }
@@ -64,16 +43,8 @@ public enum ResponseEnum {
         public String getStatusline() {
             return STATUSLINE500;
         }
-
         @Override
-        public HashMap<String, String> addHeader(HashMap<String, String> header, String content, Integer contentLength) {
-            // Content-Type
-            if(content != null)
-                header.put("Content-Type", content + "; charset=utf-8");
-            // Content-Length
-            if(contentLength != null)
-                header.put("Content-Length", "" + contentLength);
-            // Connection
+        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
             header.put("Connection", "close");
             return header;
         }
@@ -101,7 +72,7 @@ public enum ResponseEnum {
     // 상수별 status line 반환
     public abstract String getStatusline();
 
-    // 상수별 header 내용 추가
-    public abstract HashMap<String, String> addHeader(HashMap<String, String> header, String content, Integer contentLength);
+    // 상수별 header에 connection 추가
+    public abstract HashMap<String, String> addConnection2Header(HashMap<String, String> header);
 
 }

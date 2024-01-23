@@ -30,7 +30,7 @@ class GetServiceTest {
     @Test
     void testSignUpNullParams() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
         // when
         HTTPResponseDto actual = Config.getService.signup(null);
         // then
@@ -41,7 +41,7 @@ class GetServiceTest {
     @Test
     void testSignUpInvalidParams() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto();
         httpRequestDto.addRequestParam("hello", "world");
@@ -54,7 +54,8 @@ class GetServiceTest {
     @Test
     void testSignUpValidParams() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
+        expected.addHeader("Location", "/index.html");
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/user/create",
                 "HTTP/1.1",  null);
@@ -71,7 +72,8 @@ class GetServiceTest {
     @Test
     void testDefaultGET() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
+        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
+        expected.addHeader("Location", "/index.html");
         // when
         HTTPResponseDto actual = Config.getService.showIndex();
         // then
@@ -83,7 +85,7 @@ class GetServiceTest {
     void testRequestNullFile() {
         try {
             // given
-            HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+            HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto();
             HTTPResponseDto actual = Config.getService.requestFile(httpRequestDto);
@@ -101,7 +103,8 @@ class GetServiceTest {
         try {
             // given
             String path = "./src/main/resources/templates/index.html";
-            HTTPResponseDto expected = new HTTPResponseDto(200, "text/html", Files.readAllBytes(new File(path).toPath()));
+            HTTPResponseDto expected = HTTPResponseDto.createResponseDto(200, "text/html",
+                    Files.readAllBytes(new File(path).toPath()));
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/index.html",
                     "HTTP/1.1", null);
@@ -121,7 +124,8 @@ class GetServiceTest {
         try {
             // given
             String path = "./src/main/resources/static/css/styles.css";
-            HTTPResponseDto expected = new HTTPResponseDto(200, "text/css", Files.readAllBytes(new File(path).toPath()));
+            HTTPResponseDto expected = HTTPResponseDto.createResponseDto(200, "text/css",
+                    Files.readAllBytes(new File(path).toPath()));
             // when
             HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/css/styles.css",
                     "HTTP/1.1", null);

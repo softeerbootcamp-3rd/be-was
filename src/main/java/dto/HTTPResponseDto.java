@@ -22,20 +22,10 @@ public class HTTPResponseDto {
         this.header = new HashMap<>();
         this.body = null;
     }
-
-    public HTTPResponseDto(int statusCode, String content, byte[] body) {
+    public HTTPResponseDto(int statusCode, byte[] body) {
         this.statusCode = statusCode;
         this.header = new HashMap<>();
-        // 상태 코드에 맞는 enum 상수 반환
-        ResponseEnum responseEnum = ResponseEnum.getResponse(statusCode);
-        if(body == null)
-            // 상태 코드에 맞는 헤더 내용 추가
-            setHeader(responseEnum.addHeader(this.header, content, null));
-        else {
-            this.body = body;
-            // 상태 코드에 맞는 헤더 내용 추가
-            setHeader(responseEnum.addHeader(this.header, content, body.length));
-        }
+        this.body = body;
     }
 
     public int getStatusCode() {
@@ -70,7 +60,9 @@ public class HTTPResponseDto {
         dos.writeBytes(responseEnum.getStatusline());
         // header에 Date 추가
         addDate2Header();
-        // TODO 2. header 작성
+        // header에 Connection 추가
+        setHeader(responseEnum.addConnection2Header(this.header));
+        // 2. header 작성
         for(Map.Entry<String, String> entry: header.entrySet())
             dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
         // 3. body 작성
@@ -89,5 +81,19 @@ public class HTTPResponseDto {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
         String formattedDateTime = currentDateTime.format(formatter);
         addHeader("Date", formattedDateTime);
+    }
+    // Header에 Content-Type, Content-Length 추가
+    public void addContentTypeAndContentLength2Header(String contentType, Integer contentLength) {
+        if(contentType != null)
+            addHeader("Content-Type", contentType + "; charset=utf-8");
+        if(contentLength != null)
+            addHeader("Content-Length", "" + contentLength);
+    }
+
+    // 헤더에 content-type, content-length 추가한 응답 반환
+    public static HTTPResponseDto createResponseDto(int statusCode, String contentType, byte[] body) {
+        HTTPResponseDto httpResponseDto = new HTTPResponseDto(statusCode, body);
+        httpResponseDto.addContentTypeAndContentLength2Header(contentType, (body == null) ? null : body.length);
+        return httpResponseDto;
     }
 }
