@@ -32,6 +32,14 @@ public class Request {
         return method;
     }
 
+    public String getParam(String key){
+        return params.getOrDefault(key, null);
+    }
+
+    public String getBody(String key){
+        return body.getOrDefault(key, null);
+    }
+
     public void setHeader(String key, String value){
         headers.put(key, value);
     }
