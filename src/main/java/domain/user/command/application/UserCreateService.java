@@ -26,7 +26,7 @@ public class UserCreateService {
         User newUser = createUserEntity(userCreateRequest);
         saveUser(newUser);
 
-        ResponseThreadLocal.onSuccess(HttpStatusCode.MOVED_PERMANENTLY, ResponseUtils.makeRedirection("/index.html"), new byte[0]);
+        ResponseThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeRedirection("/index.html"), new byte[0]);
     }
 
     public void validate(UserCreateRequest userCreateRequest) {
