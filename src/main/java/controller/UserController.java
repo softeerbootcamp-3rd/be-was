@@ -1,8 +1,6 @@
 package controller;
 
-import annotation.GetMapping;
-import annotation.PostMapping;
-import annotation.RequestParam;
+import annotation.*;
 import db.Database;
 import dto.Cookie;
 import dto.Response;
@@ -11,12 +9,12 @@ import util.SessionManager;
 import webserver.HttpRequest;
 import webserver.HttpStatus;
 
-import java.util.UUID;
 
-
+@Controller
+@RequestMapping("/user")
 public class UserController {
 
-    @PostMapping(path = "/user/create")
+    @PostMapping(path = "/create")
     public static Response signup(@RequestParam(name = "userId") String userId,
                                   @RequestParam(name = "password") String password,
                                   @RequestParam(name = "name") String name,
@@ -31,7 +29,7 @@ public class UserController {
                 .build();
     }
 
-    @PostMapping(path = "/user/login")
+    @PostMapping(path = "/login")
     public static Response login(@RequestParam(name = "userId") String userId,
                                  @RequestParam(name = "password") String password) {
         User user = Database.findUserById(userId);

@@ -2,6 +2,7 @@ package webserver;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
+import annotation.RequestMapping;
 import annotation.RequestParam;
 import dto.Response;
 import util.ControllerMapper;
@@ -84,10 +85,12 @@ public class RequestMappingHandler {
     private static Method findGETMethod(Class<?> controllerClass, String path) {
         // [ 피드백 ] 아예 처음부터 맵핑해놓고 시작하기
         Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
+        String basePath = controllerClass.getAnnotation(RequestMapping.class).value();
         for (Method method : methods) {
             if (method.isAnnotationPresent(GetMapping.class)) {
                 GetMapping getMapping = method.getAnnotation(GetMapping.class);
-                if (getMapping.path().equals(path))
+                String controllerPath = basePath + getMapping.path();
+                if (controllerPath.equals(basePath + path))
                     return method;
             }
         }
@@ -96,10 +99,12 @@ public class RequestMappingHandler {
 
     private static Method findPOSTMethod(Class<?> controllerClass, String path) {
         Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
+        String basePath = controllerClass.getAnnotation(RequestMapping.class).value();
         for (Method method : methods) {
             if (method.isAnnotationPresent(PostMapping.class)) {
                 PostMapping postMapping = method.getAnnotation(PostMapping.class);
-                if (postMapping.path().equals(path))
+                String controllerPath = basePath + postMapping.path();
+                if (controllerPath.equals(path))
                     return method;
             }
         }

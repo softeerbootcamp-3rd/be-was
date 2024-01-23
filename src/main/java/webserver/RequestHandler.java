@@ -3,10 +3,14 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import annotation.Controller;
 import dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ControllerMapper;
 import util.SessionManager;
+
+import static util.ControllerMapper.CONTROLLER_MAP;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
