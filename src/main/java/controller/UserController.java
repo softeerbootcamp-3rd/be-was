@@ -3,14 +3,13 @@ package controller;
 import annotation.Controller;
 import annotation.RequestBody;
 import annotation.RequestMapping;
-import annotation.RequestParam;
+import constant.HttpStatus;
 import db.Database;
 import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
 import util.SessionManager;
 import webserver.HttpResponse;
-import constant.HttpStatus;
 
 @Controller
 public class UserController {

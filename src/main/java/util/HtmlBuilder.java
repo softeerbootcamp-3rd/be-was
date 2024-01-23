@@ -1,7 +1,6 @@
 package util;
 
 import constant.HtmlContent;
-import constant.MimeType;
 import db.Database;
 import model.User;
 import webserver.HttpRequest;

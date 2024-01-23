@@ -1,7 +1,5 @@
 package model;
 
-import annotation.NotEmpty;
-
 import java.util.Objects;
 
 public class User {
