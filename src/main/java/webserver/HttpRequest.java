@@ -13,7 +13,7 @@ public class HttpRequest {
     private final String path;
     private final Map<String, String> paramMap;
     private final Map<String, String> header;
-    private final char[] body;
+    private final String body;
 
     public HttpRequest(BufferedReader reader) throws IOException {
         String requestLine = reader.readLine();
@@ -31,10 +31,11 @@ public class HttpRequest {
             }
         }
         if (header.get("Content-Length") != null) {
-            body = new char[Integer.parseInt(header.get("Content-Length"))];
-            reader.read(body);
+            char[] buf = new char[Integer.parseInt(header.get("Content-Length"))];
+            reader.read();
+            body = new String(buf);
         }else
-            body = new char[0];
+            body = "";
     }
 
     public String getMethod() {
@@ -53,7 +54,7 @@ public class HttpRequest {
         return this.header;
     }
 
-    public char[] getBody() {
+    public String getBody() {
         return this.body;
     }
 }

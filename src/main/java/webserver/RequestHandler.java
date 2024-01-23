@@ -39,7 +39,8 @@ public class RequestHandler implements Runnable {
             if (handler != null) {
                 RequestMapper.invoke(handler, request).send(out, logger);
             } else if (request.getMethod().equals("GET")) {
-                ResourceLoader.getFileResponse(request.getPath()).send(out, logger);
+                HttpResponse response = ResourceLoader.getFileResponse(request.getPath());
+
             } else {
                 HttpResponse.builder()
                         .status(HttpStatus.NOT_FOUND)

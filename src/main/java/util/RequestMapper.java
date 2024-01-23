@@ -89,7 +89,7 @@ public class RequestMapper {
                         }
                     } else if (parameter.isAnnotationPresent(RequestBody.class)) {
                         try {
-                            Map<String, String> queryMap = RequestParser.parseQueryString(new String(request.getBody()));
+                            Map<String, String> queryMap = RequestParser.parseQueryString(request.getBody());
                             params[i] = RequestParser.mapToClass(queryMap, parameter.getType());
                         } catch (UnsupportedEncodingException | InvocationTargetException | IllegalAccessException
                                 | NoSuchMethodException | InstantiationException e) {

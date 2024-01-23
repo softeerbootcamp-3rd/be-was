@@ -19,6 +19,7 @@ public class SessionManager {
     }
 
     public static User getUserBySessionId(String sessionId) {
+        if (sessionId == null) return null;
         return sessionMap.get(sessionId);
     }
 
