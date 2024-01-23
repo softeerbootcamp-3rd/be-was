@@ -1,10 +1,12 @@
 package webApplicationServer.controller;
 
+import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class FakeUserService implements UserService {
@@ -14,6 +16,11 @@ public class FakeUserService implements UserService {
     public void signUp(UserSignUpDto userSignUpDto) {
         recordInvocation("signUp");
         // signUp 구현
+    }
+
+    @Override
+    public UUID login(UserLoginDto userLoginDto) {
+        return UUID.randomUUID();
     }
 
     // 다른 UserService 메서드들에 대한 빈 메서드를 추가
