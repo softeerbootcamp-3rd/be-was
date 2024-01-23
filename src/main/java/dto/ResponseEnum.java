@@ -12,10 +12,10 @@ public enum ResponseEnum {
             responseBody(httpResponseDto, dos);
         }
     },
-    REDIRECTION(303) {
+    REDIRECTION(302) {
         @Override
         public void writeResponse(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto, DataOutputStream dos) throws IOException {
-            response303Header(httpResponseDto, dos);
+            response302Header(httpResponseDto, dos);
         }
     },
     BAD_REQUEST(404) {
@@ -64,8 +64,8 @@ public enum ResponseEnum {
     }
 
     // 303에 해당하는 response header 작성
-    private static void response303Header(HTTPResponseDto httpResponseDto, DataOutputStream dos) throws IOException {
-        dos.writeBytes("HTTP/1.1 303 See other\r\n");
+    private static void response302Header(HTTPResponseDto httpResponseDto, DataOutputStream dos) throws IOException {
+        dos.writeBytes("HTTP/1.1 302 Found\r\n");
         dos.writeBytes("Location: ");
         dos.write(httpResponseDto.getContents(), 0, httpResponseDto.getContents().length);
         dos.writeBytes("\r\n");

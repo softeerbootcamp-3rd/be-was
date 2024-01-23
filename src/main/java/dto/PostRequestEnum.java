@@ -1,14 +1,20 @@
 package dto;
 
-import service.PostService;
+import config.Config;
 
 import java.util.Arrays;
 
 public enum PostRequestEnum {
+    SIGNUP("/user/create") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return Config.postService.signup(httpRequestDto);
+        }
+    },
     LOGIN("/user/login") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return PostService.login(httpRequestDto);
+            return Config.postService.login(httpRequestDto);
         }
     },
     ERROR("wrong request") {

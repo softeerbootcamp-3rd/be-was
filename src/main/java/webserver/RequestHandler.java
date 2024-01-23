@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private HTTPRequestDto httpRequestDto = new HTTPRequestDto();
 
@@ -47,7 +47,7 @@ public class RequestHandler implements Runnable {
             // 요청 처리
             HTTPResponseDto httpResponseDto = Controller.doRequest(httpRequestDto);
 
-            // status code에 따른 분기 처리 - response DataOutputStream에 작성
+            // status code에 따른 분기 처리 -> enum 상수 가져오기
             ResponseEnum responseEnum = ResponseEnum.getResponse(httpResponseDto.getStatusCode());
             responseEnum.writeResponse(httpResponseDto, httpRequestDto, dos);
 
@@ -114,7 +114,7 @@ public class RequestHandler implements Runnable {
 
             // 한글 파라미터 decoding 후 body 저장
             httpRequestDto.setBody(URLDecoder.decode(new String(body), "UTF-8"));
-            System.out.println("Request Body: " + httpRequestDto.getBody());
+            logger.debug("Request Body: {}", httpRequestDto.getBody());
         }
     }
 
