@@ -10,7 +10,6 @@ public class Response {
     private final Map<String, String> header;
     private byte[] body;
 
-
     public Response() {
         this.header = new HashMap<>();
     }

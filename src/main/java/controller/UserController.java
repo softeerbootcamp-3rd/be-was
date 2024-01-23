@@ -27,11 +27,12 @@ public class UserController implements Controller {
     }
 
     /**
-     * 사용자 로그인 결과에 따라 페이지를 이동시킵니다.
+     * 사용자 로그인 결과에 따라 응답 메시지를 설정합니다.
      *
-     * <p> 로그인 성공시 메인 화면으로 이동하며, 실패시 실패 화면으로 이동합니다.
-     * @param request 요청 정보
-     * @return 요청을 수행한 결과를 담은 응답
+     * <p> 로그인 성공시 메인 화면으로, 실패시 실패 화면으로 리다이렉션하도록 설정합니다.
+     *
+     * @param request  요청 정보
+     * @param response 응답 메시지
      */
     private void loginUser(Request request, Response response) {
         Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
@@ -51,17 +52,17 @@ public class UserController implements Controller {
     }
 
     /**
-     * 요청한 페이지 파일을 찾아 응답을 반환합니다.
+     * 요청한 페이지 파일을 찾아 응답 메시지를 설정합니다.
      *
-     * <p> 요청한 파일을 찾을 수 있는 경우 200 응답을 반환하며, 요청한 파일을 찾을 수 없는 경우 404 응답을 반환합니다.
+     * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다.
      *
      * @param url 요청 정보
-     * @return 요청을 수행한 결과를 담은 응답
+     * @param response 응답 메시지
      */
     private void getPage(String url, Response response) {
         String filePath = "src/main/resources/templates" + url;
 
-        try{
+        try {
             byte[] body = PageReader.getPage(filePath);
             response.setCode(200);
             response.setBody(body);
@@ -73,26 +74,24 @@ public class UserController implements Controller {
     }
 
     /**
-     * 회원가입 요청을 수행하고 결과 응답을 반환합니다.
+     * 회원가입 요청을 수행하고 결과 응답 메시지를 설정합니다.
      *
-     * <p> 요청한 작업을 성공적으로 수행한다면 메인 페이지로 리다이렉션하는 응답을 반환합니다.
-     * 파라미터가 불충분하거나 이미 회원가입된 아이디라면 400 응답을 반환합니다.
+     * <p> 요청한 작업을 성공적으로 수행한다면 메인 페이지로 리다이렉션하도록 설정합니다.
+     * 파라미터가 불충분하거나 이미 회원가입된 아이디라면 400 응답으로 설정합니다.
      *
      * @param request 요청 정보
-     * @return 요청을 수행한 결과를 담은 응답
+     * @param response 응답 메시지
      */
     private void createUser(Request request, Response response) {
         Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
 
         try {
             userService.createUser(params);
+            response.setCode(302);
+            response.addHeader("Location", "/index.html");
         } catch (NullPointerException | IllegalArgumentException e) {
             response.setCode(400);
             response.setBody(e.getMessage());
-            return;
         }
-
-        response.setCode(302);
-        response.addHeader("Location", "/index.html");
     }
 }

@@ -18,7 +18,7 @@ public class Request {
     /**
      * 요청 메시지를 받아 시작 줄과 각 헤더를 저장합니다.
      *
-     * <p> 만약 request body가 있을 경우 해당 내용을 문자열로 저장합니다.
+     * <p> 만약 request 본문이 있을 경우 해당 내용을 문자열로 저장합니다.
      *
      * @param in 요청 메시지
      * @throws IOException I/O 에러 발생

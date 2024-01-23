@@ -37,8 +37,10 @@ public class UserService {
      *
      * @param params 로그인 정보 파라미터
      * @return 정보가 올바르면 false, 올바르지 않으면 true
+     * @throws IllegalArgumentException 로그인 정보가 비어있거나 패스워드가 일치하지 않을 경우 발생
+     * @throws NullPointerException 아이디와 일치하는 사용자가 없을 경우 발생
      */
-    public User findUser(Map<String, String> params) {
+    public User findUser(Map<String, String> params) throws IllegalArgumentException, NullPointerException {
         try {
             String userId = params.get("userId");
             String password = params.get("password");
