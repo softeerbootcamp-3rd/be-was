@@ -18,6 +18,7 @@ public class ResponseBuilder {
         String[] tokens = StatusCodeUrl.split(" ");
         String statusCode = tokens[0];
         String targetPath = tokens[1];
+        String cookie = tokens[2].equals("none") ? "" : tokens[2];
 
         String extension = RequestParserUtil.getFileExtension(targetPath);
         String contentType = ResourcePathMapping.getContentType(extension);
@@ -29,7 +30,7 @@ public class ResponseBuilder {
             response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } else if(statusCode.equals("302")) {
-            response302Header(dos, targetPath);
+            response302Header(dos, targetPath, cookie);
         } else if (statusCode.equals("400")) {
             body = ResourceLoader.loadResource(targetPath);
             response400Header(dos);
@@ -58,6 +59,21 @@ public class ResponseBuilder {
         try {
             dos.writeBytes("HTTP/1.1 302 Found\r\n");
             dos.writeBytes("Location: " + redirectLocation + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private static void response302Header(DataOutputStream dos, String redirectLocation, String cookieHeader) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
+            dos.writeBytes("Location: " + redirectLocation + "\r\n");
+
+            if(cookieHeader != null && !cookieHeader.isEmpty()) {
+                dos.writeBytes("Set-Cookie: sid=" + cookieHeader + "; Path=/" + "\r\n");
+            }
+
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
