@@ -15,11 +15,11 @@ public class UserController {
     private final UserService userService = new UserService();
 
     public HttpResponse signUp(HttpRequest request) {
-        Map<String, String> queryParams = request.getQueryParams();
+        Map<String, String> bodyParams = request.getBody();
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
-        if(userService.signUp(queryParams)){
+        if(userService.signUp(bodyParams)){
             // 회원가입 성공
-            return responseBuilder.createRedirectResponse(HttpStatus.SEE_OTHER, "/user/login.html");
+            return responseBuilder.createRedirectResponse(HttpStatus.FOUND, "/index.html");
         }
         // 회원가입 실패
         return responseBuilder.createErrorResponse(HttpStatus.BAD_REQUEST, "SignUp Failed".getBytes(StandardCharsets.UTF_8));
