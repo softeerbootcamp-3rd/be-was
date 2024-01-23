@@ -44,12 +44,18 @@
 
 ## 4. 문제 해결
 
+### 1. Response 헤더 생성
+
+- 문제
+  > 기존에는 요청을 수행하고 응답 정보인 Response 객체를 생성했지만, 상황에 따른 생성자가 너무 많아지는
+  > 문제가 발생했습니다.
+
+- 해결 방안
+  > Response 메시지의 구조를 고려해 Response 클래스에는 상태코드, 헤더, 본문 필드로 구성했으며,
+  > Map 자료구조를 사용해 요청을 처리할때 헤더를 추가하도록 함으로써 코드의 양을 대폭 줄일 수 있었습니다.
+
 ---
 
-## 5. 기록
-
----
-
-## 6. 참고 문서
+## 5. 참고 문서
 
 [MDN - Using HTTP cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
