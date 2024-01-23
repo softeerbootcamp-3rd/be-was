@@ -1,5 +1,6 @@
 package util;
 
+import annotation.RequestBody;
 import annotation.RequestMapping;
 import annotation.RequestParam;
 import constant.ParamType;
@@ -9,6 +10,7 @@ import webserver.HttpRequest;
 import webserver.HttpResponse;
 import constant.HttpStatus;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -49,13 +51,15 @@ public class RequestMapper {
 
             Object result = method.invoke(instance, mapParams(method, request));
             if (result instanceof HttpResponse) return (HttpResponse) result;
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            logger.error(e.getMessage());
         } catch (IllegalArgumentException e) {
             return HttpResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage())
                     .build();
+        } catch (RuntimeException | NoSuchMethodException
+                 | InvocationTargetException | InstantiationException
+                 | IllegalAccessException e) {
+            logger.error(e.getMessage());
         }
         return HttpResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -64,16 +68,15 @@ public class RequestMapper {
     }
 
     private static Object[] mapParams(Method method, HttpRequest request) {
-        Class<? extends Annotation> annotationClass = RequestParam.class;
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
 
         IntStream.range(0, parameters.length)
                 .forEach(i -> {
                     Parameter parameter = parameters[i];
-                    ParamType paramType = ParamType.getByClass(parameter.getType());
-                    if(parameter.isAnnotationPresent(annotationClass)){
-                        RequestParam annotation = (RequestParam) parameter.getAnnotation(annotationClass);
+                    if(parameter.isAnnotationPresent(RequestParam.class)){
+                        ParamType paramType = ParamType.getByClass(parameter.getType());
+                        RequestParam annotation = parameter.getAnnotation(RequestParam.class);
                         String requestParam = request.getParamMap().get(annotation.value());
                         if (requestParam != null) {
                             params[i] = paramType.map(requestParam);
@@ -81,6 +84,14 @@ public class RequestMapper {
                             params[i] = null;
                         } else {
                             throw new IllegalArgumentException("Parameter '" + annotation.value() + "' cannot be null");
+                        }
+                    } else if (parameter.isAnnotationPresent(RequestBody.class)) {
+                        try {
+                            Map<String, String> queryMap = RequestParser.parseQueryString(new String(request.getBody()));
+                            params[i] = RequestParser.mapToClass(queryMap, parameter.getType());
+                        } catch (UnsupportedEncodingException | InvocationTargetException | IllegalAccessException
+                                | NoSuchMethodException | InstantiationException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 });

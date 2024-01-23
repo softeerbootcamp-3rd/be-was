@@ -1,6 +1,7 @@
 package controller;
 
 import annotation.Controller;
+import annotation.RequestBody;
 import annotation.RequestMapping;
 import annotation.RequestParam;
 import db.Database;
@@ -11,14 +12,9 @@ import constant.HttpStatus;
 @Controller
 public class UserController {
 
-    @RequestMapping(method = "GET", path = "/user/create")
-    public static HttpResponse createUser(@RequestParam(value = "userId", required = true) String userId,
-                                          @RequestParam(value = "password", required = true) String password,
-                                          @RequestParam("name") String name,
-                                          @RequestParam("email") String email) {
-
-        User user = new User(userId, password, name, email);
-        User existUser = Database.findUserById(userId);
+    @RequestMapping(method = "POST", path = "/user/create")
+    public static HttpResponse createUser(@RequestBody User user) {
+        User existUser = Database.findUserById(user.getUserId());
         if (existUser != null)
             return HttpResponse.builder()
                     .status(HttpStatus.CONFLICT)
