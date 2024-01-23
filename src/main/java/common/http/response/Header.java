@@ -2,11 +2,11 @@ package common.http.response;
 
 import java.util.Map;
 
-public class HttpResponseHeader {
+public class Header {
 
     private Map<String, String> headers;
 
-    public HttpResponseHeader(Map<String, String> headers) {
+    public Header(Map<String, String> headers) {
         this.headers = headers;
     }
 
@@ -14,6 +14,7 @@ public class HttpResponseHeader {
         this.headers = headers;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         headers.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\r\n"));

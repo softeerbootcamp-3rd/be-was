@@ -1,34 +1,37 @@
 package common.http.response;
 
+import common.logger.CustomLogger;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponse {
 
-    private HttpResponseStartLine startLine;
-    private HttpResponseHeader header;
+    private StartLine startLine;
+    private Header header;
     private byte[] body;
 
-    public HttpResponse(HttpResponseStartLine startLine, HttpResponseHeader header, byte[] body) {
+    public HttpResponse(StartLine startLine, Header header, byte[] body) {
         this.startLine = startLine;
         this.header = header;
         this.body = body;
     }
 
-    public HttpResponseStartLine getStartLine() {
+    public StartLine getStartLine() {
         return startLine;
     }
 
     public void setStartLine(HttpStatusCode httpStatusCode) {
-        this.startLine = new HttpResponseStartLine(httpStatusCode);
+        this.startLine = new StartLine(httpStatusCode);
     }
 
-    public HttpResponseHeader getHeader() {
+    public Header getHeader() {
         return header;
     }
 
     public void setHeader(Map<String, String> headers) {
-        this.header = new HttpResponseHeader(headers);
+        this.header = new Header(headers);
     }
 
     public byte[] getBody() {
@@ -44,19 +47,24 @@ public class HttpResponse {
         byte[] header = this.header.toString().getBytes();
         byte[] body = this.body;
 
-        byte[] response = new byte[startLine.length + header.length + body.length];
+        int totalLength = startLine.length + header.length + body.length;
 
-        System.arraycopy(startLine, 0, response, 0, startLine.length);
-        System.arraycopy(header, 0, response, startLine.length, header.length);
-        System.arraycopy(body, 0, response, startLine.length + header.length, body.length);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(totalLength);
 
-        return response;
+        try (byteArrayOutputStream) {
+            byteArrayOutputStream.write(startLine);
+            byteArrayOutputStream.write(header);
+            byteArrayOutputStream.write(body);
+        } catch (IOException e) {
+            CustomLogger.printError(e);
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
     public static HttpResponse responseBuilder(HttpStatusCode httpStatusCode, HashMap<String, String> headers, byte[] body) {
         return new HttpResponse(
-            new HttpResponseStartLine(httpStatusCode),
-            new HttpResponseHeader(headers),
+            new StartLine(httpStatusCode),
+            new Header(headers),
             body
         );
     }

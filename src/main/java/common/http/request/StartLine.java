@@ -1,12 +1,12 @@
 package common.http.request;
 
-public class HttpRequestStartLine {
+public class StartLine {
 
     private HttpMethod httpMethod;
     private String requestTarget;
     private String httpVersion;
 
-    public HttpRequestStartLine(String httpMethod, String requestTarget, String httpVersion) {
+    public StartLine(String httpMethod, String requestTarget, String httpVersion) {
         this.httpMethod = HttpMethod.of(httpMethod);
         this.requestTarget = requestTarget;
         this.httpVersion = httpVersion;
