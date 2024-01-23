@@ -1,7 +1,5 @@
 package webserver.request;
 
-import webserver.header.RequestHeader;
-
 import java.util.HashMap;
 import java.util.Map;
 
