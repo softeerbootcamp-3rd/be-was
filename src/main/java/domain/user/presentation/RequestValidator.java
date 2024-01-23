@@ -2,6 +2,7 @@ package domain.user.presentation;
 
 import common.http.response.HttpStatusCode;
 import domain.user.command.application.UserCreateRequest;
+import java.util.HashMap;
 import webserver.container.ResponseThreadLocal;
 
 public class RequestValidator {
@@ -10,7 +11,7 @@ public class RequestValidator {
             userCreateRequest.getPassword() == null ||
             userCreateRequest.getName() == null ||
             userCreateRequest.getEmail() == null) {
-            ResponseThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, null, "userId is null".getBytes());
+            ResponseThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, new HashMap<>(), "userId is null".getBytes());
             return false;
         }
         return true;
