@@ -1,7 +1,6 @@
 package dto;
 
 import config.Config;
-import service.GetService;
 
 import java.io.IOException;
 import java.util.Arrays;

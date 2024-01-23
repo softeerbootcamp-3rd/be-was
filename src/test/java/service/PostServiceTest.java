@@ -7,14 +7,19 @@ import dto.HTTPResponseDto;
 import model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.WebServer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PostServiceTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
+
     @AfterEach
     void clearDB() {
-        Config.logger.debug("DB: {}", Database.findAll());
+        logger.debug("DB: {}", Database.findAll());
         Database.clear();
     }
 

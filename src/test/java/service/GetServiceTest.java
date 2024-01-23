@@ -6,6 +6,9 @@ import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,9 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GetServiceTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(GetServiceTest.class);
+
     @AfterEach
     void clearDB() {
-        Config.logger.debug("DB: {}", Database.findAll());
+        logger.debug("DB: {}", Database.findAll());
         Database.clear();
     }
 
