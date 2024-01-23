@@ -5,7 +5,8 @@ public enum HttpMethod {
     POST("POST"),
     PUT("PUT"),
     PATCH("PATCH"),
-    DELETE("DELETE");
+    DELETE("DELETE"),
+    NULL("NULL");
 
     private final String httpMethodType;
 
@@ -15,5 +16,14 @@ public enum HttpMethod {
 
     public String getHttpMethodType() {
         return httpMethodType;
+    }
+
+    public static HttpMethod converHttpMethodType(String ext) {
+        for (HttpMethod httpMethodType : HttpMethod.values()) {
+            if (httpMethodType.getHttpMethodType().equals(ext)) {
+                return httpMethodType;
+            }
+        }
+        return HttpMethod.NULL;
     }
 }

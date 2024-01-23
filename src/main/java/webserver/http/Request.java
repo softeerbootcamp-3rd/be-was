@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static webserver.http.HttpMethod.converHttpMethodType;
 import static webserver.http.Mime.convertMime;
 
 public class Request {
-    private String httpMethod;
+
+    private HttpMethod httpMethod;
     private String requestTarget;
     private String httpVersion;
     private Float httpVersionNum;
@@ -59,7 +61,7 @@ public class Request {
 
     private void parseRequestStartLine(String startLine) {
         String[] requestStartLine = startLine.split(" ");
-        this.httpMethod = requestStartLine[0];
+        this.httpMethod = converHttpMethodType(requestStartLine[0]);
         this.requestTarget = requestStartLine[1];
         this.httpVersion = requestStartLine[2];
         int lastDotIndex = requestTarget.lastIndexOf('.');
@@ -120,5 +122,9 @@ public class Request {
 
     public String getHttpVersion() {
         return httpVersion;
+    }
+
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
     }
 }
