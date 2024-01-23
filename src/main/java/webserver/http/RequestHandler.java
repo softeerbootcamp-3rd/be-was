@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Map<Route, Consumer<Request>> routeHandlers= new HashMap<>();
-
     private static class Route{
         private final HttpMethod httpMethod;
         private final String routeName;
@@ -46,10 +45,6 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.GET,"/user/create"), (Request r)-> getUserCreate(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/user/create"), (Request r)-> postUserCreate(r));
     }
-
-    private void postUserCreate(Request r) {
-    }
-
     public void handleRequest(Request request) {
         String requestTarget = request.getRequestTarget().split("\\?")[0];
         Route inputRoute = new Route(request.getHttpMethod() ,requestTarget);
@@ -68,6 +63,14 @@ public class RequestHandler {
         System.out.println(user.toString());
         //리다이렉션 헤더에 넣기
         request.addRequestHeader("Location","/user/form.html");
+    }
+
+    private void postUserCreate(Request request) {
+        HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
+        User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
+        System.out.println("PostResult + " + user.toString());
+        //리다이렉션 헤더에 넣기
+        request.addRequestHeader("Location","/index.html");
     }
 
     private void handleNotFound() {

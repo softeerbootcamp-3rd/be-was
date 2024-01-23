@@ -31,11 +31,9 @@ public class Request {
         RequestHandler requestHandler = new RequestHandler();
         requestHandler.handleRequest(this);
     }
-
     public void addRequestHeader(String key, String val){
         requestHeader.put(key, val);
     }
-
     private void parseRequestHeader() {
         for(int i = 1;i < headerContent.size();i++) {
             if(headerContent.get(i).isEmpty())
@@ -57,8 +55,6 @@ public class Request {
         RequestBodyParser requestBodyParser = new RequestBodyParser(bodyContent);
         requestBody = (HashMap<String, String>) requestBodyParser.contentTypeBodyParse(ContentType.convertContentType(requestHeader.get("Content-Type")));
     }
-
-
     private void parseRequestStartLine(String startLine) {
         String[] requestStartLine = startLine.split(" ");
         this.httpMethod = converHttpMethodType(requestStartLine[0]);
@@ -72,7 +68,6 @@ public class Request {
         }
         httpVersionNum = Float.parseFloat(httpVersion.split("/")[1]);
     }
-
     private void parseRequest(BufferedReader br) throws IOException {
         String line;
         int contentLength = 0;
@@ -116,7 +111,7 @@ public class Request {
         return responseMimeType;
     }
 
-    public HashMap<String, String> getRequestHeader() {
+    public Map<String, String> getRequestHeader() {
         return requestHeader;
     }
 
@@ -126,5 +121,9 @@ public class Request {
 
     public HttpMethod getHttpMethod() {
         return httpMethod;
+    }
+
+    public Map<String, String> getRequestBody() {
+        return requestBody;
     }
 }

@@ -21,7 +21,6 @@ public class Response {
         setBody(request);
         setHeader(request);
     }
-
     private void setHeader(Request request) {
         responseHeader.put("Date",ZonedDateTime.now().format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)));
         responseHeader.put("Server", "MyServer/1.0" );
@@ -30,7 +29,6 @@ public class Response {
         Optional.ofNullable(request.getRequestHeader().get(locString))
                 .ifPresent(location -> responseHeader.put(locString, location));
     }
-
     public void setStatusCode(Request request) {
         if(request.getRequestHeader().get(locString)!=null){
             this.statusCode = StatusCode.FOUND.getCode();
@@ -41,7 +39,6 @@ public class Response {
         this.statusCode = StatusCode.OK.getCode();
         this.statusText = StatusCode.OK.name();
     }
-
 
     public String getHttpVersion() {
         return httpVersion;
