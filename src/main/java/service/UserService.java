@@ -2,7 +2,7 @@ package service;
 
 import db.Database;
 import exception.SourceException;
-import model.QueryParams;
+import util.QueryParams;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

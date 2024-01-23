@@ -1,7 +1,7 @@
 package controller;
 
 import dto.ResourceDto;
-import model.QueryParams;
+import util.QueryParams;
 import service.UserService;
 
 import java.util.HashMap;

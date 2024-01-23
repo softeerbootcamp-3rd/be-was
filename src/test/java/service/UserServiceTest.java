@@ -1,7 +1,7 @@
 package service;
 
 import exception.SourceException;
-import model.QueryParams;
+import util.QueryParams;
 import model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -2,7 +2,7 @@ package webserver;
 
 import controller.UserController;
 import dto.ResourceDto;
-import model.QueryParams;
+import util.QueryParams;
 
 import java.util.function.Function;
 
