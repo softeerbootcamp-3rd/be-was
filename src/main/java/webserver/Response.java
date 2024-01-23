@@ -4,27 +4,30 @@ import common.response.Status;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static common.response.Status.REDIRECT;
+import static webserver.RequestHandler.logger;
 
 public class Response {
 
     private static final String RESOURCES_PATH = "src/main/resources/";
 
     public static void createResponse(OutputStream out, Status status, String contentType, String url) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-        byte[] body = Files.readAllBytes(new File(getFilePath(url)).toPath());
-        if (status == REDIRECT) {
-            response302Header(dos, url);
-            return;
+        try (FileInputStream fileInputStream = new FileInputStream(getFilePath(url))) {
+            DataOutputStream dos = new DataOutputStream(out);;
+            byte[] body = fileInputStream.readAllBytes();
+            if (status == REDIRECT) {
+                response302Header(dos, url);
+                return;
+            }
+            responseHeader(dos, status, contentType, body.length);
+            responseBody(dos, body);
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
         }
-        responseHeader(dos, status, contentType, body.length);
-        responseBody(dos, body);
     }
 
     private static void responseHeader(DataOutputStream dos, Status status, String contentType, int lengthOfBodyContent) throws IOException {
