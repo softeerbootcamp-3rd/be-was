@@ -50,6 +50,9 @@ public class RequestDataController {
                 } else if (url.startsWith("/user/create")) {
                     userService.registerUser(requestData);
                     return redirectHome();
+                } else if (url.equals("/user/login")) {
+                    logger.debug("[API] /user/login");
+                    return redirectHome();
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
                     return notFound();
