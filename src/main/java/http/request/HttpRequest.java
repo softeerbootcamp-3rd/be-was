@@ -32,6 +32,12 @@ public class HttpRequest {
             }
         }
 
+        // GET - uri에서 params 분리
+        if (requestLine.getUri().contains("?")) {
+            String query = Parser.extractQuery(requestLine.getUri());
+            params = Parser.extractParams(query);
+        }
+
         // body부 받기
         if (etcHeaders.containsKey("Content-Length")) {
             // Content-Length의 길이가 페이로드의 길이
@@ -53,7 +59,8 @@ public class HttpRequest {
                 "\nHttp 버전: " + requestLine.getVersion() + "\n" +
                 "\n- General Header\n" + mapToString(generalHeader.getGeneralHeaders()) +
                 "\n- 기타 헤더\n" + mapToString(etcHeaders) +
-                (!body.isEmpty()? "\n- 바디(페이로드)\n" + mapToString(body) : null);
+                (!params.isEmpty()? "\n- uri 쿼리 파라미터\n" + mapToString(params) : "") +
+                (!body.isEmpty()? "\n- 바디(페이로드)\n" + mapToString(body) : "");
     }
 
     public String mapToString(Map<String, String> map) {
