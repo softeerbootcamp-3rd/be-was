@@ -3,7 +3,7 @@ package model;
 import java.util.Map;
 
 public class Request {
-    private HTTP_METHOD method;
+    private HttpMethod method;
     private String URI;
     private String httpVer;
     private Map<String, String> headerMap;
@@ -14,7 +14,7 @@ public class Request {
     }
 
 
-    public void setMethod(HTTP_METHOD method) {
+    public void setMethod(HttpMethod method) {
         this.method = method;
     }
 
@@ -46,7 +46,7 @@ public class Request {
         return paramMap;
     }
 
-    public HTTP_METHOD getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 

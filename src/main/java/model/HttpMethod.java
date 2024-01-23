@@ -1,5 +1,5 @@
 package model;
 
-public enum HTTP_METHOD {
+public enum HttpMethod {
     GET, POST, PUT, DELETE
 }
