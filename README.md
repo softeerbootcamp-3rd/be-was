@@ -462,3 +462,30 @@ Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
 </details>
 
 ---
+
+<details>
+    <summary><b>Step 5 - 쿠키를 이용한 로그인</b></summary>
+
+## 1. 학습 목표
+> - 쿠키와 세션을 이용한 로그인 방식을 이해하고 직접 구현할 수 있다.
+
+## 2. 기능 요구사항
+> - 가입한 회원 정보로 로그인을 할 수 있다.
+> - [로그인] 메뉴를 클릭하면 `http://localhost:8080/user/login.html` 로 이동해 로그인 할 수 있다.
+> - 로그인이 성공하면 `index.html`로 이동한다.
+> - 로그인이 실패하면 `/user/login_failed.html`로 이동한다.
+
+## 3. 프로그래밍 요구사항
+> - 로그인이 성공할 경우 HTTP 헤더의 쿠기 값을 `SID=세션 ID`로 응답한다.
+> - 세션 ID는 적당한 크기의 무작위 숫자 또는 문자열을 사용한다.
+> - 서버는 세션 아이디에 해당하는 User 정보에 접근할 수 있어야한다.
+
+## 4. 학습 내용
+
+
+## 5. Trouble Shooting
+
+
+</details>
+
+---
