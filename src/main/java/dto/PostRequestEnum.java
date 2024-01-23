@@ -20,7 +20,7 @@ public enum PostRequestEnum {
     ERROR("wrong request") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return new HTTPResponseDto(404, "Bad Request".getBytes());
+            return new HTTPResponseDto(404, "text/plain", "Bad Request".getBytes());
         }
     };
 
@@ -34,7 +34,7 @@ public enum PostRequestEnum {
     public static PostRequestEnum getRequest(String url) {
         return Arrays.stream(PostRequestEnum.values())
                 .filter(request -> request.url.equals(url))
-                .findFirst()
+                .findAny()
                 .orElse(ERROR);
     }
 

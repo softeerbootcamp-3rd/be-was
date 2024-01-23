@@ -71,7 +71,7 @@ class GetServiceTest {
     @Test
     void testDefaultGET() {
         // given
-        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html".getBytes());
+        HTTPResponseDto expected = new HTTPResponseDto(302, "/index.html", null);
         // when
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("GET", "/",
                 "HTTP/1.1", "localhost:8080", "text/html", null, null);

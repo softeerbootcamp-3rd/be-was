@@ -9,7 +9,7 @@ public enum GetRequestEnum {
     DEFAULT("/") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.showIndex(httpRequestDto);
+            return Config.getService.showIndex();
         }
     },
     SIGNUP("/user/create") {
@@ -35,7 +35,7 @@ public enum GetRequestEnum {
     public static GetRequestEnum getRequest(String url) {
         return Arrays.stream(GetRequestEnum.values())
                 .filter(request -> request.url.equals(url))
-                .findFirst()
+                .findAny()
                 .orElse(FILE);
     }
 

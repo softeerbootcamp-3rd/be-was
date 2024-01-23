@@ -7,7 +7,6 @@ import java.net.URLDecoder;
 import controller.Controller;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
-import dto.ResponseEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +46,8 @@ public class RequestHandler implements Runnable {
             // 요청 처리
             HTTPResponseDto httpResponseDto = Controller.doRequest(httpRequestDto);
 
-            // status code에 따른 분기 처리 -> enum 상수 가져오기
-            ResponseEnum responseEnum = ResponseEnum.getResponse(httpResponseDto.getStatusCode());
-            responseEnum.writeResponse(httpResponseDto, httpRequestDto, dos);
+            // status code에 맞는 응답 반환
+            httpResponseDto.writeResponse(dos);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
