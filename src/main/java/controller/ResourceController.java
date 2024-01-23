@@ -1,11 +1,9 @@
 package controller;
 
-import model.Request;
-
-public class StaticResourceController {
+public class ResourceController {
     private String type;
 
-    public StaticResourceController(String type) {
+    public ResourceController(String type) {
         this.type = type;
     }
 
