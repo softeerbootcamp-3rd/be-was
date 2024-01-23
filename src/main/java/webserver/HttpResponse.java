@@ -38,9 +38,9 @@ public class HttpResponse {
         }
     }
 
-    public void response301RedirectHeader(String redirectUrl) {
+    public void response302RedirectHeader(String redirectUrl) {
         try {
-            dos.writeBytes("HTTP/1.1 301 Moved Permanently\r\n");
+            dos.writeBytes("HTTP/1.1 302 Found\r\n");
             dos.writeBytes("Location: " + redirectUrl + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {

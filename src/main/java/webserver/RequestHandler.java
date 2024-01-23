@@ -61,7 +61,7 @@ public class RequestHandler implements Runnable {
             byte[] body = null;
 
             if (path.startsWith("redirect:")) {
-                response.response301RedirectHeader(path.substring("redirect:".length()));
+                response.response302RedirectHeader(path.substring("redirect:".length()));
                 response.responseBody(body);
             } else {
                 response.response200Header(path);
