@@ -40,6 +40,13 @@ public class RequestDataController {
 
             if (fileOrApi.equals("FILE")) {
                 if (file.exists() && !file.isDirectory()) {
+                    if (url.equals("/user/login.html")) {
+                        if (requestData.getHeaderValue("Cookie") != null) {
+                            if (UserService.isLoggedIn(requestData)) {
+                                return new Response("302", "/index.html");
+                            }
+                        }
+                    }
                     return new Response("200", url);
                 } else {
                     logger.debug("유효하지 않은 파일 경로입니다.");
@@ -54,7 +61,7 @@ public class RequestDataController {
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
                     String sessionId = UserService.login(requestData);
-                    if (!sessionId.isEmpty()) {
+                    if (sessionId != null) {
                         return new Response("302", "/index.html", sessionId);
                     }
                     return new Response("302", "/user/login_failed.html");

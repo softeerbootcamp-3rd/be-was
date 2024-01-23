@@ -54,8 +54,32 @@ public class UserService {
             return Session.createSession(user.getUserId());
         } else {
             logger.debug("ID 입력값 " + id + " 으로 비정상적인 접근이 있었습니다.");
-            return "";
+            return null;
         }
 
+    }
+
+    public static boolean isLoggedIn(RequestData requestData) {
+        logger.debug("isLoggedIn()");
+
+        String[] sid = requestData.getHeaderValue("Cookie").split("=");
+
+        logger.debug("Cookie");
+        logger.debug("\t" + sid[0] + " : " + sid[1]);
+
+        // 쿠키에 sid가 없는 경우
+        if (!sid[0].equals("sid")) {
+            logger.debug("Session is not exists!");
+            return false;
+        }
+
+        // 쿠키의 세션 id가 서버에 없는 경우
+        if (Session.getUserIdBySessionId(sid[1]) == null) {
+            logger.debug("Session is not exists!");
+            return false;
+        }
+
+        logger.debug("Session already exists!");
+        return true;
     }
 }
