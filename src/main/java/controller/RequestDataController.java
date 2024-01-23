@@ -53,9 +53,9 @@ public class RequestDataController {
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
                     if(UserService.login(requestData)) {
-                        return redirectHome();
+                        return redirectTo("/index.html");
                     }
-                    return getFilePath("/user/login_failed.html");
+                    return redirectTo("/user/login_failed.html");
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
                     return notFound();
@@ -71,6 +71,14 @@ public class RequestDataController {
 
     private static String redirectHome() {
         return "302 /index.html";
+    }
+
+    private static String redirectTo(String path) {
+        return "302 " + path;
+    }
+
+    private static String redirectTo(String path, String Cookie) {
+        return "302 " + path + " " + Cookie;
     }
 
     private static String getFilePath(String filePath) {
