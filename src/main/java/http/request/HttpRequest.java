@@ -81,4 +81,12 @@ public class HttpRequest {
     public Map<String, String> getEtcHeaders() {
         return etcHeaders;
     }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public Map<String, String> getBody() {
+        return body;
+    }
 }
