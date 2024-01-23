@@ -32,7 +32,8 @@ public class UserController {
 
         if (!user.getPassword().equals(password)) {
             return new Response.Builder()
-                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .httpStatus(HttpStatus.FOUND)
+                    .body("/user/login_failed.html")
                     .build();
         }
 
