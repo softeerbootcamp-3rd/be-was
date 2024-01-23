@@ -16,9 +16,10 @@ import util.Util;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final HashSet<String> printedKey =  // logger.debug로 출력할 헤더값들
-            new HashSet<>(Arrays.asList("Accept", "Cookie")); // etc. User-Agent, Host
+            new HashSet<>(Arrays.asList("Accept", "Cookie")); // else "Host", "User-Agent"
     private static final HashMap<String, String> statusCodeMessage = new HashMap<>() {{
         put("200", "OK"); put("302", "Found"); put("404", "Not Found"); }};
+
     private Socket connection;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -42,9 +43,9 @@ public class RequestHandler implements Runnable {
     }
     private Request handleRequest(BufferedReader br) throws IOException {
         Request request = new Request();
-        request = handleRequestStartLine(br, request);
-        request = handleRequestHeader(br, request);
-        request = handleRequestBody(br, request);
+        request = handleRequestStartLine(br, request); // startLine 처리
+        request = handleRequestHeader(br, request); // header 처리
+        request = handleRequestBody(br, request); // body 처리
         return request;
     }
     private Request handleRequestStartLine(BufferedReader br, Request request) throws IOException {
@@ -64,7 +65,6 @@ public class RequestHandler implements Runnable {
             if(printedKey.contains(key))
                 logger.debug(line);
         }
-        request.parseSessionId();
         return request;
     }
     private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
@@ -97,8 +97,7 @@ public class RequestHandler implements Runnable {
                 dos.writeBytes("Set-Cookie: " + "sessionId=" + response.getCookie() + "; Path=/; Max-Age=3600\r\n");
                 dos.writeBytes("Location: " + response.getRedirectUrl());
             }
-            else
-                if(response.getBody() != null) {
+            else if(response.getBody() != null) {
                 dos.writeBytes("Content-Type: " + response.getMimeType() + ";charset=utf-8\r\n");
                 dos.writeBytes("Content-Length: " + response.getBody().length + "\r\n");
             }

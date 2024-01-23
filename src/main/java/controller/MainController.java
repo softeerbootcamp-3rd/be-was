@@ -24,7 +24,6 @@ public class MainController {
         String base = "./src/main/resources";
         String path = request.getPath();
         String method = request.getMethod();
-        String clientSessionId = request.getCookie().get("sessionId");
 
         if(method.equals("GET")) {
             if (path.equals("/")) {
@@ -42,17 +41,7 @@ public class MainController {
                     body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
                     logger.debug("회원가입 실패!");
                 }
-            } else if(path.equals("/user/list")) {
-                if(clientSessionId != null && Session.containsSessionId(clientSessionId)) {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/list.html").toPath());
-                }
-                else {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/login.html").toPath());
-                }
-            }
-            else {
+            } else {
                 if (request.getFile() != null && request.getFile().getType().equals("html"))
                     path = "./src/main/resources/templates" + path;
                 else
