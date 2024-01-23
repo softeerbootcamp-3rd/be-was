@@ -8,6 +8,7 @@ import webserver.exception.GeneralException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.Request;
+import webserver.response.Response;
 import webserver.status.ErrorCode;
 
 import java.lang.annotation.Annotation;
@@ -17,10 +18,18 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetRequestAdapter {
+public class GetRequestAdapter implements Adapter{
     private static final Logger logger = LoggerFactory.getLogger(GetRequestAdapter.class);
+    private static final GetRequestAdapter getRequestAdapter = new GetRequestAdapter();
 
-    public static Object run(Request request) throws Throwable {
+    private GetRequestAdapter(){}
+
+    public static GetRequestAdapter getInstance(){
+        return getRequestAdapter;
+    }
+
+    @Override
+    public Response run(Request request) throws Throwable {
         List<Class<?>> classes = getControllerClasses();
         Method method = findMethod(classes, request.getPath());
 
@@ -31,10 +40,21 @@ public class GetRequestAdapter {
         Object[] params = createParams(method, request);
 
         try {
-            return executeMethod(method, params);
+            Object o = executeMethod(method, params);
+
+            if(o instanceof Response){
+                return (Response) o;
+            }
+
+            return null;
         } catch (InvocationTargetException e){
             throw e.getTargetException();
         }
+    }
+
+    @Override
+    public boolean canRun(Request request) {
+        return request.getMethod().equals("GET");
     }
 
     private static Object executeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
