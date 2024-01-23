@@ -14,6 +14,6 @@ public class UserController implements Controller{
         User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
         database.addUser(user);
 
-        return "redirect:/user/login";
+        return "redirect:/index";
     }
 }
