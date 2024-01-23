@@ -2,8 +2,9 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Map;
 
+import dto.Login;
+import model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -16,14 +17,9 @@ public class RequestHandler implements Runnable {
     private static final UserService userService = new UserService();
     private Socket connection;
     private static String USER_CREATE_PATH = "/user/create";
-    private static final String INDEX_HTML_PATH = "/index.html";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-    }
-
-    private boolean isUserRegistrationRequest(String path) {
-        return path.contains(USER_CREATE_PATH);
     }
 
     public void run() {
@@ -34,21 +30,32 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             HttpRequestParser parser = new HttpRequestParser();
-            Map<String, String> map = parser.parseHttpRequest(in);
-            HttpRequest httpRequest = new HttpRequest(map);
+            HttpRequest httpRequest = new HttpRequest(parser.parseHttpRequest(in));
             HttpResponseSender responseSender = new HttpResponseSender();
             logger.debug(httpRequest.toString());
 
-            //TODO: GET, POST 분리
-            if(httpRequest.getMethod().equals("POST")){ //회원가입
-                userService.registerUser(httpRequest.toUserDto());
-                logger.debug("New User Registered!");
-                responseSender.redirectToHomePage(dos);
+            //TODO: 회원가입과 로그인 분리
+            String path = httpRequest.getPath();
+            if(httpRequest.getMethod().equals("POST")){
+                if(path.contains(USER_CREATE_PATH)){    //회원가입
+                    userService.registerUser(httpRequest.toUserDto());
+                    logger.debug("New User Registered!");
+                    responseSender.redirectToHomePage(dos);
+                }
+                else{
+                    Login loginInfo = httpRequest.getLoginInfo();
+                    if(userService.isValidUser(loginInfo)){  //로그인 성공
+                        Session session = userService.login(loginInfo);
+                        //리다이렉션
+                        responseSender.redirectToHomePage(dos, session.getSessionId(), session.getExpireDate());
+                    }
+                    else{   //로그인 실패
+                        logger.debug("{} 로그인 실패", loginInfo.getUserId());
+                        responseSender.redirectToLoginFailedPage(dos);
+                    }
+                }
             }
             else{
-                String path = httpRequest.getPath();
-                logger.debug("Path: {}", path);
-                logger.debug("MIME: {}", httpRequest.getResponseMimeType());
                 byte[] body = new FileLoader().loadFileContent(path, httpRequest.getResponseMimeType());
                 responseSender.sendHttpResponse(dos, body.length, body, httpRequest.getResponseMimeType());
             }
