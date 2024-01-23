@@ -38,17 +38,20 @@ public class UserService {
      * @param params 로그인 정보 파라미터
      * @return 정보가 올바르면 false, 올바르지 않으면 true
      */
-    public boolean loginFail(Map<String, String> params) {
+    public User findUser(Map<String, String> params) {
         try {
             String userId = params.get("userId");
             String password = params.get("password");
             if (userId.isEmpty() || password.isEmpty()) {
-                return true;
+                throw new IllegalArgumentException();
             }
             User user = Database.findUserById(userId);
-            return !user.getPassword().equals(password);
+            if (!user.getPassword().equals(password)) {
+                throw new IllegalArgumentException();
+            }
+            return user;
         } catch (NullPointerException e) {
-            return true;
+            throw new NullPointerException();
         }
     }
 }

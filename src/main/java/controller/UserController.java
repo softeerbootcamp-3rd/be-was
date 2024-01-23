@@ -4,9 +4,11 @@ import java.util.HashMap;
 import model.Request;
 import model.Response;
 import java.util.Map;
+import model.User;
 import service.UserService;
 import utils.PageReader;
 import utils.ParamBuilder;
+import webserver.Session;
 
 public class UserController implements Controller {
 
@@ -31,13 +33,16 @@ public class UserController implements Controller {
      */
     private Response loginUser(Request request) {
         Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
-        if (userService.loginFail(params)) {
+        try {
+            User user = userService.findUser(params);
+            String sid = Session.generateSessionId();
+            Session.addSession(sid, user);
+            String location = "/";
+            return new Response(302, location, Map.of("sid", sid));
+        } catch (Exception e) {
             String location = "/user/login_failed.html";
             return new Response(302, location);
         }
-        String sid = "123456";
-        String location = "/";
-        return new Response(302, location, Map.of("sid", sid));
     }
 
     /**
