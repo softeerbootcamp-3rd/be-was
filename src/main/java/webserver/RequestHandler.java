@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
+import DTO.HttpStatus;
 import DTO.Request;
 import DTO.Response;
 import HandlerMapping.HandlerMapping;
@@ -39,17 +40,15 @@ public class RequestHandler implements Runnable {
             HandlerMapping handlerMapping = new HandlerMapping(Request);
             Response response = handlerMapping.Controller();
 
-            response200Header(dos, response.Getbody().length, response.GetreturnType());
-            responseBody(dos, response.Getbody());
+            sendResponse(Request,response,dos);
+            //response200Header(dos, response.getBody().length, response.getReturnType());
+            //responseBody(dos, response.getBody());
 
-
-            ///
 
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    ///
 
     private Request MakeRequest(InputStream inputStream) throws IOException {
         Request Request = new Request();
@@ -90,10 +89,10 @@ public class RequestHandler implements Runnable {
             }
         }
 
-        Request.SetBody(requestBuilder.toString());
+        Request.SetBody(bodyJson.toString());
 
-        System.out.println(requestBuilder.toString());
-        // prints all the requests
+        logger.debug(requestBuilder.toString());
+
         return Request;
     }
     private String getRequestMethod(String request) {
@@ -135,5 +134,42 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+
+    public static void responseRedirectWithoutBody(DataOutputStream dos, Request request, Response response) throws IOException {
+        dos.writeBytes(request.GetVersion() + " " + response.getStatus().getStatusCode() + " " + response.getStatus().getMessage() + "\r\n");
+        dos.writeBytes("Location: " + response.getRedirectUrl() + "\r\n");
+        dos.writeBytes("\r\n");
+        dos.flush();
+    }
+
+    public static void responseOKWithBody(DataOutputStream dos, Request request, Response response) throws IOException {
+        String contentType = response.getReturnType();
+
+        dos.writeBytes(request.GetVersion() + " " + response.getStatus().getStatusCode() + " " + response.getStatus().getMessage() + "\r\n");
+        dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
+        dos.writeBytes("Content-Length: " + response.getBody().length + "\r\n");
+        dos.writeBytes("\r\n");
+        dos.write(response.getBody(), 0, response.getBody().length);
+        dos.flush();
+    }
+
+    public static void responseWithoutBody(DataOutputStream dos, Request request, Response response) throws IOException {
+        dos.writeBytes(request.GetVersion() + " " + response.getStatus().getStatusCode() + " " + response.getStatus().getMessage() + "\r\n");
+        dos.writeBytes("\r\n");
+        dos.flush();
+    }
+
+    private void sendResponse(Request request, Response response, DataOutputStream dos) throws IOException {
+        if (response.getStatus() == HttpStatus.REDIRECT) {
+            responseRedirectWithoutBody(dos, request, response);
+            return;
+        }
+        if (response.getStatus() == HttpStatus.OK) {
+            responseOKWithBody(dos, request, response);
+            return;
+        }
+        responseWithoutBody(dos, request, response);
     }
 }
