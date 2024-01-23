@@ -20,37 +20,15 @@ public class HttpRequest {
     private String accept;
     private Integer contentLength;
     private Map<String, String> requestParam = new HashMap<>();
-
     private Map<String, String> formData = new HashMap<>();
 
     public String getMethod() {
         return method;
     }
-
     public String getUrl() {
         return url;
     }
-
-    public String getHttpVersion() {
-        return httpVersion;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public String getConnection() {
-        return connection;
-    }
-
-    public String getAccept() {
-        return accept;
-    }
-
-    public Integer getContentLength() { return contentLength; }
-
     public Map<String, String> getRequestParam() { return requestParam; }
-
     public Map<String, String> getFormData() { return formData; }
 
 
