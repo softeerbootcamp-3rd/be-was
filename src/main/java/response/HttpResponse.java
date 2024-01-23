@@ -1,8 +1,6 @@
 package response;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.*;
 
 import static util.MimeType.getMimeType;
 
@@ -17,10 +15,10 @@ public class HttpResponse {
         this.body = null;
     }
 
-    public HttpResponse(String path) throws IOException {
-        this.contentType = getContentType(path);
+    public HttpResponse(String filePath) throws IOException {
+        this.contentType = getContentType(filePath);
         this.redirectUri = null;
-        this.body = readFileInBytes(Path.of(path));
+        this.body = readFileInBytes(filePath);
     }
 
     public Integer getBodyLength() {
@@ -39,8 +37,16 @@ public class HttpResponse {
         return body;
     }
 
-    private static byte[] readFileInBytes(Path filePath) throws IOException { // 파일을 읽어서 byte[]로 반환
-        return Files.readAllBytes(filePath);
+    private static byte[] readFileInBytes(String filePath) throws IOException { // 파일을 읽어서 byte[]로 반환
+        File file = new File(filePath);
+
+        FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        byte[] buffer = new byte[(int) file.length()];
+        bis.read(buffer);
+
+        return buffer;
     }
 
     private static String getContentType(String file) { // 파일의 확장자에 따라 Content-Type을 결정

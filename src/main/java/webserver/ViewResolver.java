@@ -13,17 +13,19 @@ public final class ViewResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(ViewResolver.class);
 
-    public static void response(StatusCode status, String path, OutputStream out) throws IOException {
+    public static void response(StatusCode status, String filePath, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
         if (status.getStatus() == 200) {
-            HttpResponse httpResponse = new HttpResponse(path);
+            HttpResponse httpResponse = new HttpResponse(filePath);
             response200Header(dos, httpResponse.getBodyLength(), httpResponse.getContentType());
             responseBody(dos, httpResponse.getBody());
+            return;
         }
         if (status.getStatus() == 302) {
-            HttpResponse httpResponse = new HttpResponse(path, "/index.html");
+            HttpResponse httpResponse = new HttpResponse("text/html", "/index.html"); //todo: redirectUri를 어떻게 처리할지 고민
             response302Header(dos, httpResponse.getRedirectUri());
+            return;
         }
         if (status.getStatus() == 404) {
             response404Header(dos);

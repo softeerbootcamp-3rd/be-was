@@ -3,6 +3,8 @@ package controller;
 import request.HttpRequest;
 import util.StatusCode;
 
+import java.io.File;
+
 import static util.Uri.*;
 import static util.StatusCode.*;
 
@@ -21,13 +23,17 @@ public class HomeController implements Controller {
 
     @Override
     public StatusCode handleUserRequest(HttpRequest httpRequest) {
-        String URI = httpRequest.getUri();
+        String uri = httpRequest.getUri();
+        String filePath = httpRequest.getFilePath(uri);
+        String method = httpRequest.getMethod();
 
-        if (URI.equals(HOME.getUrl())) {
-            return FOUND;
-        }
-        else {
+        File file = new File(filePath);
+
+        if (file.exists() && method.equals("GET")) {
+            if (uri.equals(HOME.getUri())) return FOUND;
             return OK;
         }
+
+        return NOT_FOUND;
     }
 }

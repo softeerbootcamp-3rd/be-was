@@ -2,8 +2,6 @@ package request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,10 +63,10 @@ public class HttpRequest {
         this.requestBody = String.valueOf(body);
     }
 
-    public Path getFilePath(String path) {
+    public String getFilePath(String path) {
         if (path.endsWith(".html")) {
-            return Paths.get("src/main/resources/templates", path);
+            return "src/main/resources/templates" + path;
         }
-        return Paths.get("src/main/resources/static", path);
+        return "src/main/resources/static" + path;
     }
 }
