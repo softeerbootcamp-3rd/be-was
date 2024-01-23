@@ -16,7 +16,6 @@ public class UserCreateService {
     }
 
     public void makeNewUser(UserCreateRequest userCreateRequest) {
-//        validate(userCreateRequest);
 
         if (checkDuplicateUserId(userCreateRequest.getUserId())) {
             ResponseThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, new HashMap<>(), "userId is duplicate".getBytes());
