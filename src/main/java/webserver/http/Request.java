@@ -1,5 +1,7 @@
 package webserver.http;
 
+import utils.RequestBodyParse.RequestBodyParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ public class Request {
     private final ArrayList<String> headerContent = new ArrayList<>();
     private final ArrayList<String> bodyContent= new ArrayList<>();
     private final HashMap<String, String> requestHeader = new HashMap<>();
-    private final HashMap<String, String> requestBody = new HashMap<>();
+    private HashMap<String, String> requestBody;
 
     public Request(BufferedReader br) throws IOException {
         parseRequest(br);
@@ -44,13 +46,14 @@ public class Request {
         }
     }
     private void parseRequestBody() {
-        System.out.println("parsed request body size : " + bodyContent.size());
-        for(int i = 0;i < bodyContent.size();i++) {
-            if(bodyContent.get(i).isEmpty())
-                break;
-
-
+        if(bodyContent.isEmpty())
+        {
+            requestBody = new HashMap<>();
+            return;
         }
+
+        RequestBodyParser requestBodyParser = new RequestBodyParser(bodyContent);
+        requestBody = (HashMap<String, String>) requestBodyParser.contentTypeBodyParse(ContentType.convertContentType(requestHeader.get("Content-Type")));
     }
 
 

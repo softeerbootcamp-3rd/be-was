@@ -31,6 +31,10 @@ public class RequestHandler {
     }
 
     private void handleUserCreate(Request request) {
+        //del
+        if(true)
+            return;
+
         String data = request.getRequestTarget().split("\\?")[1];
         UserFormDataParser userFormDataParser = new UserFormDataParser(data);
         HashMap<String,String> formData = new HashMap<>(userFormDataParser.parseData());
