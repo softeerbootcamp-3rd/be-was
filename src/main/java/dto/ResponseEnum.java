@@ -18,10 +18,10 @@ public enum ResponseEnum {
             response302Header(httpResponseDto, dos);
         }
     },
-    BAD_REQUEST(404) {
+    BAD_REQUEST(400) {
         @Override
         public void writeResponse(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto, DataOutputStream dos) throws IOException {
-            response404Header(httpResponseDto, httpRequestDto, dos);
+            response400Header(httpResponseDto, httpRequestDto, dos);
             responseBody(httpResponseDto, dos);
         }
     },
@@ -73,8 +73,8 @@ public enum ResponseEnum {
     }
 
     // 404에 해당하는 response header 작성
-    private static void response404Header(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto, DataOutputStream dos) throws IOException{
-        dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
+    private static void response400Header(HTTPResponseDto httpResponseDto, HTTPRequestDto httpRequestDto, DataOutputStream dos) throws IOException{
+        dos.writeBytes("HTTP/1.1 400 Bad Request\r\n");
         dos.writeBytes("Connection: close\r\n");
         dos.writeBytes("Content-Type: " + httpRequestDto.getAccept() + ";charset=utf-8\r\n");
         dos.writeBytes("\r\n");
