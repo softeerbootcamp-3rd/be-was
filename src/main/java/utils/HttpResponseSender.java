@@ -5,12 +5,18 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class HttpResponseSender {
     private static final Map<String, String> MIME_TYPE = new HashMap<>();
     private static final String INDEX_HTML_PATH = "/index.html";
+    private static final String LOGIN_FAILED_PATH = "/user/login_failed.html";
     private static final Logger logger = LoggerFactory.getLogger(HttpResponseSender.class);
 
     public HttpResponseSender() {
@@ -41,6 +47,16 @@ public class HttpResponseSender {
         flushResponse(dos);
     }
 
+    public void redirectToHomePage(DataOutputStream dos, String sessionId, LocalDateTime expireDate) {
+        create302FoundResponseHeader(dos, sessionId, expireDate);
+        flushResponse(dos);
+    }
+
+    public void redirectToLoginFailedPage(DataOutputStream dos) {
+        create302FoundResponseHeader(dos, LOGIN_FAILED_PATH);
+        flushResponse(dos);
+    }
+
     private void create200OKResponseHeader(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
@@ -49,6 +65,16 @@ public class HttpResponseSender {
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error("Error logging response making header: {}", e.getMessage());
+        }
+    }
+
+    private void create302FoundResponseHeader(DataOutputStream dos, String sessionId, LocalDateTime expireDate) {
+        try {
+            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dos.writeBytes("Location: " + INDEX_HTML_PATH + "\r\n");
+            dos.writeBytes("Set-Cookie: sid=" + sessionId + "; Expires=" + formattingDate(expireDate) + "; Path=/");
+        } catch (IOException e) {
+            logger.error("Error logging response: {}", e.getMessage());
         }
     }
 
@@ -77,6 +103,11 @@ public class HttpResponseSender {
         } catch (IOException e) {
             logger.error("Error logging response body: {}", e.getMessage());
         }
+    }
+
+    private String formattingDate(LocalDateTime date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zz", Locale.ENGLISH);
+        return date.atZone(ZoneId.of("Asia/Seoul")).format(formatter);
     }
 
 }
