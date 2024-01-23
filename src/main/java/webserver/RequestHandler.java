@@ -3,6 +3,7 @@ package webserver;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.net.Socket;
 
@@ -13,11 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static common.config.WebServerConfig.userController;
-import static webserver.Response.getMimeType;
 import static common.response.Status.*;
-import static webserver.Response.createResponse;
 import static common.view.OutputView.*;
 import static webserver.RequestParser.*;
+import static webserver.Response.*;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -42,20 +42,23 @@ public class RequestHandler implements Runnable {
             RequestLineDto requestLineDto = parseRequestLine(line);
             printRequest(requestLineDto);
 
+            int contentLength = 0;
             while (!line.equals("")) {
                 line = br.readLine();
+                if (line.contains("Content-Length")) {
+                    contentLength = getContentLength(line);
+                }
             }
-
-            String queryString = requestLineDto.getQueryString();
 
             String mimeType = getMimeType(requestLineDto.getPath());
 
-            if (queryString == null) {
+            if (contentLength == 0) {
                 createResponse(out, OK, mimeType, requestLineDto.getPath());
             }
-            if (requestLineDto.getMethod().equals("GET") && requestLineDto.getPath().equals("/user/create")) {
+            if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/create")) {
+                String body = getRequestBody(br, contentLength);
                 try {
-                    userController.create(requestLineDto.getQueryString());
+                    userController.create(body);
                     createResponse(out, REDIRECT, mimeType, INDEX_FILE_PATH);
                 } catch (EmptyFormException e) {
                     logger.debug(e.getMessage());
@@ -69,5 +72,17 @@ public class RequestHandler implements Runnable {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private int getContentLength(String line) {
+        String[] tokens = parseRequestHeader(line);
+        String contentLength = tokens[1];
+        return Integer.parseInt(contentLength);
+    }
+
+    private String getRequestBody(BufferedReader br, int contentLength) throws IOException {
+        char[] buffer = new char[contentLength];
+        br.read(buffer, 0, contentLength);
+        return new String(buffer);
     }
 }
