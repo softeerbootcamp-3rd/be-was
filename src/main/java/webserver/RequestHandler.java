@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import controller.MainController;
@@ -10,11 +11,15 @@ import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.Util;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final HashSet<String> printedKey =  // logger.debug로 출력할 헤더값들
             new HashSet<>(Arrays.asList("Accept", "Host", "User-Agent", "Cookie"));
+    private static final HashMap<String, String> statusCodeMessage = new HashMap<>() {{
+        put("200", "OK"); put("302", "Found"); put("404", "Not Found"); }};
+
     private Socket connection;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -31,59 +36,28 @@ public class RequestHandler implements Runnable {
 
             Request request = handleRequest(br);
             Response response = MainController.control(request);
-            responseProcess(dos, response);
+            handleResponse(dos, response);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    private void responseProcess(DataOutputStream dos, Response response) {
+    private void handleResponse(DataOutputStream dos, Response response) {
+        responseHeader(dos, response);
+        if(response.getBody() != null)
+            responseBody(dos, response.getBody());
+    }
+    private void responseHeader(DataOutputStream dos, Response response) {
         String statusCode = response.getStatusCode();
-        if(statusCode.equals("200")) {
-            byte[] body = response.getBody();
-            String mimeType = response.getMimeType();
-            response200Header(dos, mimeType, body.length);
-            responseBody(dos, body);
-        }
-        else if(statusCode.equals("302")) {
-            response302Header(dos, response.getRedirectUrl());
-        }
-        else if(statusCode.equals("404")){
-            byte[] body = response.getBody();
-            String mimeType = response.getMimeType();
-            response404Header(dos, mimeType, body.length);
-            responseBody(dos, body);
-        }
-    }
-
-    private void response200Header(DataOutputStream dos,
-                                   String mimeType,
-                                   int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response302Header(DataOutputStream dos, String redirectUrl) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + redirectUrl);
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-    private void response404Header(DataOutputStream dos,
-                                   String mimeType,
-                                   int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
-            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("HTTP/1.1 " + statusCode + " " + statusCodeMessage.get(statusCode) + " \r\n");
+            if(response.getBody() != null) {
+                dos.writeBytes("Content-Type: " + response.getMimeType() + ";charset=utf-8\r\n");
+                dos.writeBytes("Content-Length: " + response.getBody().length + "\r\n");
+            }
+            else if(response.getRedirectUrl() != null){
+                dos.writeBytes("Location: " + response.getRedirectUrl());
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -118,16 +92,28 @@ public class RequestHandler implements Runnable {
             if(line == null || line.isEmpty()) break;
             String[] keyAndValue = line.split(": ");
             String key = keyAndValue[0], value = keyAndValue[1];
-            request.putHeader(key, value);
+            request.putHeader(key.toLowerCase(), value);
             if(printedKey.contains(key))
                 logger.debug(line);
         }
         return request;
     }
     private Request handleRequestBody(BufferedReader br, Request request) throws IOException {
-        String contentLength = request.getHeader().getOrDefault("Content-Length", "0");
-        if(contentLength.equals("0")) return request;
-        //TODO
+        int contentLength = Integer.parseInt(request.getHeader().getOrDefault("content-length", "0"));
+        if(contentLength == 0) return request;
+        String contentType = request.getHeader().get("content-type");
+        char[] body = new char[contentLength];
+        br.read(body);
+
+        if("application/x-www-form-urlencoded".equals(contentType)) {
+            HashMap<String, String> hashMap = Util.parseQueryString(new String(body));
+            request.setBody(hashMap);
+        }
+        else if("application/json".equals(contentType)) {
+            HashMap<String, String> hashMap = Util.parseStringJson(new String(body));
+            request.setBody(hashMap);
+        }
+
         return request;
     }
 }

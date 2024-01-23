@@ -58,7 +58,17 @@ public class MainController {
             }
         }
         else if(method.equals("POST")) {
-            //TODO
+            User user = UserService.create(new UserInfo(request.getBody()));
+            if (user != null) {
+                statusCode = "302";
+                redirectUrl = "/index.html";
+                logger.debug("회원가입 성공!  " + user.toString());
+            }
+            else {
+                statusCode = "200";
+                body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
+                logger.debug("회원가입 실패!");
+            }
         }
         else if(method.equals("PATCH")) {
             //TODO

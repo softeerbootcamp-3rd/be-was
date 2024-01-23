@@ -1,5 +1,7 @@
 package model;
 
+import util.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,8 +31,8 @@ public class Request {
     public Request() {
         this.header = new HashMap<>();
         this.param = new HashMap<>();
-        this.body = new HashMap<>();
     }
+    public void setBody(HashMap<String, String> body) {this.body = body;}
     public void parseStartLine(String line) {
         String[] tokens = line.split(" ");
         this.method = tokens[0];
@@ -50,7 +52,7 @@ public class Request {
             param = new HashMap<>();
             String queryString = target.substring(indexOfParameter + 1);
             if(!queryString.isEmpty())
-                this.parseQueryString(queryString);
+                this.param = Util.parseQueryString(queryString);
             target = target.substring(0, indexOfParameter);
         }
         return target;
@@ -65,14 +67,14 @@ public class Request {
     }
     public void putHeader(String key, String value) {
         this.header.put(key, value);
-        if (key.equals("Accept"))
+        if (key.equals("accept"))
             this.mimeType = parseAcceptHeader(value);
     }
     public void putBody(String key, String value) {
         this.body.put(key, value);
     }
     private String parseAcceptHeader(String value) {
-        String[] types = this.header.get("Accept").split(",");
+        String[] types = this.header.get("accept").split(",");
         return types[0];
     }
     private void parseFile(String target) {
@@ -87,15 +89,5 @@ public class Request {
     @Override
     public String toString() {
         return "[method= " + method + ", target= " + target + ", version= " + version + "]";
-    }
-
-    private void parseQueryString(String queryString) {
-        String[] keyAndValue = queryString.split("&");
-        for(String keyValue : keyAndValue) {
-            int indexOfEqual = keyValue.indexOf("=");
-            String key = keyValue.substring(0, indexOfEqual);
-            String value = keyValue.substring(indexOfEqual+1);
-            param.put(key, value);
-        }
     }
 }
