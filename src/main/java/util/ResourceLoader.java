@@ -24,22 +24,39 @@ public class ResourceLoader {
 
         File file = new File(url + directory + resourcePath);
 
-        try (InputStream inputStream = new FileInputStream(file);
-             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream)) {
+        // 파일을 한번에 읽는 코드
+//        try (InputStream inputStream = new FileInputStream(file);
+//             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream)) {
+//
+//            byte[] buffer = new byte[(int) file.length()];
+//            bufferedInputStream.read(buffer);
+//            return buffer;
+//        }
 
-            byte[] buffer = new byte[(int) file.length()];
-            bufferedInputStream.read(buffer);
-            return buffer;
-        }
-//         라인 단위로 읽는 코드
+        // 라인 단위로 읽는 코드
 //        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 //            StringBuilder content = new StringBuilder();
 //            String line;
 //            while ((line = reader.readLine()) != null) {
 //                content.append(line).append(System.lineSeparator());
 //            }
-//            return content.toString().getBytes(StandardCharsets.UTF_8);
+//            content.append("\r\n");
+//            return content.toString().getBytes();
 //        }
+
+        // 바이트 단위로 읽는 코드
+        try (InputStream inputStream = new FileInputStream(file)) {
+            // 파일 내용을 바이트 배열로 읽어오기
+            byte[] buffer = new byte[(int) file.length()];
+            int bytesRead = inputStream.read(buffer);
+
+            // bytesRead가 -1이 아니면 계속 읽기
+            while (bytesRead != -1) {
+                bytesRead = inputStream.read(buffer);
+            }
+
+            return buffer;
+        }
     }
 
     public static String getResourceType(String targetUrl) {
