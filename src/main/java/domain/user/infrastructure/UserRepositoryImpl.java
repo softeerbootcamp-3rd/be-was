@@ -6,6 +6,7 @@ import static common.db.Database.Users;
 import domain.user.command.domain.User;
 import domain.user.command.domain.UserRepository;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
@@ -25,13 +26,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void saveSession(String userId, String sessionId) {
-        SessionStorage().put(userId, sessionId);
+    public void saveSession(String sessionId, String userId) {
+        SessionStorage().put(sessionId, userId);
     }
 
     @Override
     public Optional<String> getSessionIdByUserId(String userId) {
-        return Optional.ofNullable(SessionStorage().get(userId));
+        return SessionStorage().entrySet().stream()
+            .filter(entry -> entry.getValue().equals(userId))
+            .map(Entry::getKey)
+            .findFirst();
     }
 
     @Override
