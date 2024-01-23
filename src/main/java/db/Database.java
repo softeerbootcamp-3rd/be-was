@@ -25,4 +25,9 @@ public class Database {
     public static void deleteUserById(String userId) {
         users.remove(userId);
     }
+
+    public static void updateUserSession(String userId, String sessionId) {
+        User user = findUserById(userId);
+        user.setSessionId(sessionId);
+    }
 }
