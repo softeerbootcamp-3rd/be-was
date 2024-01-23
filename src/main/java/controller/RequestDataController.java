@@ -10,6 +10,7 @@ import webserver.RequestHandler;
 import data.Response;
 
 import java.io.File;
+import java.util.Locale;
 
 import static util.RequestParserUtil.getFileExtension;
 import static util.ResourceLoader.getResourceType;
@@ -30,15 +31,11 @@ public class RequestDataController {
         String extension = getFileExtension(url);
 
         try {
-            File file;
-
-            String directory = ResourcePathMapping.getDirectory(extension);
-
-            file = new File(ResourceLoader.url + directory + url);
-
             String fileOrApi = getResourceType(url); // URL이 FILE을 나타내는지 API를 나타내는지 문자열로 반환
 
             if (fileOrApi.equals("FILE")) {
+                String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
+                File file = new File(ResourceLoader.url + directory + url);
                 if (file.exists() && !file.isDirectory()) {
                     if (url.equals("/user/login.html")) {
                         if (requestData.getHeaderValue("Cookie") != null) {

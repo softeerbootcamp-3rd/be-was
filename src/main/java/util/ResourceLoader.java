@@ -1,6 +1,6 @@
 package util;
 
-import controller.ResourcePathMapping;
+import controller.ResourceMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class ResourceLoader {
         logger.debug("resourcePath: " + resourcePath);
 
         String extension = getFileExtension(resourcePath);
-        String directory = ResourcePathMapping.getDirectory(extension);
+        String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
 
         File file = new File(url + directory + resourcePath);
 

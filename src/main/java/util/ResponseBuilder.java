@@ -1,6 +1,6 @@
 package util;
 
-import controller.ResourcePathMapping;
+import controller.ResourceMapping;
 import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class ResponseBuilder {
         String cookie = response.getCookie();
 
         String extension = RequestParserUtil.getFileExtension(targetPath);
-        String contentType = ResourcePathMapping.getContentType(extension);
+        String contentType = ResourceMapping.valueOf(extension.toUpperCase()).getContentType();
 
         byte[] body;
 
