@@ -3,6 +3,7 @@ package webserver.adapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.adapter.GetRequestAdapter;
+import webserver.exception.GeneralException;
 import webserver.request.Request;
 import webserver.response.Response;
 
@@ -19,6 +20,16 @@ class GetRequestAdapterTest {
         Response result = getRequestAdapter.run(request);
 
         assertEquals(true, isSame("test".getBytes(), result.getBody()));
+    }
+
+    @Test
+    @DisplayName("/tes1t를 요청할 시 예외 발생 테스트")
+    void requestTes1tMethodTest() throws Throwable {
+        Request request = Request.of("GET", "/test1", "HTTP/1.1");
+
+        assertThrows(GeneralException.class, () -> {
+            Response result = getRequestAdapter.run(request);
+        });
     }
 
     @Test
