@@ -13,4 +13,9 @@ public class Parameter {
     public Map<String, String> getValues() {
         return values;
     }
+
+    public String getValue(String key) {
+        return values.get(key);
+    }
+
 }

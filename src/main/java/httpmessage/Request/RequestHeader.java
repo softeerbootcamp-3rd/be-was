@@ -9,6 +9,7 @@ public class RequestHeader {
     private String upgradeInsecureRequests;
 
     private StringBuilder body;
+    private String cookie;
 
 
 

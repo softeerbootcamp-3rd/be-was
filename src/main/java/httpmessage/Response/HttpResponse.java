@@ -9,12 +9,17 @@ public class HttpResponse {
     String contentType;
     String redirectPath;
 
+    String sid = null;
 
     public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
         this.body = body;
         this.statusCode = statusCode;
         this.statusLine = statusLine;
         this.contentType = contentType;
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid;
     }
 
     public void setPath(String path) {
@@ -50,4 +55,8 @@ public class HttpResponse {
     }
 
     public String getPath() { return this.redirectPath; }
+
+    public String getSid() {
+        return this.sid;
+    }
 }

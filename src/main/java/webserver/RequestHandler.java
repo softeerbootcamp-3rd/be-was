@@ -62,7 +62,11 @@ public class RequestHandler implements Runnable {
 
     void response302Header(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
         dos.writeBytes("HTTP/1.1 302 Found\r\n");
-        dos.writeBytes("Location: "+ httpResponse.getPath());
+        dos.writeBytes("Location: "+ httpResponse.getPath() + "\r\n");
+
+        if(!httpResponse.getSid().isEmpty()){
+            dos.writeBytes("Set-Cookie: "+"sid="+httpResponse.getSid()+ ";" + "Path=/");
+        }
         dos.writeBytes("\r\n");
         dos.flush();
     }

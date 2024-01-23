@@ -19,6 +19,9 @@ public class HttpRequest {
     public Map<String, String> getParmeter() {
         return parameter.getValues();
     }
+    public String getParmeter(String key) {
+        return parameter.getValue(key);
+    }
 
     public String getPath(){
         return this.requestHeader.getPath();
