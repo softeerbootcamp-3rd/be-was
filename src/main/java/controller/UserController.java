@@ -25,5 +25,22 @@ public class UserController {
                 .build();
     }
 
+    @PostMapping(path = "/user/login")
+    public static Response login(@RequestParam(name = "userId") String userId,
+                                 @RequestParam(name = "password") String password) {
+        User user = Database.findUserById(userId);
+
+        if (!user.getPassword().equals(password)) {
+            return new Response.Builder()
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+
+        return new Response.Builder()
+                .httpStatus(HttpStatus.FOUND)
+                .body("/index.html")
+                .build();
+    }
+
 }
 
