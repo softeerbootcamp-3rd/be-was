@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UrlParser {
+public class Parser {
     public static Map<String, String> parseQueryString(String queryString) {
         String decodedQuery = decodeQuery(queryString);
         Map<String, String> queryParams = new HashMap<>();

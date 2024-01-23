@@ -7,7 +7,7 @@ import model.User;
 
 import java.util.Map;
 
-import static util.UrlParser.parseQueryString;
+import static util.Parser.parseQueryString;
 
 public class UserController extends Controller {
     @Override
