@@ -73,6 +73,10 @@ public class RequestHandler implements Runnable {
             contentLength -= bytesRead;
         }
 
+        if (headerMap.get("Content-Type").startsWith("application/x-www-form-urlencoded")) {
+            setRequestParamFromQuery(request, sb.toString());
+        }
+
         request.setBody(sb.toString());
     }
 
