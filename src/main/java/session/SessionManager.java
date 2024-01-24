@@ -14,7 +14,6 @@ public class SessionManager {
     public String createSession(User user) {
         String sessionId = UUID.randomUUID().toString();
         sessionRepository.put(sessionId, user);
-        System.out.println(sessionRepository.size());
         return sessionId;
     }
 

@@ -10,6 +10,7 @@ public class ControllerMappingMap {
         controllerMappingMap.put("resource", new ResourceController());
         controllerMappingMap.put("POST /user/create", new MemberJoinController());
         controllerMappingMap.put("POST /user/login", new MemberLoginController());
+        controllerMappingMap.put("POST /user/logout", new MemberLogoutController());
     }
 
     public static Controller getController(String method, String url) {

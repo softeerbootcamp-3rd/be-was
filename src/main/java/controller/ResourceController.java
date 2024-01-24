@@ -8,6 +8,7 @@ import session.SessionManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +43,10 @@ public class ResourceController implements Controller {
                 byte[] body = Files.readAllBytes(new File(url).toPath());
 
                 User loginUser = sessionManager.getUserBySessionId(request);
-                if (loginUser != null) {
-                    System.out.println(loginUser);
-                    String content = new String(body);
+                if (loginUser != null && url.endsWith(".html")) {
+                    String content = new String(body, StandardCharsets.UTF_8);
                     String replacedBody = replaceWord(content, "로그인", loginUser.getName());
-                    body = replacedBody.getBytes();
+                    body = replacedBody.getBytes(StandardCharsets.UTF_8);
                 }
 
                 headers.put("Content-Type", getContentType(url));
