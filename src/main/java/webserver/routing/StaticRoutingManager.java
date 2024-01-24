@@ -1,6 +1,6 @@
 package webserver.routing;
 
-import utils.FileUtil;
+import utils.ResourceReader;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.enums.ContentType;
 import webserver.http.response.HttpResponse;
@@ -12,10 +12,10 @@ import java.io.IOException;
 public class StaticRoutingManager {
     public static HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.getPath();
-        byte[] body = FileUtil.getFileContents(path);
+        byte[] body = ResourceReader.getFileContents(path);
 
         if (body != null) {
-            String fileExtension = FileUtil.getFileExtension(path);
+            String fileExtension = ResourceReader.getFileExtension(path);
             ContentType contentType = ContentType.toContentType(fileExtension);
 
             HttpResponse httpResponse = new HttpResponseBuilder().createSuccessResponse(HttpStatus.OK, body);

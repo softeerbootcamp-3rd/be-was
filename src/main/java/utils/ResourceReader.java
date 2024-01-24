@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class FileUtil {
+public class ResourceReader {
     private static final String BASIC_PATH = "./src/main/resources/templates";
     private static final String STATIC_PATH = "./src/main/resources/static";
 
