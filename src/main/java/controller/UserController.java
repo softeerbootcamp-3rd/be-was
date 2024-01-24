@@ -17,4 +17,8 @@ public class UserController {
     public static HttpResponse signup(HttpRequest request) {
         return userService.createUser(request.getBody());
     }
+
+    public static HttpResponse login(HttpRequest request) {
+        return userService.join(request.getBody());
+    }
 }
