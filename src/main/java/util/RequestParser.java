@@ -34,14 +34,28 @@ public class RequestParser {
             requestDto.addHeader(keyAndValue[0], keyAndValue[1]);
         }
 
-        getBody(requestDto, br);
+        readCookie(requestDto);
+        readBody(requestDto, br);
 
         logger.debug(requestDto.headersToString());
 
         return requestDto;
     }
 
-    private static void getBody(RequestDto requestDto, BufferedReader br) throws IOException {
+    private static void readCookie(RequestDto requestDto) {
+        String cookies;
+        if ((cookies = requestDto.getCookieHeader()) != null) {
+            String[] arr = cookies.split(";");
+            for (String cookie : arr) {
+                String[] keyAndValue = cookie.split("=");
+                if (keyAndValue.length == 2) {
+                    requestDto.addCookie(keyAndValue[0], keyAndValue[1]);
+                }
+            }
+        }
+    }
+
+    private static void readBody(RequestDto requestDto, BufferedReader br) throws IOException {
         Integer length = requestDto.getContentLength();
 
         // request 에 body 가 없는 경우
