@@ -3,9 +3,8 @@ package util;
 import util.http.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class ResourceUtils {
     private static final String TEMPLATES = "./src/main/resources/templates";
@@ -15,20 +14,20 @@ public class ResourceUtils {
         try {
             String path = httpRequest.getPath();
 
-            byte[] body = Files.readAllBytes(getFilePath(path));
+            byte[] body = Files.readAllBytes(getFileFromPath(path));
             String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, contentType)
                     .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
                     .body(body);
-        } catch (NotFoundException e) {
-            return notFoundExceptionHandler();
+        } catch (FileNotFoundException e) {
+            return FileNotFoundExceptionHandler();
         }
     }
 
-    private static ResponseEntity<?> notFoundExceptionHandler() throws IOException {
-        byte[] body = Files.readAllBytes(getFilePath("/notfound.html"));
+    private static ResponseEntity<?> FileNotFoundExceptionHandler() throws IOException {
+        byte[] body = Files.readAllBytes(getFileFromPath("/notfound.html"));
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
@@ -36,7 +35,7 @@ public class ResourceUtils {
                 .body(body);
     }
 
-    private static Path getFilePath(String path) {
+    private static File getFileFromPath(String path) {
         if (path.equals("/"))
             path = "/index.html";
 
@@ -50,10 +49,7 @@ public class ResourceUtils {
         } else
             file = new File(STATIC + path);
 
-        if (!file.exists())
-            throw new NotFoundException();
-
-        return file.toPath();
+        return file;
     }
 
     private static String getExtension(String path) {
