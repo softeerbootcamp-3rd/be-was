@@ -1,15 +1,11 @@
 package service;
 
 import db.Database;
-import http.response.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import http.HttpStatus;
 import webserver.RequestHandler;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**

@@ -2,12 +2,10 @@ package controller;
 
 import http.HttpStatus;
 import http.response.HttpResponse;
-import http.request.HttpRequest;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import utils.Parser;
 
 import java.util.Map;
 
