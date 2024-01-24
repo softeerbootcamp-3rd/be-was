@@ -2,7 +2,9 @@ package service;
 
 import db.Database;
 import model.User;
+
 import java.util.Map;
+import java.util.Optional;
 
 
 public class UserService {
@@ -17,6 +19,12 @@ public class UserService {
         }
         Database.addUser(newUser);
         return true;
+    }
+
+    public boolean login(Map<String, String> bodyParams){
+        String userId = bodyParams.getOrDefault("userId", "");
+        String password = bodyParams.getOrDefault("password", "");
+        return isExistUser(userId, password);
     }
 
     private User createUser(Map<String, String> queryParams) {
@@ -34,4 +42,8 @@ public class UserService {
                 && queryParams.containsKey("email") && !queryParams.get("email").isEmpty();
     }
 
+    private boolean isExistUser(String userId, String password){
+        User existUser = Database.findUserById(userId);
+        return Optional.ofNullable(existUser).map(User::getPassword).filter(p -> p.equals(password)).isPresent();
+    }
 }
