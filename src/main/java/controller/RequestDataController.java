@@ -20,12 +20,6 @@ public class RequestDataController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestDataController.class);
 
-    private static UserService userService;
-
-    static {
-        userService = new UserService();
-    }
-
     public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
 
@@ -54,7 +48,7 @@ public class RequestDataController {
                 if (url.equals("/")) {
                     return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.startsWith("/user/create")) {
-                    userService.registerUser(requestData);
+                    UserService.registerUser(requestData);
                     return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
