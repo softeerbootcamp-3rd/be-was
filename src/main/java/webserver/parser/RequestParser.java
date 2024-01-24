@@ -47,10 +47,16 @@ public class RequestParser {
 
         while(br.ready()) {
             requestLine = br.readLine();
+            logger.debug(String.valueOf(requestLine.isEmpty()) + br.ready());
 
             if(requestLine.isEmpty()){
                 if(br.ready()) {
-                    parseBody(request, br.readLine());
+                    int contentLen = Integer.parseInt(request.getHeader("ContentLength"));
+                    char[] buf = new char[contentLen];
+
+                    br.read(buf, 0, contentLen);
+
+                    parseBody(request, String.valueOf(buf));
                 }
                 continue;
             }
@@ -92,7 +98,7 @@ public class RequestParser {
             st = new StringTokenizer(param, "=");
 
             String key = st.nextToken();
-            String value = st.nextToken();
+            String value = decode(st.nextToken());
 
             if(request.existsBody(key)){
                 throw new GeneralException(ErrorCode.ILLEGAL_ARGUMENT_ERROR);
