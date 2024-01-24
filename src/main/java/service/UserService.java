@@ -4,9 +4,8 @@ import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.SessionManager;
 import webserver.RequestHandler;
-
-import java.util.UUID;
 
 /**
  * 서비스 로직 구현
@@ -37,7 +36,11 @@ public class UserService {
         }
 
         // 세션 아이디 랜덤 생성 후 반환
-        return UUID.randomUUID().toString();
+        // 세션 아이디와 user 정보 저장 - 고민사항 : 서비스 로직에서 세션 정보 저장 or 컨트롤러에서 저장?
+        String sid = SessionManager.getSessionId();
+        SessionManager.addSession(sid, user);
+
+        return SessionManager.getSessionId();
     }
 
 }
