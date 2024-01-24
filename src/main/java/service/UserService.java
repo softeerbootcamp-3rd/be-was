@@ -2,7 +2,6 @@ package service;
 
 import db.Database;
 import dto.UserRequest;
-import webserver.exception.GeneralException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

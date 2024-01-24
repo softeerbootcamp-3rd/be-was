@@ -2,7 +2,6 @@ package webserver.adapter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.adapter.ResourceAdapter;
 import webserver.request.Request;
 import webserver.response.Response;
 
@@ -11,7 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ResourceAdapterTest {
     private final URL HTML_BASE_URL = ResourceAdapter.class.getClassLoader().getResource("./templates");

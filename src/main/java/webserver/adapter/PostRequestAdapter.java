@@ -1,6 +1,5 @@
 package webserver.adapter;
 
-import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
 import webserver.exception.GeneralException;
 import webserver.request.Request;

@@ -6,7 +6,8 @@ import webserver.exception.GeneralException;
 import webserver.request.Request;
 import webserver.response.Response;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PostRequestAdapterTest {
     private final PostRequestAdapter postRequestAdapter = PostRequestAdapter.getInstance();

@@ -2,12 +2,12 @@ package webserver.adapter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.adapter.GetRequestAdapter;
 import webserver.exception.GeneralException;
 import webserver.request.Request;
 import webserver.response.Response;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetRequestAdapterTest {
     private final GetRequestAdapter getRequestAdapter = GetRequestAdapter.getInstance();

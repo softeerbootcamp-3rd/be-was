@@ -10,7 +10,10 @@ import webserver.parser.RequestParser;
 import webserver.request.Request;
 import webserver.response.Response;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 

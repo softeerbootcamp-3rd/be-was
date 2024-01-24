@@ -1,12 +1,12 @@
 package service;
 
-import dto.UserRequest;
 import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.exception.UserIdAlreadyExistsException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserServiceTest {
     private final UserService userService = new UserService();

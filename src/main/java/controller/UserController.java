@@ -1,18 +1,14 @@
 package controller;
 
 import dto.UserRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import service.UserService;
 import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
 import webserver.annotation.RequestBody;
 import webserver.annotation.RequestParam;
-import webserver.exception.GeneralException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import service.UserService;
 import webserver.response.Response;
-import webserver.type.ContentType;
-
-import java.util.Objects;
 
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);

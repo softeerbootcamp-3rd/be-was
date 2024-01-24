@@ -3,7 +3,6 @@ package controller;
 import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
 import webserver.response.Response;
-import webserver.type.ContentType;
 
 public class TestController {
     @GetMapping(path = "/test")
