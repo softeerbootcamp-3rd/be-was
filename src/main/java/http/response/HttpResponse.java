@@ -16,9 +16,9 @@ public class HttpResponse {
     private Map<String, String> responseHeader = new HashMap<>();
     private byte[] body;
 
-    public HttpResponse(HttpStatus status, String redirect) {
+    public HttpResponse(HttpStatus status, Map<String, String> addtionalHeader) {
         this.status = status;
-        responseHeader.put("Location", redirect);
+        responseHeader.putAll(addtionalHeader);
     }
 
     public HttpResponse(HttpStatus status, String contentType, byte[] body) {
@@ -32,8 +32,9 @@ public class HttpResponse {
         this.status = status;
     }
 
-    public static HttpResponse of(HttpStatus status, String redirect) {
-        return new HttpResponse(status, redirect);
+    // TODO : redirect 처리를 헤더 추가로 변경
+    public static HttpResponse of(HttpStatus status, Map<String, String> addtionalHeader) {
+        return new HttpResponse(status, addtionalHeader);
     }
 
     public static HttpResponse of(HttpStatus status, String contentType, byte[] body) {
