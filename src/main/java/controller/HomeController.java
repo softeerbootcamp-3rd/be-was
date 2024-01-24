@@ -19,7 +19,6 @@ public class HomeController implements Controller {
         int statusCode;
         byte[] body;
 
-
         if (url.contains("404")) {
             statusCode = 404;
             String errorPageContent = "<html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1></body></html>";

@@ -13,15 +13,12 @@ public class UserLoginController implements Controller {
         String password = httpRequest.getParmeter("password");
 
         User user = Database.findUserById(userId);
-
         httpResponse.setStatusCode(302);
 
         if (user != null && user.getPassword().equals(password)) {
             // 로그인 성공
             HttpSession session = new HttpSession(user);
-
             httpResponse.setSid(session.getId());
-
             httpResponse.setPath("/index.html");
         } else {
             // 로그인 실패

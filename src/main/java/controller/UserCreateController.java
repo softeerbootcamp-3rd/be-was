@@ -3,7 +3,6 @@ package controller;
 import db.Database;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
-import httpmessage.response.ResponsePasing;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +17,15 @@ public class UserCreateController implements Controller {
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
 
         try {
-
-            makeUser(httpRequest.getParmeter(),httpRequest);
+            makeUser(httpRequest.getParmeter());
         }
         catch (NullPointerException e) {
             this.path = "/user/form_failed.html";
             logger.error("Null value detected in user information", e);
         }
-        makeHttpReponse(httpResponse);
+        makeHttpResponse(httpResponse);
     }
-    public void makeUser(Map<String,String> userInformation, HttpRequest httpRequest){
+    public void makeUser(Map<String,String> userInformation){
         Database db = new Database();
 
         String userId = userInformation.get("userId");
@@ -35,11 +33,9 @@ public class UserCreateController implements Controller {
         String name = userInformation.get("name");
         String email = userInformation.get("email");
 
-        User user = new User(userId, password, name, email);
         User userFind = db.findUserById(userId);
-
         if (userFind == null) {
-            logger.debug("user : {}",user);
+            User user = new User(userId, password, name, email);
             db.addUser(user);
             this.path = "/index.html";
         }
@@ -49,9 +45,7 @@ public class UserCreateController implements Controller {
         }
     }
 
-    public void makeHttpReponse(HttpResponse httpResponse) throws IOException {
-
-        ResponsePasing responsePasing = new ResponsePasing();
+    public void makeHttpResponse(HttpResponse httpResponse){
         int statusCode = 302;
         httpResponse.setPath(this.path);
         httpResponse.setStatusCode(statusCode);

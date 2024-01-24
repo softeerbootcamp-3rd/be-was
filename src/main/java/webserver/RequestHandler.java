@@ -26,7 +26,7 @@ public class RequestHandler implements Runnable {
             HttpResponse httpResponse = new HttpResponse();
             HttpRequest httpRequest = new HttpRequest(new HttpMesssageReader(br));
 
-            logger.debug(">>  {} >> {}", httpRequest.getPath(), httpRequest.getHttpMethod());
+            logger.debug(">> {}:{}",httpRequest.getHttpMethod(),httpRequest.getPath());
 
             FirstController firstController = new FirstController();
             firstController.service(httpRequest,httpResponse);

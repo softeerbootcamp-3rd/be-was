@@ -7,11 +7,6 @@ public class HttpResponse {
     String contentType;
     String redirectPath;
     String sid = null;
-    String extension;
-
-    public void setExtension(String path) {
-        this.extension = path.split("\\.")[path.split("\\.").length-1];
-    }
 
     public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
         this.body = body;
@@ -39,11 +34,6 @@ public class HttpResponse {
     public void setStatusLine(String line) {
         this.statusLine = line;
     }
-
-    public String getExtension() {
-        return extension;
-    }
-
     public byte[] getBody() {
         return body;
     }
