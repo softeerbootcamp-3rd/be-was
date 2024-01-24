@@ -15,7 +15,7 @@ import common.exception.EmptyFormException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static common.config.WebServerConfig.userController;
+import static webserver.WebServerConfig.userController;
 import static common.response.Status.*;
 import static common.util.Util.getSessionId;
 

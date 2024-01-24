@@ -1,4 +1,4 @@
-package common.config;
+package webserver;
 
 import controller.UserController;
 import service.UserService;

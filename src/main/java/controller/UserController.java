@@ -5,7 +5,7 @@ import dto.LoginRequest;
 import model.User;
 
 import static common.binder.Binder.bindQueryStringToObject;
-import static common.config.WebServerConfig.userService;
+import static webserver.WebServerConfig.userService;
 
 public class UserController {
 

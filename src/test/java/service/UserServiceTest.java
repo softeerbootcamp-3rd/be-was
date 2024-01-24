@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-import static common.config.WebServerConfig.userService;
+import static webserver.WebServerConfig.userService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
