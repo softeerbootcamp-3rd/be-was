@@ -13,6 +13,7 @@ public class RequestHeader {
     private String connection;
     private String accept;
     private String referer;
+    private String contentLength;
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHeader.class);
 
@@ -20,6 +21,7 @@ public class RequestHeader {
         this.method = method;
         this.path = path;
         this.protocol = protocol;
+        this.contentLength = "";
     }
 
     public String getPath() {
@@ -28,6 +30,10 @@ public class RequestHeader {
 
     public String getMethod() {
         return method;
+    }
+
+    public String getContentLength() {
+        return contentLength;
     }
 
     public static void setHeader(RequestHeader requestHeader, String key, String value) {
