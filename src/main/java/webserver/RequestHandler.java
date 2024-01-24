@@ -67,7 +67,7 @@ public class RequestHandler implements Runnable {
                 ValidatorController vc = ValidatorController.getValidatorController(requestURL);
                 Function<Map<String, String>, Boolean> validator = vc.getValidator();
                 // 유효성 검증 통과한 경우 컨트롤러에 값 전달 경우 BAD_REQUEST 반환
-                if (!validator.apply(httpRequest.getBody())) {
+                if (validator.apply(httpRequest.getBody())) {
                     Function<Map<String, String>, HttpResponse> controller = vc.getController();
                     response = controller.apply(httpRequest.getBody());
                 } else {
