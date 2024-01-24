@@ -28,12 +28,10 @@ public class dispatcherServlet implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(dispatcherServlet.class);
 
     private Socket connection;
-    private Request req;
     private final Map<String, RequestController> handlerMappingMap = new HashMap<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     public dispatcherServlet(Socket connectionSocket) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         this.connection = connectionSocket;
-        this.req = new Request();
         initHandlerMappingMap();
         initHandlerAdapters();
     }
@@ -58,20 +56,15 @@ public class dispatcherServlet implements Runnable {
 
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            getRequest(in);
+            Request req = new Request(in);
             DataOutputStream dos = new DataOutputStream(out);
             Response res = new Response(dos);
             RequestController handler = getHandler(req);
             if (handler == null) {
                 String filePath = ViewResolver.getAbsolutePath(req.getUrl());
-                File file = new File(filePath);
-                if (file.exists()) {
-                    View view = new InternalResourceView(filePath);
-                    view.render(req,res);
-                } else {
-                    RedirectView view = new RedirectView("redirect:/not-found.html");
-                    view.render(req,res);
-                }
+                View view = new InternalResourceView(filePath);
+                view.render(req,res);
+                return;
             }
             HandlerAdapter adapter = getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(req, res, handler);
@@ -106,15 +99,6 @@ public class dispatcherServlet implements Runnable {
     private boolean isPatternMatch(String pattern, String path) {
         pattern = pattern.replace("*",".*");
         return path.matches(pattern);
-    }
-
-    private void getRequest(InputStream inputStream) throws IOException {
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-        String line = bufferedReader.readLine();
-        req.setMethod(line.split(" ")[0]);
-        req.setUrl(line.split(" ")[1]);
     }
 
 }
