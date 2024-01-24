@@ -1,4 +1,4 @@
-package dto;
+package dto.response;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

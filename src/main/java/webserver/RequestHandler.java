@@ -5,8 +5,8 @@ import java.net.Socket;
 import java.net.URLDecoder;
 
 import controller.Controller;
-import dto.HTTPRequestDto;
-import dto.HTTPResponseDto;
+import dto.request.HTTPRequestDto;
+import dto.response.HTTPResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,14 +2,13 @@ package service;
 
 import config.Config;
 import db.Database;
-import dto.HTTPRequestDto;
-import dto.HTTPResponseDto;
+import dto.request.HTTPRequestDto;
+import dto.response.HTTPResponseDto;
 import model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.WebServer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +32,7 @@ class PostServiceTest {
                 "HTTP/1.1", null);
         String body = "userid=hello&password=1111&name=hello&email=hello@gmail.com";        // userid -> userId
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
+        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -48,7 +47,7 @@ class PostServiceTest {
                 "HTTP/1.1", null);
         String body = "userId=hello&password=1111&name=hello&email=";       // email이 빈 문자열로 들어온 상황
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
+        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -64,13 +63,13 @@ class PostServiceTest {
                 "HTTP/1.1", null);
         String body = "userId=hello&password=1111&name=hello&email=hello@gmail.com";
         httpRequestDto.setBody(body);
-        Config.postService.signup(httpRequestDto);
+        Config.httpPostService.signup(httpRequestDto);
         // 두 번째 유저 회원가입 처리
         httpRequestDto = new HTTPRequestDto("POST", "/user/create",
                 "HTTP/1.1", null);
         body = "userId=hello&password=2222&name=hello2&email=hello2@gmail.com";
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
+        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -86,7 +85,7 @@ class PostServiceTest {
                 "HTTP/1.1",null);
         String body = "userId=hello&password=1111&name=hello&email=hello@gmail.com";
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.postService.signup(httpRequestDto);
+        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -101,7 +100,7 @@ class PostServiceTest {
         String body = "userId=login&password=fail";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
                 "HTTP/1.1", body);
-        HTTPResponseDto actual = Config.postService.login(httpRequestDto);
+        HTTPResponseDto actual = Config.httpPostService.login(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -117,7 +116,7 @@ class PostServiceTest {
         String body = "userId=hello&password=world";
         HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
                 "HTTP/1.1", body);
-        HTTPResponseDto actual = Config.postService.login(httpRequestDto);
+        HTTPResponseDto actual = Config.httpPostService.login(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }

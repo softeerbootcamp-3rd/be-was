@@ -1,6 +1,7 @@
-package dto;
+package dto.request;
 
 import config.Config;
+import dto.response.HTTPResponseDto;
 
 import java.io.IOException;
 import java.util.Arrays;

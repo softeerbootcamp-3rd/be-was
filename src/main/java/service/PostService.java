@@ -2,8 +2,8 @@ package service;
 
 import config.Config;
 import db.Database;
-import dto.HTTPRequestDto;
-import dto.HTTPResponseDto;
+import dto.request.HTTPRequestDto;
+import dto.response.HTTPResponseDto;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

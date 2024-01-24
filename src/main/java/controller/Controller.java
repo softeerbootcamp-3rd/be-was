@@ -1,12 +1,11 @@
 package controller;
 
-import dto.GetRequestEnum;
-import dto.HTTPRequestDto;
-import dto.HTTPResponseDto;
-import dto.PostRequestEnum;
+import dto.request.GetRequestEnum;
+import dto.request.HTTPRequestDto;
+import dto.response.HTTPResponseDto;
+import dto.request.PostRequestEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.WebServer;
 
 import java.io.IOException;
 
