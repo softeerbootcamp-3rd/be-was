@@ -44,7 +44,9 @@ public class HtmlBuilder {
         }
         // status : login
         String navHtml = HtmlContent.NAV_LOGIN.getText();
-        return bodyString.replace("{{nav}}", navHtml);
+        User user = Session.getUserBySessionId(request.getHeader("Cookie"));
+        String nav = navHtml.replace("{{userName}}", user.getName());
+        return bodyString.replace("{{nav}}", nav);
     }
 
     /**
