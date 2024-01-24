@@ -32,7 +32,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             // 회원가입에 실패할 경우 (중복 아이디) CONFLICT 반환
-            return HttpResponse.of(HttpStatus.BAD_REQUEST); // TODO : CONFLICT로 수정하기
+            return HttpResponse.of(HttpStatus.CONFLICT);
         }
     }
 
