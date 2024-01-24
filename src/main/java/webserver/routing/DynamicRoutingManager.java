@@ -14,6 +14,9 @@ public class DynamicRoutingManager {
         if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/create")) {
             UserController userController = new UserController();
             return userController.signUp(httpRequest);
+        } else if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/login")) {
+            UserController userController = new UserController();
+            return userController.login(httpRequest);
         }
 
         return new HttpResponseBuilder().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
