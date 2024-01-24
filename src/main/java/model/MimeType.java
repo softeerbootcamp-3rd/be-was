@@ -1,26 +1,38 @@
 package model;
 
-import java.util.HashMap;
-import java.util.Map;
+public enum MimeType {
+    HTML("html", "text/html"),
+    CSS("css", "text/css"),
+    JS("js", "application/javascript"),
+    PNG("png", "image/png"),
+    JPG("jpg", "image/jpeg"),
+    JPEG("jpeg", "image/jpeg"),
+    SVG("svg", "image/svg+xml"),
+    EOT("eot", "application/vnd.ms-fontobject"),
+    TTF("ttf", "font/ttf"),
+    ICO("ico", "image/x-icon"),
+    WOFF("woff", "font/woff"),
+    WOFF2("woff2", "font/woff2");
 
-public class MimeType {
-    private static final Map<String, String> mimeTypes = new HashMap<>();
+    private final String extension;
+    private final String contentType;
 
-    static {
-        mimeTypes.put("html", "text/html");
-        mimeTypes.put("css", "text/css");
-        mimeTypes.put("js", "application/javascript");
-        mimeTypes.put("png", "image/png");
-        mimeTypes.put("jpg", "image/jpeg");
-        mimeTypes.put("jpeg", "image/jpeg");
-        mimeTypes.put("ico", "image/x-icon");
-        mimeTypes.put("woff", "font/woff");
-        mimeTypes.put("woff2", "font/woff2");
+    MimeType(String extension, String contentType) {
+        this.extension = extension;
+        this.contentType = contentType;
     }
 
-    public static String getContentType(String filePath) {
+    public String getContentType() {
+        return contentType;
+    }
+
+    public static String getContentTypeByExtension(String filePath) {
         String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-        return mimeTypes.getOrDefault(extension, "text/html");
+        for (MimeType mimeType : MimeType.values()) {
+            if (mimeType.extension.equals(extension)) {
+                return mimeType.getContentType();
+            }
+        }
+        return "text/html";
     }
-
 }

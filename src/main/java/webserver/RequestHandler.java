@@ -5,27 +5,22 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import controller.UserController;
 import model.HttpStatus;
 import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.UserService;
 
 import static util.HttpResponse.*;
 
 public class RequestHandler implements Runnable {
     private static final String USER_PATH = "/user";
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
+    private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
+    private final UserHandler userHandler = new UserHandler();
 
-    private final UserHandler userHandler;
-
-    public RequestHandler(Socket connectionSocket, UserHandler userHandler) {
+    public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.userHandler = userHandler;
     }
 
     public void run() {
@@ -41,15 +36,14 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private static Request getRequest(InputStream in) throws IOException {
+    private Request getRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
         String line = br.readLine();
         Request request = new Request(line);
         logger.debug("request : {}", request.toString());
 
-        while (!line.isEmpty()) {
-            line = br.readLine();
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
             request.addHeader(line);
         }
         return request;
