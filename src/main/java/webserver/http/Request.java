@@ -51,9 +51,7 @@ public class Request {
             requestBody = new HashMap<>();
             return;
         }
-
-        RequestBodyParser requestBodyParser = new RequestBodyParser(bodyContent);
-        requestBody = (HashMap<String, String>) requestBodyParser.contentTypeBodyParse(ContentType.convertContentType(requestHeader.get("Content-Type")));
+        requestBody = (HashMap<String, String>) RequestBodyParser.contentTypeBodyParse(ContentType.convertContentType(requestHeader.get("Content-Type")), bodyContent);
     }
     private void parseRequestStartLine(String startLine) {
         String[] requestStartLine = startLine.split(" ");

@@ -5,12 +5,9 @@ import webserver.http.ContentType;
 import java.util.Map;
 
 public class RequestBodyParser {
-    private final char[] bodyContent;
-    public RequestBodyParser(char[] bodyContent) {
-        this.bodyContent = bodyContent;
-    }
+    private RequestBodyParser() {}
 
-    public Map<String, String> contentTypeBodyParse(ContentType contentType){
+    public static Map<String, String> contentTypeBodyParse(ContentType contentType, char[] bodyContent){
         ParserFactory.ContentParser parser = ParserFactory.getParser(contentType);
         return parser.parse(bodyContent);
     }
