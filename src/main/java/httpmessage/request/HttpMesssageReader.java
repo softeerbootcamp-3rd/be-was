@@ -56,31 +56,7 @@ public class HttpMesssageReader {
             }
         }
         if(postUrl) {
-            StringBuilder bodyJson = new StringBuilder();
-            char[] buffer = new char[contentLength];
-            HashMap<String,String> map = new HashMap<>();
-
-            br.read(buffer);
-            bodyJson.append(buffer);
-            String path = bodyJson.toString();
-
-            String[] userInformation = path.split("&");
-
-            for (int i = 0; i < userInformation.length; i++) {
-                String key = userInformation[i].split("=")[0];
-
-                if(userInformation[i].split("=").length==1) {
-                    map.put(key,null);
-                    continue;
-                }
-
-                String value = userInformation[i].split("=")[1];
-                String decodeValue = URLDecoder.decode(value, "UTF-8");
-                map.put(key,decodeValue);
-
-            }
-            this.parameter = new Parameter(map);
-            rh.setBody(bodyJson);
+            parsingParameter(br,contentLength);
         }
 
     }
@@ -92,6 +68,35 @@ public class HttpMesssageReader {
         this.rh.setHttpMethod(httpMethod);
         this.rh.setPath(path);
     }
+
+    public void parsingParameter(BufferedReader br, int contentLength) throws IOException {
+        StringBuilder bodyJson = new StringBuilder();
+        char[] buffer = new char[contentLength];
+        HashMap<String,String> map = new HashMap<>();
+
+        br.read(buffer);
+        bodyJson.append(buffer);
+        String path = bodyJson.toString();
+
+        String[] userInformation = path.split("&");
+
+        for (String s : userInformation) {
+            String key = s.split("=")[0];
+
+            if (s.split("=").length == 1) {
+                map.put(key, null);
+                continue;
+            }
+
+            String value = s.split("=")[1];
+            String decodeValue = URLDecoder.decode(value, "UTF-8");
+            map.put(key, decodeValue);
+        }
+        this.parameter = new Parameter(map);
+        this.rh.setBody(bodyJson);
+
+    }
+
     public RequestHeader getRequestHeader() {
         return this.rh;
     }
