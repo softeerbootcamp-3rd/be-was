@@ -14,6 +14,7 @@ public class Response {
     private final ResponseHandler responseHandler = new ResponseHandler();
     private byte[] responseBody;
     private final String locString = "Location";
+    private final String cookieString = "Set-Cookie";
 
     public Response(Request request) {
         this.httpVersion = request.getHttpVersion();
@@ -28,6 +29,8 @@ public class Response {
         responseHeader.put("Content-Type", request.getRequestHeader().get("Accept").split(",")[0]);
         Optional.ofNullable(request.getRequestHeader().get(locString))
                 .ifPresent(location -> responseHeader.put(locString, location));
+        Optional.ofNullable(request.getRequestHeader().get(cookieString))
+                .ifPresent(location -> responseHeader.put(cookieString, location));
     }
     public void setStatusCode(Request request) {
         if(request.getRequestHeader().get(locString)!=null){

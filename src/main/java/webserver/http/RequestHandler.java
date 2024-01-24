@@ -45,7 +45,9 @@ public class RequestHandler {
     private void initializeRoutes() {
         routeHandlers.put(new Route(HttpMethod.GET,"/user/create"), (Request r)-> getUserCreate(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/user/create"), (Request r)-> postUserCreate(r));
+        routeHandlers.put(new Route(HttpMethod.POST,"/user/login"), (Request r)-> postUserLogin(r));
     }
+
     public void handleRequest(Request request) {
         String requestTarget = request.getRequestTarget().split("\\?")[0];
         Route inputRoute = new Route(request.getHttpMethod() ,requestTarget);
@@ -71,6 +73,19 @@ public class RequestHandler {
         Database.addUser(user);
         request.addRequestHeader("Location","/index.html");
     }
+
+    private void postUserLogin(Request request) {
+        HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
+        String id = formData.get("userId");
+        String pw = formData.get("password");
+        if(Database.isValidLogin(id, pw)){
+            request.addRequestHeader("Location","/index.html");
+            request.addRequestHeader("Set-Cookie","sid=123456; Path=/");
+        }else{
+            request.addRequestHeader("Location","/user/login_failed.html");
+        }
+    }
+
 
     private void handleNotFound() {
         logger.error("request : NOT FOUND");
