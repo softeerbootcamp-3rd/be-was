@@ -1,6 +1,7 @@
 package webserver.http;
 
 import db.Database;
+import db.SessionManager;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,8 @@ public class RequestHandler {
         String pw = formData.get("password");
         if(Database.isValidLogin(id, pw)){
             request.addRequestHeader("Location","/index.html");
-            request.addRequestHeader("Set-Cookie","sid=123456; Path=/");
+            String session = SessionManager.addSession(Database.findUserById(id));
+            request.addRequestHeader("Set-Cookie", "sid=" + session + "; Path=/");
         }else{
             request.addRequestHeader("Location","/user/login_failed.html");
         }

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Database {
     Database(){
-        
+
     }
     private static Map<String, User> users = Maps.newHashMap();
 
