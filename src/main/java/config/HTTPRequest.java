@@ -81,7 +81,7 @@ public class HTTPRequest{
             String bodyString = String.valueOf(bodyChars);
 
             // body에서 받은 정보는 key - value 값으로 저장
-            // **수정할 것** 받게 되는 body형식이 각자 다를 수 있으므로 이 기능은 컨트롤러에서 구현해야함
+            // feature5 브랜치에서 수정: 받게 되는 body의 데이터 형식이 다를 수 있으므로 구분을 시켜야함
             for(String str:bodyString.split("&")){
                 tokens = str.split("=");
                 if(tokens.length<2)
