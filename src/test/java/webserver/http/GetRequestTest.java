@@ -9,8 +9,8 @@ import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RequestTest {
-    String httpRequest = "GET /user/create?userId=123&password=123&name=123&email=1%403 HTTP/1.1\n" +
+class GetRequestTest {
+    private String httpRequest = "GET /user/create?userId=123&password=123&name=123&email=1%403 HTTP/1.1\n" +
             "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\n" +
             "Accept-Encoding: gzip, deflate, br\n" +
             "Accept-Language: ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7,ja;q=0.6\n" +
@@ -26,6 +26,7 @@ class RequestTest {
             "sec-ch-ua: \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"\n" +
             "sec-ch-ua-mobile: ?0\n" +
             "sec-ch-ua-platform: \"macOS\"";
+    private Request request;
 
 
     @BeforeEach
@@ -33,21 +34,28 @@ class RequestTest {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(httpRequest));
         request = new Request(bufferedReader);
     }
-    Request request;
 
     @Test
-    @DisplayName("User Create 파싱 테스트")
+    @DisplayName("사용자가 User를 생성했을때 데이터가 정상적으로 파싱이 된다.")
     void getRequestTarget() {
+        //GIVEN
+
+        //WHEN
         String expected = "/user/create?userId=123&password=123&name=123&email=1%403";
         String actual = request.getRequestTarget();
+        //THEN
         assertEquals(expected, actual);
     }
 
     @Test
-    @DisplayName("HTTP Request MIME 파싱 결과 테스트")
+    @DisplayName("사용자가 유저를 생성했을때 요청되는 MIME TYPE이 NONE값이다.")
     void getResponseMimeType() {
+        //GIVEN
+
+        //WHEN
         Mime expected = Mime.NONE;
         Mime actual = request.getResponseMimeType();
+        //THEN
         assertEquals(expected, actual);
     }
 }
