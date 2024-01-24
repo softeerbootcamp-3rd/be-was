@@ -1,42 +1,40 @@
 package controller;
 
-import db.Database;
-import model.User;
 import service.UserService;
-import util.RequestUrl;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.HashMap;
+import util.http.HttpStatus;
+import util.http.HttpRequest;
+import util.http.ResponseEntity;
+import java.net.URI;
+import java.util.Map;
 
 public class UserController {
-    private final RequestUrl url;
+    private final HttpRequest httpRequest;
     private final UserService userService;
 
-    public UserController(RequestUrl url) {
-        this.url = url;
+    public UserController(HttpRequest httpRequest) {
+        this.httpRequest = httpRequest;
         this.userService = new UserService();
     }
 
-    public byte[] run() throws IOException {
-        String path = url.getPath();
+    public ResponseEntity<?> run() {
+        String path = httpRequest.getPath();
 
         String[] tokens = path.split("/");
         String lastPath = tokens[tokens.length - 1];
 
+        ResponseEntity<?> responseEntity;
         if (lastPath.equals("create")) {
             String userId = create();
-            return (userId + " created").getBytes();
-        } else
-            return Files.readAllBytes(new File("./src/main/resources/templates" + path).toPath());
+            responseEntity = ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("/"))
+                    .build();
+            return responseEntity;
+        }
+        return null;
     }
 
     private String create() {
-        HashMap<String, String> query = url.getQuery();
-
-        if (query == null)
-            throw new RuntimeException();
+        Map<String, String> query = httpRequest.getQueryMap();
 
         String userId = query.get("userId");
         String password = query.get("password");
