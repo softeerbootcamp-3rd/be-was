@@ -13,7 +13,6 @@ public class ResponseHandler {
 
     public static void send(DataOutputStream dos, ResponseDto responseDto) {
         try {
-
             // 헤더 전송
             dos.writeBytes("HTTP/1.1 " + responseDto.getStatus().toString() + " \r\n");
             for (String header : responseDto.getHeaders()) {
@@ -31,6 +30,5 @@ public class ResponseHandler {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-
     }
 }
