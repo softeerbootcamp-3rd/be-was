@@ -1,5 +1,7 @@
 package http.request;
 
+import utils.Parser;
+
 import java.util.Map;
 
 public class RequestLine {
@@ -23,5 +25,10 @@ public class RequestLine {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getMethodAndPath() {
+        String path = Parser.extractPath(uri);
+        return method + " " +  path;
     }
 }
