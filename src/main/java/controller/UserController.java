@@ -6,7 +6,6 @@ import dto.HttpResponseDtoBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import util.HttpResponseUtil;
 import util.WebUtil;
 
 import java.util.Map;
@@ -33,15 +32,18 @@ public class UserController implements Controller {
     }
 
     public HttpResponseDto createUser(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+
         try {
             Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
             userService.createUser(parameters);
 
-            return HttpResponseUtil.response302("/index.html");
+            return responseDtoBuilder.response302Header()
+                    .setHeaders("Location", "/index.html").build();
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
 
-            return HttpResponseUtil.response400();
+            return responseDtoBuilder.response400Header().build();
         }
     }
 
