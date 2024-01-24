@@ -25,6 +25,7 @@ public class ControllerMapper {
 
     static {
         CONTROLLER.put("POST /user/create", UserController::signup);
+        CONTROLLER.put("POST /user/login", UserController::login);
     }
 
     public static Function<HttpRequest, HttpResponse> getController(HttpRequest request) {
