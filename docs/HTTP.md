@@ -90,6 +90,28 @@ Accept-Language: us-en, fr, cn
 - `GET:` Select적인 성향, 서버에서 어떤 데이터를 가져와서 보여준다거나 하는 용도이지 서버의 값이나 상태등을 바꾸지 않음(ex. 게시판의 리스트라던지 글보기 기능)
 - `POST`: 서버의 값이나 상태를 바꾸기 위해서 사용 (ex. 글쓰기를 하면 글의 내용이 디비에 저장이 되고 수정을 하면 디비값이 수정)
 
+### GET
+* 특정한 리소스를 가져오도록 요청, 데이터를 가져올 때만 사용해야 함
+* GET 요청에는 Request Body를 담지 않는 것이 바람직하다 -> HTTP 명세를 위반하기 때문
+
+### POST
+* 서버로 데이터를 전송
+* `PUT`과의 차이는 멱등성: `PUT`은 한 번을 보내도, 여러 번을 연속으로 보내도 같은 효과
+  * **POST-redirect-GET 패턴**: 중복 submit을 방지하기 위한 패턴
+  * POST 요청 시, 요청 본문에 고유한 식별자를 포함시켜 서버에서 중복 요청을 인식해 멱등성을 보장하는 방법
+  * 클라이언트 측에서 중복 요청을 제거하는 방법
+* 웹 브라우저가 웹 폼(form)을 통해 `POST` 요청을 보낼 때 기본 인터넷 미디어 타입(Content-Type)은 `application/x-www-form-urlencoded`
+  * 각각의 키-값 쌍은 '&' 문자로 구분되며 각 키는 '=' 문자의 값과 구분된다. 키와 값들은 둘 다 공백을 '+' 문자로 대체하며 영숫자가 아닌 그 밖의 모든 문자는 퍼센트 인코딩 처리
+  ```text
+  userId: 1
+  password: hello
+  name: suji
+  email: example@softeer.com
+  ```
+  ```text
+  userId=1&password=hello&name=suji&email=example%40softeer.com
+  ```
+
 ## HTTP Response
 
 ### HTTP Request를 받은 서버가 동작하는 방법

@@ -6,46 +6,55 @@ import dto.HttpResponseDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import service.UserService;
+import util.WebUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
+import java.util.Collections;
 
 public class UserControllerTest {
-    private final UserController userController = new UserController();
+    private final UserService userService = Mockito.mock(UserService.class);
 
-    private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+    private final UserController userController = new UserController(userService);
 
-    @ParameterizedTest
-    @MethodSource("handleRequestParams")
-    @DisplayName("UserController.handleRequest() Test")
-    public void handleRequestTest(String method, String uri, String expectedStatus) {
+    @Test
+    @DisplayName("createUser() Test : Success case - UserService.createUser()가 성공한 경우")
+    public void createUserTest() {
         // given
-        HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder(method, uri, "HTTP/1.1").build();
+        HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/create", "HTTP/1.1").build();
+        Mockito.doNothing().when(userService).createUser(Mockito.any());
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(httpRequestDto);
+        HttpResponseDto httpResponseDto;
+        try (MockedStatic<WebUtil> webUtil = Mockito.mockStatic(WebUtil.class)) {
+            webUtil.when(() -> WebUtil.parseRequestBody(Mockito.any()))
+                            .thenReturn(Collections.emptyMap());
+            httpResponseDto = userController.handleRequest(request);
+        }
 
         // then
-        logger.debug(httpRequestDto.toString());
-        logger.debug(new String(httpResponseDto.getBody()), StandardCharsets.UTF_8);
-        Assertions.assertThat(httpResponseDto.getStatus()).contains(expectedStatus);
+        Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
+        Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
+        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/index.html");
     }
 
-    public static Stream<Arguments> handleRequestParams() {
-        return Stream.of(
-                // 200 OK
-                Arguments.of("GET", "/user/form.html", "200"),
-                // 302 Found
-                Arguments.of("GET", "/user/create?userId=userId&password=password&name=name&email=softeer@example.com", "302"),
-                // 400 Bad Request: /user/create 시 필요한 파라미터를 모두 전달하지 않은 경우
-                Arguments.of("GET", "/user/create?userId=userId", "400")
-        );
+    @Test
+    @DisplayName("createUser() Test : Fail case - UserService가 IllegalArgumentException 던진 경우")
+    public void createUserFailTest() {
+        // given
+        HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/create", "HTTP/1.1").build();
+        Mockito.doThrow(new IllegalArgumentException("Invalid Parameters")).when(userService).createUser(Mockito.any());
+
+        // when
+        HttpResponseDto httpResponseDto;
+        try (MockedStatic<WebUtil> webUtil = Mockito.mockStatic(WebUtil.class)) {
+            webUtil.when(() -> WebUtil.parseRequestBody(Mockito.any()))
+                    .thenReturn(Collections.emptyMap());
+            httpResponseDto = userController.handleRequest(request);
+        }
+
+        // then
+        Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("400");
     }
 }

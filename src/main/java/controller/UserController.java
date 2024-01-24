@@ -14,11 +14,15 @@ public class UserController implements Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    private static final UserService userService = new UserService();
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public HttpResponseDto handleRequest(HttpRequestDto request) {
-        if (request.getMethod().equals("GET") && request.getUri().startsWith("/user/create")) {
+        if (request.getMethod().equals("POST") && request.getUri().startsWith("/user/create")) {
             return createUser(request);
         }
         return getPage(request, logger);
@@ -26,11 +30,13 @@ public class UserController implements Controller {
 
     public HttpResponseDto createUser(HttpRequestDto request) {
         try {
-            Map<String, String> parameters = WebUtil.parseQueryString(request.getUri());
+            Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
             userService.createUser(parameters);
+
             return HttpResponseUtil.response302("/index.html");
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
+
             return HttpResponseUtil.response400();
         }
     }

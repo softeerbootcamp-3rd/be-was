@@ -5,10 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dto.HttpRequestDto;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,8 +100,9 @@ public class WebUtil {
     // Parsing query string from URI into Map<String, String> Object
     public static Map<String, String> parseQueryString(String uri) {
         Map<String, String> parameters = new HashMap<>();
+        String encodedUri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
         try {
-            String queryString = uri.split("\\?")[1];
+            String queryString = encodedUri.split("\\?")[1];
             String[] pairs = queryString.split("&");
             for (String pair: pairs) {
                 String[] keyValue = pair.split("=");
@@ -112,6 +112,22 @@ public class WebUtil {
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
+        }
+
+        return parameters;
+    }
+
+    // Parsing Request Body into Map<String, Stirng> Object
+    public static Map<String, String> parseRequestBody(String body) {
+        Map<String, String> parameters = new HashMap<>();
+        String encodedBody = URLDecoder.decode(body, StandardCharsets.UTF_8);
+        String[] pairs = encodedBody.split("&");
+
+        for (String pair: pairs) {
+            String[] keyValue = pair.split("=");
+            if (keyValue.length == 2) {
+                parameters.put(keyValue[0], keyValue[1]);
+            }
         }
 
         return parameters;
