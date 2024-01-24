@@ -5,6 +5,7 @@ import http.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -16,19 +17,23 @@ import java.util.function.Function;
  * 우선 서비스 별로 파 둠
  */
 
-public enum ControllerMapper {
-    SIGNUP("POST /user/create", Validator::validateSignUpInfo, UserController::signup),
-    LOGIN("POST /user/login", Validator::validateLoginInfo, UserController::login),
+public enum ValidatorController {
+    SIGNUP(Validator::validateSignUpInfo, UserController::signup),
+    LOGIN(Validator::validateLoginInfo, UserController::login),
     ;
 
-    private String requestURL;
     private Function<Map<String, String>, Boolean> validator;
     private Function<Map<String, String>, HttpResponse> controller;
-    private static final Logger logger = LoggerFactory.getLogger(ControllerMapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidatorController.class);
 
-    ControllerMapper(String url, Function<Map<String, String>, Boolean> validator,
-                     Function<Map<String, String>, HttpResponse> controller) {
-        this.requestURL = url;
+    private static Map<String, ValidatorController> MAPPER = new HashMap<>();
+
+    static {
+        MAPPER.put("POST /user/create", SIGNUP);
+        MAPPER.put("POST /user/login", LOGIN);
+    }
+
+    ValidatorController(Function<Map<String, String>, Boolean> validator, Function<Map<String, String>, HttpResponse> controller) {
         this.validator = validator;
         this.controller = controller;
     }
@@ -39,5 +44,9 @@ public enum ControllerMapper {
 
     public Function<Map<String, String>, HttpResponse> getController() {
         return controller;
+    }
+
+    public ValidatorController getValicatorController(String requestURL) {
+        return MAPPER.getOrDefault(requestURL, null);
     }
 }
