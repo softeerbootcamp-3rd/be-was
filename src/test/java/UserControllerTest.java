@@ -3,7 +3,7 @@ import dto.Response;
 import model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import webserver.HttpStatus;
+import webserver.http.HttpStatus;
 
 public class UserControllerTest {
 

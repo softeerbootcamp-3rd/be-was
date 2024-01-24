@@ -2,15 +2,15 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import annotation.Controller;
-import dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ControllerMapper;
 import util.SessionManager;
-
-import static util.ControllerMapper.CONTROLLER_MAP;
+import webserver.http.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -43,21 +43,22 @@ public class RequestHandler implements Runnable {
                 // 유효한 세션인지 검증
                 String sid = httpRequest.getCookie().split("=")[1];
                 if (SessionManager.isSessionPresent(sid) && !SessionManager.checkSessionTimeout(sid)) {
-                    Response response = new Response.Builder()
-                            .httpStatus(HttpStatus.FOUND)
-                            .body("/index.html")
-                            .build();
-                    HttpResponse.response(dos, response);
+                    Map<String, List<String>> headerMap = new HashMap<>();
+                    headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
+                    ResponseEntity response = new ResponseEntity<>(HttpStatus.FOUND, headerMap);
+
+                    HttpResponse.send(dos, response);
                     return;
                 }
             }
 
-            Response response = RequestMappingHandler.handleRequest(httpRequest);
-            HttpResponse.response(dos, response);
+            ResponseEntity response = RequestMappingHandler.handleRequest(httpRequest);
+            HttpResponse.send(dos, response);
+
         } catch (IndexOutOfBoundsException e) {
-            HttpResponse.response(dos, new Response(HttpStatus.BAD_REQUEST));
+            HttpResponse.send(dos, new ResponseEntity(HttpStatus.BAD_REQUEST));
         } catch (Exception e) {
-            HttpResponse.response(dos, new Response(HttpStatus.INTERNAL_SERVER_ERROR));
+            HttpResponse.send(dos, new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 

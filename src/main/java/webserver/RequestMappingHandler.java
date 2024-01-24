@@ -1,16 +1,12 @@
 package webserver;
 
-import annotation.GetMapping;
-import annotation.PostMapping;
-import annotation.RequestMapping;
-import annotation.RequestParam;
-import dto.Response;
+import annotation.*;
 import util.ControllerMapper;
-import util.ResourceLoader;
+import util.ResourceManager;
+import webserver.http.HttpRequest;
+import webserver.http.HttpStatus;
+import webserver.http.ResponseEntity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -20,12 +16,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMappingHandler {
-    private static final String FILE_PATH = "src/main/resources";
 
     // RequestHandler에서 컨트롤러 전송
-    public static Response handleRequest(HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
+    public static ResponseEntity handleRequest(HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
         if (request.getPath().contains(".") || request.getPath().equals("/")) {
-            return handleStaticResource(request);
+            return ResourceManager.handleStaticResource(request);
         }
 
         Class<?> controllerClass = ControllerMapper.getController(request.getPath());
@@ -38,49 +33,24 @@ public class RequestMappingHandler {
         }
 
         if (method == null) {
-            return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        ResponseEntity response = null;
         if (request.getPath().equals("/user/logout")) {
-            return invokeMethod(method, request);
+            response = invokeMethod(method, request);
+        } else {
+            Object[] params = createParams(method, request.getParams());
+            response = invokeMethod(method, params);
         }
 
-        Object[] params = createParams(method, request.getParams());
-        return invokeMethod(method, params);
+        if (method.isAnnotationPresent(ResponseBody.class)) {
+            response.getHeaders().setContentType("application/json");
+        }
+
+        return response;
     }
 
-    private static Response handleStaticResource(HttpRequest request) throws IOException {
-        String path = request.getPath().equals("/") ? "/index.html" : request.getPath();
-        String contentType = ResourceLoader.getContentType(path);
-        String filePath = FILE_PATH + "/static" + path;
-
-        if (path.endsWith(".html")) {
-            filePath = FILE_PATH + "/templates" + path;
-        }
-
-        File file = new File(filePath);
-
-        if (file.exists()) {
-            byte[] body = readAllBytes(file);
-            return new Response(HttpStatus.OK, contentType, body);
-        }
-
-        return new Response.Builder().httpStatus(HttpStatus.NOT_FOUND).build();
-    }
-
-    private static byte[] readAllBytes(File file) throws IOException {
-        try (FileInputStream fis = new FileInputStream(file); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            int size = (int) file.length();
-            byte[] buffer = new byte[size];
-            int bytesRead;
-
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, bytesRead);
-            }
-
-            return bos.toByteArray();
-        }
-    }
 
     private static Method findGETMethod(Class<?> controllerClass, String path) {
         // [ 피드백 ] 아예 처음부터 맵핑해놓고 시작하기
@@ -111,18 +81,18 @@ public class RequestMappingHandler {
         return null;
     }
 
-    private static Response invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static ResponseEntity invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> c = method.getDeclaringClass();
         Object instance = c.getDeclaredConstructor().newInstance();
 
-        return (Response) method.invoke(instance, params);
+        return (ResponseEntity) method.invoke(instance, params);
     }
 
-    private static Response invokeMethod(Method method, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static ResponseEntity invokeMethod(Method method, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> c = method.getDeclaringClass();
         Object instance = c.getDeclaredConstructor().newInstance();
 
-        return (Response) method.invoke(instance, httpRequest);
+        return (ResponseEntity) method.invoke(instance, httpRequest);
     }
 
 

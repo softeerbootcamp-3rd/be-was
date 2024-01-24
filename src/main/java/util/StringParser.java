@@ -1,6 +1,7 @@
 package util;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,4 +21,5 @@ public class StringParser {
         }
         return parseMap;
     }
+
 }
