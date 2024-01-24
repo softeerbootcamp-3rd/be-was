@@ -15,16 +15,12 @@ import common.exception.EmptyFormException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static webserver.WebServerConfig.userController;
 import static common.response.Status.*;
 import static common.util.Util.getSessionId;
+import static webserver.WebServerConfig.*;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String INDEX_FILE_PATH = "/index.html";
-    private static final String USER_CREATE_FORM_FAIL_FILE_PATH = "/user/form_fail.html";
-    private static final String USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH = "/user/form_userId_duplicate_fail.html";
-    private static final String LOGIN_FAIL_FILE_PATH = "/user/login_failed.html";
 
     private Socket connection;
 
