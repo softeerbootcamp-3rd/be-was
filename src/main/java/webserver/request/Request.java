@@ -40,6 +40,10 @@ public class Request {
         return body.getOrDefault(key, null);
     }
 
+    public String getHeader(String key){
+        return headers.getOrDefault(key, null);
+    }
+
     public void setHeader(String key, String value){
         headers.put(key, value);
     }
