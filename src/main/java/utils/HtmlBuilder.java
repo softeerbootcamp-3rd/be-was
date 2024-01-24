@@ -1,6 +1,6 @@
 package utils;
 
-import constants.Html;
+import constants.HtmlContent;
 import db.Database;
 import java.util.Collection;
 import model.User;
@@ -36,7 +36,7 @@ public class HtmlBuilder {
         StringBuilder sb = new StringBuilder();
         for (User user : users) {
             count++;
-            String userContentHtml = Html.USER_CONTENT.getText();
+            String userContentHtml = HtmlContent.USER_CONTENT.getText();
             String userContent = userContentHtml.replace("{{count}}", Integer.toString(count))
                     .replace("{{userId}}", user.getUserId())
                     .replace("{{userName}}", user.getName())

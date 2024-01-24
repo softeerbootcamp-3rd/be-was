@@ -1,6 +1,6 @@
 package constants;
 
-public enum Html {
+public enum HtmlContent {
 
     USER_CONTENT("<tr>\n"
             + "<th scope=\"row\">{{count}}</th> "
@@ -12,7 +12,7 @@ public enum Html {
 
     private final String text;
 
-    Html(String text) {
+    HtmlContent(String text) {
         this.text = text;
     }
 
