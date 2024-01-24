@@ -3,10 +3,7 @@ package util.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +24,8 @@ public class HttpRequest {
         URI url = URI.create(tokens[1]);
 
         String accept = MediaType.ALL_VALUE;
+        String contentLength = null;
+        String contentType = null;
 
         logger.debug(line);
         while (!(line = br.readLine()).isEmpty()) {
@@ -35,13 +34,29 @@ public class HttpRequest {
                 accept = tokens[1].split(",")[0];
                 logger.debug(line);
             }
+            if (tokens[0].equals("Content-Length:")) {
+                contentLength = tokens[1];
+                logger.debug(line);
+            }
+            if (tokens[0].equals("Content-Type:")) {
+                contentType = tokens[1];
+                logger.debug(line);
+            }
             if (tokens[0].equals("Host:") || tokens[0].equals("Connection:"))
                 logger.debug(line);
         }
 
+        char[] body = null;
+        if (contentLength != null) {
+            body = new char[Integer.parseInt(contentLength)];
+            br.read(body);
+        }
+
         httpRequest.request = RequestEntity.method(method, url)
                 .header(HttpHeaders.ACCEPT, accept)
-                .build();
+                .header(HttpHeaders.CONTENT_LENGTH, contentLength)
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(body == null ? null : new String(body));
 
         return httpRequest;
     }
@@ -59,6 +74,20 @@ public class HttpRequest {
 
         String query = this.request.getUrl().getQuery();
         String[] params = query.split("&");
+
+        for (String s : params) {
+            String[] keyVal = s.split("=");
+            queryMap.put(keyVal[0], keyVal[1]);
+        }
+        return queryMap;
+    }
+
+    public Map<String, String> getBodyParams() {
+        Map<String, String> queryMap = new HashMap<>();
+
+        String body = (String)this.request.getBody();
+
+        String[] params = body.split("&");
 
         for (String s : params) {
             String[] keyVal = s.split("=");
