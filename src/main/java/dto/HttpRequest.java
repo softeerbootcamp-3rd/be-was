@@ -1,10 +1,13 @@
 package dto;
 
+import java.util.Map;
+
 public class HttpRequest {
 
     private String method;
     private String path;
     private String queryString;
+    private Map<String, String> headers;
 
     public HttpRequest(String method, String path, String queryString) {
         this.method = method;
@@ -28,5 +31,13 @@ public class HttpRequest {
 
     public String getQueryString() {
         return queryString;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 }

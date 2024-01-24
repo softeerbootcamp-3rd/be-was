@@ -3,6 +3,8 @@ package webserver;
 import common.response.Status;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static common.response.Status.REDIRECT;
 import static webserver.RequestHandler.logger;
@@ -13,6 +15,7 @@ public class Response {
     private final String contentType;
     private Status status;
     private String path;
+    private Map<String, String> headers;
     private byte[] body;
 
     private static final String RESOURCES_PATH = "src/main/resources/";
@@ -20,6 +23,7 @@ public class Response {
     public Response(OutputStream out, String contentType) {
         this.dos = new DataOutputStream(out);
         this.contentType = contentType;
+        this.headers = new HashMap<>();
     }
 
     public void setStatus(Status status) {
@@ -32,6 +36,10 @@ public class Response {
 
     public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    public void setHeader(String key, String value) {
+        headers.put(key, value);
     }
 
     public void send() throws IOException {
