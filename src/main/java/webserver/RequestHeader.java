@@ -21,7 +21,7 @@ public class RequestHeader {
         this.method = method;
         this.path = path;
         this.protocol = protocol;
-        this.contentLength = "";
+        this.contentLength = "0";
     }
 
     public String getPath() {
