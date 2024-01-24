@@ -3,6 +3,8 @@ package webserver.status;
 public enum HttpStatus {
     OK(200, "OK"),
 
+    FOUND(302, "FOUND"),
+
     BAD_REQUEST(400, "BAD REQUEST"),
     NOT_FOUND(404, "NOT FOUND"),
     CONFLICT(409, "CONFLICT"),
