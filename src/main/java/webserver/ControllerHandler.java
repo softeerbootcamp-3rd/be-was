@@ -7,6 +7,7 @@ import controller.UserController;
 
 public enum ControllerHandler {
 
+    //url별로 컨트롤러에게 작업 할당
     CREATE_ACCOUNT("/user/create"){
         @Override
         public HTTPResponse toController(HTTPRequest request){

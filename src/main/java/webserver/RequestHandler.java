@@ -24,8 +24,6 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             logger.debug("Ending Connected IP : {}, Port : {}", connection.getInetAddress(),
@@ -42,12 +40,12 @@ public class RequestHandler implements Runnable {
             String urlFrontPart = url.split("\\?")[0];
 
             HTTPResponse response;
-
+            // 정적페이지 불러오는 경우 (GET 메소드이며, url에 확장자가 있을 때)
             if(request.getMethod().equals("GET") && urlFrontPart.contains(".")){
                 response = PageController.getPage(request);
             }
+            // 그 외에는 디스패쳐 서블릿으로 컨트롤러를 불러온다 (ControllerHandler가 디스패쳐 서블릿)
             else {
-
                 for (ControllerHandler handler : ControllerHandler.values()) {
                     if (handler.url.equals(urlFrontPart)) {
                         controllerHandler = handler;
@@ -61,9 +59,7 @@ public class RequestHandler implements Runnable {
                     response = new HTTPResponse("HTTP/1.1", ResponseCode.NOT_FOUND.code, ResponseCode.NOT_FOUND.toString());
             }
 
-
-
-
+            // 헤드와 바디 값을 DataOutputStream으로 전달
             byte[] head = response.getHead();
             byte[] body = response.getBody();
             dos.write(head, 0, head.length);
