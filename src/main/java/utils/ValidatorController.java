@@ -24,7 +24,6 @@ public enum ValidatorController {
 
     private Function<Map<String, String>, Boolean> validator;
     private Function<Map<String, String>, HttpResponse> controller;
-    private static final Logger logger = LoggerFactory.getLogger(ValidatorController.class);
 
     private static Map<String, ValidatorController> MAPPER = new HashMap<>();
 
@@ -46,7 +45,7 @@ public enum ValidatorController {
         return controller;
     }
 
-    public ValidatorController getValicatorController(String requestURL) {
+    public static ValidatorController getValicatorController(String requestURL) {
         return MAPPER.getOrDefault(requestURL, null);
     }
 }
