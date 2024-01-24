@@ -21,7 +21,7 @@ public class DefaultControllerTest {
 
     @ParameterizedTest
     @MethodSource("handleRequestParams")
-    @DisplayName("DefaultController.handleRequest() Test")
+    @DisplayName("handleRequest(): 정적 페이지 요청 URL이 들어왔을 때 적절하게 처리해서 응답을 리턴한다.")
     public void handleRequestTest(String method, String uri, String expectedStatus) {
         // given
         HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder(method, uri, "HTTP/1.1").build();

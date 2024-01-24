@@ -8,16 +8,14 @@ import dto.HttpRequestDtoBuilder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.net.Socket;
 
 public class RequestHandlerTest {
-    private final Socket mockSocket = Mockito.mock(Socket.class);
-    private final RequestHandler requestHandler = new RequestHandler(mockSocket);
+    private final RequestHandler requestHandler = new RequestHandler(new Socket());
 
     @Test()
-    @DisplayName("RequestHandler.mappingController() Test")
+    @DisplayName("mappingController(): 요청 URL에 따라 적절한 컨트롤러를 매핑해준다.")
     public void mappingControllerTest() {
         // given
         HttpRequestDto httpRequestDto = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1").build();
