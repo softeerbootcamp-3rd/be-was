@@ -29,7 +29,7 @@ public class FrontController {
         return response;
     }
 
-    private static CommonResponse getResponse(RequestHeader requestHeader, byte[] body, UserController controller) {
+    private static CommonResponse getResponse(RequestHeader requestHeader, String body, UserController controller) {
         CommonResponse response = null;
         try {
             ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), body, controller);
