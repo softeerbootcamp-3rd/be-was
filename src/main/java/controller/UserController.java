@@ -43,7 +43,7 @@ public class UserController {
 
         String sid = SessionManager.createSession();
         SessionManager.setAttribute(sid, "user", userId);
-        Cookie cookie = new Cookie(sid, SessionManager.getSessionTimeoutSeconds());
+        Cookie cookie = new Cookie(sid, SessionManager.getSessionTimeoutSeconds(), "/");
 
         return new Response.Builder()
                 .httpStatus(HttpStatus.FOUND)
@@ -61,7 +61,7 @@ public class UserController {
         if (SessionManager.isSessionPresent(sid))
             SessionManager.invalidateSession(sid);
         // 클라이언트에서도 쿠키 제거
-        Cookie cookie = new Cookie(sid, 0);
+        Cookie cookie = new Cookie(sid, 0, "/");
 
         return new Response.Builder()
                 .httpStatus(HttpStatus.OK)

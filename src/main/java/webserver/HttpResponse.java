@@ -46,7 +46,7 @@ public class HttpResponse {
 
             if (response.getCookie() != null) {
                 String cookie = "Set-Cookie: sid=" + response.getCookie().getSid()
-                        + "; Max-Age=" + response.getCookie().getMaxAge() + "; Path=/";
+                        + "; Max-Age=" + response.getCookie().getMaxAge() + "; Path=" + response.getCookie().getPath();
                 dos.writeBytes(cookie + "\r\n");
 
                 return ", " + contentType + ", " + contentLength + ", " + cookie;
@@ -78,7 +78,7 @@ public class HttpResponse {
 
             if (response.getCookie() != null) {
                 String cookie = "Set-Cookie: sid=" + response.getCookie().getSid()
-                        + "; Max-Age=" + response.getCookie().getMaxAge() + "; Path=/";
+                        + "; Max-Age=" + response.getCookie().getMaxAge() + "; Path=" + response.getCookie().getPath();
                 dos.writeBytes(cookie + "\r\n");
 
                 return ", " + redirectResponse + ", " + cookie;
