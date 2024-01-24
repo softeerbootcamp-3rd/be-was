@@ -7,8 +7,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FileUtil {
-    public static final String BASIC_PATH = "./src/main/resources/templates";
-    public static final String STATIC_PATH = "./src/main/resources/static";
+    private static final String BASIC_PATH = "./src/main/resources/templates";
+    private static final String STATIC_PATH = "./src/main/resources/static";
 
     public static byte[] getFileContents(String path) throws IOException {
         String fileExtension = getFileExtension(path);
