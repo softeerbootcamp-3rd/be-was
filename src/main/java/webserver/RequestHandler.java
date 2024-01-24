@@ -8,7 +8,7 @@ import java.io.BufferedReader;
 import java.net.Socket;
 
 import common.exception.LoginFailException;
-import dto.RequestLineDto;
+import dto.HttpRequest;
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
 import org.slf4j.Logger;
@@ -41,8 +41,8 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             String line = br.readLine();
-            RequestLineDto requestLineDto = parseRequestLine(line);
-            printRequest(requestLineDto);
+            HttpRequest request = parseRequestLine(line);
+            printRequest(request);
 
             int contentLength = 0;
             while (!line.equals("")) {
@@ -52,14 +52,14 @@ public class RequestHandler implements Runnable {
                 }
             }
 
-            String contentType = getContentType(requestLineDto.getPath());
+            String contentType = getContentType(request.getPath());
             Response response = new Response(out, contentType);
 
             if (contentLength == 0) {
                 response.setStatus(OK);
-                response.setPath(requestLineDto.getPath());
+                response.setPath(request.getPath());
             }
-            if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/create")) {
+            if (request.getMethod().equals("POST") && request.getPath().equals("/user/create")) {
                 String body = getRequestBody(br, contentLength);
                 try {
                     userController.create(body);
@@ -76,7 +76,7 @@ public class RequestHandler implements Runnable {
                     response.setPath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
-            if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/login")) {
+            if (request.getMethod().equals("POST") && request.getPath().equals("/user/login")) {
                 String body = getRequestBody(br, contentLength);
                 try {
                     userController.login(body);

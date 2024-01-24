@@ -1,18 +1,18 @@
 package dto;
 
-public class RequestLineDto {
+public class HttpRequest {
 
     private String method;
     private String path;
     private String queryString;
 
-    public RequestLineDto(String method, String path, String queryString) {
+    public HttpRequest(String method, String path, String queryString) {
         this.method = method;
         this.path = path;
         this.queryString = queryString;
     }
 
-    public RequestLineDto(String method, String path) {
+    public HttpRequest(String method, String path) {
         this.method = method;
         this.path = path;
         this.queryString = null;

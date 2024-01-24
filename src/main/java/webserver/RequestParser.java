@@ -1,6 +1,6 @@
 package webserver;
 
-import dto.RequestLineDto;
+import dto.HttpRequest;
 
 import java.io.IOException;
 
@@ -15,13 +15,13 @@ public class RequestParser {
     public static final String PARAMETERS_DELIMITER = "&";
     public static final String PARAMETER_DELIMITER = "=";
 
-    public static RequestLineDto parseRequestLine(String line) throws IOException {
+    public static HttpRequest parseRequestLine(String line) throws IOException {
         String[] methodAndURL = split(line, REQUEST_LINE_DELIMITER);
         if (isQueryStringExist(methodAndURL[1])) {
             String[] pathAndQueryString = split(methodAndURL[1], URL_DELIMITER);
-            return new RequestLineDto(methodAndURL[0], pathAndQueryString[0], pathAndQueryString[1]);
+            return new HttpRequest(methodAndURL[0], pathAndQueryString[0], pathAndQueryString[1]);
         }
-        return new RequestLineDto(methodAndURL[0], methodAndURL[1]);
+        return new HttpRequest(methodAndURL[0], methodAndURL[1]);
     }
 
     public static String[] parseRequestHeader(String line) {
