@@ -2,19 +2,19 @@ package session;
 
 import model.User;
 import request.HttpRequest;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
 
-    private Map<String, User> sessionRepository = new ConcurrentHashMap<>();
+    private static Map<String, User> sessionRepository = new ConcurrentHashMap<>();
 
     // 로그인 성공한 유저에게 세션 id 발급
     public String createSession(User user) {
         String sessionId = UUID.randomUUID().toString();
         sessionRepository.put(sessionId, user);
+        System.out.println(sessionRepository.size());
         return sessionId;
     }
 

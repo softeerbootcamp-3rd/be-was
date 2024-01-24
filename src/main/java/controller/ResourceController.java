@@ -1,18 +1,23 @@
 package controller;
 
+import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
 import response.HttpResponseStatus;
+import session.SessionManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ResourceController implements Controller {
 
     static Map<String, String> contentType = new HashMap<>();
+    SessionManager sessionManager = new SessionManager();
 
     static {
         contentType.put("html", "text/html; charset=utf-8");
@@ -36,6 +41,14 @@ public class ResourceController implements Controller {
             try{
                 byte[] body = Files.readAllBytes(new File(url).toPath());
 
+                User loginUser = sessionManager.getUserBySessionId(request);
+                if (loginUser != null) {
+                    System.out.println(loginUser);
+                    String content = new String(body);
+                    String replacedBody = replaceWord(content, "로그인", loginUser.getName());
+                    body = replacedBody.getBytes();
+                }
+
                 headers.put("Content-Type", getContentType(url));
                 headers.put("Content-Length", String.valueOf(body.length));
                 response.setResponse(HttpResponseStatus.OK, body, headers);
@@ -56,5 +69,23 @@ public class ResourceController implements Controller {
             return "font/" + extension;
         }
         return result;
+    }
+
+    private static String replaceWord(String content, String targetWord, String replacement) {
+        // 정규 표현식 패턴 생성
+        String regex = "\\b" + Pattern.quote(targetWord) + "\\b";
+        Pattern pattern = Pattern.compile(regex);
+
+        // 패턴과 일치하는 단어 찾기
+        Matcher matcher = pattern.matcher(content);
+
+        // 대체된 내용으로 문자열 빌드
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(result, replacement);
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 }
