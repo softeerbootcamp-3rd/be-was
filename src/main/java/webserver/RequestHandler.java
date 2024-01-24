@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.net.Socket;
 
+import common.exception.LoginFailException;
 import dto.RequestLineDto;
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
@@ -24,6 +25,7 @@ public class RequestHandler implements Runnable {
     private static final String INDEX_FILE_PATH = "/index.html";
     private static final String USER_CREATE_FORM_FAIL_FILE_PATH = "/user/form_fail.html";
     private static final String USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH = "/user/form_userId_duplicate_fail.html";
+    private static final String LOGIN_FAIL_FILE_PATH = "/user/login_failed.html";
 
     private Socket connection;
 
@@ -76,9 +78,15 @@ public class RequestHandler implements Runnable {
             }
             if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/login")) {
                 String body = getRequestBody(br, contentLength);
-                userController.login(body);
-                response.setStatus(REDIRECT);
-                response.setPath(INDEX_FILE_PATH);
+                try {
+                    userController.login(body);
+                    response.setStatus(REDIRECT);
+                    response.setPath(INDEX_FILE_PATH);
+                } catch (LoginFailException e) {
+                    logger.debug(e.getMessage());
+                    response.setStatus(REDIRECT);
+                    response.setPath(LOGIN_FAIL_FILE_PATH);
+                }
             }
             response.send();
         } catch (Exception e) {
