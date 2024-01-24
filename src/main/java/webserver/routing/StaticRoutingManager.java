@@ -2,10 +2,10 @@ package webserver.routing;
 
 import utils.FileUtil;
 import webserver.http.request.HttpRequest;
-import webserver.http.response.ContentType;
+import webserver.http.response.enums.ContentType;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
-import webserver.http.response.HttpStatus;
+import webserver.http.response.enums.HttpStatus;
 
 import java.io.IOException;
 

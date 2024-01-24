@@ -1,4 +1,4 @@
-package webserver.http.response;
+package webserver.http.response.enums;
 
 public enum HttpStatus {
     // 성공 상태 코드
