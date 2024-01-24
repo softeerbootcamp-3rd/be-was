@@ -2,9 +2,13 @@ package controller;
 
 import data.RequestData;
 import data.Response;
+import db.Database;
+import db.Session;
+import model.User;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import service.UserService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -99,5 +103,27 @@ public class RequestDataControllerTest {
         // Then
         assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
         assertThat(actual.getPath()).isEqualTo(expected.getPath());
+    }
+
+    @Test
+    @DisplayName("기존 로그인 유저가 다시 로그인에 접근하면 홈으로 리다이렉션하는지 검증")
+    public void testRedirectToHomeIfLoggedInUserAccessesLoginPage() {
+        // Given
+        User testUser = new User("test", "test", "Test User", "test@example.com");
+        Database.addUser(testUser);
+        String sessionId = Session.createSession(testUser.getUserId());
+
+        Map<String, String> map = new HashMap<>();
+        RequestData requestData = new RequestData("GET", "/user/login.html", "HTTP/1.1", map);
+        requestData.getHeaders().put("Cookie", "sid=" + sessionId);
+
+
+        // When
+        Response actual = RequestDataController.routeRequest(requestData);
+
+        // Then
+        assertThat(actual.getStatus()).isEqualTo(HttpStatusCode.FOUND);
+        assertThat(actual.getPath()).isEqualTo("/index.html");
+        assertThat(actual.getCookie()).isNull();
     }
 }
