@@ -69,6 +69,10 @@ public class RequestHandler implements Runnable {
                     createResponse(out, CONFLICT, contentType, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
+            if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/login")) {
+                String body = getRequestBody(br, contentLength);
+                userController.login(body);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
