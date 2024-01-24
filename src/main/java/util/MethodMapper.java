@@ -3,10 +3,9 @@ package util;
 import annotation.GetMapping;
 import annotation.PostMapping;
 import dto.RequestDto;
+import dto.ResponseDto;
 import exception.WebServerException;
-import webserver.ResponseHandler;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,16 +26,19 @@ public class MethodMapper {
     }
 
     // 요청에 맞게 매핑되는 컨트롤러_메소드 를 실행
-    public static void execute(DataOutputStream dos, RequestDto requestDto) {
+    public static ResponseDto execute(RequestDto requestDto) {
         Method method = CONTROLLER_METHOD.get(requestDto.getMethodAndPath());
         Class<?> controller = method.getDeclaringClass();
+        ResponseDto response = new ResponseDto();
 
         try {
-            method.invoke(controller, dos, requestDto);
+            response = (ResponseDto) method.invoke(controller, requestDto);
         } catch (InvocationTargetException | IllegalAccessException e) {
             WebServerException wasE = (WebServerException) e.getCause();
-            ResponseHandler.sendError(dos, wasE.getErrorCode());
+            response.makeError(wasE.getErrorCode());
         }
+
+        return response;
     }
 
     public static void registerMethod() {

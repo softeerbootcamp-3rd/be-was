@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,14 +34,28 @@ public class RequestParser {
             requestDto.addHeader(keyAndValue[0], keyAndValue[1]);
         }
 
-        getBody(requestDto, br);
+        readCookie(requestDto);
+        readBody(requestDto, br);
 
         logger.debug(requestDto.headersToString());
 
         return requestDto;
     }
 
-    private static void getBody(RequestDto requestDto, BufferedReader br) throws IOException {
+    private static void readCookie(RequestDto requestDto) {
+        String cookies;
+        if ((cookies = requestDto.getCookieHeader()) != null) {
+            String[] arr = cookies.split(";");
+            for (String cookie : arr) {
+                String[] keyAndValue = cookie.split("=");
+                if (keyAndValue.length == 2) {
+                    requestDto.addCookie(keyAndValue[0], keyAndValue[1]);
+                }
+            }
+        }
+    }
+
+    private static void readBody(RequestDto requestDto, BufferedReader br) throws IOException {
         Integer length = requestDto.getContentLength();
 
         // request 에 body 가 없는 경우
@@ -52,14 +65,16 @@ public class RequestParser {
 
         char[] body = new char[length];
         br.read(body, 0, length);
-        String bodyStr = Arrays.toString(body);
+
+        String bodyStr = new String(body);
         requestDto.setBody(getMapFromQueryStr(bodyStr));
     }
 
     private static Map<String, String> getMapFromQueryStr(String str) {
         Map<String, String> result = new HashMap<>();
-        for (String param : str.split("&")) {
-            String[] keyAndValue = param.split("=");
+
+        for (String s : str.split("&")) {
+            String[] keyAndValue = s.split("=");
             result.put(keyAndValue[0], keyAndValue[1]);
         }
         return result;

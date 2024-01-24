@@ -5,8 +5,8 @@ import java.net.Socket;
 
 import constant.ErrorCode;
 import constant.FilePath;
-import constant.HttpStatus;
 import dto.RequestDto;
+import dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.FileManager;
@@ -37,18 +37,22 @@ public class RequestHandler implements Runnable {
             FilePath basePath = FilePath.HTML_BASE;
             byte[] body;
 
-            if (requestDto.getPath().equals("/")) { requestDto.setPath(MAIN_PAGE.getPath()); }
+            if (requestDto.getPath().equals("/")) { requestDto.setPath(MAIN_PAGE.path); }
             if (!requestDto.getPath().endsWith(".html")) { basePath = FilePath.SUPPORT_FILE_BASE; }
 
+            ResponseDto response = new ResponseDto();
+
             if (MethodMapper.hasMethod(requestDto.getMethodAndPath())) {
-                MethodMapper.execute(dos, requestDto);
+                response = MethodMapper.execute(requestDto);
             } else if (requestDto.getMethod().equals("GET") &&
                     (body = FileManager.getFileByPath(basePath, requestDto.getPath())) != null) {
                 String contentType = FileManager.getContentType(requestDto.getPath());
-                ResponseHandler.sendBody(dos, HttpStatus.OK, body, contentType);
+                response.makeBody(body, contentType);
             } else {
-                ResponseHandler.sendError(dos, ErrorCode.PAGE_NOT_FOUND);
+                response.makeError(ErrorCode.PAGE_NOT_FOUND);
             }
+
+            ResponseHandler.send(dos, response);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
