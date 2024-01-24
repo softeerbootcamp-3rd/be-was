@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 
 import controller.Controller;
 import controller.ControllerMappingMap;
@@ -30,7 +31,7 @@ public class RequestHandler implements Runnable {
             HttpRequest request = HttpRequestUtils.makeHttpRequest(in);
             HttpResponse response = new HttpResponse();
 
-            Controller controller = ControllerMappingMap.getController(request.getUrl());
+            Controller controller = ControllerMappingMap.getController(request.getMethod(), request.getUrl());
             controller.process(request, response);
 
             DataOutputStream dos = new DataOutputStream(out);

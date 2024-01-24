@@ -7,8 +7,17 @@ public class HttpRequest {
     private String method;
     private String url;
     private String version;
+    private Map<String, String> params = new HashMap<>();
     private Map<String, String> headers = new HashMap<>();
     private String body;
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
 
     public String getMethod() {
         return method;

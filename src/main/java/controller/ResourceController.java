@@ -19,6 +19,7 @@ public class ResourceController implements Controller {
         contentType.put("css", "text/css; charset=utf-8");
         contentType.put("js", "text/javascript; charset=utf-8");
         contentType.put("png", "image/png");
+        contentType.put("jpg", "image/jpg");
         contentType.put("ico", "image/x-icon");
     }
     @Override

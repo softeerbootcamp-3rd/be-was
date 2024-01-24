@@ -25,7 +25,11 @@ public class MemberJoinService {
         userList.add(user);
     }
 
-    public List<User> getUserList() {
-        return userList;
+    public List<String> getUserIds() {
+        List<String> userIds = new ArrayList<>();
+        for (User user : userList) {
+            userIds.add(user.getUserId());
+        }
+        return userIds;
     }
 }

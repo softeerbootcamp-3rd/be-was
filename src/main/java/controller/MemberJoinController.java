@@ -12,26 +12,26 @@ public class MemberJoinController implements Controller {
     MemberJoinService memberJoinService = new MemberJoinService();
     @Override
     public void process(HttpRequest request, HttpResponse response) {
-        String fullUrl = request.getUrl();
-        String queryString = fullUrl.substring(fullUrl.indexOf("?") + 1);
-        Map<String, String> params = parse(queryString);
+        Map<String, String> headers = new HashMap<>();
+
+        Map<String, String> params = request.getParams();
+        for (String value : params.values()) {
+            if(value.equals("")) {
+                headers.put("Location", "/user/form.html");
+                response.setResponse(HttpResponseStatus.FOUND, null, headers);
+                return;
+            }
+        }
+
+        if (memberJoinService.getUserIds().contains(params.get("userId"))) {
+            headers.put("Location", "/user/form.html");
+            response.setResponse(HttpResponseStatus.FOUND, null, headers);
+            return;
+        }
+
 
         memberJoinService.createUser(params);
-
-
-        Map<String, String> headers = new HashMap<>();
         headers.put("Location", "/index.html");
         response.setResponse(HttpResponseStatus.FOUND, null, headers);
     }
-
-    public static Map<String, String> parse(String query) {
-        Map<String, String> params = new HashMap<>();
-        String[] pairs = query.split("&");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            params.put(keyValue[0], keyValue[1]);
-        }
-        return params;
-    }
-
 }
