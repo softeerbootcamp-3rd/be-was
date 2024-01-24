@@ -12,7 +12,10 @@ public class URIParer {
         for (String set: query.split("&")) {
             String[] keyValue = set.split("=");
             String key = URLDecoder.decode(keyValue[0], "UTF-8");
-            String value = URLDecoder.decode(keyValue[1], "UTF-8");
+            String value = null;
+            if (keyValue.length > 1) {
+                value = URLDecoder.decode(keyValue[1], "UTF-8");
+            }
             parseMap.put(key, value);
         }
         return parseMap;
