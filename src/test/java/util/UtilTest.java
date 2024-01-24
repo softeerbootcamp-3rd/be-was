@@ -70,4 +70,16 @@ class UtilTest {
         //then
         assertThat(result).isEqualTo("박재성");
     }
+
+    @Test
+    @DisplayName("10자리 랜덤 문자열 생성")
+    void getSessionIdTest() {
+
+        //when
+        String sessionId = getSessionId();
+
+        //then
+        assertThat(sessionId.length()).isEqualTo(10);
+        assertThat(sessionId.getClass()).isEqualTo(String.class);
+    }
 }
