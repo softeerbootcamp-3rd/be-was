@@ -37,7 +37,7 @@ public class UserService {
 
         // 유저 아이디 중복 검사
         if (!validateDuplicated(userId)) {
-            // 고민사항 : BAD_REQUEST를 반환해야 할지 회원가입 폼으로 REDIRECT 시켜야 할지
+            // TODO: 고민사항 - BAD_REQUEST를 반환해야 할지 회원가입 폼으로 REDIRECT 시켜야 할지
             Map<String, String> header = Map.of("Location", "/user/form.html");
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
@@ -52,7 +52,6 @@ public class UserService {
         return Database.findUserById(userId) == null;
     }
 
-    // TODO: 로그인 기능 구현
     public HttpResponse join(Map<String, String> params) {
         String userId = params.get("userId"), password = params.get("password");
         User user = Database.findUserById(userId);
@@ -63,8 +62,10 @@ public class UserService {
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
 
-        // TODO: 세션 아이디 임의로 설정
+        // 세션 아이디 랜덤 생성 후 DB에 저장
         String sid = UUID.randomUUID().toString();
+        Database.addSession(user, sid);
+        // response 헤더에 redirection, cookie 설정 추가
         Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=" + sid + "; Path=/");
         return HttpResponse.of(HttpStatus.REDIRECT, header);
     }
