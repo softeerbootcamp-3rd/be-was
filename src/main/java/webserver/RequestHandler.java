@@ -37,7 +37,9 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             RequestHeader requestHeader = readRequest(br);
-            byte[] body = parseBody(in, requestHeader.getContentLength().length());
+            String body = parseBody(br, Integer.parseInt(requestHeader.getContentLength()));
+            System.out.println("body = " + body);
+
             HttpRequest httpRequest = HttpRequest.of(requestHeader, body);
 
             CommonResponse response = FrontController.service(httpRequest);
@@ -48,21 +50,12 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private byte[] parseBody(InputStream in, int contentLength) throws IOException {
-        byte[] body = null;
-
-        System.out.println("contentLength = " + contentLength);
+    private String parseBody(BufferedReader br, int contentLength) throws IOException {
+        char[] chArr = new char[contentLength];
         if (contentLength != 0) {
-            body = new byte[contentLength];
-            int bytesRead = 0;
-            while (bytesRead < contentLength) {
-                System.out.println("strt");
-                bytesRead += in.read(body, bytesRead, contentLength - bytesRead);
-            }
-            System.out.println("body = " + body.length);
+            br.read(chArr);
         }
-
-        return body;
+        return URLDecoder.decode(new String(chArr), StandardCharsets.UTF_8);
     }
 
     private RequestHeader readRequest(BufferedReader br) throws IOException, ClassNotFoundException {
