@@ -19,8 +19,6 @@ import java.util.Map;
 public class UserController implements RequestController {
     private final UserService userService = UserService.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private Map<String, Method> getMap = new HashMap<>();
-    private Map<String, Method> postMap = new HashMap<>();
 
     public UserController(){
     }
