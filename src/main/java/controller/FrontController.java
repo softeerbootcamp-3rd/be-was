@@ -19,7 +19,6 @@ public class FrontController {
 
     public String process(HttpRequest request, HttpResponse response) {
         String url = request.getUrl();
-        String method = request.getMethod();
 
         String path;
         Controller controller = controllerMap.get(url);
@@ -36,13 +35,6 @@ public class FrontController {
             }
         } else {
             path = controller.process(request, response) + ".html";
-            if (method.equals("GET")) {
-
-            } else if (method.equals("POST")) {
-                path = controller.process(request, response) + ".html";
-            } else {
-                path = null;
-            }
         }
         response.setPath(path);
         return path;
