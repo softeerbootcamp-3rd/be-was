@@ -39,6 +39,9 @@ public class Response {
     }
 
     public void setHeader(String key, String value) {
+        if (key.equals("Set-Cookie")) {
+            value += "; path=/";
+        }
         headers.put(key, value);
     }
 
@@ -65,7 +68,7 @@ public class Response {
 
     private void responseHeader(String location) throws IOException {
         dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMsg() + "\r\n");
-        dos.writeBytes("Location: " + location);
+        dos.writeBytes("Location: " + location + "\r\n");
         writeAdditionalHeaders();
     }
 

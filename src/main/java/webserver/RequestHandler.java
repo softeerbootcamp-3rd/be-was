@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import static common.config.WebServerConfig.userController;
 import static common.response.Status.*;
+import static common.util.Util.getSessionId;
 import static common.view.OutputView.*;
 import static webserver.RequestParser.*;
 import static webserver.Response.*;
@@ -73,6 +74,7 @@ public class RequestHandler implements Runnable {
                         userController.login(body);
                         response.setStatus(REDIRECT);
                         response.setPath(INDEX_FILE_PATH);
+                        response.setHeader("Set-Cookie", "SID=" + getSessionId());
                     } catch (LoginFailException e) {
                         logger.debug(e.getMessage());
                         response.setStatus(REDIRECT);
