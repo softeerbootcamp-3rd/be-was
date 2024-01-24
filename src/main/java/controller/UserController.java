@@ -64,6 +64,7 @@ public class UserController implements Controller {
      * 요청한 페이지 파일을 찾아 응답 메시지를 설정합니다.
      *
      * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다.
+     * 만약 파일이 동적인 HTML인 경우 해당 내용을 변경합니다.
      *
      * @param url      요청 정보
      * @param response 응답 메시지
