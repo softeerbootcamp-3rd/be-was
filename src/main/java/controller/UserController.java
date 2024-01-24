@@ -12,6 +12,8 @@ import service.UserService;
 import webserver.response.Response;
 import webserver.type.ContentType;
 
+import java.util.Objects;
+
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService = new UserService();
@@ -25,13 +27,13 @@ public class UserController {
 
         userService.createUser(userId, password, name, email);
 
-        return Response.onSuccess(ContentType.HTML, "회원가입 완료".getBytes());
+        return Response.redirect("/index.html");
     }
 
     @PostMapping(path = "/user/create")
     public Response createUserByPost(@RequestBody UserRequest.Register register){
         userService.createUser(register);
 
-        return Response.onSuccess(ContentType.HTML, "회원가입 완료".getBytes());
+        return Response.redirect("/index.html");
     }
 }
