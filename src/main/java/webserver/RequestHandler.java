@@ -49,35 +49,35 @@ public class RequestHandler implements Runnable {
                 response.setStatus(OK);
                 response.setPath(request.getPath());
             }
-            if (request.getMethod().equals("POST") && request.getPath().equals("/user/create")) {
+            if (request.getMethod().equals("POST")) {
                 int contentLength = getContentLength(request);
                 String body = getRequestBody(br, contentLength);
-                try {
-                    userController.create(body);
-                    response.setStatus(REDIRECT);
-                    response.setPath(INDEX_FILE_PATH);
-                } catch (EmptyFormException e) {
-                    logger.debug(e.getMessage());
-                    response.setStatus(BAD_REQUEST);
-                    response.setPath(USER_CREATE_FORM_FAIL_FILE_PATH);
+                if (request.getPath().equals("/user/create")) {
+                    try {
+                        userController.create(body);
+                        response.setStatus(REDIRECT);
+                        response.setPath(INDEX_FILE_PATH);
+                    } catch (EmptyFormException e) {
+                        logger.debug(e.getMessage());
+                        response.setStatus(BAD_REQUEST);
+                        response.setPath(USER_CREATE_FORM_FAIL_FILE_PATH);
+                    }
+                    catch (DuplicateUserIdException e) {
+                        logger.debug(e.getMessage());
+                        response.setStatus(CONFLICT);
+                        response.setPath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
+                    }
                 }
-                catch (DuplicateUserIdException e) {
-                    logger.debug(e.getMessage());
-                    response.setStatus(CONFLICT);
-                    response.setPath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
-                }
-            }
-            if (request.getMethod().equals("POST") && request.getPath().equals("/user/login")) {
-                int contentLength = getContentLength(request);
-                String body = getRequestBody(br, contentLength);
-                try {
-                    userController.login(body);
-                    response.setStatus(REDIRECT);
-                    response.setPath(INDEX_FILE_PATH);
-                } catch (LoginFailException e) {
-                    logger.debug(e.getMessage());
-                    response.setStatus(REDIRECT);
-                    response.setPath(LOGIN_FAIL_FILE_PATH);
+                if (request.getPath().equals("/user/login")) {
+                    try {
+                        userController.login(body);
+                        response.setStatus(REDIRECT);
+                        response.setPath(INDEX_FILE_PATH);
+                    } catch (LoginFailException e) {
+                        logger.debug(e.getMessage());
+                        response.setStatus(REDIRECT);
+                        response.setPath(LOGIN_FAIL_FILE_PATH);
+                    }
                 }
             }
             response.send();
