@@ -4,7 +4,7 @@ import model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 
-public class DatabaseTest {
+public class UserDatabaseTest {
     @Test()
     @DisplayName("DB Test: addUser()")
     public void addUserTest() {
@@ -12,8 +12,8 @@ public class DatabaseTest {
         User testUser = new User("user", "password", "name", "softeer@example.com");
 
         // when
-        Database.addUser(testUser);
-        User addedUser = Database.findUserById("user");
+        UserDatabase.addUser(testUser);
+        User addedUser = UserDatabase.findUserById("user");
 
         // then
         Assertions.assertThat(addedUser).isNotNull();
@@ -28,11 +28,11 @@ public class DatabaseTest {
     public void findByUserIdTest() {
         // given
         User testUser = new User("user", "password", "name", "softeer@example.com");
-        Database.addUser(testUser);
+        UserDatabase.addUser(testUser);
 
         // when
-        User foundUser = Database.findUserById(testUser.getUserId());
-        User nullUser = Database.findUserById("no_userId");
+        User foundUser = UserDatabase.findUserById(testUser.getUserId());
+        User nullUser = UserDatabase.findUserById("no_userId");
 
         // then
         Assertions.assertThat(foundUser).isNotNull();
@@ -42,23 +42,5 @@ public class DatabaseTest {
         Assertions.assertThat(foundUser.getEmail()).isEqualTo(testUser.getEmail());
 
         Assertions.assertThat(nullUser).isNull();
-    }
-
-    @Test
-    @DisplayName("UserId로 디비에 저장된 유저를 찾아 해당 유저의 Session ID 업데이트하는 기능 테스트")
-    public void updateUserSessionTest() {
-        // given
-        User testUser = new User("testUserId", "password", "testUserName", "test@exmaple.com");
-        Database.addUser(testUser);
-        String testSessionId = "12345678";
-
-        // when
-        Database.updateUserSession(testUser.getUserId(), testSessionId);
-
-        // then
-        User updatedUser = Database.findUserById(testUser.getUserId());
-        Assertions.assertThat(updatedUser.getSessionId()).isEqualTo(testSessionId);
-        Assertions.assertThat(updatedUser.getUserId()).isEqualTo(testUser.getUserId());
-
     }
 }

@@ -7,7 +7,7 @@ import model.User;
 import java.util.Collection;
 import java.util.Map;
 
-public class Database {
+public class UserDatabase {
     private static final Map<String, User> users = Maps.newHashMap();
 
     public static void addUser(User user) {
@@ -24,10 +24,5 @@ public class Database {
 
     public static void deleteUserById(String userId) {
         users.remove(userId);
-    }
-
-    public static void updateUserSession(String userId, String sessionId) {
-        User user = findUserById(userId);
-        user.setSessionId(sessionId);
     }
 }
