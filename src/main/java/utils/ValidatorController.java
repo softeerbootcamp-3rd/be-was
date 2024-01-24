@@ -43,7 +43,7 @@ public enum ValidatorController {
         return controller;
     }
 
-    public static ValidatorController getValicatorController(String requestURL) {
+    public static ValidatorController getValidatorController(String requestURL) {
         return MAPPER.getOrDefault(requestURL, null);
     }
 }
