@@ -1,7 +1,7 @@
 package service;
 
 import db.Database;
-import db.SessionDatabase;
+import utils.SessionManager;
 import model.User;
 
 import java.util.Map;
@@ -28,8 +28,8 @@ public class UserService {
         if(!isExistUser(userId, password)){
             return null;
         }
-        String sessionId = SessionDatabase.createSessionId();
-        SessionDatabase.addSessionId(userId, sessionId);
+        String sessionId = SessionManager.createSessionId();
+        SessionManager.addSessionId(userId, sessionId);
         return sessionId;
     }
 

@@ -1,4 +1,4 @@
-package db;
+package utils;
 
 import com.google.common.collect.Maps;
 
@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-public class SessionDatabase {
+public class SessionManager {
 
     private static Map<String, String> sessionIds = Maps.newConcurrentMap();
 
