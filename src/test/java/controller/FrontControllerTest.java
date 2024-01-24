@@ -54,6 +54,34 @@ class FrontControllerTest {
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getHttpStatus());
     }
 
+    @Test
+    @DisplayName("Post 정상 url 성공 테스트")
+    public void postRequestServiceTest() throws IOException {
+        // given
+        String body = "userId=win9&password=password&name=seunggu&email=win9@gmail.com";
+        HttpRequest request = HttpRequest.of(createHeader("POST", "/user/create", "HTTP/1.1"), body);
+
+        // when
+        CommonResponse response = FrontController.service(request);
+
+        // then
+        Assertions.assertEquals(HttpStatus.REDIRECT, response.getHttpStatus());
+    }
+
+    @Test
+    @DisplayName("Post 비정상 url 예외 테스트")
+    public void notValidPostRequestServiceTest() throws IOException {
+        // given
+        String body = "userId=win9&password=password&name=seunggu&email=win9@gmail.com";
+        HttpRequest request = HttpRequest.of(createHeader("POST", "/user/bad", "HTTP/1.1"), body);
+
+        // when
+        CommonResponse response = FrontController.service(request);
+
+        // then
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getHttpStatus());
+    }
+
     private RequestHeader createHeader(String method, String path, String protocol) {
         return new RequestHeader(method, path, protocol);
     }
