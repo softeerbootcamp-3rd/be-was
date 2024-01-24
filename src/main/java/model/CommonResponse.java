@@ -5,6 +5,13 @@ import util.HttpStatus;
 public class CommonResponse {
     private HttpStatus httpStatus;
     private byte[] body;
+    private String extension = "html";
+
+    private CommonResponse(HttpStatus httpStatus, byte[] body, String extension){
+        this.httpStatus = httpStatus;
+        this.body = body;
+        this.extension = extension;
+    }
 
     private CommonResponse(HttpStatus httpStatus, byte[] body){
         this.httpStatus = httpStatus;
@@ -19,8 +26,12 @@ public class CommonResponse {
         return httpStatus;
     }
 
-    public static CommonResponse onOk(HttpStatus httpStatus, byte[] body){
-        return new CommonResponse(httpStatus, body);
+    public String getExtension() {
+        return extension;
+    }
+
+    public static CommonResponse onOk(HttpStatus httpStatus, byte[] body, String extension){
+        return new CommonResponse(httpStatus, body, extension);
     }
 
     public static CommonResponse onFail(HttpStatus httpStatus, String message){

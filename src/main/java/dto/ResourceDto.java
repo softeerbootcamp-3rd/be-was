@@ -31,4 +31,9 @@ public class ResourceDto {
     public HttpStatus getHttpStatus() {
         return httpStatus;
     }
+
+    public String getExtension() {
+        int dotIndex = path.lastIndexOf(".");
+        return path.substring(dotIndex + 1);
+    }
 }
