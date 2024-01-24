@@ -6,6 +6,7 @@ import webserver.exception.GeneralException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.exception.UserIdAlreadyExistsException;
 import webserver.status.ErrorCode;
 
 public class UserService {
@@ -32,7 +33,7 @@ public class UserService {
     public void createUser(UserRequest.Register register){
         if(existsUserId(register.getUserId())){
             logger.error("userId가 이미 존재하는 예외 발생");
-            throw new GeneralException(ErrorCode.USER_ID_ALREADY_EXISTS_ERROR);
+            throw new UserIdAlreadyExistsException(ErrorCode.USER_ID_ALREADY_EXISTS_ERROR);
         }
 
         User user = User.builder()
