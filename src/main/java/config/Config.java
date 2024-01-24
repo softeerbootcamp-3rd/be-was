@@ -5,6 +5,6 @@ import service.PostService;
 
 public class Config {
 
-    public static final PostService postService = new PostService();
-    public static final GetService getService = new GetService();
+    public static final PostService httpPostService = new PostService();
+    public static final GetService httpGetService = new GetService();
 }

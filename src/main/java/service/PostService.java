@@ -50,7 +50,7 @@ public class PostService {
         logger.debug("새로운 유저: {}", user.toString());
         logger.debug("전체 DB: {}", Database.findAll());
         // /index.html로 리다이렉트
-        return Config.getService.showIndex();
+        return Config.httpGetService.showIndex();
     }
 
     // 로그인 요청 처리
@@ -79,7 +79,7 @@ public class PostService {
         }
         // 로그인 성공 -> index.html로 리다이렉트
         else {
-            return Config.getService.showIndex();
+            return Config.httpGetService.showIndex();
         }
     }
 }

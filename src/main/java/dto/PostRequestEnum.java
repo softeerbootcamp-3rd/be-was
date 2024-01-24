@@ -8,13 +8,13 @@ public enum PostRequestEnum {
     SIGNUP("/user/create") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return Config.postService.signup(httpRequestDto);
+            return Config.httpPostService.signup(httpRequestDto);
         }
     },
     LOGIN("/user/login") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return Config.postService.login(httpRequestDto);
+            return Config.httpPostService.login(httpRequestDto);
         }
     },
     ERROR("wrong request") {

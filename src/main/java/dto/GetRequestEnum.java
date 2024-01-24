@@ -9,19 +9,19 @@ public enum GetRequestEnum {
     DEFAULT("/") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.showIndex();
+            return Config.httpGetService.showIndex();
         }
     },
     SIGNUP("/user/create") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.signup(httpRequestDto);
+            return Config.httpGetService.signup(httpRequestDto);
         }
     },
     FILE("file") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.requestFile(httpRequestDto);
+            return Config.httpGetService.requestFile(httpRequestDto);
         }
     };
 
