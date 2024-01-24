@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.net.Socket;
+import java.util.Map;
 
 import common.exception.LoginFailException;
 import dto.HttpRequest;
@@ -39,27 +40,17 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            String line = br.readLine();
-            HttpRequest request = parseRequestLine(line);
-            printRequest(request);
-
-            int contentLength = 0;
-            while (!line.equals("")) {
-                line = br.readLine();
-                if (line.contains("Content-Length")) {
-                    contentLength = getContentLength(line);
-                }
-            }
+            HttpRequest request = new HttpRequest(br);
 
             String contentType = getContentType(request.getPath());
             Response response = new Response(out, contentType);
 
-            if (contentLength == 0) {
+            if (request.getMethod().equals("GET")) {
                 response.setStatus(OK);
                 response.setPath(request.getPath());
             }
             if (request.getMethod().equals("POST") && request.getPath().equals("/user/create")) {
+                int contentLength = getContentLength(request);
                 String body = getRequestBody(br, contentLength);
                 try {
                     userController.create(body);
@@ -77,6 +68,7 @@ public class RequestHandler implements Runnable {
                 }
             }
             if (request.getMethod().equals("POST") && request.getPath().equals("/user/login")) {
+                int contentLength = getContentLength(request);
                 String body = getRequestBody(br, contentLength);
                 try {
                     userController.login(body);
@@ -94,9 +86,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private int getContentLength(String line) {
-        String[] tokens = parseRequestHeader(line);
-        String contentLength = tokens[1];
+    private int getContentLength(HttpRequest request) {
+        Map<String, String> headers = request.getHeaders();
+        String contentLength = headers.get("Content-Length");
         return Integer.parseInt(contentLength);
     }
 

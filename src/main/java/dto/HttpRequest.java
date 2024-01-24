@@ -1,24 +1,27 @@
 package dto;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Map;
+
+import static common.view.OutputView.printRequest;
+import static webserver.RequestParser.*;
 
 public class HttpRequest {
 
-    private String method;
-    private String path;
-    private String queryString;
-    private Map<String, String> headers;
+    private final String method;
+    private final String path;
+    private final String queryString;
+    private final Map<String, String> headers;
 
-    public HttpRequest(String method, String path, String queryString) {
-        this.method = method;
-        this.path = path;
-        this.queryString = queryString;
-    }
-
-    public HttpRequest(String method, String path) {
-        this.method = method;
-        this.path = path;
-        this.queryString = null;
+    public HttpRequest(BufferedReader br) throws IllegalAccessException, IOException {
+        String line = br.readLine();
+        this.method = parseMethod(line);
+        String[] tokens = parseUrl(line);
+        this.path = tokens[0];
+        this.queryString = tokens[1];
+        this.headers = parseHeaders(br, line);
+        printRequest(this);
     }
 
     public String getMethod() {
@@ -35,9 +38,5 @@ public class HttpRequest {
 
     public Map<String, String> getHeaders() {
         return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
     }
 }

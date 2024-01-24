@@ -1,34 +1,50 @@
 package webserver;
 
-import dto.HttpRequest;
-
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static common.util.Util.split;
 
 
 public class RequestParser {
 
-    public static final String REQUEST_LINE_DELIMITER = " ";
-    public static final String REQUEST_HEADER_DELIMITER = ": ";
-    public static final String URL_DELIMITER = "\\?";
+    private static final String REQUEST_LINE_DELIMITER = " ";
+    private static final String REQUEST_HEADER_DELIMITER = ": ";
+    private static final String URL_DELIMITER = "\\?";
     public static final String PARAMETERS_DELIMITER = "&";
     public static final String PARAMETER_DELIMITER = "=";
 
-    public static HttpRequest parseRequestLine(String line) throws IOException {
-        String[] methodAndURL = split(line, REQUEST_LINE_DELIMITER);
-        if (isQueryStringExist(methodAndURL[1])) {
-            String[] pathAndQueryString = split(methodAndURL[1], URL_DELIMITER);
-            return new HttpRequest(methodAndURL[0], pathAndQueryString[0], pathAndQueryString[1]);
-        }
-        return new HttpRequest(methodAndURL[0], methodAndURL[1]);
+    public static String parseMethod(String line) {
+        String[] tokens = split(line, REQUEST_LINE_DELIMITER);
+        return tokens[0];
     }
 
-    public static String[] parseRequestHeader(String line) {
-        return split(line, REQUEST_HEADER_DELIMITER);
+    public static String[] parseUrl(String requestLine) {
+        String[] tokens = split(requestLine, REQUEST_LINE_DELIMITER);
+        String url = tokens[1];
+        if (isQueryStringExist(url)) {
+            tokens = split(url, URL_DELIMITER);
+            return new String[]{tokens[0], tokens[1]};
+        }
+        return new String[]{url, null};
+    }
+
+    public static Map<String, String> parseHeaders(BufferedReader br, String line) throws IOException {
+        String[] tokens;
+        Map<String, String> headers = new HashMap<>();
+        while (!line.equals("")) {
+            line = br.readLine();
+            if (line.contains(":")) {
+                tokens = split(line, REQUEST_HEADER_DELIMITER);
+                headers.put(tokens[0], tokens[1]);
+            }
+        }
+        return headers;
     }
 
     private static boolean isQueryStringExist(String url) {
-        return url.contains("?");
+        return url.contains(URL_DELIMITER);
     }
 }
