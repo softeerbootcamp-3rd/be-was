@@ -47,10 +47,11 @@ public class ServerContainer implements Runnable {
 
             byte[] convertResponseToByteArray = httpResponse.convertResponseToByteArray();
             dos.write(convertResponseToByteArray, 0, convertResponseToByteArray.length);
-            ResponseThreadLocal.clearHttpResponse();
             dos.flush();
         } catch (Exception e) {
             CustomLogger.printError(e);
+        } finally {
+            ResponseThreadLocal.clearHttpResponse();
         }
     }
 
