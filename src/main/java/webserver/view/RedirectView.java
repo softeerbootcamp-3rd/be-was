@@ -30,13 +30,12 @@ public class RedirectView implements View{
     @Override
     public void render(Request request, Response response) {
         viewPath = viewPath.substring("redirect:".length());
-        logger.debug("viewPath = {}",viewPath);
         sendRedirect(request,response,viewPath);
     }
 
     private void sendRedirect(Request request, Response response, String viewPath) {
         response.setLocation(viewPath);
-        response.setStatus(HttpStatus.MOVED_PERMANENTLY);
+        response.setStatus(HttpStatus.FOUND);
         response.send(request);
     }
 }
