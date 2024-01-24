@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
@@ -53,17 +54,17 @@ public class Response {
     }
     private void setResponseHeader(int lengthOfBodyContent, Request req) {
         try {
-
             dos.writeBytes(new StringBuilder("HTTP/1.1 ").append(status.toString()).append("\r\n").toString());
-
             dos.writeBytes(new StringBuilder(getContentTypeString(req)).toString());
             dos.writeBytes("charset=utf-8\r\n");
             dos.writeBytes(new StringBuilder("Content-Length: ").append(lengthOfBodyContent).append("\r\n").toString());
             dos.writeBytes(new StringBuilder("Location : ").append(location).append("\r\n").toString());
             dos.writeBytes("\r\n");
         } catch (IOException e) {
-            logger.error("e.getMessage = {}",e.getMessage());
+            logger.error(String.valueOf(e.getCause()));
+            e.printStackTrace();
         }
+
     }
 
     private void setResponseBody(byte[] body) {
@@ -77,7 +78,6 @@ public class Response {
 
     private String getContentTypeString(Request req){
         if(req.getRequestParam().containsKey("content")) {
-            logger.debug(new StringBuilder("content = ").append(req.getRequestParam().get("content")).toString());
             setContentType(req.getRequestParam().get("content"));
             return new StringBuilder("Content-Type: ").append(contentType).append(";").toString();
         }
