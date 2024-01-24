@@ -12,9 +12,7 @@ public class HTTPRequest{
     private String method;
     private String url;
     private String HTTPType;
-
     private HashMap<String,String> head;
-
     private HashMap<String,String> body;
 
     public String getMethod() {
@@ -73,13 +71,17 @@ public class HTTPRequest{
             line = br.readLine();
         }
 
+        // Body는 EOF가 없기 때문에 헤더의 Content-Length를 이용
         if(this.head.get("Content-Length")!=null) {
             int length = Integer.parseInt(this.head.get("Content-Length"));
             char[] bodyChars = new char[length];
 
+            //char형 배열에 저장 후 String형으로 변환
             br.read(bodyChars, 0, length);
             String bodyString = String.valueOf(bodyChars);
 
+            // body에서 받은 정보는 key - value 값으로 저장
+            // feature5 브랜치에서 수정: 받게 되는 body의 데이터 형식이 다를 수 있으므로 구분을 시켜야함
             for(String str:bodyString.split("&")){
                 tokens = str.split("=");
                 if(tokens.length<2)

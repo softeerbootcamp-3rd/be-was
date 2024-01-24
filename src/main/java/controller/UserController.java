@@ -15,14 +15,17 @@ public class UserController {
     public static HTTPResponse createAccount(HTTPRequest request) {
         HTTPResponse response = null;
         try {
+            //request에서 구현된 Body의 hashMap을 이용
             String userId = request.getBody().get("userId");
             String password = request.getBody().get("password");
             String name = request.getBody().get("name");
             String email = request.getBody().get("email");
 
+            //유저 저장
             User user = new User(userId, password, name, email);
             Database.addUser(user);
 
+            //성공메세지 (feature5 브렌치에서 개인정보를 보내는 것을 삭제)
             byte[] body = user.toString().getBytes();
             byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code+ " " + ResponseCode.REDIRECT +"\r\n"+
                     "Content-Type: "+ request.getHead().get("Accept").split(",")[0] +"\r\n"+
