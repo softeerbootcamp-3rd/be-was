@@ -35,4 +35,11 @@ public class GlobalExceptionHandler{
         res.setStatus(HttpStatus.NOT_FOUND);
         return "redirect:/not-found.html";
     }
+
+    @ExceptionHandler(InternalServerException.class)
+    public String error500(Response res){
+        logger.debug("error500");
+        res.setStatus(HttpStatus.NOT_FOUND);
+        return "redirect:/server-error.html";
+    }
 }
