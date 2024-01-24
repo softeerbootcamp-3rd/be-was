@@ -1,5 +1,6 @@
 package controller;
 
+import data.CookieData;
 import data.RequestData;
 import model.User;
 import org.slf4j.Logger;
@@ -57,15 +58,15 @@ public class RequestDataController {
                     return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.equals("/user/login")) {
                     logger.debug("[API] /user/login");
-                    String sessionId = UserService.login(requestData);
-                    if (sessionId != null) {
-                        return new Response(HttpStatusCode.FOUND, "/index.html", sessionId);
+                    CookieData cookieData = UserService.login(requestData);
+                    if (cookieData != null) {
+                        return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
                     }
                     return new Response(HttpStatusCode.FOUND, "/index.html");
                 } else if (url.equals("/user/logout")) {
                     logger.debug("[API] /user/logout");
-                    String cookieHeader = UserService.logout(requestData);
-                    return new Response(HttpStatusCode.FOUND, "/index.html", cookieHeader);
+                    CookieData cookieData = UserService.logout(requestData);
+                    return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
                 } else {
                     logger.debug("유효하지 않은 API입니다.");
                     return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");

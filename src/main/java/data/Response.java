@@ -11,20 +11,21 @@ public class Response {
     private final String httpVer = "HTTP/1.1";
     private final HttpStatusCode status;
     private final String path;
-    private final String cookie;
+    private final CookieData cookie;
+
     public Response(HttpStatusCode status, String path) {
         this.status = status;
         this.path = path;
         this.cookie = null;
     }
-    public Response(HttpStatusCode status, String path, String cookie) {
+    public Response(HttpStatusCode status, String path, CookieData cookie) {
         this.status = status;
         this.path = path;
         this.cookie = cookie;
     }
     public HttpStatusCode getStatus() { return status; }
     public String getPath() { return path; }
-    public String getCookie() { return cookie; }
+    public CookieData getCookie() { return cookie; }
     @Override
     public String toString() {
         return "Response : " + status + "\n" +

@@ -2,6 +2,7 @@ package util;
 
 import controller.HttpStatusCode;
 import controller.ResourceMapping;
+import data.CookieData;
 import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,8 @@ public class ResponseBuilder {
         dos.writeBytes("Location: " + targetPath + "\r\n");
     }
 
-    private static void writeCookieHeader(DataOutputStream dos, String cookieHeader) throws IOException {
-        dos.writeBytes("Set-Cookie: sid=" + cookieHeader + "; Path=/" + "\r\n");
+    private static void writeCookieHeader(DataOutputStream dos, CookieData cookieData) throws IOException {
+        dos.writeBytes("Set-Cookie: " + cookieData.toString() + " Path=/" + "\r\n");
     }
 
     private static void buildResponseBody(DataOutputStream dos, HttpStatusCode statusCode, byte[] body) throws IOException {

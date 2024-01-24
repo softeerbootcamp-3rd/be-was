@@ -1,9 +1,11 @@
 package service;
 
+import data.CookieData;
 import data.RequestData;
 import db.Database;
 import db.Session;
 import model.User;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.RequestParserUtil;
@@ -39,7 +41,7 @@ public class UserService {
         logger.debug(newUser.toString());
     }
 
-    public static String login(RequestData requestData) {
+    public static CookieData login(RequestData requestData) {
         logger.debug("login() method");
 
         Map<String, String> loginData = RequestParserUtil.parseUserRegisterQuery(requestData.getBody());
@@ -51,7 +53,8 @@ public class UserService {
 
         if(user != null && user.getPassword().equals(password)) {
             logger.debug("사용자 " + user.getUserId() + " 의 로그인이 성공했습니다.");
-            return Session.createSession(user.getUserId()) + "; Max-Age=360; ";
+            String sid = Session.createSession(user.getUserId());
+            return new CookieData(sid, 60 * 5);
         } else {
             logger.debug("ID 입력값 " + id + " 으로 비정상적인 접근이 있었습니다.");
             return null;
@@ -83,7 +86,7 @@ public class UserService {
         return true;
     }
 
-    public static String logout(RequestData requestData) {
+    public static CookieData logout(RequestData requestData) {
         logger.debug("logout()");
 
         String cookie = requestData.getHeaderValue("Cookie");
@@ -104,7 +107,7 @@ public class UserService {
                 for (String sessionId: Session.getAllSessionId()) {
                     logger.debug("sessionId: " + sessionId + ", userId: " + Session.getUserIdBySessionId(sessionId));
                 }
-                return sid + "; Max-Age=0; ";
+                return new CookieData(sid, 0);
             }
         }
 
