@@ -11,13 +11,10 @@ import webserver.type.ContentType;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
-import java.nio.file.Files;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private final URL RESOURCES_URL = this.getClass().getClassLoader().getResource("./templates");
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -45,11 +42,9 @@ public class RequestHandler implements Runnable {
 
         try{
             if(requestHeader.getMethod().equals("GET")){
-                File file = new File(RESOURCES_URL.getPath() + requestHeader.getPath());
+                response = ResourceHandler.run(requestHeader);
 
-                if(!file.isDirectory() && file.exists()) {
-                    response = Response.onSuccess(ContentType.HTML, Files.readAllBytes(file.toPath()));
-                } else{
+                if(response == null){
                     Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
 
                     if (result instanceof Response) {
