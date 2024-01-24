@@ -12,6 +12,7 @@ import common.exception.LoginFailException;
 import dto.HttpRequest;
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
+import dto.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(br);
-            Response response = new Response(out, request);
+            HttpResponse response = new HttpResponse(out, request);
 
             if (request.getMethod().equals("GET")) {
                 response.setStatus(OK);

@@ -1,5 +1,6 @@
 package webserver;
 
+import dto.HttpResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class ResponseTest {
         String path = "/css/bootstrap.min.css";
 
         //when
-        String mimeType = Response.getContentType(path);
+        String mimeType = HttpResponse.getContentType(path);
 
         //then
         Assertions.assertThat(mimeType).isEqualTo("text/css");
