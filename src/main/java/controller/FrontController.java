@@ -20,22 +20,19 @@ public class FrontController {
     public String process(HttpRequest request, HttpResponse response) {
         String url = request.getUrl();
 
-        String path;
+        String path = null;
         Controller controller = controllerMap.get(url);
         if (controller == null) { //.html
             if (url.endsWith(".html")) {
                 path = RESOURCES_TEMPLATES_URL + url;
-
             } else { //.js .css ...
                 path = RESOURCES_STATIC_URL + url;
-            }
-            if (!isFileExists(path)) {
-                response.setHttpStatus(HttpStatus.NOT_FOUND);
-                return null;
             }
         } else {
             path = controller.process(request, response) + ".html";
         }
+        
+        if (!isFileExists(path)) path=null;
         response.setPath(path);
         return path;
     }
