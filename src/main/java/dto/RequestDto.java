@@ -19,6 +19,7 @@ public class RequestDto {
         this.methodAndPath = methodAndPath;
         this.params = new HashMap<>();
         this.headers = new HashMap<>();
+        this.cookies = new HashMap<>();
     }
 
     public String getMethod() {

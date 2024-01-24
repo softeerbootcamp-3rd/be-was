@@ -38,7 +38,7 @@ public class RequestHandler implements Runnable {
             FilePath basePath = FilePath.HTML_BASE;
             byte[] body;
 
-            if (requestDto.getPath().equals("/")) { requestDto.setPath(MAIN_PAGE.getPath()); }
+            if (requestDto.getPath().equals("/")) { requestDto.setPath(MAIN_PAGE.path); }
             if (!requestDto.getPath().endsWith(".html")) { basePath = FilePath.SUPPORT_FILE_BASE; }
 
             ResponseDto response = new ResponseDto();

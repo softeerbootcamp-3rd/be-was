@@ -14,13 +14,13 @@ public class UserController {
     public static ResponseDto create(RequestDto requestDto) {
         UserService.signUp(requestDto.getBody());
 
-        return new ResponseDto().makeRedirect(MAIN_PAGE.getPath());
+        return new ResponseDto().makeRedirect(MAIN_PAGE.path);
     }
 
     @PostMapping(path = "/user/login")
     public static ResponseDto login(RequestDto requestDto) {
         ResponseDto response = new ResponseDto();
-        response.makeRedirect(MAIN_PAGE.getPath());
+        response.makeRedirect(MAIN_PAGE.path);
 
         // 이전에 로그인한 유저 (요청 헤더 쿠키에 sessionId 가 있음) && 세션이 만료되지 않은 경우
         // MAIN_PAGE 로 리다이렉트

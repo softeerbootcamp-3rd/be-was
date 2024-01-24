@@ -10,7 +10,7 @@ import java.io.IOException;
 public class FileManager {
 
     public static byte[] getFileByPath(FilePath basePath, String path) throws IOException {
-        File file = new File(basePath.getPath() + path);
+        File file = new File(basePath.path + path);
         if (file.exists()) {
             return fileToByte(file);
         }
@@ -20,7 +20,7 @@ public class FileManager {
 
     public static String getContentType(String path) throws IOException {
         int extensionPoint = path.lastIndexOf(".");
-        return FileContentType.of(path.substring(extensionPoint)).getContentType();
+        return FileContentType.of(path.substring(extensionPoint));
     }
 
     private static byte[] fileToByte(File file) throws IOException {

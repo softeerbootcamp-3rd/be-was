@@ -7,20 +7,11 @@ public enum ErrorCode {
     USER_NOT_FOUND (HttpStatus.BAD_REQUEST, "유저가 존재하지 않습니다."),
     USER_WRONG_PASSWORD (HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다.");
 
-
-    private final HttpStatus httpStatus;
-    private final String errorMessage;
+    public final HttpStatus httpStatus;
+    public final String errorMessage;
 
     ErrorCode(HttpStatus httpStatus, String errorMessage) {
         this.errorMessage = errorMessage;
         this.httpStatus = httpStatus;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
     }
 }

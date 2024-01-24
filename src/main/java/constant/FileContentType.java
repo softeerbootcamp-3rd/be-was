@@ -23,27 +23,23 @@ public enum FileContentType {
     WOFF (".woff", "font/woff"),
     WOFF2 (".woff2", "font/woff2");
 
-    private final String extension;
-    private final String contentType;
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    private static final Map<String, FileContentType> fileContentTypeMap = Collections.unmodifiableMap(
-            Stream.of(values()).collect(Collectors.toMap(FileContentType::getExtension, Function.identity()))
-    );
+    public final String extension;
+    public final String contentType;
 
     FileContentType(String extension, String contentType) {
         this.extension = extension;
         this.contentType = contentType;
     }
 
-    public static FileContentType of(String extension) {
-        return fileContentTypeMap.get(extension);
+    public String getExtension() {
+        return extension;
+    }
+
+    private static final Map<String, FileContentType> fileContentTypeMap = Collections.unmodifiableMap(
+            Stream.of(values()).collect(Collectors.toMap(FileContentType::getExtension, Function.identity()))
+    );
+
+    public static String of(String extension) {
+        return fileContentTypeMap.get(extension).contentType;
     }
 }

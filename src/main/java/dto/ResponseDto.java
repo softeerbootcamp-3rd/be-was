@@ -13,15 +13,15 @@ public class ResponseDto {
     private byte[] body = null;
 
     public void makeError(ErrorCode errorCode) {
-        this.status = errorCode.getHttpStatus();
-        this.body = errorCode.getErrorMessage().getBytes();
-        addContentType(FileContentType.TXT.getContentType());
+        this.status = errorCode.httpStatus;
+        this.body = errorCode.errorMessage.getBytes();
+        addContentType(FileContentType.TXT.contentType);
     }
 
     public ResponseDto makeRedirect(String redirectUrl) {
         this.status = HttpStatus.REDIRECT;
         addHeader("Location", redirectUrl);
-        addContentType(FileContentType.HTML.getContentType());
+        addContentType(FileContentType.HTML.contentType);
         return this;
     }
 
