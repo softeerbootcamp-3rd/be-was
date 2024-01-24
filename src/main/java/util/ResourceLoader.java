@@ -1,6 +1,5 @@
 package util;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +16,6 @@ public class ResourceLoader {
         CONTENT_TYPE_MAP.put("jpeg", "image/jpeg");
         CONTENT_TYPE_MAP.put("gif", "image/gif");
         CONTENT_TYPE_MAP.put("font", "image/svg+xml");
-    }
-
-    public static InputStream getResourceAsStream(String resourcePath) {
-        ClassLoader classLoader = ResourceLoader.class.getClassLoader();
-        return classLoader.getResourceAsStream(resourcePath);
     }
 
     public static String getContentType(String path) {
