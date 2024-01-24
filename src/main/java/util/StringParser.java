@@ -5,9 +5,9 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class URIParer {
+public class StringParser {
 
-    public static Map<String, String> parserKeyValue(String query) throws UnsupportedEncodingException {
+    public static Map<String, String> parseKeyVaue(String query) throws UnsupportedEncodingException {
         Map<String, String> parseMap = new HashMap<>();
         for (String set: query.split("&")) {
             String[] keyValue = set.split("=");
