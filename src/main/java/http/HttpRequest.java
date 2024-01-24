@@ -6,6 +6,7 @@ import webserver.RequestHandler;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,60 +32,72 @@ public class HttpRequest {
     public Map<String, String> getRequestParam() { return requestParam; }
     public Map<String, String> getFormData() { return formData; }
 
-
-    public HttpRequest (InputStream inputStream) throws IOException {
+    public HttpRequest(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         getRequestInfo(br);
     }
 
     private void getRequestInfo(BufferedReader br) throws IOException {
-
         String line = br.readLine();
-        if (line != null) {
-            String[] lines = line.split(" ");
-            method=lines[0];
-            if (lines[1].contains("?")) {
-                getQueryParam(lines[1]);
-                lines[1] = lines[1].substring(0,line.indexOf('?'));
-            }
-            url=lines[1];
-            httpVersion = lines[2];
+        parseRequestLine(line);
+        parseRequestHeaders(br);
+        if (method.equals("POST")) {
+            getFormData(getBody(br, contentLength));
+        }
+    }
 
-            while (!line.equals("")) {
-                line = br.readLine();
-                if (line.startsWith("Accept:")) {
-                    accept=line.substring("Accept: ".length());
-                } else if (line.startsWith("Connection")) {
-                    connection=line.substring("Connection: ".length());
-                } else if (line.startsWith("Host:")) {
-                    host=line.substring("Host: ".length());
-                } else if (line.startsWith("Content-Length: ")) {
-                    contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
-                }
-            }
-            if (method.equals("POST")) {
-                String body = getBody(br, contentLength);
-                getFormData(body);
-            }
+    private void parseRequestLine(String line) throws UnsupportedEncodingException {
+        String[] lines = line.split(" ");
+        method = lines[0];
+        if (lines[1].contains("?")) {
+            getQueryParam(lines[1]);
+            lines[1] = lines[1].substring(0, line.indexOf('?'));
+        }
+        url = lines[1];
+        httpVersion = lines[2];
+    }
 
+    private void parseRequestHeaders(BufferedReader br) throws IOException {
+        String line = br.readLine();
+        while (!line.equals("")) {
+            if (line.startsWith("Accept:")) {
+                accept = line.substring("Accept: ".length());
+            } else if (line.startsWith("Connection")) {
+                connection = line.substring("Connection: ".length());
+            } else if (line.startsWith("Host:")) {
+                host = line.substring("Host: ".length());
+            } else if (line.startsWith("Content-Length: ")) {
+                contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
+            }
+            line = br.readLine();
         }
     }
 
     private void getQueryParam(String url) throws UnsupportedEncodingException {
-        String paramLine = url.substring(url.indexOf('?')+1);
-        String[] params = paramLine.split("&");
-        for (String param : params) {
-            String[] p = param.split("=");
-            requestParam.put(p[0], decode(p[1]));
-        }
+        String paramLine = url.substring(url.indexOf('?') + 1);
+        Arrays.stream(paramLine.split("&"))
+                .map(param -> param.split("="))
+                .forEach(p -> {
+                    try {
+                        requestParam.put(p[0], decode(p[1]));
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
     }
 
     private void getFormData(String body) throws UnsupportedEncodingException {
-        String[] objects = body.split("&");
-        for (String object : objects) {
-            String[] o = object.split("=");
-            formData.put(o[0], decode(o[1]));
-        }
+        Arrays.stream(body.split("&"))
+                .map(object -> object.split("="))
+                .forEach(o -> {
+                    try {
+                        formData.put(o[0], decode(o[1]));
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
     }
 
     private String getBody(BufferedReader br, int contentLength) throws IOException {
@@ -102,6 +115,9 @@ public class HttpRequest {
         return bodyBuilder.toString();
     }
 
+    private String decode(String encodedString) throws UnsupportedEncodingException {
+        return URLDecoder.decode(encodedString, "UTF-8");
+    }
 
     public void print() {
         StringBuilder sb = new StringBuilder();
@@ -112,9 +128,5 @@ public class HttpRequest {
         sb.append("\nAccept: " + accept+"\n");
 
         logger.debug(sb.toString());
-    }
-
-    private String decode(String encodedString) throws UnsupportedEncodingException {
-        return URLDecoder.decode(encodedString, "UTF-8");
     }
 }

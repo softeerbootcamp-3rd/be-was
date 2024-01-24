@@ -61,18 +61,16 @@ public class RequestHandler implements Runnable {
                 }
             }
 
-            byte[] body = null;
-
-            if (path.startsWith("redirect:")) {
+            if (path == null) {
+                response.setHttpStatus(HttpStatus.NOT_FOUND);
+            } else if (path.startsWith("redirect:")) {
                 response.setHttpStatus(HttpStatus.FOUND);
                 response.setHeader("Location", path.substring("redirect:".length()));
-                response.sendResponse();
             } else {
                 response.setHttpStatus(HttpStatus.OK);
                 response.setPath(path);
-                response.sendResponse();
-                //response.setHeader("Content-Type");
             }
+            response.sendResponse();
 
         } catch (IOException e) {
             logger.error(e.getMessage());
