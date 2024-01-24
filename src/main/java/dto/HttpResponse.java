@@ -1,13 +1,13 @@
 package dto;
 
-import common.response.Status;
+import webserver.Status;
 import webserver.ContentType;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static common.response.Status.REDIRECT;
+import static webserver.Status.REDIRECT;
 import static webserver.RequestHandler.logger;
 
 public class HttpResponse {

@@ -16,7 +16,7 @@ import dto.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static common.response.Status.*;
+import static webserver.Status.*;
 import static common.util.Util.getSessionId;
 import static webserver.WebServerConfig.*;
 

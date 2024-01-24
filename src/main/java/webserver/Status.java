@@ -1,4 +1,4 @@
-package common.response;
+package webserver;
 
 public enum Status {
 
