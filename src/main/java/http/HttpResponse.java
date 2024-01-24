@@ -36,6 +36,10 @@ public class HttpResponse {
         this.httpStatus = httpStatus;
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public void sendResponse() throws IOException {
         dos.writeBytes("HTTP/1.1 " + httpStatus.getCode() + " " + httpStatus.getMessage() + "\r\n");
         Set<String> keySet = headers.keySet();
@@ -45,7 +49,6 @@ public class HttpResponse {
             } else {
                 dos.writeBytes(key + ": " + headers.get(key) + "\r\n");
             }
-
         }
         dos.writeBytes("\r\n");
         readFile();

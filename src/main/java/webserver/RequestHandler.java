@@ -10,6 +10,7 @@ import controller.FrontController;
 import controller.UserController;
 import http.HttpRequest;
 import http.HttpResponse;
+import http.HttpResponseHandler;
 import http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,12 @@ public class RequestHandler implements Runnable {
     private Socket connection;
 
     private FrontController frontController;
+    private HttpResponseHandler responseHandler;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.frontController = new FrontController();
+        this.responseHandler = new HttpResponseHandler();
     }
 
     public void run() {
@@ -39,17 +42,9 @@ public class RequestHandler implements Runnable {
 
             HttpResponse response = new HttpResponse(dos);
 
-            String path = frontController.process(request, response);
+            frontController.process(request, response);
 
-            if (path == null) {
-                response.setHttpStatus(HttpStatus.NOT_FOUND);
-            } else if (path.startsWith("redirect:")) {
-                response.setHttpStatus(HttpStatus.FOUND);
-                response.setHeader("Location", path.substring("redirect:".length()));
-            } else {
-                response.setHttpStatus(HttpStatus.OK);
-                response.setPath(path);
-            }
+            responseHandler.setHttpResponse(response);
             response.sendResponse();
 
         } catch (IOException e) {
