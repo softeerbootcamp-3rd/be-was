@@ -51,29 +51,36 @@ public class RequestHandler implements Runnable {
             }
 
             String contentType = getContentType(requestLineDto.getPath());
+            Response response = new Response(out, contentType);
 
             if (contentLength == 0) {
-                createResponse(out, OK, contentType, requestLineDto.getPath());
+                response.setStatus(OK);
+                response.setPath(requestLineDto.getPath());
             }
             if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/create")) {
                 String body = getRequestBody(br, contentLength);
                 try {
                     userController.create(body);
-                    createResponse(out, REDIRECT, contentType, INDEX_FILE_PATH);
+                    response.setStatus(REDIRECT);
+                    response.setPath(INDEX_FILE_PATH);
                 } catch (EmptyFormException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, BAD_REQUEST, contentType, USER_CREATE_FORM_FAIL_FILE_PATH);
+                    response.setStatus(BAD_REQUEST);
+                    response.setPath(USER_CREATE_FORM_FAIL_FILE_PATH);
                 }
                 catch (DuplicateUserIdException e) {
                     logger.debug(e.getMessage());
-                    createResponse(out, CONFLICT, contentType, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
+                    response.setStatus(CONFLICT);
+                    response.setPath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
                 }
             }
             if (requestLineDto.getMethod().equals("POST") && requestLineDto.getPath().equals("/user/login")) {
                 String body = getRequestBody(br, contentLength);
                 userController.login(body);
-                createResponse(out, REDIRECT, contentType, INDEX_FILE_PATH);
+                response.setStatus(REDIRECT);
+                response.setPath(INDEX_FILE_PATH);
             }
+            response.send();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
