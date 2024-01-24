@@ -43,5 +43,16 @@ Java Web Application Server 2023
 - [Git에 대한 진실](https://b1ackhand.tistory.com/261)
 - [멀티쓰레드프로그래밍](https://b1ackhand.tistory.com/263)
 
+## 2주차 개발과정 및 학습과정
+### 웹 서버 4단계 - POST로 회원 가입
+#### 요구사항
+- nio 대신 io 사용
+- POST 요청
+
+#### 개발과정
+##### 8. NIO와 IO의 차이 학습
+##### 9. BODY파싱을 위한 팩토리패턴
+
+
 
 
