@@ -1,6 +1,8 @@
 package service;
 
-import db.Database;
+import db.SessionDatabase;
+import db.UserDatabase;
+import model.Session;
 import model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +28,7 @@ public class UserServiceTest {
         userService.createUser(createUserParams);
 
         // then
-        User user = Database.findUserById("TestUserId");
+        User user = UserDatabase.findUserById("TestUserId");
         Assertions.assertThat(user.getUserId()).isEqualTo(createUserParams.get("userId"));
         Assertions.assertThat(user.getPassword()).isEqualTo(createUserParams.get("password"));
         Assertions.assertThat(user.getEmail()).isEqualTo(createUserParams.get("email"));
@@ -49,11 +51,30 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("loginUser(): 올바른 파라미터를 전달한 경우 로그인에 성공하고 세션 아이디를 반환한다")
+    @DisplayName("loginUser(): 유효한 기존 세션 정보가 없는 유저가 로그인에 성공한 경우 새로운 Session을 저장하고 해당 sessionId를 리턴한다")
+    public void loginNewUserTest() {
+        // given
+        User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
+        UserDatabase.addUser(testUser);
+        Map<String, String> loginUserParams = new HashMap<>();
+        loginUserParams.put("userId", testUser.getUserId());
+        loginUserParams.put("password", testUser.getPassword());
+
+        // when
+        String sessionId = userService.loginUser(loginUserParams);
+
+        // then
+        Session session = SessionDatabase.findSessionById(sessionId);
+        Assertions.assertThat(session.getUserId()).isEqualTo(testUser.getUserId());
+    }
+
+    @Test
+    @DisplayName("loginUser(): 유효한 기존 세션 정보가 있는 유저가 로그인에 성공한 경우 기존에 존재하는 sessionId를 리턴한다")
     public void loginUserTest() {
         // given
         User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
-        Database.addUser(testUser);
+        UserDatabase.addUser(testUser);
+        String existedSessionId = SessionDatabase.addSession(new Session(testUser.getUserId()));
 
         Map<String, String> loginUserParams = new HashMap<>();
         loginUserParams.put("userId", testUser.getUserId());
@@ -63,7 +84,7 @@ public class UserServiceTest {
         String sessionId = userService.loginUser(loginUserParams);
 
         // then
-        Assertions.assertThat(sessionId).isNotNull();
+        Assertions.assertThat(sessionId).isEqualTo(existedSessionId);
     }
 
     @Test
@@ -84,7 +105,7 @@ public class UserServiceTest {
     public void loginUserFailInvalidIdPwTest() {
         // given
         User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
-        Database.addUser(testUser);
+        UserDatabase.addUser(testUser);
 
         Map<String, String> loginUserParams = new HashMap<>();
         loginUserParams.put("userId", testUser.getUserId());
