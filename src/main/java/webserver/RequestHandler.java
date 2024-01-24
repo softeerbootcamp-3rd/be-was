@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 import java.util.function.Function;
 
 import http.response.HttpResponse;
@@ -60,8 +61,8 @@ public class RequestHandler implements Runnable {
                 }
             } else {
                 // 동적 자원 처리
-                Function<HttpRequest, HttpResponse> controller = ControllerMapper.getController(httpRequest);
-                response = controller.apply(httpRequest);
+                Function<Map<String, String>, HttpResponse> controller = ControllerMapper.getController(httpRequest);
+                response = controller.apply(httpRequest.getBody());
             }
 
             // 응답
