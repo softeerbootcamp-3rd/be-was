@@ -15,6 +15,7 @@ public class URLMapper {
 
     static {
         URL_MAPPING.put("POST /user/create", UserController::createUser);
+        URL_MAPPING.put("POST /user/login", UserController::login);
     }
 
     //찾으면 찾은 컨트롤러 반환, 못 찾으면 ResourceController 반환

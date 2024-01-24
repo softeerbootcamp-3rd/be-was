@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserDtoTest {
+class UserSignUpDtoTest {
 
     @DisplayName("body의 문자열을 UserDto로 변환할 수 있다.")
     @Test
@@ -14,10 +14,10 @@ class UserDtoTest {
         String query = "userId=user1&password=1234&name=test&email=test@naver.com";
 
         //when
-        UserDto userDto = UserDto.from(query);
+        UserSignUpDto userSignUpDto = UserSignUpDto.from(query);
 
         //then
-        assertThat(userDto)
+        assertThat(userSignUpDto)
                 .extracting("userId", "password", "name", "email")
                 .contains("user1", "1234", "test", "test@naver.com");
     }
