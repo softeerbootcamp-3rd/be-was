@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public class UserService {
 
-    public boolean signUp(Map<String, String> queryParams){
-        if (!validateParams(queryParams)){
+    public boolean signUp(Map<String, String> bodyParams){
+        if (!validateParams(bodyParams)){
             return false;
         }
-        User newUser = createUser(queryParams);
+        User newUser = createUser(bodyParams);
         if (Database.findUserById(newUser.getUserId()) != null) {
             return false;
         }
