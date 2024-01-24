@@ -9,8 +9,6 @@ import webserver.adapter.ResourceAdapter;
 import webserver.parser.RequestParser;
 import webserver.request.Request;
 import webserver.response.Response;
-import webserver.status.HttpStatus;
-import webserver.type.ContentType;
 
 import java.io.*;
 import java.net.Socket;
@@ -74,16 +72,11 @@ public class RequestHandler implements Runnable {
                 throw new IllegalArgumentException("");
             }
 
-            HttpStatus httpStatus = response.getHttpStatus();
-            ContentType contentType = response.getContentType();
-            byte[] body = response.getBody();
+            dos.writeBytes(response.getHeaders());
 
-            dos.writeBytes(String.format("HTTP/1.1 %d %s \r\n", httpStatus.getCode(), httpStatus.getName()));
-            dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", contentType.getValue()));
-            dos.writeBytes(String.format("Content-Length: %d\r\n", body.length));
-            dos.writeBytes("\r\n");
-
-            dos.write(body, 0, body.length);
+            if(response.existsBody()) {
+                dos.write(response.getBody(), 0, response.getBody().length);
+            }
 
             dos.flush();
         } catch (IOException e) {
