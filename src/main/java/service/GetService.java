@@ -1,5 +1,6 @@
 package service;
 
+import com.google.common.io.ByteStreams;
 import db.Database;
 import dto.HTTPRequestDto;
 import dto.HTTPResponseDto;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -55,21 +57,48 @@ public class GetService {
         if(httpRequestDto.getRequestTarget() == null) {
             return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
         }
-        // 해당 파일을 읽고 응답
+
+        // 파일 경로 찾기
+        String path = findFilePath(httpRequestDto.getRequestTarget());
+        logger.debug("file path: {}", path);
+
+        return HTTPResponseDto.createResponseDto(200,
+                httpRequestDto.getAccept(),
+                readFile(path));
+    }
+
+    // 파일 확장자에 따라 파일 경로 찾기
+    private String findFilePath(String url) {
         String path = "./src/main/resources";
 
         // 1. html일 경우
-        if(httpRequestDto.getRequestTarget().contains(".html")) {
-            path += "/templates" + httpRequestDto.getRequestTarget();
-        }
+        if(url.contains(".html"))
+            path += "/templates" + url;
         // 2. css, fonts, images, js, ico일 경우
-        else {
-            path += "/static" + httpRequestDto.getRequestTarget();
+        else
+            path += "/static" + url;
+        return path;
+    }
+
+    // 경로에 해당하는 파일 읽어오기
+    private byte[] readFile(String path) {
+        byte[] byteFile = null;
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream(path);
+            byteFile = ByteStreams.toByteArray(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(fis != null) { fis.close(); }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        logger.debug("file path: {}", path);
-        return HTTPResponseDto.createResponseDto(200,
-                httpRequestDto.getAccept(),
-                Files.readAllBytes(new File(path).toPath()));
+
+        return byteFile;
     }
 
     // index.html로 리다이렉트
