@@ -23,6 +23,14 @@ public class UserController implements Controller {
             loginUser(request, response);
             return;
         }
+        if (request.getUrl().startsWith("/user/list")) {
+            String cookie = request.getHeader("Cookie");
+            if (cookie == null || Session.getUserBySessionId(cookie) == null) {
+                response.setCode(302);
+                response.addHeader("Location", "/user/login.html");
+                return;
+            }
+        }
         getPage(request.getUrl(), response);
     }
 
@@ -56,7 +64,7 @@ public class UserController implements Controller {
      *
      * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다.
      *
-     * @param url 요청 정보
+     * @param url      요청 정보
      * @param response 응답 메시지
      */
     private void getPage(String url, Response response) {
@@ -79,7 +87,7 @@ public class UserController implements Controller {
      * <p> 요청한 작업을 성공적으로 수행한다면 메인 페이지로 리다이렉션하도록 설정합니다.
      * 파라미터가 불충분하거나 이미 회원가입된 아이디라면 400 응답으로 설정합니다.
      *
-     * @param request 요청 정보
+     * @param request  요청 정보
      * @param response 응답 메시지
      */
     private void createUser(Request request, Response response) {
