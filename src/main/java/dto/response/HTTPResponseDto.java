@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class HTTPResponseDto {
@@ -78,7 +79,7 @@ public class HTTPResponseDto {
         // 현재 날짜 및 시간 가져오기
         LocalDateTime currentDateTime = LocalDateTime.now();
         // 날짜 및 시간 포맷 지정 (예: "Sat, 01 Jan 2022 12:00:00 GMT")
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
         String formattedDateTime = currentDateTime.format(formatter);
         addHeader("Date", formattedDateTime);
     }

@@ -2,6 +2,8 @@ package dto.session;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.UUID;
 
 public class Session {
@@ -27,6 +29,13 @@ public class Session {
     public String getUserId() {
         return this.userId;
     }
+    // 만료기간을 GMT 형식에 맞춰 반환
+    public String getExpires() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
+        return expires.format(formatter);
+    }
+
+    // 로그인 시 마지막 접속 시간 업데이트
     public void setLastAccessTime(LocalDateTime time) {
         this.lastAccessTime = time;
     }

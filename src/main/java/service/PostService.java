@@ -4,6 +4,7 @@ import config.Config;
 import db.Database;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
+import dto.session.Session;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,19 +68,29 @@ public class PostService {
         String userId = tokens[0].substring("userId=".length());
         String password = tokens[1].substring("password=".length());
 
-        // 3. 둘 다 빈 문자열이면 안됨
+        // 3. 하나라도 빈 문자열이면 안됨
         if(userId.equals("") || password.equals(""))
             return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
 
-        // 로그인 실패
-        if(Database.findUserById(userId) == null) {
+        User user = Database.findUserById(userId);
+        // 로그인 실패 1 : 아이디에 해당하는 유저가 없을 경우 or 비밀번호가 틀렸을 경우
+        if(user == null || !user.getPassword().equals(password)) {
             HTTPResponseDto httpResponseDto = HTTPResponseDto.createResponseDto(302, null, null);
             httpResponseDto.addHeader("Location", "/user/login_failed.html");
             return httpResponseDto;
         }
-        // 로그인 성공 -> index.html로 리다이렉트
+        // 로그인 성공 -> 응답에 Set-Cookie 헤더 추가, index.html로 리다이렉트
         else {
-            return Config.httpGetService.showIndex();
+            // 세션 생성 후 세션 저장소에 저장
+            Session session = new Session(userId);
+            Database.addSession(session);
+            // TODO : response header에 쿠키 관련 헤더 추가
+            System.out.println(session.getExpires());
+            String setCookie = "sid=" + session.getId() + "; expires=" + session.getExpires() + "; Path=/";
+            HTTPResponseDto httpResponseDto = HTTPResponseDto.createResponseDto(302, null, null);
+            httpResponseDto.addHeader("Location", "/index.html");
+            httpResponseDto.addHeader("Set-Cookie", setCookie);
+            return httpResponseDto;
         }
     }
 }
