@@ -2,6 +2,7 @@ package dto.session;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Session {
 
@@ -10,10 +11,10 @@ public class Session {
     private LocalDateTime createTime;   // 세션 생성 시간
     private LocalDateTime lastAccessTime;     // 마지막 접속 시간 (로그인 했을 떄 갱신)
     private LocalDateTime expires;      // 세션 만료 시간 : 1시간
-    private static long maxAccessTime = 3600;          // 최대 접속 가능 시간 (초)
+    private static long maxAccessTime = 3600;          // 최대 접속 가능 시간 : 1시간 (3600초)
 
-    public Session(String id, String userId) {
-        this.id = id;
+    public Session(String userId) {
+        this.id = createSessionID();
         this.userId = userId;
         this.createTime = LocalDateTime.now();
         this.lastAccessTime = LocalDateTime.now();
@@ -51,6 +52,14 @@ public class Session {
         if(AccessTimeSeconds < maxAccessTime)       // 유저의 접속 시간이 1시간보다 적을 경우
             return true;
         return false;                               // 유저의 접속 시간이 1시간 이상이 되었을 경우
+    }
+
+    // 세션 ID 생성
+    public String createSessionID() {
+        // randomUUID 메서드를 사용하여 랜덤한 UUID 생성
+        UUID uuid = UUID.randomUUID();
+        // UUID를 문자열로 변환하여 세션 ID로 반환
+        return uuid.toString();
     }
 
 }

@@ -22,8 +22,8 @@ class GetServiceTest {
 
     @AfterEach
     void clearDB() {
-        logger.debug("DB: {}", Database.findAll());
-        Database.clear();
+        logger.debug("DB: {}", Database.findAllUser());
+        Database.clearUsers();
     }
 
     // 쿼리 스트링에 null 값이 들어왔을 경우 회원가입 테스트

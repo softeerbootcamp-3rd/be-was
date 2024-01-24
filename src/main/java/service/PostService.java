@@ -48,7 +48,7 @@ public class PostService {
         // 데이터베이스에 저장
         Database.addUser(user);
         logger.debug("새로운 유저: {}", user.toString());
-        logger.debug("전체 DB: {}", Database.findAll());
+        logger.debug("전체 DB: {}", Database.findAllUser());
         // /index.html로 리다이렉트
         return Config.httpGetService.showIndex();
     }

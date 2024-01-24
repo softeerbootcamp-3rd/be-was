@@ -18,8 +18,8 @@ class PostServiceTest {
 
     @AfterEach
     void clearDB() {
-        logger.debug("DB: {}", Database.findAll());
-        Database.clear();
+        logger.debug("DB: {}", Database.findAllUser());
+        Database.clearUsers();
     }
 
     // 회원가입 테스트 1: 바디에 key 값이 제대로 들어오지 않은 경우
