@@ -5,7 +5,6 @@ public class User {
     private String password;
     private String name;
     private String email;
-    private String sessionId;
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
@@ -28,14 +27,6 @@ public class User {
 
     public String getEmail() {
         return this.email;
-    }
-
-    public String getSessionId() {
-        return this.sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
     }
 
     @Override
