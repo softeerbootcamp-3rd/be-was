@@ -54,7 +54,8 @@ public class ResourceAdapter implements Adapter{
 
     private static Response makeResponse(File file, ContentType contentType) throws IOException {
         if(!file.isDirectory() && file.exists()) {
-            return Response.onSuccess(contentType, Files.readAllBytes(file.toPath()));
+
+            return Response.onSuccess(Files.readAllBytes(file.toPath()), contentType);
         }
 
         return null;
