@@ -9,10 +9,7 @@ import java.util.function.Function;
 
 
 /**
- * 스프링의 @GetMapping or @PostMapping 역할
- * 요청 메소드 + URL의 path로 controller 맵핑해주기
- * 고민 : controller를 서비스 별로 파는게 좋을지 메소드 별로 파는게 좋을지
- * 우선 서비스 별로 파 둠
+ * method + path 에 맞는 validator(유효성 검증 메소드)와 controller 맵핑
  */
 
 public enum ValidatorController {
