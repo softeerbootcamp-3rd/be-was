@@ -32,22 +32,16 @@ public class UserService {
         return Database.findUserById(userId) == null;
     }
 
-    public HttpResponse join(Map<String, String> params) {
-        String userId = params.get("userId"), password = params.get("password");
+    public String join(String userId, String password) throws Exception {
         User user = Database.findUserById(userId);
 
-        // user 정보가 없거나 비밀번호 검증이 실패한 경우 로그인 실패
+        // 입력한 아이디에 대한 user 정보가 없거나 비밀번호 검증이 실패한 경우 로그인 실패
         if (user == null || !password.equals(user.getPassword())) {
-            Map<String, String> header = Map.of("Location", "/user/login_failed.html");
-            return HttpResponse.of(HttpStatus.REDIRECT, header);
+            throw new Exception("로그인 실패");
         }
 
-        // 세션 아이디 랜덤 생성 후 DB에 저장
-        String sid = UUID.randomUUID().toString();
-        Database.addSession(user, sid);
-        // response 헤더에 redirection, cookie 설정 추가
-        Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=" + sid + "; Path=/");
-        return HttpResponse.of(HttpStatus.REDIRECT, header);
+        // 세션 아이디 랜덤 생성 후 반환
+        return UUID.randomUUID().toString();
     }
 
 }
