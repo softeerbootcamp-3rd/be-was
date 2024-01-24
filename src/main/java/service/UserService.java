@@ -18,34 +18,14 @@ import java.util.UUID;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     // 회원가입
-    public HttpResponse createUser(Map<String, String> params) {
-        // userId, password, name, email 값이 잘 들어왔는지 확인
-        if (!params.containsKey("userId") || !params.containsKey("password")
-                || !params.containsKey("name") || !params.containsKey("email")) {
-            return HttpResponse.of(HttpStatus.BAD_REQUEST);
-        }
-
-        String userId = params.get("userId"), password = params.get("password");
-        String name = params.get("name"), email = params.get("email");
-
-        // userId, password, name, email 빈 값 검사
-        if (userId.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
-            return HttpResponse.of(HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new User(userId, password, name, email);
-
+    public void createUser(User user) throws Exception {
         // 유저 아이디 중복 검사
-        if (!validateDuplicated(userId)) {
-            // TODO: 고민사항 - BAD_REQUEST를 반환해야 할지 회원가입 폼으로 REDIRECT 시켜야 할지
-            Map<String, String> header = Map.of("Location", "/user/form.html");
-            return HttpResponse.of(HttpStatus.REDIRECT, header);
+        if (!validateDuplicated(user.getUserId())) {
+            throw new Exception("중복된 아이디입니다.");
         }
 
         Database.addUser(user);
         logger.info(Database.findAll().toString());
-        Map<String, String> header = Map.of("Location", "/index.html");
-        return HttpResponse.of(HttpStatus.REDIRECT, header);
     }
 
     private boolean validateDuplicated(String userId) {
