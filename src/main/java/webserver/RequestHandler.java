@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.Controller;
+import controller.FrontController;
 import controller.UserController;
 import http.HttpRequest;
 import http.HttpResponse;
@@ -18,15 +19,11 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
 
-    private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
-
-    private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
-    private final String RESOURCES_STATIC_URL = "src/main/resources/static";
-    private final String DEFAULT_URL = "/index.html";
+    private FrontController frontController;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerMap.put("/user/create", new UserController());
+        this.frontController = new FrontController();
     }
 
     public void run() {
@@ -42,24 +39,7 @@ public class RequestHandler implements Runnable {
 
             HttpResponse response = new HttpResponse(dos);
 
-            String path;
-            Controller controller = controllerMap.get(request.getUrl());
-            if (controller == null) { //.html
-                if (request.getUrl().endsWith(".html")) {
-                    path = RESOURCES_TEMPLATES_URL + request.getUrl();
-
-                } else { //.js .css ...
-                    path = RESOURCES_STATIC_URL + request.getUrl();
-                }
-            } else {
-                if (request.getMethod().equals("GET")) {
-                    path = controller.process(request.getRequestParam()) + ".html";
-                } else if (request.getMethod().equals("POST")) {
-                    path = controller.process(request.getFormData()) + ".html";
-                } else {
-                    path=null;
-                }
-            }
+            String path = frontController.process(request, response);
 
             if (path == null) {
                 response.setHttpStatus(HttpStatus.NOT_FOUND);

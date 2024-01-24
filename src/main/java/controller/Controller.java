@@ -1,8 +1,11 @@
 package controller;
 
+import http.HttpRequest;
+import http.HttpResponse;
+
 import java.util.Map;
 
 public interface Controller {
 
-    String process(Map<String, String> paramMap);
+    String process(HttpRequest request, HttpResponse response);
 }
