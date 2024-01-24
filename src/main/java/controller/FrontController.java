@@ -4,6 +4,7 @@ import dto.ResourceDto;
 import exception.ExceptionHandler;
 import exception.SourceException;
 import model.CommonResponse;
+import request.HttpRequest;
 import util.ResourceHandler;
 import webserver.PathHandler;
 import webserver.RequestHeader;
@@ -21,17 +22,17 @@ public class FrontController {
         controllerMap.put("/user/form.html", new UserController());
     }
 
-    public static CommonResponse service(RequestHeader requestHeader) throws IOException {
+    public static CommonResponse service(HttpRequest httpRequest) throws IOException {
         // controller Mapping
-        UserController controller = getController(requestHeader.getPath());
-        CommonResponse response = getResponse(requestHeader, controller);
+        UserController controller = getController(httpRequest.getRequestHeader().getPath());
+        CommonResponse response = getResponse(httpRequest.getRequestHeader(), httpRequest.getBody(),controller);
         return response;
     }
 
-    private static CommonResponse getResponse(RequestHeader requestHeader, UserController controller) {
+    private static CommonResponse getResponse(RequestHeader requestHeader, byte[] body, UserController controller) {
         CommonResponse response = null;
         try {
-            ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), controller);
+            ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), body, controller);
             response = CommonResponse.onOk(resource.getHttpStatus(), ResourceHandler.resolveResource(resource), resource.getExtension());
         } catch (SourceException e) {
             response = ExceptionHandler.handleGeneralException(e);

@@ -8,13 +8,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import controller.FrontController;
-import controller.UserController;
-import dto.ResourceDto;
-import exception.SourceException;
 import model.CommonResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ResourceHandler;
+import request.HttpRequest;
 import util.ResponseBuilder;
 
 public class RequestHandler implements Runnable {
@@ -40,13 +37,32 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
             RequestHeader requestHeader = readRequest(br);
+            byte[] body = parseBody(in, requestHeader.getContentLength().length());
+            HttpRequest httpRequest = HttpRequest.of(requestHeader, body);
 
-            CommonResponse response = FrontController.service(requestHeader);
+            CommonResponse response = FrontController.service(httpRequest);
 
             ResponseBuilder.sendResponse(dos, response.getBody(), response.getHttpStatus(), response.getExtension());
         } catch (ClassNotFoundException | IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private byte[] parseBody(InputStream in, int contentLength) throws IOException {
+        byte[] body = null;
+
+        System.out.println("contentLength = " + contentLength);
+        if (contentLength != 0) {
+            body = new byte[contentLength];
+            int bytesRead = 0;
+            while (bytesRead < contentLength) {
+                System.out.println("strt");
+                bytesRead += in.read(body, bytesRead, contentLength - bytesRead);
+            }
+            System.out.println("body = " + body.length);
+        }
+
+        return body;
     }
 
     private RequestHeader readRequest(BufferedReader br) throws IOException, ClassNotFoundException {
