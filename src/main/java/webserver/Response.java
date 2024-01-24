@@ -60,12 +60,21 @@ public class Response {
         dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMsg() + "\r\n");
         dos.writeBytes("Content-Type: " + contentType + "\r\n");
         dos.writeBytes("Content-Length: " + body.length + "\r\n");
-        dos.writeBytes("\r\n");
+        writeAdditionalHeaders();
     }
 
     private void responseHeader(String location) throws IOException {
         dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMsg() + "\r\n");
         dos.writeBytes("Location: " + location);
+        writeAdditionalHeaders();
+    }
+
+    private void writeAdditionalHeaders() throws IOException {
+        if (!headers.isEmpty()) {
+            for (String key : headers.keySet()) {
+                dos.writeBytes(key + ": " + headers.get(key) + "\r\n");
+            }
+        }
         dos.writeBytes("\r\n");
     }
 
