@@ -197,6 +197,44 @@ TCP/IP 네트워크에서 이메일교환 시 표준으로 RFC822(기본 이메�
 리다이렉트는 HTTP 표준으로 정의 되어 있는데 최초 요청을 받은 웹서버는 HTTP 응답 상태코드로 302를 보내고 응답 메시지 헤더 중 Location 값으로 리다이렉트 되어야 할 주소를 설정해 리턴한다.
 클라이언트는 서버로 부터 받은 응답 값이 상태코드 302라는 것을 보고 서버가 리다이렉트를 시킨거구나라고 알고  Location 에 설정되어 있는 URL로 다시 재요청을 한다.
 
+### step-4를 구현하면서 발생한 오류
+#### ❗️java.net.SocketException: Broken pipe
+원인
+- 잦은 입출력 호출로 발생한다.
+- 처리중인 요청 또는 응답을 사용자가 기다리지 않고 새로고침 또는 종료를 자주 실행하게 되면 소켓이 끊어져 발생한다.
+- 웹 브라우저에서 서버에 연결하면 accept된 소켓을 HttpThread에 전달, ThreadPool에서 조건에 맞으면 해당 HttpThread를 가동하게 되어있다.
+- HttpThread가 완료되기 전에 재요청을 할 경우 문제가 생긴다. 처음 요청 때 생성된 소켓의 자원을 httpThread.run()에서 사용하려고 하는 중에 두 번째 요청이 들어와 첫번째 요청의 소켓이 끊어져 버리기 때문이다.
+
+### 문제 상황
+
+body를 추출하는 부분에서 문제를 발견했다.
+
+문제가 발생한 코드
+
+``` java
+if(method.equals("POST")){
+            String body = br.readLine();
+            return new HttpRequest(method, uri, headers, body);
+        }
+```
+
+문제가 발생한 이유는 body를 POST 요청인 경우 br.readLine()으로 읽어오도록 코드를 작성하였는데,
+br.readLine() 메서드의 종료 조건이 ‘\n ‘또는 ‘\r’로 설정되어 있어, 바디를 읽은 후에도 종료 조건이 없어서 계속해서 데이터를 읽어오게 되었다. 이로 인해 회원가입 요청이 계속해서 pending 상태로 남아 있었고, 두 번째 요청 시에는 broken pipe 오류가 발생하는 상황이었다.
+
+### 해결 방법
+
+br.read()를 활용하여 httpRequest의 contentLength 만큼만 읽어오도록 코드를 수정하여 해결할 수 있었다.
+
+해결한 코드
+
+``` java
+if(method.equals("POST")){
+    int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH));
+    char[] body = new char[contentLength];
+    return new HttpRequest(method, uri, headers, new String(body, 0, br.read(body)));
+}
+```
+
 </div>
 </details>
 
