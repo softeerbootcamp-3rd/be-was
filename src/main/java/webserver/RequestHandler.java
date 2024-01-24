@@ -63,6 +63,7 @@ public class RequestHandler implements Runnable {
                 // 동적 자원 처리
                 // method + path 갖고오기
                 String requestURL = httpRequest.getRequestLine().getMethodAndPath();
+                logger.debug("requestURL: {}", requestURL);
                 // 해당 값으로 Validator와 Controller 탐색
                 ValidatorController vc = ValidatorController.getValidatorController(requestURL);
                 Function<Map<String, String>, Boolean> validator = vc.getValidator();

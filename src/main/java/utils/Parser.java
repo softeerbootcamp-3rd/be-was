@@ -43,6 +43,6 @@ public class Parser {
         if (uri.contains("?")) {
             return uri.split("\\?", 2)[0];
         }
-        return "";
+        return uri;
     }
 }

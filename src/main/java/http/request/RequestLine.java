@@ -29,6 +29,6 @@ public class RequestLine {
 
     public String getMethodAndPath() {
         String path = Parser.extractPath(uri);
-        return method + " " +  path;
+        return this.method + " " + path;
     }
 }
