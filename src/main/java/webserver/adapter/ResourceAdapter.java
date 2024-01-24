@@ -1,5 +1,6 @@
 package webserver.adapter;
 
+import com.google.common.io.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.handler.RequestHandler;
@@ -8,9 +9,9 @@ import webserver.response.Response;
 import webserver.type.ContentType;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 
 public class ResourceAdapter implements Adapter{
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -54,8 +55,10 @@ public class ResourceAdapter implements Adapter{
 
     private static Response makeResponse(File file, ContentType contentType) throws IOException {
         if(!file.isDirectory() && file.exists()) {
+            FileInputStream fis = new FileInputStream(file);
+            byte[] body = fis.readAllBytes();
 
-            return Response.onSuccess(Files.readAllBytes(file.toPath()), contentType);
+            return Response.onSuccess(body, contentType);
         }
 
         return null;
