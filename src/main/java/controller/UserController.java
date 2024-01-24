@@ -6,6 +6,7 @@ import model.Response;
 import java.util.Map;
 import model.User;
 import service.UserService;
+import utils.HtmlBuilder;
 import utils.PageReader;
 import utils.ParamBuilder;
 import webserver.Session;
@@ -72,6 +73,8 @@ public class UserController implements Controller {
 
         try {
             byte[] body = PageReader.getPage(filePath);
+            body = HtmlBuilder.build(url, body).getBytes();
+
             response.setCode(200);
             response.setBody(body);
             response.addHeader("Content-Type", "text/html");
