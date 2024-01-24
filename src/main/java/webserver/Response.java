@@ -1,6 +1,7 @@
 package webserver;
 
 import common.response.Status;
+import dto.HttpRequest;
 
 import java.io.*;
 import java.util.HashMap;
@@ -20,9 +21,9 @@ public class Response {
 
     private static final String RESOURCES_PATH = "src/main/resources/";
 
-    public Response(OutputStream out, String contentType) {
+    public Response(OutputStream out, HttpRequest request) {
         this.dos = new DataOutputStream(out);
-        this.contentType = contentType;
+        this.contentType = getContentType(request.getPath());
         this.headers = new HashMap<>();
     }
 

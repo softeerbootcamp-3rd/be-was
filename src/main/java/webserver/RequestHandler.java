@@ -18,9 +18,6 @@ import org.slf4j.LoggerFactory;
 import static common.config.WebServerConfig.userController;
 import static common.response.Status.*;
 import static common.util.Util.getSessionId;
-import static common.view.OutputView.*;
-import static webserver.RequestParser.*;
-import static webserver.Response.*;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -42,9 +39,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(br);
-
-            String contentType = getContentType(request.getPath());
-            Response response = new Response(out, contentType);
+            Response response = new Response(out, request);
 
             if (request.getMethod().equals("GET")) {
                 response.setStatus(OK);
