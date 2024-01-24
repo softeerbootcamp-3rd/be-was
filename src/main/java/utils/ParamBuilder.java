@@ -38,6 +38,9 @@ public class ParamBuilder {
 
         for (String query : splitQuery) {
             String[] split = query.split("=", -1);
+            if (split[1].contains("%40")) {
+                split[1] = split[1].replace("%40", "@");
+            }
             params.put(split[0], split[1]);
         }
 
