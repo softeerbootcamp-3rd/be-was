@@ -2,7 +2,6 @@ package controller;
 
 import http.HttpRequest;
 import http.HttpResponse;
-import http.HttpStatus;
 
 import java.io.File;
 import java.util.HashMap;
@@ -25,13 +24,13 @@ public class FrontController {
         if (controller == null) { //.html
             if (url.endsWith(".html")) {
                 path = RESOURCES_TEMPLATES_URL + url;
-            } else { //.js .css ...
+            } else { //.js .css .g..
                 path = RESOURCES_STATIC_URL + url;
             }
         } else {
             path = controller.process(request, response) + ".html";
         }
-        
+
         if (!isFileExists(path)) path=null;
         response.setPath(path);
         return path;
