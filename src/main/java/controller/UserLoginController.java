@@ -1,15 +1,14 @@
-package service;
+package controller;
 
 import db.Database;
 import httpmessage.HttpSession;
-import httpmessage.Request.HttpRequest;
-import httpmessage.Response.HttpResponse;
+import httpmessage.request.HttpRequest;
+import httpmessage.response.HttpResponse;
 import model.User;
-
 import java.io.IOException;
 
-public class UserLoginService implements Service{
-    public void process(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+public class UserLoginController implements Controller {
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String userId = httpRequest.getParmeter("userId");
         String password = httpRequest.getParmeter("password");
 

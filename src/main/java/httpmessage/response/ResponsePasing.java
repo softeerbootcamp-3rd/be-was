@@ -1,10 +1,6 @@
-package httpmessage.Response;
+package httpmessage.response;
 
-import httpmessage.Request.HttpRequest;
-
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class ResponsePasing {
 

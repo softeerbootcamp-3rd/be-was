@@ -1,4 +1,4 @@
-package httpmessage.Request;
+package httpmessage.request;
 
 import java.util.Map;
 
@@ -16,6 +16,7 @@ public class HttpRequest {
         this.requestHeader.setPath(path);
     }
 
+    public String getCookie(){return requestHeader.getCookie(); }
     public Map<String, String> getParmeter() {
         return parameter.getValues();
     }

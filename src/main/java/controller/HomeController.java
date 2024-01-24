@@ -1,36 +1,47 @@
-package service;
+package controller;
 
-import httpmessage.Request.HttpRequest;
-import httpmessage.Response.HttpResponse;
-import httpmessage.Response.ResponsePasing;
-import java.io.File;
+import httpmessage.request.HttpRequest;
+import httpmessage.response.HttpResponse;
+import httpmessage.response.ResponsePasing;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
-public class HomeService implements Service {
-    public void process(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+public class HomeController implements Controller {
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         ResponsePasing responsePasing = new ResponsePasing();
 
         String path =  httpRequest.getPath();
-        String httpMethod = httpRequest.getHttpMethod();
         String url = responsePasing.getUrl(path);
         String contentType = responsePasing.getContentType(path);
         String statusLine;
         int statusCode;
         byte[] body;
 
+
         if (url.contains("404")) {
             statusCode = 404;
             String errorPageContent = "<html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1></body></html>";
             statusLine = responsePasing.getSatusCode(statusCode);
-            body = errorPageContent.getBytes(StandardCharsets.UTF_8);
+            body = errorPageContent.getBytes("UTF-8");
         }
         else {
             statusCode = 200;
             statusLine = responsePasing.getSatusCode(statusCode);
-            body = Files.readAllBytes(new File(url).toPath());
+            FileInputStream fis = new FileInputStream(url);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+            }
+            body = bos.toByteArray();
         }
+
         httpResponse.setHttpResponse(body,contentType,statusCode,statusLine);
+
     }
 }

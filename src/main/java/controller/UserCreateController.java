@@ -1,26 +1,21 @@
-package service;
+package controller;
 
 import db.Database;
-import httpmessage.Request.HttpRequest;
-import httpmessage.Response.HttpResponse;
-import httpmessage.Response.ResponsePasing;
+import httpmessage.request.HttpRequest;
+import httpmessage.response.HttpResponse;
+import httpmessage.response.ResponsePasing;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
-
-import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Map;
 
-public class UserCreateService implements Service{
+public class UserCreateController implements Controller {
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private String path;
 
-    public void process(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
 
         try {
 

@@ -1,14 +1,11 @@
-package httpmessage.Request;
+package httpmessage.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
-
 import java.io.*;
-
 import java.io.BufferedReader;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class HttpMesssageReader {
@@ -53,7 +50,9 @@ public class HttpMesssageReader {
                 case "Content-Length":
                     contentLength = Integer.parseInt(value);
                     break;
-
+                case "Cookie":
+                    this.rh.setCookie(value.split("=")[1]);
+                    break;
             }
         }
         if(postUrl) {
@@ -76,13 +75,14 @@ public class HttpMesssageReader {
                 }
 
                 String value = userInformation[i].split("=")[1];
-                String decodeValue = URLDecoder.decode(value, StandardCharsets.UTF_8);
+                String decodeValue = URLDecoder.decode(value, "UTF-8");
                 map.put(key,decodeValue);
 
             }
             this.parameter = new Parameter(map);
             rh.setBody(bodyJson);
         }
+
     }
     public void separteFirstHeader(String firstHeader){
         String[] tokens = firstHeader.split(" ");

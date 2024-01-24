@@ -1,4 +1,4 @@
-package httpmessage.Request;
+package httpmessage.request;
 
 public class RequestHeader {
     private String httpMethod;
@@ -9,9 +9,11 @@ public class RequestHeader {
     private String upgradeInsecureRequests;
 
     private StringBuilder body;
-    private String cookie;
+    private String cookie = "";
 
-
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
+    }
 
     public void setAccpet(String accpet) {
         this.accpet = accpet;
@@ -67,6 +69,10 @@ public class RequestHeader {
     public String getUpgradeInsecureRequests() {
         return this.upgradeInsecureRequests;
     }
+    public String getCookie() {
+        return cookie;
+    }
+
 
 
 }
