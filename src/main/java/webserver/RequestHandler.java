@@ -61,9 +61,21 @@ public class RequestHandler implements Runnable {
         if(line == null)
             return;
         // start line 파싱
+        startLineParsing(line);
+
+        // header 파싱
+        headerParsing(br);
+
+        // body 읽기
+        bodyParsing(br);
+    }
+
+    // http request 파싱 1: start line
+    private void startLineParsing(String startLine) throws IOException {
+        // start line 파싱
         // 한글 파라미터 decoding
-        line = URLDecoder.decode(line, "UTF-8");
-        String[] tokens = line.split(" ");
+        startLine = URLDecoder.decode(startLine, "UTF-8");
+        String[] tokens = startLine.split(" ");
 
         httpRequestDto.setHTTPMethod(tokens[0]);
         httpRequestDto.setRequestTarget(tokens[1]);
@@ -73,53 +85,53 @@ public class RequestHandler implements Runnable {
                 httpRequestDto.getHTTPMethod(),
                 httpRequestDto.getRequestTarget(),
                 httpRequestDto.getHTTPVersion());
+    }
 
-        // header 파싱
-        String key;
-        String value;
-        // host, accept 출력
-        while(line != null) {
-            line = br.readLine();
+    // http request 파싱 2: header
+    private void headerParsing(BufferedReader br) throws IOException {
+        String key, value;
+
+        while(true) {
+            String line = br.readLine();
+            if(line == null)
+                break;
             // 개행문자만을 읽었다면 -> 헤더 끝
-            if(line != null && line.trim().isEmpty())
+            if(line != null && line.isEmpty())
                 break;
             if(line.contains("Host:")) {
                 // Host 추출
-                key = "Host";
-                value = line.substring("Host: ".length());
-                httpRequestDto.addHeader(key, value);
-                logger.debug("Host: {}",  value);
+                oneHeaderParsing("Host", line);
                 continue;
             }
             if(line.contains("Accept:")) {
                 // Accept 추출
-                key = "Accept";
-                value = line.substring("Accept: ".length());
-                if(line.contains(","))
-                    value = value.substring(0, value.indexOf(","));
-                httpRequestDto.addHeader(key, value);
-                logger.debug("Accept: {}", value);
+                oneHeaderParsing("Accept", line);
                 continue;
             }
             if(line.contains("Connection:")) {
                 // Connection 추출
-                key = "Connection";
-                value = line.substring("Connection: ".length());
-                httpRequestDto.addHeader(key, value);
-                logger.debug("Connection: {}", value);
+                oneHeaderParsing("Connection", line);
                 continue;
             }
             if(line.contains("Content-Length:")) {
                 // Content-Length 추출
-                key = "Content-Length";
-                value = line.substring("Content-Length: ".length());
-                httpRequestDto.addHeader(key, value);
-                logger.debug("Content-Length: {}", value);
+                oneHeaderParsing("Content-Length", line);
                 continue;
             }
         }
+    }
 
-        // body 읽기
+    // http request 파싱 3: header 하나
+    private void oneHeaderParsing(String key, String line) {
+        String value = line.substring((key + ": ").length());
+        if(value.contains(","))
+            value = value.substring(0, value.indexOf(","));
+        httpRequestDto.addHeader(key, value);
+        logger.debug(key + ": {}",  value);
+    }
+
+    // http request 파싱 4: body
+    private void bodyParsing(BufferedReader br) throws IOException {
         Integer length;
         if( (length = httpRequestDto.getContentLength()) != null) {
             char[] body = new char[length];
