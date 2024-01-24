@@ -2,7 +2,9 @@ package controller;
 
 import http.HttpRequest;
 import http.HttpResponse;
+import http.HttpStatus;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,9 +30,14 @@ public class FrontController {
             } else { //.js .css ...
                 path = RESOURCES_STATIC_URL + url;
             }
+            if (!isFileExists(path)) {
+                response.setHttpStatus(HttpStatus.NOT_FOUND);
+                return null;
+            }
         } else {
+            path = controller.process(request, response) + ".html";
             if (method.equals("GET")) {
-                path = controller.process(request, response) + ".html";
+
             } else if (method.equals("POST")) {
                 path = controller.process(request, response) + ".html";
             } else {
@@ -39,5 +46,9 @@ public class FrontController {
         }
         response.setPath(path);
         return path;
+    }
+
+    private boolean isFileExists(String path) {
+        return new File(path).exists();
     }
 }
