@@ -16,12 +16,14 @@ public class ResponseBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static void buildResponse(OutputStream out, Response response) throws IOException {
+    public static DataOutputStream buildResponse(OutputStream out, Response response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
         HttpStatusCode statusCode = response.getStatus();
 
         byte[] body = buildResponseHeader(dos, response);
         buildResponseBody(dos, statusCode, body);
+
+        return dos;
     }
 
     private static byte[] buildResponseHeader(DataOutputStream dos, Response response) throws IOException {
