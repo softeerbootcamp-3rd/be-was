@@ -1,5 +1,6 @@
 package controller;
 
+import config.ExceptionHandler;
 import config.HTTPRequest;
 import config.HTTPResponse;
 import config.ResponseCode;
@@ -21,12 +22,14 @@ public class UserController {
             String name = request.getBody().get("name");
             String email = request.getBody().get("email");
 
+            //유저 아이디가 이미 존재하는 경우 예외 발생
+            if(Database.findUserById(userId)!=null)
+                throw new ExceptionHandler.UserIdTaken("User id already in use");
             //유저 저장
             User user = new User(userId, password, name, email);
             Database.addUser(user);
 
-            //성공메세지 (feature5 브렌치에서 개인정보를 보내는 것을 삭제)
-            byte[] body = user.toString().getBytes();
+            byte[] body = new byte[0];
             byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code+ " " + ResponseCode.REDIRECT +"\r\n"+
                     "Content-Type: "+ request.getHead().get("Accept").split(",")[0] +"\r\n"+
                     "Location: /index.html" + "\r\n" +
@@ -45,6 +48,21 @@ public class UserController {
 
         return response;
     }
+    public HTTPResponse login(HTTPRequest request){
+        String userId = request.getBody().get("userId");
+        String password = request.getBody().get("password");
+        User user = Database.findUserById(userId);
+
+        //로그인 실패하는경우 (아이디 없거나 비밀번호 불일치)
+        if(user == null || !user.getPassword().equals(password)){
+
+        }
+
+
+    }
+
+
+
     private static Map<String,String> querytoMap(String query){
         Map<String, String> map = new HashMap<>();
 
