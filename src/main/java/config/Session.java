@@ -1,15 +1,12 @@
 package config;
 
 
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Session {
-    private final HashMap<UUID, String> sessions;
+    private static final ConcurrentHashMap<UUID, String> sessions = new ConcurrentHashMap<>();
 
-    public Session(){
-        this.sessions = new HashMap<>();
-    }
 
     UUID createSession(String userId){
         if (exitsByValue(userId))

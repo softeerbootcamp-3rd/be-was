@@ -17,7 +17,7 @@ public class PageController {
     static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
     static public HTTPResponse getPage(HTTPRequest request) throws IOException {
 
-        // nio 수정은 feature5 브렌치에서 수정됨
+
         String url = request.getUrl();
         File file;
 
