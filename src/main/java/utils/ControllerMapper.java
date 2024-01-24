@@ -21,14 +21,14 @@ import java.util.function.Function;
 public class ControllerMapper {
     private static final Logger logger = LoggerFactory.getLogger(ControllerMapper.class);
     // Key : 메소드 url-path, Value : controller
-    public static final Map<String, Function<HttpRequest, HttpResponse>> CONTROLLER = new HashMap<>();
+    public static final Map<String, Function<Map<String, String>, HttpResponse>> CONTROLLER = new HashMap<>();
 
     static {
         CONTROLLER.put("POST /user/create", UserController::signup);
         CONTROLLER.put("POST /user/login", UserController::login);
     }
 
-    public static Function<HttpRequest, HttpResponse> getController(HttpRequest request) {
+    public static Function<Map<String, String>, HttpResponse> getController(HttpRequest request) {
         String path = request.getRequestLine().getUri();
         if (path.contains("?")) {
             path = path.split("\\?", 2)[0];
