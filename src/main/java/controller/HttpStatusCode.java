@@ -6,5 +6,12 @@ public enum HttpStatusCode {
     BAD_REQUEST("400 Bad Request"),
     NOT_FOUND("404 Not Found");
 
-    HttpStatusCode(String s) {}
+    private final String statusCode;
+    HttpStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
 }
