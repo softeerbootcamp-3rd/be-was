@@ -15,7 +15,7 @@ public class UserService {
     public void createUser(String userId, String password, String name, String email){
         if(existsUserId(userId)){
             logger.error("userId가 이미 존재하는 예외 발생");
-            throw new GeneralException(ErrorCode.USER_ID_ALREADY_EXISTS_ERROR);
+            throw new UserIdAlreadyExistsException(ErrorCode.USER_ID_ALREADY_EXISTS_ERROR);
         }
 
         User user = User.builder()
