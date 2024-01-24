@@ -7,8 +7,8 @@ Java Web Application Server 2023
 이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
 를 참고하여 작성되었습니다.
 
-## 🐧공부한 것
-### 💡소켓 통신
+# 🐧공부한 것
+## 💡소켓 통신
 소켓 번호를 통해 byte stream으로 통신
 
 [서버 클래스(`WebServer.java`)에 필요한 것]
@@ -23,7 +23,7 @@ Java Web Application Server 2023
 
 </br>
 
-### 💡자바 스레드 모델
+## 💡자바 스레드 모델
 
 자바 프로그램 실행 → JVM 프로세스 실행 → JVM 프로세스 안에서 여러 개의 스레드 실행
 
@@ -229,6 +229,92 @@ send data to a server and is typically utilized for interacting with a specific 
     - 서버에게 어떤 task를 시작하거나 멈추게 명령
     - 새로운 리소스 생성. → 201 created status code
 
+## 💡 쿠키
+
+- 서버가 사용자의 웹 브라우저에 전송하는 작은 데이터 조각
+- 브라우저는 이 데이터 조각을 저장해 놓았다가, **동일한 서버에 재요청시** 이 조각을 함께 **전송**
+- 쿠키는 **두 요청이 동일 브라우저**에서 들어왔는지 아닌지 판단할 때 사용
+
+  →사용자의 로그인 `상태 유지` 가능
+
+- `stateless HTTP` 프로토콜에서 상태정보 기억 가능
+
+### 🥠 목적
+
+1. **세션 관리**: 서버에 저장해야 하는 로그인, 장바구니, 게임 스코어 등
+2. **개인화**: 사용자 선호, 테마
+3. **트래킹**: 사용자 행동 기록하고 분석
+
+**예전**에는 클라이언트에 정보 저장할 때 쿠키 씀.
+
+근데 **지금**은 ***modern storage API***(웹 스토리지 API(localStorage, sessionStorage), IndexedDB)를 사용해 정보 저장하는 것을 권장
+
+### 🥠 쿠키를 어떻게 만드나요
+
+**서버**: 응답에 `Set-Cookie` 헤더
+
+```bash
+HTTP/1.0 200 OK
+Content-type: text/html
+Set-Cookie: yummy_cookie=choco
+Set-Cookie: tasty_cookie=strawberry
+
+[page content]
+```
+
+**클라이언트**: 요청에 `Cookie` 헤더
+
+```bash
+GET /sample_page.html HTTP/1.1
+Host: www.example.org
+Cookie: yummy_cookie=choco; tasty_cookie=strawberry
+```
+
+### 🥠 쿠키의 라이프타임
+
+- `세션 쿠키`: 현재 세션이 끝날 때 삭제됨.
+- `영속적인 쿠키`: *Expires* 속성에 명시된 날짜에 삭제됨 or *Max-Age* 속성에 명시된 기간 이후에 삭제됨.
+
+```bash
+Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
+```
+
+### 🥠 Secure 쿠키와 HttpOnly 쿠키
+
+- **`Secure 쿠키`**: *HTTPS* 프로토콜 상에서 암호화된 요청의 경우
+    - 그래도 민감한 정보는 쿠키에 저장하면 안 돼
+- **`HttpOnly 쿠키`**: XSS 공격을 방지하기 위해 HttpOnly 쿠키는 JS의 Document.cookie API에 접근 못함.
+    - 세션 쿠키는 JS에 접근할 필요가 없어 HttpOnly 플래그 설정
+
+### 🥠 쿠키의 스코프
+
+어떤 URL을 쿠키가 보내야 하는지
+
+**`Domain`**: 쿠키가 전송되게 될 호스트들 명시(어떤 웹 사이트 주소로 보낼 건지 지정)
+
+- 명시되지 않으면 현재 문서 위치의 호스트 일부를 기본값으로 함.→현재 웹 문서의 위치에 따라 기본 도메인이 자동 설정됨
+- 도메인이 명시되면, 서브도메인들은 항상 포함됨
+- 만약 `Domain=mozila.org`로 설정되면, 쿠키들은 `developer.mozila.org`에서도 이 쿠키를 사용할 수 있다.
+
+`Path`: `Cookie` 헤더를 전송하기 위해 요청되는 URL 내에 반드시 존재해야 하는 URL 경로
+
+- Path=/docs로 설정되면, 아래 경로들은 모두 매치
+    - /docs
+    - /docs/Web
+    - /docs/Web/HTTP
+
+
+### 🥠 Document.cookie를 이용한 JS 접근
+
+HttpOnly 플래그가 설정되지 않았다면 JS로부터 잘 접근될 수 있음
+
+## 🥯 세션
+
+클라이언트와 서버간 저장하고 싶은 데이터를 **서버에 저장**한 후 이 값에 대한 유일한 값(Session Id)발급
+
+- 쿠키를 통해 Session Id만 주고 받음
+- 서버는 클라이언트가 전송한 Session Id를 활용해 서버에 저장된 값을 꺼내와 사용함.
+
 ## 🐧 STEP 1 구현 방법
 >### 💡 정적인 html 파일 응답
 FileReader 유틸클래스에서 Files.readAllBytes를 통해 html 파일 읽어옴.
@@ -266,3 +352,12 @@ HttpResponseSender에서 MIME-Type에 맞게 헤더의 Content-Type을 작성하
 RequestHandler에서 요청 메소드로 분리(POST, GET)
 HttpRequestParser에서 요청 메시지 헤더와 바디 저장
 - 바디 저장시 Content-Length 값만큼만 읽어서 무한으로 읽어오는 것 방지
+
+## 🐧 STEP 5 구현 방법
+>### 💡쿠키와 세션을 이용한 로그인
+로그인이 성공할 경우 HTTP 헤더의 쿠키 값을 SID=세션 ID 로 응답한다.
+- HttpResponseSender에서 로그인 성공 후 /index.html로 리다이렉션할 때 `Set-Cookie` 헤더를 통해 세션(id, expireTime) 전달 
+
+
+세션 ID는 적당한 크기의 무작위 숫자 또는 문자열을 사용한다.
+- userService의 login 메서드에서 java.util 패키지의 UUID를 이용해 무작위 숫자 배정
