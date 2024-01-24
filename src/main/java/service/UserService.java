@@ -12,8 +12,8 @@ import static constant.ErrorCode.*;
 public class UserService {
 
     // 회원가입 - 회원 id, 이메일 중복 확인
-    public static void signUp(Map<String, String> params) {
-        User newUser = new User(params);
+    public static void signUp(Map<String, String> body) {
+        User newUser = new User(body);
 
         if (Database.findUserById(newUser.getUserId()) != null) {
             throw new WebServerException(USER_ID_DUPLICATED);
