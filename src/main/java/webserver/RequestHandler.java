@@ -5,7 +5,6 @@ import java.net.Socket;
 
 import constant.ErrorCode;
 import constant.FilePath;
-import constant.HttpStatus;
 import dto.RequestDto;
 import dto.ResponseDto;
 import org.slf4j.Logger;
