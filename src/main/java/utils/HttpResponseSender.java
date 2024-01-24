@@ -26,7 +26,8 @@ public class HttpResponseSender {
         MIME_TYPE.put("css", "text/css");
         MIME_TYPE.put("png", "image/png");
         MIME_TYPE.put("js", "application/javascript");
-        MIME_TYPE.put("ico", "image/x-icon");
+        MIME_TYPE.put("ico", "image/avif");
+        MIME_TYPE.put("html", "text/html");
     }
 
     public void sendHttpResponse(DataOutputStream dos, int lengthOfBodyContent, byte[] body, String mimeType) {
@@ -74,7 +75,7 @@ public class HttpResponseSender {
         try {
             dos.write(body, 0, body.length);
         } catch (IOException e) {
-            logger.error("Error logging response: {}", e.getMessage());
+            logger.error("Error logging response body: {}", e.getMessage());
         }
     }
 

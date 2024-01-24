@@ -5,35 +5,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class HttpRequestParser {
-    public HttpRequestParser(){
+    public HttpRequestParser() {
     }
 
     public Map<String, String> parseHttpRequest(InputStream in) throws IOException {
-        Map<String, String> header = new HashMap<>();
+        Map<String, String> messageElement = new HashMap<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         //첫 번째 라인에서 메서드, 경로 추출
         String firstLine = reader.readLine();
         String[] firstLineParts = firstLine.split(" ");
-        header.put("Method", firstLineParts[0]);
-        header.put("Path", firstLineParts[1]);
-        header.put("HTTP version", firstLineParts[2]);
+        messageElement.put("Method", firstLineParts[0]);
+        messageElement.put("Path", firstLineParts[1]);
+        messageElement.put("HTTP version", firstLineParts[2]);
         //다른 헤더 추출
         String line;
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+        while((line=reader.readLine()) != null && !line.isEmpty()) {
             String[] headerParts = line.split(": ");
             if (headerParts.length == 2) {
-                header.put(headerParts[0], headerParts[1]);
+                messageElement.put(headerParts[0], headerParts[1]);
             }
         }
-        //TODO: 닫으면 왜 소켓연결이 끊기는지 공부하기
-        //reader.close();
-        return header;
+
+        // 바디 추출
+        if(messageElement.get("Method").equals("POST")){
+            //TODO: Integer.getInt랑 Integer.parseInt 차이
+            char[] body = new char[Integer.parseInt(messageElement.get("Content-Length"))];
+            reader.read(body);
+            messageElement.put("Body", Arrays.toString(body));
+        }
+
+        return messageElement;
     }
 
 }
