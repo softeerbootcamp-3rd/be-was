@@ -26,8 +26,8 @@ public class HttpResponseBuilder {
         return response;
     }
 
-    public HttpResponse setSessionId(HttpResponse response, String sessionId){
-        response.addHeader("Set-Cookie", sessionId);
-        return response;
+    public void addSessionCookie(HttpResponse response, String sessionId){
+        String cookieValue = String.format("sid=%s; Path=/", sessionId);
+        response.addHeader("Set-Cookie", cookieValue);
     }
 }

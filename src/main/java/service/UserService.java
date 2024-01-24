@@ -1,6 +1,7 @@
 package service;
 
 import db.Database;
+import db.SessionDatabase;
 import model.User;
 
 import java.util.Map;
@@ -21,10 +22,15 @@ public class UserService {
         return true;
     }
 
-    public boolean login(Map<String, String> bodyParams){
+    public String login(Map<String, String> bodyParams){
         String userId = bodyParams.getOrDefault("userId", "");
         String password = bodyParams.getOrDefault("password", "");
-        return isExistUser(userId, password);
+        if(!isExistUser(userId, password)){
+            return null;
+        }
+        String sessionId = SessionDatabase.createSessionId();
+        SessionDatabase.addSessionId(userId, sessionId);
+        return sessionId;
     }
 
     private User createUser(Map<String, String> queryParams) {

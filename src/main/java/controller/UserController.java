@@ -25,9 +25,12 @@ public class UserController {
     public HttpResponse login(HttpRequest request){
         Map<String, String> bodyParams = request.getBody();
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
-        if(userService.login(bodyParams)){
+        String sessionId = userService.login(bodyParams);
+        if (sessionId != null) {
             // 로그인 성공
-            return responseBuilder.createRedirectResponse(HttpStatus.FOUND, "/index.html");
+            HttpResponse response = responseBuilder.createRedirectResponse(HttpStatus.FOUND, "/index.html");
+            responseBuilder.addSessionCookie(response, sessionId);
+            return response;
         }
         // 로그인 실패
         return responseBuilder.createRedirectResponse(HttpStatus.FOUND, "/user/login_failed.html");
