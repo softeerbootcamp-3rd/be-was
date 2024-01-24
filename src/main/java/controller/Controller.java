@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import util.WebUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 
 public interface Controller {
     public abstract HttpResponseDto handleRequest(HttpRequestDto request);
@@ -17,8 +17,13 @@ public interface Controller {
     default HttpResponseDto getPage(HttpRequestDto request, Logger logger) {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
         byte[] body = null;
-        try {
-            body = Files.readAllBytes(new File(WebUtil.getPath(request.getUri())).toPath());
+
+        File file = new File(WebUtil.getPath(request.getUri()));
+
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] buffer = new byte[(int) file.length()];
+            fileInputStream.read(buffer);
+            body = buffer;
         } catch (IOException e) {
             logger.error(e.getMessage());
 
