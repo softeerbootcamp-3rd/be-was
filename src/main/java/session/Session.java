@@ -5,7 +5,7 @@ import java.util.*;
 public class Session {
     private static Map<String, String> session = new HashMap<>();
     private static Map<String, Long> lastAccessTime = new HashMap<>();
-    private static final long INVALIDATE_TIME = 600000; // 1시간
+    private static final long INVALIDATE_TIME = 3600000; // 1시간
 
     public static String setAttribute(String userId) {
         String sessionId = makeSessionId();
@@ -15,7 +15,7 @@ public class Session {
     }
 
     public static String getAttribute(String sessionId) {
-        checkSessionExpiration();
+        checkSessionExpiration(sessionId);
         String userId;
         if ((userId = session.get(sessionId)) != null) {
             lastAccessTime.put(sessionId, System.currentTimeMillis());
@@ -28,11 +28,10 @@ public class Session {
         lastAccessTime.remove(sessionId);
     }
 
-    private static void checkSessionExpiration() {
-        for (String sessionId : session.keySet()) {
-            if (lastAccessTime.get(sessionId) + INVALIDATE_TIME < System.currentTimeMillis())
-                removeSession(sessionId);
-        }
+    private static void checkSessionExpiration(String sessionId) {
+        if (lastAccessTime.containsKey(sessionId) &&
+                lastAccessTime.get(sessionId) + INVALIDATE_TIME < System.currentTimeMillis())
+            removeSession(sessionId);
     }
 
     public static String makeSessionId() {
