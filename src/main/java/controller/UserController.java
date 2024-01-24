@@ -32,7 +32,7 @@ public class UserController implements Controller {
                 return;
             }
         }
-        getPage(request.getUrl(), response);
+        getPage(request, response);
     }
 
     /**
@@ -64,17 +64,17 @@ public class UserController implements Controller {
      * 요청한 페이지 파일을 찾아 응답 메시지를 설정합니다.
      *
      * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다.
-     * 만약 파일이 동적인 HTML인 경우 해당 내용을 변경합니다.
+     * 페이지를 동적으로 변경합니다.
      *
-     * @param url      요청 정보
+     * @param request 요청 정보
      * @param response 응답 메시지
      */
-    private void getPage(String url, Response response) {
-        String filePath = "src/main/resources/templates" + url;
+    private void getPage(Request request, Response response) {
+        String filePath = "src/main/resources/templates" + request.getUrl();
 
         try {
             byte[] body = PageReader.getPage(filePath);
-            body = HtmlBuilder.build(url, body).getBytes();
+            body = HtmlBuilder.build(request, body).getBytes();
 
             response.setCode(200);
             response.setBody(body);
