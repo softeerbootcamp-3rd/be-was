@@ -36,7 +36,19 @@ public class UserController {
         }
     }
 
-    public static HttpResponse login(HttpRequest request) {
-        return userService.join(request.getBody());
+    public static HttpResponse login(Map<String, String> body) {
+        // 유효성 검증 실패할 경우 BAD_REQUEST 반환하도록 로직 추가
+
+        try {
+            String sid = userService.join(body.get("userId"), body.get("password"));
+            // 로그인에 성공할 경우 index.html로 리다이렉션 되며 쿠키 값에 sid값 추가
+            Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=" + sid + "; Max-Age=360; HttpOnly; Path=/");
+            return HttpResponse.of(HttpStatus.REDIRECT, header);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            // 로그인에 실패할 경우 /user/login_failed.html로 리다이렉션
+            Map<String, String> header = Map.of("Location", "/user/login_failed.html");
+            return HttpResponse.of(HttpStatus.REDIRECT, header);
+        }
     }
 }
