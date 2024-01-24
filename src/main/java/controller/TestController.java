@@ -7,6 +7,6 @@ import webserver.type.ContentType;
 public class TestController {
     @GetMapping(path = "/test")
     public Response test(){
-        return Response.onSuccess(ContentType.HTML, "test".getBytes());
+        return Response.onSuccess("test".getBytes());
     }
 }
