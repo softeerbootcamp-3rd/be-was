@@ -1,5 +1,10 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,5 +51,18 @@ public class Util {
             hashMap.put(key, value);
         }
         return hashMap;
+    }
+
+    public static void readFile(StringBuilder stringBuilder, String path) {
+        try (FileInputStream fileInputStream = new FileInputStream(path);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

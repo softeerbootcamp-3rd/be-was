@@ -6,17 +6,21 @@ import model.Session;
 import model.User;
 import model.UserInfo;
 
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 
 public class UserService {
 
-    public static User create(UserInfo userInfo) {
-        User user = new User(userInfo);
-        if(user.verifyUser()) {
+    public static User create(HashMap<String, String> params) {
+        try {
+            UserInfo userInfo = new UserInfo(params);
+            User user = new User(userInfo);
             Database.addUser(user);
             return user;
         }
-        else return null;
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public static boolean checkUserLogin(Request request) {

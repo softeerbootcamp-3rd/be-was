@@ -5,9 +5,11 @@ import model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import util.Util;
+
+import java.io.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.util.Collection;
 import java.util.UUID;
 
 public class MainController {
@@ -27,14 +29,14 @@ public class MainController {
             if (path.equals("/")) {
                 statusCode = "302";
                 redirectUrl = "/index.html";
-            } else if(path.startsWith("/user/list")) {
+            } else if(path.equals("/user/list")) {
                 if(UserService.checkUserLogin(request)) {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/list.html").toPath());
+                    statusCode = "302";
+                    redirectUrl = "/user/list.html";
                 }
                 else {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/login.html").toPath());
+                    statusCode = "302";
+                    redirectUrl = "/user/login.html";
                 }
             }
             else {
@@ -45,25 +47,63 @@ public class MainController {
                 File searchedFile = new File(path);
                 if(searchedFile.exists()) {
                     statusCode = "200";
-                    body = Files.readAllBytes(new File(path).toPath());
+                    if(request.getFile().getType().equals("html")) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        if(UserService.checkUserLogin(request)) {
+                            Util.readFile(stringBuilder, "./src/main/resources/templates/new/navbar_login.html");
+                        }
+                        else
+                            Util.readFile(stringBuilder, "./src/main/resources/templates/new/navbar_logout.html");
+                        if(request.getFile().getName().equals("list.html")) {
+                            Collection<User> userList = Database.findAll();
+                            Util.readFile(stringBuilder, "./src/main/resources/templates/new/list1.html");
+                            int i=0;
+                            for(User user : userList) {
+                                stringBuilder.append("<tr><th scope=\"row\">" + ++i + "</th> <td>" + user.getUserId() + "</td> <td>"
+                                        + user.getName() + "</td> <td>" + user.getEmail() + "</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
+                            }
+                            Util.readFile(stringBuilder, "./src/main/resources/templates/new/list2.html");
+                        }
+                        else {
+                            Util.readFile(stringBuilder, path);
+                        }
+                        String string = stringBuilder.toString();
+                        if(UserService.checkUserLogin(request))
+                            string = string.replaceAll("#이름", Session.findBySessionId(request.getCookie().get("sessionId")).getName());
+                        body = string.getBytes();
+                    }
+                    else {
+                        File file = new File(path);
+                        byte[] data = new byte[(int) file.length()];
+
+                        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                            int bytesRead = fileInputStream.read(data);
+                            if (bytesRead != file.length()) {
+                                throw new IOException("Could not read the entire file");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        body = data;
+                    }
                 }
                 else {
-                    statusCode = "404";
-                    body = Files.readAllBytes(new File(base + "/templates/error404.html").toPath());
+                    statusCode = "302";
+                    redirectUrl = "/error404.html";
                 }
             }
         }
         else if(method.equals("POST")) {
             if(path.equals("/user/create")) {
-                User user = UserService.create(new UserInfo(request.getBody()));
+                User user = UserService.create(request.getBody());
                 if (user != null) {
                     statusCode = "302";
                     redirectUrl = "/index.html";
                     logger.debug("회원가입 성공!  " + user.toString());
                 }
                 else {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
+                    statusCode = "302";
+                    redirectUrl = "/user/form.html";
                     logger.debug("회원가입 실패!");
                 }
             }
@@ -71,8 +111,8 @@ public class MainController {
                 String target = request.getBody().getOrDefault("userId", "");
                 User user = Database.findUserById(target);
                 if(user == null) {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/login_failed.html").toPath());
+                    statusCode = "302";
+                    redirectUrl = "/user/login_failed.html";
                     logger.debug("로그인 실패!");
                 }
                 else {
@@ -84,8 +124,8 @@ public class MainController {
                         logger.debug("로그인!  " + user.toString());
                     }
                     else {
-                        statusCode = "200";
-                        body = Files.readAllBytes(new File("./src/main/resources/templates/user/login_failed.html").toPath());
+                        statusCode = "302";
+                        redirectUrl = "/user/login_failed.html";
                         logger.debug("로그인 실패!");
                     }
                 }
