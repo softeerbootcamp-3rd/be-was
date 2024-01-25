@@ -10,6 +10,7 @@ public class RequestDto {
     private Map<String, String> params;
     private Map<String, String> headers;
     private Map<String, String> body;
+    private Map<String, String> cookies;
 
     public RequestDto(String methodAndPath) {
         String[] arr = methodAndPath.split(" ");
@@ -18,6 +19,7 @@ public class RequestDto {
         this.methodAndPath = methodAndPath;
         this.params = new HashMap<>();
         this.headers = new HashMap<>();
+        this.cookies = new HashMap<>();
     }
 
     public String getMethod() {
@@ -44,16 +46,28 @@ public class RequestDto {
         return body;
     }
 
+    public Map<String, String> getCookies() {
+        return cookies;
+    }
+
     public void setParams(Map<String, String> params) {
         this.params = params;
     }
 
     public void setBody(Map<String, String> body) {
-        this.body = params;
+        this.body = body;
+    }
+
+    public void addCookie(String key, String value) {
+        this.cookies.put(key, value);
     }
 
     public void addHeader(String key, String value) {
         this.headers.put(key, value);
+    }
+
+    public String getCookieHeader() {
+        return this.headers.get("Cookie");
     }
 
     public Integer getContentLength() {
