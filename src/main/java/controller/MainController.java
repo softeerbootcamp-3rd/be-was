@@ -5,8 +5,6 @@ import model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,29 +22,13 @@ public class MainController {
         String base = "./src/main/resources";
         String path = request.getPath();
         String method = request.getMethod();
-        String clientSessionId = null;
 
-        if(request.getCookie() != null && request.getCookie().get("sessionId") != null)
-            clientSessionId = request.getCookie().get("sessionId");
-
-        if(method.equals("GET")) {
+        if(request.getMethod().equals("GET")) {
             if (path.equals("/")) {
                 statusCode = "302";
                 redirectUrl = "/index.html";
-            } else if (path.equals("/user/create")) {
-                User user = UserService.create(new UserInfo(request.getParam()));
-                if (user != null) {
-                    statusCode = "302";
-                    redirectUrl = "/index.html";
-                    logger.debug("회원가입 성공!  " + user.toString());
-                }
-                else {
-                    statusCode = "200";
-                    body = Files.readAllBytes(new File("./src/main/resources/templates/user/form.html").toPath());
-                    logger.debug("회원가입 실패!");
-                }
             } else if(path.startsWith("/user/list")) {
-                if(clientSessionId != null && Session.containsSessionId(clientSessionId)) {
+                if(UserService.checkUserLogin(request)) {
                     statusCode = "200";
                     body = Files.readAllBytes(new File("./src/main/resources/templates/user/list.html").toPath());
                 }

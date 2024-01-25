@@ -1,6 +1,8 @@
 package service;
 
 import db.Database;
+import model.Request;
+import model.Session;
 import model.User;
 import model.UserInfo;
 
@@ -15,5 +17,10 @@ public class UserService {
             return user;
         }
         else return null;
+    }
+
+    public static boolean checkUserLogin(Request request) {
+        String sessionId = request.getCookie().get("sessionId");
+        return (sessionId != null && Session.containsSessionId(sessionId));
     }
 }

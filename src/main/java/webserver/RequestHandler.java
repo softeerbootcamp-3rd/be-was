@@ -56,11 +56,10 @@ public class RequestHandler implements Runnable {
     }
     private Request handleRequestHeader(BufferedReader br, Request request) throws IOException {
         String line;
-        while(true) {
-            line = br.readLine();
-            if(line == null || line.isEmpty()) break;
-            String[] keyAndValue = line.split(": ");
-            String key = keyAndValue[0], value = keyAndValue[1];
+        while((line = br.readLine()) != null) {
+            if(line.isEmpty()) break;
+            String[] keyValue = line.split(": ");
+            String key = keyValue[0], value = keyValue[1];
             request.putHeader(key.toLowerCase(), value);
             if(printedKey.contains(key))
                 logger.debug(line);

@@ -89,8 +89,8 @@ public class Request {
     }
     public void parseCookie() {
         String cookies = this.header.get("cookie");
-        if(cookies == null) return;
-        this.cookie = Util.parseSemicolon(cookies);
+        if(cookies == null) this.cookie = new HashMap<>();
+        else this.cookie = Util.parseSemicolon(cookies);
     }
     @Override
     public String toString() {
