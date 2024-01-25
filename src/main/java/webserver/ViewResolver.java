@@ -2,7 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponse;
+import response.http.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,12 +16,12 @@ public final class ViewResolver {
         DataOutputStream dos = new DataOutputStream(out);
 
         if (httpResponse.getStatusCode() == 200) {
-            response200Header(dos, httpResponse.getBodyLength(), httpResponse.getContentType());
+            response200Header(dos, httpResponse);
             responseBody(dos, httpResponse.getBody());
             return;
         }
         if (httpResponse.getStatusCode() == 302) {
-            response302Header(dos, httpResponse.getRedirectUri());
+            response302Header(dos, httpResponse);
             return;
         }
         if (httpResponse.getStatusCode() == 404) {
@@ -30,21 +30,27 @@ public final class ViewResolver {
         }
     }
 
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
+    private static void response200Header(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("Content-Type: " + httpResponse.getContentType() + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
+            if (httpResponse.getSid() != null) {
+                dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid() + "; Path=/");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private static void response302Header(DataOutputStream dos, String location) {
+    private static void response302Header(DataOutputStream dos, HttpResponse httpResponse) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location + "\r\n");
+            dos.writeBytes("Location: " + httpResponse.getRedirectUri() + "\r\n");
+            if (httpResponse.getSid() != null) {
+                dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid() + "; Path=/");
+            }
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
