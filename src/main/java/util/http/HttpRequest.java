@@ -24,25 +24,30 @@ public class HttpRequest {
         URI url = URI.create(tokens[1]);
 
         String accept = MediaType.ALL_VALUE;
+        String cookie = null;
         String contentLength = null;
         String contentType = null;
 
         logger.debug(line);
         while (!(line = br.readLine()).isEmpty()) {
-            tokens = line.split(" ");
-            if (tokens[0].equals("Accept:")) {
-                accept = tokens[1].split(",")[0];
+            tokens = line.split(":");
+            if (tokens[0].equals("Accept")) {
+                accept = tokens[1].split(",")[0].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Content-Length:")) {
-                contentLength = tokens[1];
+            if (tokens[0].equals("Cookie")) {
+                cookie = tokens[1].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Content-Type:")) {
-                contentType = tokens[1];
+            if (tokens[0].equals("Content-Length")) {
+                contentLength = tokens[1].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Host:") || tokens[0].equals("Connection:"))
+            if (tokens[0].equals("Content-Type")) {
+                contentType = tokens[1].trim();
+                logger.debug(line);
+            }
+            if (tokens[0].equals("Host") || tokens[0].equals("Connection"))
                 logger.debug(line);
         }
 
@@ -54,12 +59,14 @@ public class HttpRequest {
 
         httpRequest.request = RequestEntity.method(method, url)
                 .header(HttpHeaders.ACCEPT, accept)
+                .header(HttpHeaders.COOKIE, cookie)
                 .header(HttpHeaders.CONTENT_LENGTH, contentLength)
                 .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .body(body == null ? null : new String(body));
 
         return httpRequest;
     }
+
 
     public String getPath() {
         return this.request.getUrl().getPath();

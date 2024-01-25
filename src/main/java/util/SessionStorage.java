@@ -18,6 +18,7 @@ public class SessionStorage {
     }
 
     public static User getUserBySessionId(String sessionId) {
+        if (sessionId == null) return null;
         return sessionMap.get(sessionId);
     }
 
@@ -25,3 +26,4 @@ public class SessionStorage {
         sessionMap.remove(sessionId);
     }
 }
+

@@ -1,11 +1,11 @@
 package controller;
 
 import service.UserService;
+import util.http.HttpHeaders;
 import util.http.HttpStatus;
 import util.http.HttpRequest;
 import util.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -28,8 +28,22 @@ public class UserController {
         if (lastPath.equals("create")) {
             String userId = create();
             responseEntity = ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create("/"))
+                    .location(URI.create("/index.html"))
                     .build();
+            return responseEntity;
+        }
+        if (lastPath.equals("login")) {
+            String sessionId = login();
+            if (sessionId == null) {
+                responseEntity = ResponseEntity.status(HttpStatus.FOUND)
+                        .location(URI.create("/user/login_failed.html"))
+                        .build();
+            } else {
+                responseEntity = ResponseEntity.status(HttpStatus.FOUND)
+                        .header(HttpHeaders.SET_COOKIE, "SID=" + sessionId + "; Path=/")
+                        .location(URI.create("/index.html"))
+                        .build();
+            }
             return responseEntity;
         }
         return null;
@@ -45,5 +59,13 @@ public class UserController {
         String email = query.get("email");
 
         return userService.create(userId, password, name, email);
+    }
+
+    private String login() {
+        Map<String, String> query = httpRequest.getBodyParams();
+
+        String userId = query.get("userId");
+        String password = query.get("password");
+        return userService.login(userId, password);
     }
 }
