@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import db.Database;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
+import dto.session.Session;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class GetService {
 
         return HTTPResponseDto.createResponseDto(200,
                 httpRequestDto.getAccept(),
-                readFile(path));
+                readFile(path, httpRequestDto));
     }
 
     // 파일 확장자에 따라 파일 경로 찾기
@@ -79,7 +80,7 @@ public class GetService {
     }
 
     // 경로에 해당하는 파일 읽어오기
-    private byte[] readFile(String path) {
+    private byte[] readFile(String path, HTTPRequestDto httpRequestDto) {
         byte[] byteFile = null;
         FileInputStream fis = null;
 
@@ -95,6 +96,42 @@ public class GetService {
                 e.printStackTrace();
             }
         }
+
+        // index.html일 경우 로그인 여부에 따라 동적인 화면 반환
+        if(path.contains("index.html"))
+            byteFile = makeIndexWithLoginInfo(httpRequestDto, byteFile);
         return byteFile;
+    }
+
+    // index.html의 동적 화면 처리
+    private byte[] makeIndexWithLoginInfo(HTTPRequestDto httpRequestDto, byte[] byteFile) {
+        String sessionId = httpRequestDto.getSessionId();
+        // 로그인 되어있지 않을 경우
+        if(sessionId == null)
+            return byteFile;
+        // 로그인 되어있을 경우 -> 로그인 버튼의 '로그인'을 유저의 이름으로 변경
+        // 유저의 이름 가져오기
+        String name = findUserName(sessionId);
+        if(name == null)
+            return byteFile;
+        return indexReplaceWithName(byteFile, name);
+    }
+
+    // 세션 아이디를 이용하여 해당하는 유저의 이름 반환
+    private String findUserName(String sessionId) {
+        Session session = Database.findSessionById(sessionId);
+        if(session.getUserId() == null)
+            return null;
+        User user = Database.findUserById(session.getUserId());
+        if(user == null)
+            return null;
+        return user.getName();
+    }
+
+    // index.html 파일에서 '로그인'을 유저의 이름으로 대체하여 반환
+    private byte[] indexReplaceWithName(byte[] byteFile, String name) {
+        String indexHtml = new String(byteFile);
+        indexHtml = indexHtml.replace("로그인", name);
+        return indexHtml.getBytes();
     }
 }

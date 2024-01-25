@@ -48,7 +48,6 @@ public class Session {
         // randomUUID 메서드를 사용하여 랜덤한 UUID 생성
         UUID uuid = UUID.randomUUID();
         // UUID를 문자열로 변환하여 세션 ID로 반환
-        System.out.println("create session id: " + uuid.toString());
         return uuid.toString();
     }
 }
