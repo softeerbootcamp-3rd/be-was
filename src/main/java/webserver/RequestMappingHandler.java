@@ -2,6 +2,7 @@ package webserver;
 
 import annotation.*;
 import db.Database;
+import org.checkerframework.checker.units.qual.C;
 import util.ControllerMapper;
 import util.JsonConverter;
 import util.ResourceManager;
@@ -64,34 +65,33 @@ public class RequestMappingHandler {
         return response;
     }
 
-
-    private static Method findGETMethod(Class<?> controllerClass, String path) {
-        // [ 피드백 ] 아예 처음부터 맵핑해놓고 시작하기
+    private static Method findMethod(Class<?> controllerClass, String path, Class<? extends Annotation> annotationType) {
         Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
         String basePath = controllerClass.getAnnotation(RequestMapping.class).value();
         for (Method method : methods) {
-            if (method.isAnnotationPresent(GetMapping.class)) {
-                GetMapping getMapping = method.getAnnotation(GetMapping.class);
-                String controllerPath = basePath + getMapping.path();
+            if (method.isAnnotationPresent(annotationType)) {
+                Annotation mappingAnnotation = method.getAnnotation(annotationType);
+
+                String mappingPath = null;
+                try {
+                    mappingPath = (String) annotationType.getMethod("path").invoke(mappingAnnotation);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                String controllerPath = basePath + mappingPath;
                 if (controllerPath.equals(path))
                     return method;
             }
         }
         return null;
     }
+    private static Method findGETMethod(Class<?> controllerClass, String path) {
+        return findMethod(controllerClass, path, GetMapping.class);
+    }
 
     private static Method findPOSTMethod(Class<?> controllerClass, String path) {
-        Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
-        String basePath = controllerClass.getAnnotation(RequestMapping.class).value();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(PostMapping.class)) {
-                PostMapping postMapping = method.getAnnotation(PostMapping.class);
-                String controllerPath = basePath + postMapping.path();
-                if (controllerPath.equals(path))
-                    return method;
-            }
-        }
-        return null;
+        return findMethod(controllerClass, path, PostMapping.class);
     }
 
     private static ResponseEntity invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
