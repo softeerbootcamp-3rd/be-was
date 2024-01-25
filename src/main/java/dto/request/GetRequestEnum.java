@@ -10,7 +10,7 @@ public enum GetRequestEnum {
     DEFAULT("/") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.httpGetService.showIndex();
+            return HTTPResponseDto.create302Dto("/index.html");
         }
     },
     SIGNUP("/user/create") {

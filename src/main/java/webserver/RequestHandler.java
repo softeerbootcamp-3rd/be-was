@@ -118,6 +118,11 @@ public class RequestHandler implements Runnable {
                 oneHeaderParsing("Content-Length", line);
                 continue;
             }
+            if(line.contains("Cookie:")) {
+                // Cookie 추출
+                oneHeaderParsing("Cookie", line);
+                continue;
+            }
         }
     }
 

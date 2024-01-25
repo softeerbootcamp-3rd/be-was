@@ -33,6 +33,10 @@ public class Session {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
         return expires.format(formatter);
     }
+    public String getLastAccessTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
+        return lastAccessTime.format(formatter);
+    }
 
     // 로그인 시 마지막 접속 시간 업데이트
     public void setLastAccessTime(LocalDateTime time) {
@@ -44,7 +48,7 @@ public class Session {
         // randomUUID 메서드를 사용하여 랜덤한 UUID 생성
         UUID uuid = UUID.randomUUID();
         // UUID를 문자열로 변환하여 세션 ID로 반환
+        System.out.println("create session id: " + uuid.toString());
         return uuid.toString();
     }
-
 }

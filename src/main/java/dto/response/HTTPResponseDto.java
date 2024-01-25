@@ -64,8 +64,13 @@ public class HTTPResponseDto {
         // header에 Connection 추가
         setHeader(responseEnum.addConnection2Header(this.header));
         // 2. header 작성
-        for(Map.Entry<String, String> entry: header.entrySet())
+        for(Map.Entry<String, String> entry: header.entrySet()) {
+            if(entry.getKey().equals("Set-Cookie")) {               // 쿠키는 여러 개일 수 있으므로 value에 전체 헤더를 저장
+                dos.writeBytes(entry.getValue());
+                continue;
+            }
             dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+        }
         // 3. body 작성
         if(body != null) {
             dos.writeBytes("\r\n");
@@ -95,6 +100,13 @@ public class HTTPResponseDto {
     public static HTTPResponseDto createResponseDto(int statusCode, String contentType, byte[] body) {
         HTTPResponseDto httpResponseDto = new HTTPResponseDto(statusCode, body);
         httpResponseDto.addContentTypeAndContentLength2Header(contentType, (body == null) ? null : body.length);
+        return httpResponseDto;
+    }
+
+    // 리다이렉트 응답 반환
+    public static HTTPResponseDto create302Dto(String location) {
+        HTTPResponseDto httpResponseDto = HTTPResponseDto.createResponseDto(302, null, null);
+        httpResponseDto.addHeader("Location", location);
         return httpResponseDto;
     }
 }

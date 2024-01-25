@@ -75,7 +75,7 @@ class GetServiceTest {
         HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
         expected.addHeader("Location", "/index.html");
         // when
-        HTTPResponseDto actual = Config.httpGetService.showIndex();
+        HTTPResponseDto actual = HTTPResponseDto.create302Dto("/index.html");
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }

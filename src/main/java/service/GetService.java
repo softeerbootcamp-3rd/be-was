@@ -47,7 +47,7 @@ public class GetService {
         logger.debug("새로운 유저: {}", user.toString());
         logger.debug("전체 DB: {}", Database.findAllUser());
         // /index.html로 리다이렉트
-        return showIndex();
+        return HTTPResponseDto.create302Dto("/index.html");
     }
 
     // 파일 불러오기 요청
@@ -97,13 +97,6 @@ public class GetService {
         }
 
         return byteFile;
-    }
-
-    // index.html로 리다이렉트
-    public HTTPResponseDto showIndex() {
-        HTTPResponseDto httpResponseDto = HTTPResponseDto.createResponseDto(302, null, null);
-        httpResponseDto.addHeader("Location", "/index.html");
-        return httpResponseDto;
     }
 
 }

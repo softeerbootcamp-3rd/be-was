@@ -42,6 +42,9 @@ public class HTTPRequestDto {
     public String getAccept() {
         return header.get("Accept");
     }
+    public HashMap<String, String> getHeader() {
+        return this.header;
+    }
 
     public HashMap<String, String> getRequestParams() {
         return this.requestParams;
