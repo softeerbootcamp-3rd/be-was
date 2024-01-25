@@ -1,5 +1,6 @@
 package controller;
 
+import annotation.PostMapping;
 import db.Database;
 import http.HttpRequest;
 import http.HttpResponse;
@@ -17,6 +18,7 @@ public class LoginController implements Controller{
     }
 
     @Override
+    @PostMapping("/user/login")
     public String process(HttpRequest request, HttpResponse response) {
         Map<String, String> data = request.getFormData();
         User user = database.findUserById(data.get("userId"));
