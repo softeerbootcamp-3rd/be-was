@@ -5,11 +5,10 @@ import java.net.Socket;
 
 import controller.HomeController;
 import controller.UserController;
-import request.HttpRequest;
+import request.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponse;
-import util.StatusCode;
+import response.http.HttpResponse;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static webserver.ViewResolver.response;

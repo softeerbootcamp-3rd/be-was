@@ -1,7 +1,7 @@
 package controller;
 
 import request.http.HttpRequest;
-import response.HttpResponse;
+import response.http.HttpResponse;
 
 import java.io.File;
 

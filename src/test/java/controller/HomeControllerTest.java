@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import request.http.HttpRequest;
-import response.HttpResponse;
+import response.http.HttpResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
