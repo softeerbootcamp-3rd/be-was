@@ -41,7 +41,7 @@ public class RequestHandler implements Runnable {
             frontController.process(request, response);
 
             responseHandler.setHttpResponse(response);
-            response.sendResponse();
+            response.send();
 
         } catch (IOException e) {
             logger.error(e.getMessage());

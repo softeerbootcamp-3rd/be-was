@@ -40,7 +40,7 @@ public class HttpResponse {
         return path;
     }
 
-    public void sendResponse() throws IOException {
+    public void send() throws IOException {
         dos.writeBytes("HTTP/1.1 " + httpStatus.getCode() + " " + httpStatus.getMessage() + "\r\n");
         Set<String> keySet = headers.keySet();
         for (String key : keySet) {
