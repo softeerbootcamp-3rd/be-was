@@ -9,13 +9,24 @@ import webserver.http.response.enums.HttpStatus;
 
 public class DynamicRoutingManager {
     public static final byte[] NOT_FOUND_MESSAGE = "The requested resource was not found on this server.".getBytes();
-    public static HttpResponse handleRequest(HttpRequest httpRequest) {
+    private static final DynamicRoutingManager instance = new DynamicRoutingManager();
+
+    private DynamicRoutingManager() {}
+
+    public static DynamicRoutingManager getInstance(){
+        return instance;
+    }
+
+    public HttpResponse handleRequest(HttpRequest httpRequest) {
         String path = httpRequest.getPath();
         if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/create")) {
             UserController userController = new UserController();
             return userController.signUp(httpRequest);
+        } else if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/login")) {
+            UserController userController = new UserController();
+            return userController.login(httpRequest);
         }
 
-        return new HttpResponseBuilder().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
+        return HttpResponseBuilder.getInstance().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
     }
 }

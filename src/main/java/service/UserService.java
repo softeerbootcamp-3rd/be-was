@@ -1,22 +1,36 @@
 package service;
 
 import db.Database;
+import utils.SessionManager;
 import model.User;
+
 import java.util.Map;
+import java.util.Optional;
 
 
 public class UserService {
 
-    public boolean signUp(Map<String, String> queryParams){
-        if (!validateParams(queryParams)){
+    public boolean signUp(Map<String, String> bodyParams){
+        if (!validateParams(bodyParams)){
             return false;
         }
-        User newUser = createUser(queryParams);
+        User newUser = createUser(bodyParams);
         if (Database.findUserById(newUser.getUserId()) != null) {
             return false;
         }
         Database.addUser(newUser);
         return true;
+    }
+
+    public String login(Map<String, String> bodyParams){
+        String userId = bodyParams.getOrDefault("userId", "");
+        String password = bodyParams.getOrDefault("password", "");
+        if(!isExistUser(userId, password)){
+            return null;
+        }
+        String sessionId = SessionManager.createSessionId();
+        SessionManager.addSessionId(userId, sessionId);
+        return sessionId;
     }
 
     private User createUser(Map<String, String> queryParams) {
@@ -34,4 +48,8 @@ public class UserService {
                 && queryParams.containsKey("email") && !queryParams.get("email").isEmpty();
     }
 
+    private boolean isExistUser(String userId, String password){
+        User existUser = Database.findUserById(userId);
+        return Optional.ofNullable(existUser).map(User::getPassword).filter(p -> p.equals(password)).isPresent();
+    }
 }

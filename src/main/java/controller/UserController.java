@@ -13,13 +13,25 @@ public class UserController {
 
     public HttpResponse signUp(HttpRequest request) {
         Map<String, String> bodyParams = request.getBody();
-        HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
         if(userService.signUp(bodyParams)){
             // 회원가입 성공
-            return responseBuilder.createRedirectResponse(HttpStatus.FOUND, "/index.html");
+            return HttpResponseBuilder.getInstance().createRedirectResponse(HttpStatus.FOUND, "/index.html");
         }
         // 회원가입 실패
-        return responseBuilder.createErrorResponse(HttpStatus.BAD_REQUEST, "SignUp Failed".getBytes());
+        return HttpResponseBuilder.getInstance().createErrorResponse(HttpStatus.BAD_REQUEST, "SignUp Failed".getBytes());
+    }
+
+    public HttpResponse login(HttpRequest request){
+        Map<String, String> bodyParams = request.getBody();
+        String sessionId = userService.login(bodyParams);
+        if (sessionId != null) {
+            // 로그인 성공
+            HttpResponse response = HttpResponseBuilder.getInstance().createRedirectResponse(HttpStatus.FOUND, "/index.html");
+            HttpResponseBuilder.getInstance().addSessionCookie(response, sessionId);
+            return response;
+        }
+        // 로그인 실패
+        return HttpResponseBuilder.getInstance().createRedirectResponse(HttpStatus.FOUND, "/user/login_failed.html");
     }
 
 }
