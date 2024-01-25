@@ -17,7 +17,6 @@ public class Database {
     }
 
     public static void addUser(User user) {
-        System.out.println(user.getUserId());
         users.put(user.getUserId(), user);
     }
 

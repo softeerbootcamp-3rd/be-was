@@ -3,7 +3,6 @@ package controller;
 import http.HttpRequest;
 import http.HttpResponse;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ public class FrontController {
 
     public FrontController() {
         controllerMap.put("/user/create", new UserController());
+        controllerMap.put("/user/login", new LoginController());
     }
 
     public String process(HttpRequest request, HttpResponse response) {
