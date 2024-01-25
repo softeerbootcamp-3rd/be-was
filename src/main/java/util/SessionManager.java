@@ -82,6 +82,12 @@ public class SessionManager {
         return SESSION_TIMEOUT_SECONDS;
     }
 
+    public static boolean isValidateSession(String sessionId) {
+        if (isSessionPresent(sessionId) && !checkSessionTimeout(sessionId))
+            return true;
+        return false;
+    }
+
 }
 
 

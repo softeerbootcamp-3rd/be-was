@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringParser {
 
@@ -20,6 +22,18 @@ public class StringParser {
             parseMap.put(key, value);
         }
         return parseMap;
+    }
+
+    public static String getCookieValue(String cookieHeader, String cookieName) {
+        String patternString = cookieName + "=([^;]+)";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(cookieHeader);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return null;
+        }
     }
 
 }

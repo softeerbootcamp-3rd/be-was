@@ -41,14 +41,17 @@ public class HttpResponse {
             logBuilder.append(contentType);
             dos.writeBytes(contentType + "\r\n");
 
-            if (!response.getHeaders().getContentType().equals("application/json")) {
-                byte[] body = (byte[]) response.getBody();
-                long bodyLength = body != null ? body.length : 0;
-                String contentLength = "Content-Length: " + bodyLength;
-                dos.writeBytes(contentLength + "\r\n");
-
-                logBuilder.append(", " + contentLength);
+            byte[] body = null;
+            if (response.getHeaders().getContentType().equals("application/json") && response.getBody() != null) {
+                body = ((String) response.getBody()).getBytes();
+            } else {
+                body = (byte[]) response.getBody();
             }
+            long bodyLength = body != null ? body.length : 0;
+            String contentLength = "Content-Length: " + bodyLength;
+            dos.writeBytes(contentLength + "\r\n");
+
+            logBuilder.append(", " + contentLength);
 
             if (response.getHeaders().hasSetCookie()) {
                 String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
@@ -74,7 +77,6 @@ public class HttpResponse {
             dos.writeBytes(redirectResponse + "\r\n");
 
             if (response.getHeaders().hasSetCookie()) {
-                System.out.println("Cookie : " + response.getHeaders().getSetCookie());
                 String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
                 dos.writeBytes(cookie + "\r\n");
 
@@ -93,7 +95,7 @@ public class HttpResponse {
         try {
             byte[] bytes = null;
             if (response.getHeaders().getContentType().equals("application/json")) {
-                String body = JsonConverter.convertObjectToJson(response.getBody());
+                String body = (String) response.getBody();
                 bytes = body.getBytes();
             } else {
                 bytes = (byte[]) response.getBody();

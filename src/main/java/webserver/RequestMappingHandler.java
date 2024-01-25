@@ -1,17 +1,21 @@
 package webserver;
 
 import annotation.*;
+import db.Database;
 import util.ControllerMapper;
+import util.JsonConverter;
 import util.ResourceManager;
-import webserver.http.HttpRequest;
-import webserver.http.HttpStatus;
-import webserver.http.ResponseEntity;
+import util.SessionManager;
+import webserver.http.*;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +41,7 @@ public class RequestMappingHandler {
         }
 
         ResponseEntity response = null;
-        if (request.getPath().equals("/user/logout")) {
+        if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")) {
             response = invokeMethod(method, request);
         } else {
             Object[] params = createParams(method, request.getParams());
@@ -46,8 +50,17 @@ public class RequestMappingHandler {
 
         if (method.isAnnotationPresent(ResponseBody.class)) {
             response.getHeaders().setContentType("application/json");
+            response.setBody(JsonConverter.convertObjectToJson(response.getBody()));
         }
 
+        return response;
+    }
+
+    private ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
+        // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
+        if (method.isAnnotationPresent(ResponseBody.class)) {
+            response.getHeaders().setContentType("application/json");
+        }
         return response;
     }
 
@@ -60,7 +73,7 @@ public class RequestMappingHandler {
             if (method.isAnnotationPresent(GetMapping.class)) {
                 GetMapping getMapping = method.getAnnotation(GetMapping.class);
                 String controllerPath = basePath + getMapping.path();
-                if (controllerPath.equals(basePath + path))
+                if (controllerPath.equals(path))
                     return method;
             }
         }

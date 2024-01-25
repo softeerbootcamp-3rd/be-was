@@ -4,6 +4,7 @@ import annotation.*;
 import db.Database;
 import model.User;
 import util.SessionManager;
+import util.StringParser;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.HttpHeader;
@@ -63,7 +64,7 @@ public class UserController {
         );
     }
 
-    @GetMapping(path = "/user/logout")
+    @GetMapping(path = "/logout")
     @ResponseBody
     public static ResponseEntity logout(HttpRequest httpRequest) {
 

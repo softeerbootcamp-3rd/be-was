@@ -1,10 +1,9 @@
 package webserver.http;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HttpHeader implements Serializable {
+public class HttpHeader {
 
     public static Map<String, List<String>> headers = new HashMap<>();
 

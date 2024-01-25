@@ -21,4 +21,8 @@ public class Database {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static String findUserNameById(String userId) {
+        return users.get(userId).getName();
+    }
 }
