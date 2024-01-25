@@ -64,10 +64,10 @@ public class RequestHandler implements Runnable {
                 // method + path 갖고오기
                 String requestURL = httpRequest.getRequestLine().getMethodAndPath();
                 logger.debug("requestURL: {}", requestURL);
-                // 해당 값으로 Validator와 Controller 탐색
+                // 해당 값으로 Validator, Controller 탐색
                 ValidatorController vc = ValidatorController.getValidatorController(requestURL);
                 Function<Map<String, String>, Boolean> validator = vc.getValidator();
-                // 유효성 검증 통과한 경우 컨트롤러에 값 전달 경우 BAD_REQUEST 반환
+                // 유효성 검증 통과한 경우 컨트롤러에 값 전달
                 if (validator.apply(httpRequest.getBody())) {
                     Function<Map<String, String>, HttpResponse> controller = vc.getController();
                     response = controller.apply(httpRequest.getBody());

@@ -62,10 +62,6 @@ public class Parser {
             }
         }
 
-        if (sid.isEmpty()) {
-            return null;
-        }
-
         return sid;
     }
 }
