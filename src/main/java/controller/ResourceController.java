@@ -80,7 +80,7 @@ public class ResourceController extends CrudController {
 
         // 대체된 내용으로 문자열 빌드
         StringBuffer result = new StringBuffer();
-        while (matcher.find()) {
+        if (matcher.find()) {
             matcher.appendReplacement(result, replacement);
         }
         matcher.appendTail(result);
