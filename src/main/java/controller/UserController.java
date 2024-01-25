@@ -46,7 +46,7 @@ public class UserController {
 
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.SET_COOKIE, "SID=" + sessionId + "; Path=/; Max-Age=600")
+                .addHeader(HttpHeader.SET_COOKIE, "SID=" + sessionId + "; Path=/;")
                 .addHeader(HttpHeader.LOCATION, "/index.html")
                 .build();
     }
