@@ -1,6 +1,9 @@
 # java-was-2023
 Java Web Application Server 2023   
 
+## 프로젝트 설계
+<img src="https://github.com/jiaeYoon/softeer3-be-was/assets/68904755/31d5fbf7-36f6-46e3-900f-3ffaa441b66c" alt="project_architecture" width="85%"/>
+
 # 1단계
 
 ### 요구사항
@@ -51,6 +54,27 @@ Java Web Application Server 2023
 
 ### 학습 내역
 - [HTTP Response와 MIME Type](https://github.com/jiaeYoon/softeer3-be-was/wiki/HTTP-%7C-HTTP-Response%EC%99%80-MIME-Type)
+
+# 4단계
+### 요구사항
+- 로그인을 GET에서 POST로 수정 후 정상 동작하도록 구현하기 
+- 가입을 완료하면 /index.html 페이지로 이동하기
+- 불필요한 외부 의존성 제거(자바 기본 패키지, Junit, AssertJ, Logger 외의 외부 패키지 사용 X)
+- java.nio 에서 java.io로 변환
+
+### 체크리스트
+- [x] Request Body 추출
+- [x] HTTP Method를 GET -> POST으로 변경 후 회원가입이 동작하도록 코드 수정
+- [x] Redirect 구현
+- [x] java.nio에서 java.io로 변환
+  - [x] 파일 내용을 읽어 byte[]로 변환
+  - [x] 파일의 mimeType 도출
+  - [x] 이진 형태의 문자를 디코딩
+
+### 학습 내역
+- [java.io와 java.nio](https://github.com/jiaeYoon/softeer3-be-was/wiki/JAVA-%7C-java.io%EC%99%80-java.nio)
+- redirect
+- BufferedReader의 read()와 readline()
 
 <hr>
 

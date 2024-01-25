@@ -4,17 +4,19 @@ import common.util.Util;
 
 import java.lang.reflect.Field;
 
-import static common.util.Util.splitParamters;
-import static common.util.Util.splitParameter;
+import static common.util.Util.split;
+import static webserver.RequestParser.PARAMETERS_DELIMITER;
+import static webserver.RequestParser.PARAMETER_DELIMITER;
+
 
 public class Binder {
 
     public static <T> T bindQueryStringToObject(String queryString, Class<T> dtoClass) throws Exception {
         T dto = dtoClass.getDeclaredConstructor().newInstance();
-        String[] params = splitParamters(queryString);
+        String[] params = split(queryString, PARAMETERS_DELIMITER);
 
         for (String param : params) {
-            String[] keyValue = splitParameter(param);
+            String[] keyValue = split(param, PARAMETER_DELIMITER);
             String fieldName = keyValue[0];
             String fieldValue = Util.decode(keyValue[1]);
 

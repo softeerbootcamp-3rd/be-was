@@ -1,14 +1,17 @@
 package common.validate;
 
 import common.exception.EmptyFormException;
-import common.util.Util;
+
+import static common.util.Util.split;
+import static webserver.RequestParser.PARAMETERS_DELIMITER;
+import static webserver.RequestParser.PARAMETER_DELIMITER;
 
 public class InputValidate {
 
     public static void validateUserInfo(String query) {
-        String[] paramters = Util.splitParamters(query);
+        String[] paramters = split(query, PARAMETERS_DELIMITER);
         for (String parameter : paramters) {
-            String[] tokens = Util.splitParameter(parameter);
+            String[] tokens = split(parameter, PARAMETER_DELIMITER);
             if (tokens.length == 1) {
                 throw new EmptyFormException();
             }

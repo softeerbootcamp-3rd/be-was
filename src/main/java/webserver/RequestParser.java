@@ -9,11 +9,11 @@ import static common.util.Util.split;
 
 public class RequestParser {
 
-    private static final String REQUEST_LINE_DELIMITER = " ";
-    private static final String REQUEST_HEADER_DELIMITER = ": ";
-    private static final String URL_DELIMITER = "\\?";
-    private static final String PARAMETERS_DELIMITER = "&";
-    private static final String PARAMETER_DELIMITER = "=";
+    public static final String REQUEST_LINE_DELIMITER = " ";
+    public static final String REQUEST_HEADER_DELIMITER = ": ";
+    public static final String URL_DELIMITER = "\\?";
+    public static final String PARAMETERS_DELIMITER = "&";
+    public static final String PARAMETER_DELIMITER = "=";
 
     public static RequestLineDto parseRequestLine(String line) throws IOException {
         String[] methodAndURL = split(line, REQUEST_LINE_DELIMITER);
