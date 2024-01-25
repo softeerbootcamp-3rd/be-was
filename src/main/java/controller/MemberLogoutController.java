@@ -13,8 +13,7 @@ public class MemberLogoutController extends CrudController {
     @Override
     public void doPost(HttpRequest request, HttpResponse response) {
         sessionManager.deleteSession(request);
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Location", "/index.html");
-        response.setResponse(HttpResponseStatus.FOUND, null, headers);
+        responseHeaders.put(LOCATION, "/index.html");
+        response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
     }
 }

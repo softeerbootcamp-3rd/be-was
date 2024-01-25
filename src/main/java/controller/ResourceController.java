@@ -31,7 +31,6 @@ public class ResourceController extends CrudController {
     @Override
     public void doGet(HttpRequest request, HttpResponse response) {
         String url;
-        Map<String, String> headers = new HashMap<>();
         if (request.getUrl().endsWith(".html")) {
             url = "src/main/resources/templates" + request.getUrl();
         } else {
@@ -49,15 +48,15 @@ public class ResourceController extends CrudController {
                     body = replacedBody.getBytes(StandardCharsets.UTF_8);
                 }
 
-                headers.put("Content-Type", getContentType(url));
-                headers.put("Content-Length", String.valueOf(body.length));
-                response.setResponse(HttpResponseStatus.OK, body, headers);
+                responseHeaders.put(CONTENT_TYPE, getContentType(url));
+                responseHeaders.put(CONTENT_LENGTH, String.valueOf(body.length));
+                response.setResponse(HttpResponseStatus.OK, body, responseHeaders);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            headers.put("Content-Type", "text/html;charset=utf-8");
-            response.setResponse(HttpResponseStatus.NOT_FOUND, "404 NOT FOUND".getBytes(), headers);
+            responseHeaders.put(CONTENT_TYPE, "text/html;charset=utf-8");
+            response.setResponse(HttpResponseStatus.NOT_FOUND, "404 NOT FOUND".getBytes(), responseHeaders);
         }
 
     }

@@ -17,21 +17,19 @@ public class MemberLoginController extends CrudController{
 
     @Override
     public void doPost(HttpRequest request, HttpResponse response) {
-        Map<String, String> headers = new HashMap<>();
-
         String userId = request.getParams().get("userId");
         String password = request.getParams().get("password");
 
         User loginUser = memberLoginService.login(userId, password);
         if (loginUser == null) { // 로그인 실패 시 로그인 실패 창으로
-            headers.put("Location", "/user/login_failed.html");
-            response.setResponse(HttpResponseStatus.FOUND, null, headers);
+            responseHeaders.put(LOCATION, "/user/login_failed.html");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         } else { // 로그인 성공 시 홈으로
             String sessionId = sessionManager.createSession(loginUser);
 
-            headers.put("Location", "/index.html");
-            headers.put("set-cookie", "sid="+sessionId+"; Path=/");
-            response.setResponse(HttpResponseStatus.FOUND, null, headers);
+            responseHeaders.put(LOCATION, "/index.html");
+            responseHeaders.put(SET_COOKIE, "sid="+sessionId+"; Path=/");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         }
     }
 }

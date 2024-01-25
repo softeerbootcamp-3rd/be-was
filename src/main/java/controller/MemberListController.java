@@ -23,11 +23,9 @@ public class MemberListController extends CrudController {
     @Override
     public void doGet(HttpRequest request, HttpResponse response) {
         User loginUser = sessionManager.getUserBySessionId(request);
-
-        Map<String, String> headers = new HashMap<>();
         if (loginUser == null) {
-            headers.put("Location", "/user/login.html");
-            response.setResponse(HttpResponseStatus.FOUND, null, headers);
+            responseHeaders.put(LOCATION, "/user/login.html");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         } else {
             Collection<User> users = Database.findAll();
 
@@ -39,9 +37,9 @@ public class MemberListController extends CrudController {
                 String replacedBody = replaceWord(content, "<tbody></tbody>", makeListHtml(users));
                 body = replacedBody.getBytes(StandardCharsets.UTF_8);
 
-                headers.put("Content-Type", "text/html; charset=utf-8");
-                headers.put("Content-Length", String.valueOf(body.length));
-                response.setResponse(HttpResponseStatus.OK, body, headers);
+                responseHeaders.put(CONTENT_TYPE, "text/html; charset=utf-8");
+                responseHeaders.put(CONTENT_LENGTH, String.valueOf(body.length));
+                response.setResponse(HttpResponseStatus.OK, body, responseHeaders);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
