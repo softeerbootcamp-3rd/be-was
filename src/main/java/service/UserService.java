@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import util.ErrorCode;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -28,4 +29,18 @@ public class UserService {
         return user;
     }
 
+    public String loginUser(QueryParams bodyData) {
+        Map<String, String> data = bodyData.getParamMap();
+        User user = Database.findUserById(data.get("userId"));
+        if (user == null) {
+            throw new SourceException(ErrorCode.NOT_EXIST_USER);
+        }
+
+        if (!user.getPassword().equals(Database.findUserById(data.get("password")))) {
+            throw new SourceException(ErrorCode.NOT_VALID_PASSWORD);
+        }
+        String uuid = UUID.randomUUID().toString();
+        Database.addSession(uuid, user.getUserId());
+        return uuid;
+    }
 }
