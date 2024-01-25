@@ -86,18 +86,14 @@ public class PostService {
 
     // 로그인 성공 시 세션 및 응답 처리
     private HTTPResponseDto loginSuccess(HTTPRequestDto httpRequestDto, String userId) {
-
-        HashMap<String, String> header = httpRequestDto.getHeader();
-        String cookieValue = header.get("Cookie");
+        // 요청에 이미 세션이 있을 경우 기존 세션 아이디 가져오기
+        String sessionId = httpRequestDto.getSessionId();
 
         Session session = null;
         boolean done = false;
         // 요청에 이미 세션이 있을 경우
-        if(cookieValue != null && cookieValue.contains("sid")) {
+        if(sessionId != null) {
             // session id 추출
-            String sessionId = cookieValue.substring("sid=".length());
-            if(sessionId.contains(";"))
-                sessionId = sessionId.substring(0, cookieValue.indexOf(";"));
             logger.debug("already exists session id: {}", sessionId);
             // 기존 세션 가져오기
             session = Database.findSessionById(sessionId);

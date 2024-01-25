@@ -82,4 +82,19 @@ public class HTTPRequestDto {
         }
         return bodyMap;
     }
+
+    // 요청에 쿠키 값으로 세션 아이디가 포함되어 있다면 해당 세션 아이디 반환, 없으면 null 반환
+    public String getSessionId() {
+        String cookieValue = header.get("Cookie");
+        if(cookieValue == null)
+            return null;
+        if(cookieValue.contains("sid")) {
+            // session id 추출
+            String sessionId = cookieValue.substring("sid=".length());
+            if (sessionId.contains(";"))
+                sessionId = sessionId.substring(0, cookieValue.indexOf(";"));
+            return sessionId;
+        }
+        return null;
+    }
 }
