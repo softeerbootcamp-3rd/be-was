@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory;
 import webserver.ViewResolver;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.net.URLDecoder;
+import java.util.Optional;
 
 public class Request {
     //상수 및 클래스 변수
@@ -17,6 +19,7 @@ public class Request {
     private String url;
     private String location = "";
     private Map<String,String> requestParam = new HashMap<>();
+    private ArrayList<Cookie> cookies = new ArrayList<>();
     private Map<String,String> body = new HashMap<>();
 
     public Map<String, String> getBody() {
@@ -26,9 +29,16 @@ public class Request {
     public void setBody(String bodyString) {
         String[] fields = bodyString.split("&");
         for(String field : fields){
+            String[] data = field.split("=");
             String key = field.split("=")[0];
-            String value = field.split("=")[1];
-            this.body.put(key,value);
+            String value;
+            if(data.length==2) {
+                value = field.split("=")[1];
+            }
+            else {
+                value = "";
+            }
+            this.body.put(key, value);
         }
     }
 
@@ -122,11 +132,29 @@ public class Request {
             if (headerParts.length == 2) {
                 String headerName = headerParts[0].trim();
                 String headerValue = headerParts[1].trim();
+
                 headers.put(headerName, headerValue);
             }
         }
-
+        if(headers.containsKey("Cookie")) {
+            setCookies(headers.get("Cookie"));
+        }
         return headers;
+    }
+
+    public ArrayList<Cookie> getCookies() {
+        return cookies.isEmpty() ? null : cookies;
+    }
+    private void setCookies(String cookieString){
+        String[] cookiePairs = cookieString.split("; ");
+        for (String cookiePair : cookiePairs) {
+            String[] keyValue = cookiePair.split("=");
+            if (keyValue.length == 2) {
+                String key = keyValue[0];
+                String value = keyValue[1];
+                cookies.add(new Cookie(key, value));
+            }
+        }
     }
 
 }
