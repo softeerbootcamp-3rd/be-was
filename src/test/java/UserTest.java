@@ -1,4 +1,4 @@
-import controller.Controller;
+import controller.BasicController;
 import controller.UserController;
 import db.Database;
 import http.HttpStatus;
@@ -8,7 +8,7 @@ import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.ModelAndView;
-import webserver.MyView;
+import webserver.view.InternalResourceView;
 import webserver.ViewResolver;
 import webserver.adaptor.MyHandlerAdapter;
 
@@ -38,7 +38,7 @@ public class UserTest {
         //given
         Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com");
         Response res = new Response();
-        Controller handler = new UserController();
+        BasicController handler = new UserController();
         ModelAndView mv = adapter.handle(req, res, handler);
         //when
 
@@ -57,11 +57,11 @@ public class UserTest {
         //given
         Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com");
         Response res = new Response();
-        Controller handler = new UserController();
+        BasicController handler = new UserController();
         ModelAndView mv = adapter.handle(req, res, handler);
         //when
 
-        MyView view = viewResolver.resolve(mv.getViewName());
+        InternalResourceView view = viewResolver.resolve(mv.getViewName());
         view.render(dos, req, res);
         //then
         assertEquals(HttpStatus.MOVED_PERMANENTLY,res.getStatus());

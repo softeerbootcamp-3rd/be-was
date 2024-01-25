@@ -1,47 +1,51 @@
 package controller;
 
+import annotation.*;
+import com.sun.jdi.InternalException;
+import dto.UserDto;
 import http.Request;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 
-import java.net.URLDecoder;
+import java.lang.reflect.Method;
+
+import java.util.HashMap;
 import java.util.Map;
 
-public class UserController implements Controller{
+@Controller
+@RequestMapping("/user")
+public class UserController implements RequestController {
     private final UserService userService = UserService.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private Map<String, Method> getMap = new HashMap<>();
+    private Map<String, Method> postMap = new HashMap<>();
 
-    @Override
-    public String process(Request req, Map<String, String> model) {
-        logger.debug(new StringBuilder("[MemberFormController.process] req.getUrl() : ").append(req.getUrl()).toString());
-        String subPath = req.getUrl().replace("/user/", "");
-        switch (subPath) {
-            case "create":
-                return createUser(req, model);
-            // Add more cases for other sub-paths as needed
-            default:
-                logger.warn("Unknown subPath: {}", subPath);
-                return null;
-        }
-
+    public UserController(){
     }
 
-    private String createUser(Request req, Map<String, String> model){
+    @GetMapping(url = "/create")
+    public String createUser(@RequestParam(name = "email") String email, @RequestParam(name = "userId") String userId,
+                             @RequestParam(name = "name") String name, @RequestParam(name = "password") String password){
         try{
             User user = new User();
-            Map<String, String> paramMap = req.getRequestParam();
-            user.setEmail(URLDecoder.decode(paramMap.get("email"), "UTF-8"));
-            user.setUserId(URLDecoder.decode(paramMap.get("userId"), "UTF-8"));
-            user.setName(URLDecoder.decode(paramMap.get("name"), "UTF-8"));
-            user.setPassword(URLDecoder.decode(paramMap.get("password"), "UTF-8"));
+            user.setEmail(email);
+            user.setUserId(userId);
+            user.setName(name);
+            user.setPassword(password);
             userService.signUp(user);
         }
         catch (Exception e) {
-            logger.error(e.getMessage());
-            return "/user/form.html";
+            throw new InternalException();
         }
         return "redirect:/user/login.html";
+    }
+
+    @PostMapping(url = "/create")
+    public String createUserPost(@RequestBody UserDto userDto){
+        User user = new User(userDto);
+        userService.signUp(user);
+        return "redirect:/index.html";
     }
 }

@@ -33,13 +33,20 @@ public class WebServer {
 
                     if (connection != null) {
                         // 스레드 풀에서 작업을 처리
-                        executorService.execute(new FrontController(connection));
+                        executorService.execute(new dispatcherServlet(connection));
                     }
                 }
-            } finally {
+            }
+            catch (Exception e){
+                logger.error("???");
+            }
+            finally
+            {
                 // 스레드 풀 종료
                 executorService.shutdown();
             }
         }
     }
+
+
 }

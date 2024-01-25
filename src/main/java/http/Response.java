@@ -6,14 +6,17 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
+    private DataOutputStream dos;
     private String location;
-    private HttpStatus status;
+    private HttpStatus status = HttpStatus.OK;
     private String contentType = "";
     //constructors
-    public Response(){
+    public Response(DataOutputStream dos){
+        this.dos = dos;
     }
     //getter
     public String getLocation() {
@@ -40,16 +43,16 @@ public class Response {
     }
 
     //methods
-    public void send(DataOutputStream dos, Request req){
+    public void send(Request req){
         byte[] body = new byte[0];
-        setResponseHeader(dos,body.length,req);
-        setResponseBody(dos,body);
+        setResponseHeader(body.length,req);
+        setResponseBody(body);
     }
-    public void send(DataOutputStream dos,byte[] body, Request req){
-        setResponseHeader(dos,body.length,req);
-        setResponseBody(dos,body);
+    public void send(byte[] body, Request req){
+        setResponseHeader(body.length,req);
+        setResponseBody(body);
     }
-    private void setResponseHeader(DataOutputStream dos, int lengthOfBodyContent, Request req) {
+    private void setResponseHeader(int lengthOfBodyContent, Request req) {
         try {
             dos.writeBytes(new StringBuilder("HTTP/1.1 ").append(status.toString()).append("\r\n").toString());
             dos.writeBytes(new StringBuilder(getContentTypeString(req)).toString());
@@ -58,22 +61,23 @@ public class Response {
             dos.writeBytes(new StringBuilder("Location : ").append(location).append("\r\n").toString());
             dos.writeBytes("\r\n");
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error(String.valueOf(e.getCause()));
+            e.printStackTrace();
         }
+
     }
 
-    private void setResponseBody(DataOutputStream dos, byte[] body) {
+    private void setResponseBody(byte[] body) {
         try {
             dos.write(body, 0, body.length);
             dos.flush();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error(String.valueOf(e.getCause()));
         }
     }
 
     private String getContentTypeString(Request req){
         if(req.getRequestParam().containsKey("content")) {
-            logger.debug(new StringBuilder("content = ").append(req.getRequestParam().get("content")).toString());
             setContentType(req.getRequestParam().get("content"));
             return new StringBuilder("Content-Type: ").append(contentType).append(";").toString();
         }
