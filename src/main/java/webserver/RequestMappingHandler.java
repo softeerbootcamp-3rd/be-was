@@ -45,22 +45,19 @@ public class RequestMappingHandler {
         if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")) {
             response = invokeMethod(method, request);
         } else {
-            Object[] params = createParams(method, request.getParams());
-            response = invokeMethod(method, params);
+            response = invokeMethod(method, createParams(method, request.getParams()));
         }
 
-        if (method.isAnnotationPresent(ResponseBody.class)) {
-            response.getHeaders().setContentType("application/json");
-            response.setBody(JsonConverter.convertObjectToJson(response.getBody()));
-        }
+        response = addHeaders(request, method, response);
 
         return response;
     }
 
-    private ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
+    private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
         // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
         if (method.isAnnotationPresent(ResponseBody.class)) {
             response.getHeaders().setContentType("application/json");
+            response.setBody(JsonConverter.convertObjectToJson(response.getBody()));
         }
         return response;
     }
@@ -94,20 +91,12 @@ public class RequestMappingHandler {
         return findMethod(controllerClass, path, PostMapping.class);
     }
 
-    private static ResponseEntity invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static ResponseEntity invokeMethod(Method method, Object... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> c = method.getDeclaringClass();
         Object instance = c.getDeclaredConstructor().newInstance();
 
         return (ResponseEntity) method.invoke(instance, params);
     }
-
-    private static ResponseEntity invokeMethod(Method method, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class<?> c = method.getDeclaringClass();
-        Object instance = c.getDeclaredConstructor().newInstance();
-
-        return (ResponseEntity) method.invoke(instance, httpRequest);
-    }
-
 
     private static Object[] createParams(Method method, Map<String, String> originParams){
         Class<? extends Annotation> requestParam = RequestParam.class;
