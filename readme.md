@@ -19,3 +19,5 @@
     + 서버는 accept() 함수를 통해 클라이언트로부터 정보를 받아와 inputstream에 저장.
     + 받아온 정보(HTTP request) 중 가장 중요한 첫 줄만 logger가 기록함.
     + index.html을 읽어와 outputstream을 통해 요청한 브라우저로 출력.
+  + #### Concurrent 패키지
+    + Thread 관리가 힘든 점을 보완하기 위해 고안된 것..
