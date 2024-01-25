@@ -13,19 +13,20 @@ import java.util.Set;
 public class HttpResponse {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private DataOutputStream dos;
+    private final DataOutputStream dos;
     private HttpStatus httpStatus;
-    private Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers;
     private byte[] body;
-
     private String path;
+
+    public HttpResponse(DataOutputStream dos) {
+        headers = new HashMap<>();
+        this.dos = dos;
+
+    }
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public HttpResponse(DataOutputStream dos) {
-        this.dos = dos;
     }
 
     public void setHeader(String header, String content) {

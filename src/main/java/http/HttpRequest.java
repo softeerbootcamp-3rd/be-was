@@ -20,8 +20,8 @@ public class HttpRequest {
     private String connection;
     private String accept;
     private Integer contentLength;
-    private Map<String, String> requestParam = new HashMap<>();
-    private Map<String, String> formData = new HashMap<>();
+    private final Map<String, String> requestParam;
+    private final Map<String, String> formData;
 
     public String getMethod() {
         return method;
@@ -33,6 +33,8 @@ public class HttpRequest {
     public Map<String, String> getFormData() { return formData; }
 
     public HttpRequest(InputStream inputStream) throws IOException {
+        requestParam = new HashMap<>();
+        formData = new HashMap<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         getRequestInfo(br);
     }

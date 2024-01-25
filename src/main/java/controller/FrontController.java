@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FrontController {
-    private final Map<String, Controller> controllerMap = new HashMap<>(); //controller list
+    private final Map<String, Controller> controllerMap; //controller list
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
     private final String RESOURCES_STATIC_URL = "src/main/resources/static";
 
     public FrontController() {
+        controllerMap = new HashMap<>();
         controllerMap.put("/user/create", new UserController());
         controllerMap.put("/user/login", new LoginController());
     }
