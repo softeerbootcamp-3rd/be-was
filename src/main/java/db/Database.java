@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import model.User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
@@ -25,4 +26,5 @@ public class Database {
     public static String findUserNameById(String userId) {
         return users.get(userId).getName();
     }
+
 }

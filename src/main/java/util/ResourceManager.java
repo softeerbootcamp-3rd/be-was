@@ -1,16 +1,15 @@
 package util;
 
 import db.Database;
+import model.User;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.HttpHeader;
 import webserver.http.ResponseEntity;
 
+import javax.xml.crypto.Data;
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ResourceManager {
 
@@ -99,6 +98,20 @@ public class ResourceManager {
                 }
 
                 sb.append(line + "\n");
+
+                if (filePath.contains("/user/list") && line.contains("<tbody>") && SID != null) {
+                    int id = 1;
+                    Collection<User> users = Database.findAll();
+                    for (User u : users) {
+                        sb.append("<tr>\n");
+                        sb.append("<th scope=\"row\">" + id + "</th> <td>"
+                                + u.getUserId() + "</td> <td>" + u.getName() + "</td> <td>"
+                                + u.getEmail() + "</td> <td>");
+                        sb.append("<a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n");
+                        sb.append("</tr>\n");
+                        id++;
+                    }
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
