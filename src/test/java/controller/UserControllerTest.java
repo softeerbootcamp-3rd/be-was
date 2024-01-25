@@ -6,6 +6,7 @@ import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
 import org.junit.jupiter.api.Test;
+import util.ObjectMapper;
 import util.RequestParser;
 import util.SessionManager;
 import webserver.HttpResponse;

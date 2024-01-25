@@ -1,12 +1,10 @@
 package util;
 
-import annotation.NotEmpty;
-import constant.ParamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.HttpRequest;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,32 +36,15 @@ public class RequestParser {
         }
     }
 
+    public static String decodeUri(String encodedUrl) throws UnsupportedEncodingException {
+        return URLDecoder.decode(encodedUrl, "UTF-8");
+    }
+
     public static Map<String, String> parseQueryString(String queryString) throws UnsupportedEncodingException {
         if (queryString == null || queryString.isEmpty())
             return new HashMap<>();
         queryString = decodeUri(queryString);
         return extractKeyValue(queryString, "&", "=");
-    }
-
-    public static String decodeUri(String encodedUrl) throws UnsupportedEncodingException {
-        return URLDecoder.decode(encodedUrl, "UTF-8");
-    }
-
-    public static <T> T mapToClass(Map<String, String> mapInfo, Class<T> destClass)
-            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
-        T result = destClass.getDeclaredConstructor().newInstance();
-        for (Field field : destClass.getDeclaredFields()) {
-            field.setAccessible(true);
-            String fieldValue = mapInfo.get(field.getName());
-            NotEmpty notEmptyAnnotation = field.getDeclaredAnnotation(NotEmpty.class);
-            if (notEmptyAnnotation != null && (fieldValue == null || fieldValue.isEmpty()))
-                throw new IllegalArgumentException("Field '" + field.getName() + "' cannot be null");
-            if (fieldValue != null) {
-                ParamType paramType = ParamType.getByClass(field.getType());
-                field.set(result, paramType.map(fieldValue));
-            }
-        }
-        return result;
     }
 
     public static Map<String, String> parseCookie(String cookieString) {
@@ -74,6 +55,8 @@ public class RequestParser {
 
     private static Map<String, String> extractKeyValue(String input, String delimiter1, String delimiter2) {
         Map<String, String> result = new HashMap<>();
+        if (input == null)
+            return result;
         String[] entries = input.split(delimiter1);
         for (String entry : entries) {
             String[] parts = entry.split(delimiter2);
@@ -82,5 +65,24 @@ public class RequestParser {
             }
         }
         return result;
+    }
+
+    public static <T> T parseBody(HttpRequest request, Class<T> clazz)
+            throws UnsupportedEncodingException, InvocationTargetException,
+            IllegalAccessException, NoSuchMethodException, InstantiationException {
+
+        Map<String, String> queryMap;
+        String contentType = request.getHeader().get("Content-Type");
+        String[] entries = new String[1];
+        entries[0] = contentType;
+
+        if (contentType != null)
+            entries = contentType.split("; ");
+
+        if ("application/x-www-form-urlencoded".equals(entries[0])) {
+            queryMap = parseQueryString(new String(request.getBody()));
+            return ObjectMapper.mapToClass(queryMap, clazz);
+        }
+        return ObjectMapper.jsonToClass(new String(request.getBody()), clazz);
     }
 }
