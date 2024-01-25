@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class HttpHeader {
 
-    public static Map<String, List<String>> headers = new HashMap<>();
+    public Map<String, List<String>> headers;
 
     public static final String ACCEPT = "Accept";
     public static final String ACCEPT_ENCODING = "Accept-Encoding";
@@ -75,6 +75,10 @@ public class HttpHeader {
 
     public void setContentType(String contentType) {
         headers.put(CONTENT_TYPE, Collections.singletonList(contentType));
+    }
+
+    public void setContentLength(String contentLength) {
+        headers.put(CONTENT_LENGTH, Collections.singletonList(contentLength));
     }
 
     public boolean hasSetCookie() {
