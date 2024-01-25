@@ -10,13 +10,13 @@ import session.SessionManager;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemberLoginController implements Controller{
+public class MemberLoginController extends CrudController{
 
     MemberLoginService memberLoginService = new MemberLoginService();
     SessionManager sessionManager = new SessionManager();
 
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public void doPost(HttpRequest request, HttpResponse response) {
         Map<String, String> headers = new HashMap<>();
 
         String userId = request.getParams().get("userId");

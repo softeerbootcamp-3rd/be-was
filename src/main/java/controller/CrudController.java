@@ -10,14 +10,14 @@ public abstract class CrudController implements Controller {
             doGet(request, response);
         }
         if (request.getMethod().equals("POST")) {
-            doPOST(request, response);
+            doPost(request, response);
         }
     }
 
     public void doGet(HttpRequest request, HttpResponse response) {
     }
 
-    public void doPOST(HttpRequest request, HttpResponse response) {
+    public void doPost(HttpRequest request, HttpResponse response) {
     }
 
 }

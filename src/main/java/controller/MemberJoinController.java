@@ -9,10 +9,10 @@ import service.MemberJoinService;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemberJoinController implements Controller {
+public class MemberJoinController extends CrudController {
     MemberJoinService memberJoinService = new MemberJoinService();
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public void doPost(HttpRequest request, HttpResponse response) {
         Map<String, String> headers = new HashMap<>();
 
         Map<String, String> params = request.getParams();

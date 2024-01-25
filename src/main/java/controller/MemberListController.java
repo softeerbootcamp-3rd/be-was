@@ -17,11 +17,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MemberListController implements Controller {
+public class MemberListController extends CrudController {
     SessionManager sessionManager = new SessionManager();
 
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public void doGet(HttpRequest request, HttpResponse response) {
         User loginUser = sessionManager.getUserBySessionId(request);
 
         Map<String, String> headers = new HashMap<>();

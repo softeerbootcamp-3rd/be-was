@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ResourceController implements Controller {
+public class ResourceController extends CrudController {
 
     static Map<String, String> contentType = new HashMap<>();
     SessionManager sessionManager = new SessionManager();
@@ -29,7 +29,7 @@ public class ResourceController implements Controller {
         contentType.put("ico", "image/x-icon");
     }
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public void doGet(HttpRequest request, HttpResponse response) {
         String url;
         Map<String, String> headers = new HashMap<>();
         if (request.getUrl().endsWith(".html")) {
