@@ -49,6 +49,8 @@ public class HTTPRequest{
         // ******시간이 남으면 Enum으로 수정할것******
         String line = br.readLine();
 
+        if(line==null)
+            line ="";
         String[] tokens = line.split(" ");
         method = tokens[0];
         url = tokens[1];

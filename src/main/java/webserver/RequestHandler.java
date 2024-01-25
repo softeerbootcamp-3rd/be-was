@@ -45,14 +45,15 @@ public class RequestHandler implements Runnable {
             ControllerHandler controllerHandler = null;
             String urlFrontPart = url.split("\\?")[0];
 
+            System.out.println(threadUuid.get()+"]]]]");
             HTTPResponse response;
             // 페이지 불러오는 경우 (GET 메소드이며, url에 확장자가 있을 때)
             if(request.getMethod().equals("GET") && urlFrontPart.contains(".")){
                 //로그인 상태에 따라 정적/동적 페이지 로드
-                if(threadUuid.get() == null )
-                    response = PageController.getPageStatic(request);
-                else
+                if(threadUuid.get() != null && url.contains(".html"))
                     response = PageController.getPageDynamic(request);
+                else
+                    response = PageController.getPageStatic(request);
             }
             // 그 외에는 디스패쳐 서블릿으로 컨트롤러를 불러온다 (ControllerHandler가 디스패쳐 서블릿)
             else {
