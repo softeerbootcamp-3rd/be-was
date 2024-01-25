@@ -52,7 +52,7 @@ public class SessionManager {
             SessionInfo sessionInfo = entry.getValue();
             long lastAccessTime = sessionInfo.getLastAccessTime();
             // 세션 만료 시간 (10분)
-            long sessionExpirationTime = 2 * 60 * 1000;
+            long sessionExpirationTime = 10 * 60 * 1000;
             return (currentTimestamp - lastAccessTime) > sessionExpirationTime;
         });
     }
