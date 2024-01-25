@@ -24,9 +24,6 @@ public class HttpRequestHeaderUtils {
     public String getQueryString() {
         return  requestLineMap.get("QueryString");
     }
-    public String getRequestVersion() {
-        return requestLineMap.get("Version");
-    }
     public Map<String,String> getRequestHeaders() {
         return requestHeaderMap;
     }

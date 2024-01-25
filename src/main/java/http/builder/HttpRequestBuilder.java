@@ -9,7 +9,6 @@ public class HttpRequestBuilder {
     private String method;
     private String uri;
     private String queryString;
-    private String version;
     private Map<String, String> headerFields;
 	private String body;
 
@@ -28,11 +27,6 @@ public class HttpRequestBuilder {
         return this;
     }
 
-    public HttpRequestBuilder version(String version) {
-        this.version = version;
-        return this;
-    }
-
     public HttpRequestBuilder headerFields(Map<String,String> headerFields) {
         this.headerFields = headerFields;
         return this;
@@ -43,6 +37,6 @@ public class HttpRequestBuilder {
 		return this;
 	}
     public HttpRequest build() {
-        return new HttpRequest(method, uri, queryString, version, headerFields, body);
+        return new HttpRequest(method, uri, queryString, headerFields, body);
     }
 }

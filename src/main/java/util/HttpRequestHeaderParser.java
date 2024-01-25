@@ -9,7 +9,6 @@ public class HttpRequestHeaderParser {
         Map<String, String> requestLineMap = new HashMap<>();
         String[] splitRequestLine = splitRequestLine(requestMessage);
         putMethodField(splitRequestLine, requestLineMap);
-        putVersionField(splitRequestLine, requestLineMap);
         String uri = splitRequestLine[1];
         putUriField(uri, requestLineMap);
         return requestLineMap;
@@ -28,22 +27,16 @@ public class HttpRequestHeaderParser {
         }
         return requestHeaderMap;
     }
-    private static void putVersionField(String[] splitRequestLine, Map<String, String> requestLineMap) {
-        String version = splitRequestLine[2];
-        requestLineMap.put("Version", version);
-    }
 
+	private static String[] splitRequestLine(String requestMessage) {
+		String[] lines = requestMessage.split("\r\n");
+		String requestLine = lines[0];
+		return requestLine.split(" ");
+	}
     private static void putMethodField(String[] splitRequestLine, Map<String, String> requestLineMap) {
         String method = splitRequestLine[0];
         requestLineMap.put("Method", method);
     }
-
-    private static String[] splitRequestLine(String requestMessage) {
-        String[] lines = requestMessage.split("\r\n");
-        String requestLine = lines[0];
-        return requestLine.split(" ");
-    }
-
     private static void putUriField(String uri, Map<String, String> requestHeaderMap) {
         String requestUri;
         String queryString = "None";

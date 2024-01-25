@@ -8,8 +8,8 @@ public class User {
     private String name;
     private String email;
 
-    public static User create(Map<String, String> parameters) {
-        return new User(parameters.get("userId"), parameters.get("password"), parameters.get("name"), parameters.get("email"));
+    public static User create(Map<String, String> queryParameters) {
+        return new User(queryParameters.get("userId"), queryParameters.get("password"), queryParameters.get("name"), queryParameters.get("email"));
     }
 
     public User(String userId, String password, String name, String email) {

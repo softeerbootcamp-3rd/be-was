@@ -7,15 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class HttpResponseBuilder {
-    private String version;
     private HttpStatusCode statusCode;
     private Map<String, String> headerFields;
     private byte[] body;
 
-    public HttpResponseBuilder version(String version) {
-        this.version = version;
-        return this;
-    }
     public HttpResponseBuilder status(HttpStatusCode statusCode) {
         this.statusCode = statusCode;
         return this;
@@ -31,6 +26,6 @@ public class HttpResponseBuilder {
     }
 
     public HttpResponse build() {
-        return new HttpResponse(version, statusCode, headerFields, body);
+        return new HttpResponse(statusCode, headerFields, body);
     }
 }

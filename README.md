@@ -89,8 +89,41 @@ br.readLine() 함수는 텍스트의 한 line을 읽는데 이 line은 ‘\n’,
 
 body를 읽어오기 위해서 Content-Length를 사용해야 한다. br.read(char[] buf) 함수는 buf의 크기 만큼 스트림에서 읽어오는데 buf 배열의 크기를 Content-Length 크기만큼 할당하고 읽어오면 body를 읽어올 수 있다.
 
+# 학습 내용 step 5
+
+## HTTP Response 상태 코드
+
+### 200 OK
+
+HTTP 200 OK 상태 코드는 요청이 성공했음을 나타낸다. **성공의 의미는 HTTP 요청 방법에 따라 달라진다.**
+
+- GET: uri 요청 리소스가 검색되어 응답 메시지 body에서 전송된다.
+- POST: 요청 작업의 결과를 설명하는 리소스는 응답 메시지 body에서 전송된다.
+
+### 301 **Moved Permanently**
+
+요청한 리소스의 URL이 영구적으로 변경된다. Location 헤더에 의해 지정된 URL로 리다이렉션된다. 브라우저는 새 URL로 리디렉션되고 검색 엔진은 리소스에 대한 링크를 업데이트한다.
+
+### 302 Found
+
+요청된 리소스가 Location 헤더가 지정한 URL로 일시적으로 이동되었음을 나타낸다. 브라우저는 이 페이지로 리디렉션되지만 검색 엔진은 리소스에 대한 링크를 업데이트하지 않는다.
+
+### 308 Permanent Redirect
+
+리소스가 이제 Location 헤더에 의해 지정된 다른 URI에 영구적으로 위치함을 의미한다. 301 상태 코드와 동일한 의미를 갖지만 HTTP 메서드를 변경하면 안된다. 첫 번째 요청에서 POST가 사용된 경우 두 번째 요청에서 POST가 사용돼야 한다.
+
+### 401 **Unauthorized**
+
+HTTP 표준에는 "unauthorized"라고 명시되어 있지만, 의미론적으로 이 응답은 "unauthenticated”를 의미한다. 즉, 사용자 이름/비밀번호가 일치하는지 묻기 위해 클라이언트(front-end application)가 인증(authentication)되지 않았음을 의미한다. (ex: 토큰 만료)
+
+### **403 Forbidden**
+
+클라이언트는 컨텐츠에 대한 접근 권한이 없다. 즉, “unauthorized”를 의미한다. 서버는 요청한 리소스를 부여하는 것을 거부하고 있다. 401 상태 코드와 달리 클라이언트의 ID는 서버에 알려진다.
+
 ## Reference
 - [Java의 미래, Virtual Thread - 김태헌](https://techblog.woowahan.com/15398/)
 - [Thread, Java thread model에 대한 이해](https://e-una.tistory.com/70)
 - [Green Threads - Priyanka Muniraju](https://priyankamuniraju.medium.com/green-threads-a1f86df8e37a)
 - [Multi-Threading in Java - Saurav Kumar](https://tipsontech.medium.com/multi-threading-in-java-b33620ce7b0a)
+- [HTTP 상태 코드 - developer.mozilla](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200)
+- [로그인시 상태 코드관련 의견 - stackoverflow](https://stackoverflow.com/questions/32752578/whats-the-appropriate-http-status-code-to-return-if-a-user-tries-logging-in-wit)

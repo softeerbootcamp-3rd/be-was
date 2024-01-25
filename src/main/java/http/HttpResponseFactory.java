@@ -1,7 +1,5 @@
-package util;
+package http;
 
-import http.HttpRequest;
-import http.HttpResponse;
 import http.builder.HttpResponseBuilder;
 import http.status.HttpStatusCode;
 import util.mapper.ContentTypeMapper;
@@ -9,26 +7,41 @@ import util.mapper.ContentTypeMapper;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpResponseUtils {
-    public static HttpResponse getHttpResponse(HttpStatusCode statusCode, String version, String fileType, byte[] body) {
+public class HttpResponseFactory {
+    public static HttpResponse getHttpResponse(HttpStatusCode statusCode, String fileType, byte[] body) {
         Map<String, String> headerFields = setHeaderFields(fileType, body);
         return new HttpResponseBuilder()
-                .version(version)
                 .status(statusCode)
                 .headerFields(headerFields)
                 .body(body)
                 .build();
     }
 
-    public static HttpResponse get302HttpResponse(HttpStatusCode statusCode, String version) {
-        Map<String, String> headerFields = setRedirectionHeader();
+    public static HttpResponse get302HttpResponse(String uri) {
+        Map<String, String> headerFields = setRedirectionHeader(uri);
         return new HttpResponseBuilder()
-                .version(version)
-                .status(statusCode)
+                .status(HttpStatusCode.FOUND)
                 .headerFields(headerFields)
 				.body(new byte[0])
                 .build();
     }
+
+	public static HttpResponse get302HttpResponse(String uri, String sessionId) {
+		Map<String, String> headerFields = setRedirectionHeader(uri, sessionId);
+		return new HttpResponseBuilder()
+			.status(HttpStatusCode.FOUND)
+			.headerFields(headerFields)
+			.body(new byte[0])
+			.build();
+	}
+
+	private static Map<String, String> setRedirectionHeader(String uri, String sessionId){
+		Map<String, String> headerFields = new HashMap<>();
+		headerFields.put("Content-Type", "text/html;charset=utf-8");
+		headerFields.put("Location", uri);
+		headerFields.put("Set-Cookie", "SID=" + sessionId + "; Path=/");
+		return headerFields;
+	}
 
     private static Map<String, String> setHeaderFields(String fileType, byte[] body) {
         Map<String, String> headerFields = new HashMap<>();
@@ -38,10 +51,10 @@ public class HttpResponseUtils {
         return headerFields;
     }
 
-    private static Map<String, String> setRedirectionHeader(){
+    private static Map<String, String> setRedirectionHeader(String uri){
         Map<String, String> headerFields = new HashMap<>();
         headerFields.put("Content-Type", "text/html;charset=utf-8");
-        headerFields.put("Location", "/index.html");
+        headerFields.put("Location", uri);
         return headerFields;
     }
 }

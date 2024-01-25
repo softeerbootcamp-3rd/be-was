@@ -92,18 +92,6 @@ public class HttpRequestHeaderUtilsTest {
         //then
         assertThat(queryString).isEqualTo("None");
     }
-    @Test
-    @DisplayName("프로토콜 버전 테스트")
-    void 프로토콜_버전_테스트(){
-        //given
-        HttpRequestHeaderUtils httpRequestHeaderUtils = HttpRequestHeaderUtils.createHeaderUtils(requestMessage);
-
-        //when
-        String requestVersion = httpRequestHeaderUtils.getRequestVersion();
-
-        //then
-        assertThat(requestVersion).isEqualTo("HTTP/1.1");
-    }
 
     @Test
     @DisplayName("Host 필드 테스트")

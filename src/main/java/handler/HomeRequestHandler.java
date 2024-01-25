@@ -11,6 +11,6 @@ public class HomeRequestHandler implements RequestHandler{
         if (uri.equals("/")) {
             uri = "/index.html";
         }
-        return getHttpResponse(httpRequest.getVersion(), uri);
+        return getHttpResponse(uri);
     }
 }
