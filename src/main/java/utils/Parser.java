@@ -45,4 +45,27 @@ public class Parser {
         }
         return uri;
     }
+
+    public static String extractSid(String cookie) {
+        if (!cookie.contains("sid")) {
+            return null;
+        }
+
+        String[] tokens = cookie.split("; ");
+        String sid = "";
+        for (String token : tokens) {
+            // "=" 구분자로 key, value 추출
+            String[] t = token.split("=", 2);
+            if (t[0].equals("sid")) {
+                sid = t[1];
+                break;
+            }
+        }
+
+        if (sid.isEmpty()) {
+            return null;
+        }
+
+        return sid;
+    }
 }
