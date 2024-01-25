@@ -7,4 +7,12 @@ public class ExceptionHandler {
         }
     }
 
+    public static class AlreadyLoggedIn extends RuntimeException {
+        public AlreadyLoggedIn(String message) {
+            super(message);
+        }
+    }
+
+
+
 }

@@ -1,14 +1,14 @@
 package controller;
 
-import config.ExceptionHandler;
-import config.HTTPRequest;
-import config.HTTPResponse;
-import config.ResponseCode;
+import config.*;
 import db.Database;
 import model.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import static webserver.RequestHandler.threadUuid;
 
 
 public class UserController {
@@ -23,47 +23,76 @@ public class UserController {
             String email = request.getBody().get("email");
 
             //유저 아이디가 이미 존재하는 경우 예외 발생
+            //그러나 현재 어떻게 처리할지 명시되지 않아서 catch문은 미구현
             if(Database.findUserById(userId)!=null)
                 throw new ExceptionHandler.UserIdTaken("User id already in use");
+
             //유저 저장
             User user = new User(userId, password, name, email);
             Database.addUser(user);
 
             byte[] body = new byte[0];
             byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code+ " " + ResponseCode.REDIRECT +"\r\n"+
-                    "Content-Type: "+ request.getHead().get("Accept").split(",")[0] +"\r\n"+
                     "Location: /index.html" + "\r\n" +
                     "Content-Length: " + body.length  + "\r\n").getBytes();
 
             response = new HTTPResponse("HTTP/1.1",ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
 
-        }
-        catch(Exception e){
+        }catch(Exception e){
             byte[] body = new byte[0];
             byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + " " + ResponseCode.SERVER_ERROR +" \r\n"+
-                    "Content-Type: text/html;charset=utf-8\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
             response = new HTTPResponse("HTTP/1.1",ResponseCode.SERVER_ERROR.code, ResponseCode.SERVER_ERROR.toString(), head, body);
         }
 
         return response;
     }
-    public HTTPResponse login(HTTPRequest request){
+    public static HTTPResponse login(HTTPRequest request) {
+        System.out.println("OK0");
+        //로그인이 되어 있다면 홈으로 리디렉션
+        if (threadUuid.get() != null) {
+            byte[] body = new byte[0];
+            byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
+                    "Location: /index.html" + "\r\n" +
+                    "Content-Length: " + body.length + "\r\n").getBytes();
+
+            return new HTTPResponse("HTTP/1.1", ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
+        }
+
+        System.out.println("OK1");
+        //유저 정보를 비교하기 위해 데이터베이스에서 불러온다
         String userId = request.getBody().get("userId");
         String password = request.getBody().get("password");
         User user = Database.findUserById(userId);
 
-        //로그인 실패하는경우 (아이디 없거나 비밀번호 불일치)
-        if(user == null || !user.getPassword().equals(password)){
+        HTTPResponse response = null;
+        //로그인 실패하는 경우 리디렉션 (아이디 없거나 비밀번호 불일치)
+        if (user == null || !user.getPassword().equals(password)) {
+            System.out.println("OK2");
+            byte[] body = new byte[0];
+            byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
+                    "Location: /user/login_failed.html" + "\r\n" +
+                    "Content-Length: " + body.length + "\r\n").getBytes();
 
+            response = new HTTPResponse("HTTP/1.1", ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
+        }
+        // 로그인 성공시 세션 발급, index.html로 리디렉션
+        else {
+            System.out.println("OK3");
+            UUID uuid = Session.createSession(userId);
+            byte[] body = new byte[0];
+            byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
+                    "Location: /index.html" + "\r\n" +
+                    "Set-Cookie: sid=" + uuid +"; Path=/"+ "\r\n" +
+                    "Content-Length: " + body.length + "\r\n").getBytes();
+            response = new HTTPResponse("HTTP/1.1", ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
         }
 
+        return response;
 
     }
 
-
-
-    private static Map<String,String> querytoMap(String query){
+    private Map<String,String> querytoMap(String query){
         Map<String, String> map = new HashMap<>();
 
         //&를 기준으로 한쌍으로 묶는다.

@@ -8,7 +8,7 @@ public class Session {
     private static final ConcurrentHashMap<UUID, String> sessions = new ConcurrentHashMap<>();
 
 
-    UUID createSession(String userId){
+    public static UUID createSession(String userId){
         if (exitsByValue(userId))
             return null;
         UUID uuid =  UUID.randomUUID();
@@ -16,11 +16,11 @@ public class Session {
         return uuid;
     }
 
-    boolean exitsByValue(String userId){
+    public static boolean exitsByValue(String userId){
         return sessions.containsValue(userId);
     }
 
-    String getUserId(UUID uuid){
+    public static String getUserId(UUID uuid){
         return sessions.get(uuid);
     }
 
