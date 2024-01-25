@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import static db.Database.addUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static util.StatusCode.*;
 
 @DisplayName("UserControllerTest 클래스")
 class UserControllerTest {
@@ -60,7 +61,7 @@ class UserControllerTest {
         HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(httpResponse.getStatusCode()).isEqualTo(200);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(OK.getStatus());
     }
 
     @ParameterizedTest
@@ -76,7 +77,7 @@ class UserControllerTest {
         assertThat(findUser).isNotNull()
                 .extracting("userId", "password", "name", "email")
                 .contains(findUser.getUserId(), findUser.getPassword(), findUser.getName(), findUser.getEmail());
-        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(FOUND.getStatus());
     }
 
     @ParameterizedTest
@@ -88,7 +89,7 @@ class UserControllerTest {
         HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(httpResponse.getStatusCode()).isEqualTo(404);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(NOT_FOUND.getStatus());
     }
 
     @ParameterizedTest
@@ -101,7 +102,7 @@ class UserControllerTest {
 
         // then
         assertThat(httpResponse.getSid());
-        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(FOUND.getStatus());
     }
 
     @ParameterizedTest
@@ -114,7 +115,7 @@ class UserControllerTest {
 
         // then
         assertThat(httpResponse.getSid()).isNull();
-        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(FOUND.getStatus());
     }
 
 

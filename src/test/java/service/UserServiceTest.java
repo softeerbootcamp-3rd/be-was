@@ -25,7 +25,7 @@ class UserServiceTest {
     private Database database;
 
     @BeforeEach
-    void init() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    void init() throws Exception {
         this.userService = UserService.getInstance();
         this.database = new Database();
 
@@ -76,7 +76,7 @@ class UserServiceTest {
     @ParameterizedTest
     @MethodSource("login_success_parameters")
     @DisplayName("database에 회원정보가 존재하고 아이디와 비밀번호가 일치하면 true를 반환하는지 확인")
-    void login_success(LoginRequest loginRequest) throws Exception {
+    void login_success(LoginRequest loginRequest) {
 
         // when
         boolean isLogin = userService.login(loginRequest);
@@ -88,7 +88,7 @@ class UserServiceTest {
     @ParameterizedTest
     @MethodSource("login_fail_parameters")
     @DisplayName("database에 회원정보가 존재하지 않는 경우나 비밀번호가 일치하지 않으면 false를 반환하는지 확인")
-    void login_fail(LoginRequest loginRequest) throws Exception {
+    void login_fail(LoginRequest loginRequest) {
 
         // when
         boolean isLogin = userService.login(loginRequest);

@@ -14,6 +14,7 @@ import java.io.StringReader;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static util.StatusCode.*;
 
 class HomeControllerTest {
     private HomeController homeController;
@@ -32,7 +33,7 @@ class HomeControllerTest {
         HttpResponse httpResponse = homeController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(httpResponse.getStatusCode()).isEqualTo(200);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(OK.getStatus());
     }
 
     @ParameterizedTest
@@ -44,7 +45,7 @@ class HomeControllerTest {
         HttpResponse httpResponse = homeController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(FOUND.getStatus());
     }
 
     @ParameterizedTest
@@ -56,7 +57,7 @@ class HomeControllerTest {
         HttpResponse httpResponse = homeController.handleUserRequest(httpRequest);
 
         // then
-        assertThat(httpResponse.getStatusCode()).isEqualTo(404);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(NOT_FOUND.getStatus());
     }
 
     private static Stream<Arguments> status_200_Parameters() throws IOException {
