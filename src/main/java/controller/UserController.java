@@ -1,6 +1,7 @@
 package controller;
 
 import dto.ResourceDto;
+import model.Model;
 import util.QueryParams;
 import service.UserService;
 
@@ -16,6 +17,13 @@ public class UserController {
         methodMap.put("/user/create", this::generateUserResource);
         methodMap.put("/index.html", this::process);
         methodMap.put("/user/form.html", this::process);
+        methodMap.put("/user/login", this::loginUserResource);
+    }
+
+    public ResourceDto loginUserResource(Object bodyData) {
+        String sessionId = userService.loginUser((QueryParams) bodyData);
+        Model.addAttribute("sessionId", sessionId);
+        return ResourceDto.of("/index.html", 302);
     }
 
     public ResourceDto generateUserResource(Object queryParams) {
@@ -35,6 +43,4 @@ public class UserController {
         }
         return null;
     }
-
-
 }
