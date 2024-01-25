@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.*;
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -21,21 +20,15 @@ class FileUtilTest {
         String ttfUrl = "/index.ttf";
         String woffUrl = "/index.woff";
 
-        File htmlContent = FileUtil.getFileFromUrl(htmlUrl);
-        File javascriptContent = FileUtil.getFileFromUrl(javascriptUrl);
-        File cssContent = FileUtil.getFileFromUrl(cssUrl);
-        File ttfContent = FileUtil.getFileFromUrl(ttfUrl);
-        File woffContent = FileUtil.getFileFromUrl(woffUrl);
-
-        assertThat(FileUtil.getContentType(htmlContent.toPath()))
+        assertThat(FileUtil.getContentType(htmlUrl))
                 .isEqualTo("text/html");
-        assertThat(FileUtil.getContentType(javascriptContent.toPath()))
+        assertThat(FileUtil.getContentType(javascriptUrl))
                 .isEqualTo("text/javascript");
-        assertThat(FileUtil.getContentType(cssContent.toPath()))
+        assertThat(FileUtil.getContentType(cssUrl))
                 .isEqualTo("text/css");
-        assertThat(FileUtil.getContentType(ttfContent.toPath()))
+        assertThat(FileUtil.getContentType(ttfUrl))
                 .isEqualTo("font/ttf");
-        assertThat(FileUtil.getContentType(woffContent.toPath()))
+        assertThat(FileUtil.getContentType(woffUrl))
                 .isEqualTo("font/woff");
 
     }

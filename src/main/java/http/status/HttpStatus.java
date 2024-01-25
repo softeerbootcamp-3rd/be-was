@@ -2,6 +2,7 @@ package http.status;
 
 public enum HttpStatus {
     OK(200, "OK"),
+    FOUND(302, "Found"),
     SEE_OTHER(303, "See Other"),
     NOT_MODIFIED(304, "Not Modified"),
     BAD_REQUEST(400, "Bad Request"),

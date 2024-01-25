@@ -9,9 +9,7 @@ import utils.DateTimeUtil;
 import utils.FileUtil;
 import http.status.HttpStatus;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -30,11 +28,10 @@ public class StaticResourceController {
 
     public void handle(HttpRequest request, HttpResponse response) throws IOException {
         File file = FileUtil.getFileFromUrl(request.getUrl());
-        String contentType = FileUtil.getContentType(file.toPath());
+        String contentType = FileUtil.getContentType(request.getUrl());
         Map<String, String> properties = new HashMap<>();
 
-
-        if (!file.exists()){
+        if (!file.exists()) {
             response.setHeader(
                     ResponseHeader.of(HttpStatus.NOT_FOUND, properties)
             );
@@ -43,7 +40,7 @@ public class StaticResourceController {
             return;
         }
 
-        byte[] body = Files.readAllBytes(file.toPath());
+        byte[] body = FileUtil.readFile(file);
 
         LocalDateTime nowDate = LocalDateTime.now();
         LocalDateTime lastModified = LocalDateTime.ofInstant(

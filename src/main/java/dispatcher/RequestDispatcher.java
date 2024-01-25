@@ -1,18 +1,17 @@
 package dispatcher;
 
 import controller.StaticResourceController;
-import controller.UserController;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.header.ResponseHeader;
 import http.status.HttpStatus;
-import utils.FileExtension;
+import utils.MethodMapper;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public class RequestDispatcher {
-    private final UserController userController = UserController.getInstance();
     private final StaticResourceController staticResourceController = StaticResourceController.getInstance();
 
     public static RequestDispatcher getInstance() {
@@ -25,28 +24,30 @@ public class RequestDispatcher {
 
 
     public void dispatchHandler(HttpRequest request, HttpResponse response) throws IOException {
-        String method = request.getMethod();
+        String httpMethod = request.getMethod();
         String url = request.getUrl();
 
-        if (method.equals("GET")) {
+        Method method = MethodMapper.findMethodByRequest(request);
+        if (method != null) { // 요청에 적합한 메소드가 있을 때
+            MethodMapper.invokeMethod(method, request, response);
+            return;
+        }
+        // 정적파일 및 리다이렉팅
+        if (httpMethod.equals("GET")) {
             if (url.equals("/")) {
                 response.setEmptyBody();
                 response.setHeader(
-                        ResponseHeader.of(HttpStatus.SEE_OTHER,  Map.of("Location", "/index.html"))
+                        ResponseHeader.of(HttpStatus.FOUND, Map.of("Location", "/index.html"))
                 );
+                return;
             }
-            else if (FileExtension.extensions.stream()
-                    .anyMatch(extension -> url.endsWith(extension))
-            ) {
-                staticResourceController.handle(request, response);
-            } else {
-                userController.handle(request, response);
-            }
-        } else {
-            response.setEmptyBody();
-            response.setHeader(
-                    ResponseHeader.of(HttpStatus.METHOD_NOT_ALLOWED, Map.of("Allow", "GET"))
-            );
+            staticResourceController.handle(request, response);
+            return;
         }
+
+        response.setEmptyBody();
+        response.setHeader(
+                ResponseHeader.of(HttpStatus.METHOD_NOT_ALLOWED, Map.of("Allow", "GET, POST"))
+        );
     }
 }

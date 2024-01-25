@@ -3,6 +3,8 @@ package service;
 import controller.UserController;
 import db.Database;
 import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,8 @@ public class UserService {
         private static final UserService INSTANCE = new UserService();
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     public boolean saveUser(User user) {
         if (Database.findUserById(user.getUserId()) != null) {
             return false;
@@ -24,6 +28,8 @@ public class UserService {
 
         try {
             Database.addUser(user);
+            logger.debug("user saved: {}", user);
+            logger.debug("DB Users: {}", Database.findAll());
             return true;
         } catch (Exception e) {
             return false;
