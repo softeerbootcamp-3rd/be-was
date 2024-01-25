@@ -18,7 +18,7 @@ public class StaticRoutingManager {
             String fileExtension = ResourceReader.getFileExtension(path);
             ContentType contentType = ContentType.toContentType(fileExtension);
 
-            HttpResponse httpResponse = new HttpResponseBuilder().createSuccessResponse(HttpStatus.OK, body);
+            HttpResponse httpResponse = HttpResponseBuilder.getInstance().createSuccessResponse(HttpStatus.OK, body);
             httpResponse.addHeader("Content-Type", contentType.getMimeType());
 
             return httpResponse;

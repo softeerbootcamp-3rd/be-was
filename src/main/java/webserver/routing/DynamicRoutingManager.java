@@ -19,6 +19,6 @@ public class DynamicRoutingManager {
             return userController.login(httpRequest);
         }
 
-        return new HttpResponseBuilder().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
+        return HttpResponseBuilder.getInstance().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
     }
 }
