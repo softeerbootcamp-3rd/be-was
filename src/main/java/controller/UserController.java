@@ -52,7 +52,7 @@ public class UserController implements RequestController {
     public String login(@RequestBody LoginDto form, Response response) {
         Optional<User> loginMember = userService.login(form.getUserId(), form.getPassword());
         if (loginMember.isEmpty()) {
-            return "user/login.html";
+            return "user/login_failed.html";
         }
 
         sessionManager.createSession(loginMember, response);
