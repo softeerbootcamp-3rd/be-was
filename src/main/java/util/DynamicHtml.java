@@ -9,8 +9,10 @@ public class DynamicHtml {
 
         // 예시: 로그인 상태에 따라 동적으로 변경할 부분
         Map<String, String> dynamicContent = new HashMap<>();
-        dynamicContent.put("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", "<li>사용자입니다.</li>"); // `/index.html`의 로그인 버튼
-        dynamicContent.put("<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>", "<li>사용자입니다.</li>"); // `/user/*.html`의 로그인 버튼
+        dynamicContent.put("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", ""); // `/index.html`의 로그인 버튼
+        dynamicContent.put("<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>", ""); // `/user/*.html`의 로그인 버튼
+        dynamicContent.put("<li><a href=\"./user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>", "<li class=\"navbar-brand\">사용자님 안녕하세요</li>\r\n<li><a href=\"./user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>"); // `/index.html`의 로그인 버튼
+        dynamicContent.put("<li><a href=\"../user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>", "<li class=\"navbar-brand\">사용자님 안녕하세요</li>\r\n<li><a href=\"../user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>"); // `/user/*.html`의 로그인 버튼
 
         // 동적으로 HTML 수정
         for (Map.Entry<String, String> entry : dynamicContent.entrySet()) {
