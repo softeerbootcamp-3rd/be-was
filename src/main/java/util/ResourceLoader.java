@@ -4,6 +4,7 @@ import controller.ResourceMapping;
 import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import java.io.*;
 import java.net.URI;
@@ -54,6 +55,11 @@ public class ResourceLoader {
             // bytesRead가 -1이 아니면 계속 읽기
             while (bytesRead != -1) {
                 bytesRead = inputStream.read(buffer);
+            }
+
+            if (requestData.getHeaderValue("Cookie") != null && UserService.isLoggedIn(requestData) && extension.equals("html")) {
+                String modifiedContent = DynamicHtml.modifyHtml(new String(buffer), true);
+                return modifiedContent.getBytes();
             }
 
             return buffer;
