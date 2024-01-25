@@ -22,12 +22,11 @@ public class UserLoginDto {
         return password;
     }
 
-    public static UserLoginDto fromRequestBody(byte[] requestBody) {
+    public static UserLoginDto fromRequestBody(String requestBody) {
         try {
             HashMap<String, String> map = new HashMap<>();
-            String body = new String(requestBody);
-            if (!body.isEmpty()) {
-                String[] pairs = body.split("&");
+            if (!requestBody.isEmpty()) {
+                String[] pairs = requestBody.split("&");
 
                 for (String pair : pairs) {
                     String[] keyValue = pair.split("=");

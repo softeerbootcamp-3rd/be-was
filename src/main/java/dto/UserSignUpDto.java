@@ -46,12 +46,11 @@ public class UserSignUpDto {
         return name;
     }
 
-    public static UserSignUpDto fromRequestBody(byte[] requestBody) {
+    public static UserSignUpDto fromRequestBody(String requestBody) {
         try {
             HashMap<String, String> map = new HashMap<>();
-            String body = new String(requestBody);
-            if (!body.isEmpty()) {
-                String[] pairs = body.split("&");
+            if (!requestBody.isEmpty()) {
+                String[] pairs = requestBody.split("&");
 
                 for (String pair : pairs) {
                     String[] keyValue = pair.split("=");

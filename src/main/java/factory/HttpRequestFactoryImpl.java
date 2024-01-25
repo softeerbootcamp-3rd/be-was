@@ -45,7 +45,7 @@ public class HttpRequestFactoryImpl implements HttpRequestFactory {
             return new Body(null);
         }
         else{
-            return new Body(temp.getBytes());
+            return new Body(temp);
         }
     }
     private List<String> getRequest(BufferedReader bufferedReader) throws IOException {

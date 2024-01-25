@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.Map;
 
 public class HttpResponseSendServiceImpl implements HttpResponseSendService {
@@ -44,7 +45,7 @@ public class HttpResponseSendServiceImpl implements HttpResponseSendService {
     }
 
     private void setBody(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
-        dos.write(httpResponse.getBody().getContent());
+        dos.write(Base64.getDecoder().decode(httpResponse.getBody().getContent()));
         dos.flush();
     }
 
