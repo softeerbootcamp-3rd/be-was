@@ -22,13 +22,17 @@ public class Parser {
         return object;
     }
 
-    private static Map<String, String> parseJson(String body) {
+    private static Map<String, String> parseJson(String body) throws Exception {
 
         String[] jsons = body.split("&");
+
         Map<String, String> keyValueMap = new HashMap<>();
 
         for (String s : jsons) {
-            String[] keyValue = s.split("=");
+            String[] keyValue = s.split("=", -1);
+
+            if (keyValue[1].isEmpty()) throw new Exception("value가 유효하지 않습니다.");
+
             keyValueMap.put(keyValue[0], keyValue[1]);
         }
 
@@ -37,7 +41,7 @@ public class Parser {
 
     private static void setField(Object object, Field[] fields, Map<String, String> keyValueMap) throws Exception {
         for (Field field : fields) {
-            if (field.isAnnotationPresent(Column.class)) { // @Column 어노테이션이 있는 필드만 필드값 설정
+            if (field.isAnnotationPresent(Column.class)) {
                 String value = keyValueMap.get(field.getName());
 
                 if (value == null) throw new Exception("필드명이 유효하지 않습니다.");
