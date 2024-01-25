@@ -13,8 +13,10 @@ import annotation.Controller;
 import annotation.RequestMapping;
 import controller.BasicController;
 import controller.RequestController;
+import http.Cookie;
 import http.Request;
 import http.Response;
+import http.SessionManager;
 import utils.ClassScanner;
 import webserver.adaptor.HandlerAdapter;
 import webserver.adaptor.RequestHandlerAdapter;
@@ -72,6 +74,7 @@ public class dispatcherServlet implements Runnable {
             view.render(req, res);
         } catch (Exception e) {
             logger.error("e.getMessage() = {}",e.getMessage());
+            e.printStackTrace();
         }
     }
 
