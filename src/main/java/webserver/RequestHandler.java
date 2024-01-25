@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 import java.util.function.Function;
 
 import http.response.HttpResponse;
@@ -60,8 +61,20 @@ public class RequestHandler implements Runnable {
                 }
             } else {
                 // 동적 자원 처리
-                Function<HttpRequest, HttpResponse> controller = ControllerMapper.getController(httpRequest);
-                response = controller.apply(httpRequest);
+                // method + path 갖고오기
+                String requestURL = httpRequest.getRequestLine().getMethodAndPath();
+                logger.debug("requestURL: {}", requestURL);
+                // 해당 값으로 Validator와 Controller 탐색
+                ValidatorController vc = ValidatorController.getValidatorController(requestURL);
+                Function<Map<String, String>, Boolean> validator = vc.getValidator();
+                // 유효성 검증 통과한 경우 컨트롤러에 값 전달 경우 BAD_REQUEST 반환
+                if (validator.apply(httpRequest.getBody())) {
+                    Function<Map<String, String>, HttpResponse> controller = vc.getController();
+                    response = controller.apply(httpRequest.getBody());
+                } else {
+                    // 유효성 검증 실패할 경우 BAD_REQUEST 반환
+                    response = HttpResponse.of(HttpStatus.BAD_REQUEST);
+                }
             }
 
             // 응답

@@ -2,7 +2,10 @@ package service;
 
 import db.Database;
 import model.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,46 +14,44 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceTest.class);
     UserService userService = new UserService();
 
     @Test
-    void 회원가입_서비스() {
+    @DisplayName("회원가입이 잘 되는지 확인")
+    void createUserTest() {
         // given
-        Map<String, String> params = new HashMap<>();
-        params.put("userId", "ossu1975");
-        params.put("password", "ossu1975");
-        params.put("name", "ossu");
-        params.put("email", "ossu1975@gmail.com");
+        User user = new User("ossu1975", "ossu1975", "ossu", "ossu1975@gamil.com");
 
         // when
-        userService.createUser(params);
+        try {
+            userService.createUser(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // then
-        User findUser = Database.findUserById(params.get("userId"));
-        assertEquals(params.get("name"), findUser.getName());
-        assertEquals(params.get("email"), findUser.getEmail());
-        assertEquals(params.get("password"), findUser.getPassword());
+        User findUser = Database.findUserById(user.getUserId());
+        assertEquals(user.getName(), findUser.getName());
+        assertEquals(user.getEmail(), findUser.getEmail());
+        assertEquals(user.getPassword(), findUser.getPassword());
         assertEquals(1, Database.findAll().size());
     }
 
     @Test
-    void 중복_아이디_검증() {
+    @DisplayName("중복 아이디 검증")
+    void validateDuplicatedTest() {
         // given
-        Map<String, String> params1 = new HashMap<>();
-        params1.put("userId", "ossu1975");
-        params1.put("password", "ossu1975");
-        params1.put("name", "ossu");
-        params1.put("email", "ossu1975@gmail.com");
-
-        Map<String, String> params2 = new HashMap<>();
-        params2.put("userId", "ossu1975");
-        params2.put("password", "ossu1975");
-        params2.put("name", "ossu");
-        params2.put("email", "ossu1975@gmail.com");
+        User user1 = new User("ossu1975", "ossu1975", "ossu", "ossu1975@gamil.com");
+        User user2 = new User("ossu1975", "ossu1975", "ossu", "ossu1975@gamil.com");
 
         // when
-        userService.createUser(params1);
-        userService.createUser(params2);
+        try {
+            userService.createUser(user1);
+            userService.createUser(user2);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
         // then
         Collection<User> users = Database.findAll();

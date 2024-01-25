@@ -38,4 +38,11 @@ public class Parser {
         // uri에서 쿼리 부분 파싱
         return uri.split("\\?", 2)[1];
     }
+
+    public static String extractPath(String uri) {
+        if (uri.contains("?")) {
+            return uri.split("\\?", 2)[0];
+        }
+        return uri;
+    }
 }

@@ -1,14 +1,11 @@
 package service;
 
 import db.Database;
-import http.response.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import http.HttpStatus;
+import utils.SessionManager;
 import webserver.RequestHandler;
-
-import java.util.Map;
 
 /**
  * 서비스 로직 구현
@@ -16,35 +13,34 @@ import java.util.Map;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     // 회원가입
-    public HttpResponse createUser(Map<String, String> params) {
-        // userId, password, name, email 값이 잘 들어왔는지 확인
-        if (!params.containsKey("userId") || !params.containsKey("password")
-                || !params.containsKey("name") || !params.containsKey("email")) {
-            return HttpResponse.of(HttpStatus.BAD_REQUEST);
-        }
-
-        String userId = params.get("userId"), password = params.get("password");
-        String name = params.get("name"), email = params.get("email");
-
-        // userId, password, name, email 빈 값 검사
-        if (userId.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
-            return HttpResponse.of(HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new User(userId, password, name, email);
-
+    public void createUser(User user) throws Exception {
         // 유저 아이디 중복 검사
-        if (!validateDuplicated(userId)) {
-            // 고민사항 : BAD_REQUEST를 반환해야 할지 회원가입 폼으로 REDIRECT 시켜야 할지
-            return HttpResponse.of(HttpStatus.REDIRECT, "/user/form.html");
+        if (!validateDuplicated(user.getUserId())) {
+            throw new Exception("중복된 아이디입니다.");
         }
 
         Database.addUser(user);
         logger.info(Database.findAll().toString());
-        return HttpResponse.of(HttpStatus.REDIRECT, "/index.html");
     }
 
     private boolean validateDuplicated(String userId) {
         return Database.findUserById(userId) == null;
     }
+
+    public String join(String userId, String password) throws Exception {
+        User user = Database.findUserById(userId);
+
+        // 입력한 아이디에 대한 user 정보가 없거나 비밀번호 검증이 실패한 경우 로그인 실패
+        if (user == null || !password.equals(user.getPassword())) {
+            throw new Exception("로그인 실패");
+        }
+
+        // 세션 아이디 랜덤 생성 후 반환
+        // 세션 아이디와 user 정보 저장 - 고민사항 : 서비스 로직에서 세션 정보 저장 or 컨트롤러에서 저장?
+        String sid = SessionManager.getSessionId();
+        SessionManager.addSession(sid, user);
+
+        return SessionManager.getSessionId();
+    }
+
 }
