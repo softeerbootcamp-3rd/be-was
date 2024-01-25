@@ -19,8 +19,7 @@ public class Session {
         this.userId = userId;
         this.createTime = LocalDateTime.now();
         this.lastAccessTime = LocalDateTime.now();
-//        this.expires = createTime.plusHours(1);
-        this.expires = createTime.plusSeconds(10);
+        this.expires = createTime.plusHours(1);
     }
 
     public String getId() {

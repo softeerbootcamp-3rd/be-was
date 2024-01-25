@@ -36,8 +36,7 @@ public class WebServer {
                     System.out.println("가비지 컬렉터 실행! 사이즈: " + Database.findAllSession().size());
                 }
             };
-//            scheduler.scheduleAtFixedRate(task, 60*60*1000, 60*60*1000);        // 1시간 후 1시간 간격으로 세션 저장소 청소
-            scheduler.scheduleAtFixedRate(task, 0, 30*1000);        // 30초 간격으로 세션 저장소 청소
+            scheduler.scheduleAtFixedRate(task, 60*60*1000, 60*60*1000);        // 1시간 후 1시간 간격으로 세션 저장소 청소
 
             ExecutorService executorService = Executors.newFixedThreadPool(5);     // 고정 크키 5의 쓰레드 풀 생성
 
