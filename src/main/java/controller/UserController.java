@@ -40,6 +40,7 @@ public class UserController implements Controller {
      * 사용자 로그인 결과에 따라 응답 메시지를 설정합니다.
      *
      * <p> 로그인 성공시 메인 화면으로, 실패시 실패 화면으로 리다이렉션하도록 설정합니다.
+     * 로그인 성공시 만료시간이 60초인 쿠키를 할당합니다.
      *
      * @param request  요청 정보
      * @param response 응답 메시지
@@ -54,7 +55,7 @@ public class UserController implements Controller {
 
             response.setCode(302);
             response.addHeader("Location", "/");
-            response.addHeader("Set-Cookie", sid + "; Path=/");
+            response.addHeader("Set-Cookie", sid + "; Path=/; Max-Age=60");
         } catch (Exception e) {
             response.setCode(302);
             response.addHeader("location", "/user/login_failed.html");
