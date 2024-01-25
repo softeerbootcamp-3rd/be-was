@@ -6,6 +6,7 @@ public class HttpRequestConstant {
     public static final String CONNECTION = "Connection:";
     public static final String ACCEPT = "Accept:";
     public static final String CONTENT_LENGTH = "Content-Length:";
+    public static final String COOKIE = "Cookie:";
     public static final int HTTP_METHOD_POS = 0;
     public static final int PATH_POS = 1;
     public static final int EXTENSION_POS = 1;

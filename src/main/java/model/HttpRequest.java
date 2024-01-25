@@ -54,7 +54,7 @@ public class HttpRequest {
 
         while (!(line = br.readLine()).equals(END)) {
             String[] header = line.split(" ");
-            if (line.startsWith(HOST) || line.startsWith(CONNECTION) || line.startsWith(ACCEPT) || line.startsWith(CONTENT_LENGTH)) {
+            if (line.startsWith(HOST) || line.startsWith(CONNECTION) || line.startsWith(ACCEPT) || line.startsWith(CONTENT_LENGTH) || line.startsWith(COOKIE)) {
                 headers.put(header[KEY_INDEX], header[VALUE_INDEX]);
             }
         }
