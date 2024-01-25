@@ -12,7 +12,7 @@ public class UrlParserTest {
     public void testValidQuery() {
         String queryString = "param1=value1&param2=value2";
 
-        Map<String, String> queryParams = UrlParser.parseQueryString(queryString);
+        Map<String, String> queryParams = Parser.parseQueryString(queryString);
 
         assertEquals(2, queryParams.size());
         assertEquals("value1", queryParams.get("param1"));
@@ -24,7 +24,7 @@ public class UrlParserTest {
     public void testExampleEncodeQuery() {
         String queryString = "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
 
-        Map<String, String> queryParams = UrlParser.parseQueryString(queryString);
+        Map<String, String> queryParams = Parser.parseQueryString(queryString);
 
         assertEquals(4, queryParams.size());
         assertEquals("javajigi", queryParams.get("userId"));
@@ -38,7 +38,7 @@ public class UrlParserTest {
     public void testWithoutValue() {
         String queryString = "param1=value1&param2=";
 
-        Map<String, String> queryParams = UrlParser.parseQueryString(queryString);
+        Map<String, String> queryParams = Parser.parseQueryString(queryString);
 
         assertEquals(1, queryParams.size());
         assertEquals("value1", queryParams.get("param1"));
@@ -49,7 +49,7 @@ public class UrlParserTest {
     public void testWithoutValue2() {
         String queryString = "param1value1&param2=value2";
 
-        Map<String, String> queryParams = UrlParser.parseQueryString(queryString);
+        Map<String, String> queryParams = Parser.parseQueryString(queryString);
 
         assertEquals(1, queryParams.size());
         assertEquals("value2", queryParams.get("param2"));
@@ -61,7 +61,7 @@ public class UrlParserTest {
     public void testWithoutQuery() {
         String queryString = "";
 
-        Map<String, String> queryParams = UrlParser.parseQueryString(queryString);
+        Map<String, String> queryParams = Parser.parseQueryString(queryString);
 
         assertTrue(queryParams.isEmpty());
     }

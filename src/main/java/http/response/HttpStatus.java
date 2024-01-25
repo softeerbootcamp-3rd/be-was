@@ -1,9 +1,11 @@
-package model;
+package http.response;
 
 public enum HttpStatus {
     OK(200, "OK"),
     REDIRECT(302, "FOUND"),
     BAD_REQUEST(400, "Bad Request"),
+    UNAUTHORIZED(401, "Unauthorized"),
+    NOT_FOUND(404, "Not Found"),
     SERVER_ERROR(500, "Internal Server Error");
 
     private final int statusCode;
@@ -15,11 +17,8 @@ public enum HttpStatus {
         this.message = message;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public String getStatusCodeAndMessage() {
+        return statusCode + " " + message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

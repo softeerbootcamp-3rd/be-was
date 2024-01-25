@@ -1,4 +1,4 @@
-package model;
+package http;
 
 public enum MimeType {
     HTML("html", "text/html"),
