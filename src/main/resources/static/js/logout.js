@@ -1,14 +1,20 @@
 document.getElementById("logoutButton").addEventListener("click", function() {
-    // AJAX 요청 생성
-    var xhr = new XMLHttpRequest();
-
     // 로그아웃 요청을 서버에 보냄
-    xhr.open("GET", "/user/logout", true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            // 로그아웃이 성공하면 페이지를 새로고침하거나 로그인 페이지로 이동할 수 있습니다.
+    fetch("/user/logout", {
+        method: "GET",
+        credentials: "same-origin" // 브라우저의 쿠키를 request에 포함하기 위해
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+            return response.text(); // 서버가 보낸 response 파싱 가능
+        })
+        .then(() => {
+            // 로그아웃 성공하면 페이지 reload
             window.location.reload();
-        }
-    };
-    xhr.send();
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
 });
