@@ -583,3 +583,30 @@ Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
 </details>
 
 ---
+
+<details>
+    <summary><b>Step-6 동적인 HTML</b></summary>
+
+## 1. 학습목표
+>- 세션 정보를 바탕으로 주어진 요청에 대해 동적인 HTML을 응답하도록 구현할 수 있다.
+
+## 2. 기능 요구사항
+- 동적인 html 구현
+>- 사용자가 로그인 상태인 경우 `/index.html`에서 사용자 이름을 표시해 준다.
+>- 사용자가 로그인 상태가 아닐 경우 `/index.html`에서 `[로그인]` 버튼을 표시해 준다.
+>- 사용자가 로그인 상태일 경우 `http://localhost:8080/user/list` 에서 사용자 목록을 출력한다.
+>- `http://localhost:8080/user/list` 페이지 접근시 로그인하지 않은 상태일 경우 로그인 페이지(login.html)로 이동한다.
+
+## 3. 프로그래밍 요구사항
+>- 쿠키와 세션을 활용해서 주어진 요구사항을 만족하도록 구현한다.
+
+## 4. 학습 내용
+- `StringBuilder`
+>- 
+
+## 5. Trouble Shooting
+
+
+</details>
+
+---
