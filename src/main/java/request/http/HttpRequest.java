@@ -2,15 +2,13 @@ package request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HttpRequest {
     //todo: 일급 컬렉션으로 변경
     private String method;
     private String uri;
     private String httpVersion;
-    private final Map<String, String> requestHeaders = new HashMap<>();
+    private RequestHeaders requestHeaders;
     private String requestBody;
 
     //헤더 정보 저장 & 테스트
@@ -22,13 +20,15 @@ public class HttpRequest {
         this.method = tokens[0];
         this.uri = tokens[1];
         this.httpVersion = tokens[2];
+        this.requestHeaders = new RequestHeaders();
 
         //header 정보 저장
-        setRequestHeaders(readLine, br);
+        requestHeaders.setRequestHeaders(readLine, br);
 
+        String contentLength = requestHeaders.getValue("Content-Length");
         //body 정보 저장
-        if (requestHeaders.containsKey("Content-Length") && !requestHeaders.get("Content-Length").equals("0")) {
-            setRequestBody(br);
+        if (contentLength != null && !contentLength.equals("0")) {
+            setRequestBody(br, contentLength);
         }
     }
 
@@ -48,17 +48,9 @@ public class HttpRequest {
         return requestBody;
     }
 
-    public void setRequestHeaders(String readLine, BufferedReader br) throws IOException {
-        for (readLine = br.readLine(); !readLine.isEmpty(); readLine = br.readLine()) {
-            String[] headerTokens = readLine.split(": ");
-            requestHeaders.put(headerTokens[0], headerTokens[1]);
-        }
-    }
-
-    public void setRequestBody(BufferedReader br) throws IOException {
-        int contentLength = Integer.parseInt(requestHeaders.get("Content-Length"));
-        char[] body = new char[contentLength];
-        br.read(body, 0, contentLength);
+    public void setRequestBody(BufferedReader br, String contentLength) throws IOException {;
+        char[] body = new char[Integer.parseInt(contentLength)];
+        br.read(body, 0, Integer.parseInt(contentLength));
 
         this.requestBody = String.valueOf(body);
     }
