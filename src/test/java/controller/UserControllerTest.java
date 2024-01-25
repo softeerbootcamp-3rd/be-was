@@ -7,14 +7,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import request.HttpRequest;
+import request.http.HttpRequest;
 import response.HttpResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
+import static db.Database.addUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("UserControllerTest 클래스")
@@ -24,9 +27,28 @@ class UserControllerTest {
     private Database database;
 
     @BeforeEach
-    void init() {
+    void init() throws Exception {
         this.userController = UserController.getInstance();
         this.database = new Database();
+
+        Constructor<User> constructor = User.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        User firstUser = constructor.newInstance();
+        User secondUser = constructor.newInstance();
+
+        Field[] fields = User.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            field.set(firstUser, "test1");
+        }
+        addUser(firstUser);
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            field.set(secondUser, "test2");
+        }
+        addUser(secondUser);
     }
 
     @ParameterizedTest
@@ -68,6 +90,33 @@ class UserControllerTest {
         // then
         assertThat(httpResponse.getStatusCode()).isEqualTo(404);
     }
+
+    @ParameterizedTest
+    @MethodSource("login_success_parameters")
+    @DisplayName("database에 존재하는 회원이면 sid값을 생성하고 302 상태코드를 반환하는지 확인")
+    void login_success(HttpRequest httpRequest) throws Exception {
+
+        // when
+        HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
+
+        // then
+        assertThat(httpResponse.getSid());
+        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
+    }
+
+    @ParameterizedTest
+    @MethodSource("login_fail_parameters")
+    @DisplayName("database에 회원정보가 존재하지 않거나 비밀번호가 틀리면 sid값을 생성하지 않고 302 상태코드를 반환하는지 확인")
+    void login_fail(HttpRequest httpRequest) throws Exception {
+
+        // when
+        HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
+
+        // then
+        assertThat(httpResponse.getSid()).isNull();
+        assertThat(httpResponse.getStatusCode()).isEqualTo(302);
+    }
+
 
     private static Stream<Arguments> status_200_Parameters() throws IOException {
         return Stream.of(
@@ -115,6 +164,48 @@ class UserControllerTest {
                         + "Content-Type: application/x-www-form-urlencoded"
                         + "\r\n"
                         + "\r\n"))))
+        );
+    }
+
+    private static Stream<Arguments> login_success_parameters() throws IOException {
+        return Stream.of(
+                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
+                        + "\r\n"
+                        + "Content-Length: 27"
+                        + "\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded"
+                        + "\r\n"
+                        + "\r\n"
+                        + "userId=test1&password=test1")))),
+                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
+                        + "\r\n"
+                        + "Content-Length: 27"
+                        + "\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded"
+                        + "\r\n"
+                        + "\r\n"
+                        + "userId=test2&password=test2"))))
+        );
+    }
+
+    private static Stream<Arguments> login_fail_parameters() throws IOException {
+        return Stream.of(
+                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
+                        + "\r\n"
+                        + "Content-Length: 27"
+                        + "\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded"
+                        + "\r\n"
+                        + "\r\n"
+                        + "userId=test3&password=test2")))), // 아이디가 존재하지 않는 경우
+                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
+                        + "\r\n"
+                        + "Content-Length: 27"
+                        + "\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded"
+                        + "\r\n"
+                        + "\r\n"
+                        + "userId=test1&password=test2")))) // 비밀번호가 틀린 경우
         );
     }
 }
