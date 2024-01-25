@@ -10,10 +10,12 @@ import webserver.Session;
 public class HtmlBuilder {
 
     /**
-     * 동적인 HTML 주소인지 확인 후 내용을 수정합니다.
+     * 페이지 내용을 동적으로 변경합니다.
+     *
+     * <p> 기본적으로 로그인 여부에 따라 상단의 버튼을 다르게 표시합니다.
      *
      * @param request 요청 정보
-     * @param body    : 본문
+     * @param body 본문
      * @return 수정된 내용 (String)
      */
     public static String build(Request request, byte[] body) {
@@ -29,6 +31,9 @@ public class HtmlBuilder {
 
     /**
      * 페이지 상단의 버튼 내용을 수정합니다.
+     *
+     * <p> 로그인 여부를 확인하고 로그인이 되어있다면 로그아웃, 개인정보수정 버튼을 보여주며, 사용자 이름을 표시합니다.
+     * 로그인이 안되어있다면 로그인, 회원가입 버튼을 보여줍니다.
      *
      * @param request 요청 정보
      * @param bodyString 본문 페이지
