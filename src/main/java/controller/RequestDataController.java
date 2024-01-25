@@ -127,4 +127,12 @@ public class RequestDataController {
         CookieData cookieData = UserService.logout(requestData);
         return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
     }
+
+    @Route("/user/list.html")
+    private static Response handleFileList(RequestData requestData) {
+        if (requestData.getHeaderValue("Cookie") != null && UserService.isLoggedIn(requestData)) {
+            return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+        }
+        return new Response(HttpStatusCode.FOUND, "/index.html");
+    }
 }
