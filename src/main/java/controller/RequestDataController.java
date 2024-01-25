@@ -47,7 +47,7 @@ public class RequestDataController {
             } else if (fileOrApi.equals("API")) {
                 if (url.equals("/")) {
                     return redirectHome();
-                } else if (url.startsWith("/user/create?")) {
+                } else if (url.startsWith("/user/create")) {
                     userService.registerUser(requestData);
                     return redirectHome();
                 } else {

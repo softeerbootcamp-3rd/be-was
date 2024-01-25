@@ -29,6 +29,21 @@ public class RequestParserUtil {
 
         Map<String, String> headers = parseHeaders(br);
 
+        String requestBody = "";
+
+        if(tokens[0].equals("POST")) {
+            int contentLength = Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
+            if (contentLength > 0) {
+                char[] buffer = new char[contentLength];
+                br.read(buffer, 0, contentLength);
+                requestBody = new String(buffer);
+
+                logger.debug("requestBody: {}", requestBody);
+
+                return new RequestData(tokens[0], tokens[1], tokens[2], headers, requestBody);
+            }
+        }
+
         return new RequestData(tokens[0], tokens[1], tokens[2], headers);
     }
 
@@ -60,10 +75,8 @@ public class RequestParserUtil {
     }
 
     public static Map<String, String> parseUserRegisterQuery(String url) {
-        String userQuery = url.split("\\?")[1];
-
         // HTTP 요청으로부터 사용자 데이터 추출
-        String[] pairs = userQuery.split("&");
+        String[] pairs = url.split("&");
 
         Map<String, String> userProps = new HashMap<>();
         for (String pair : pairs) {

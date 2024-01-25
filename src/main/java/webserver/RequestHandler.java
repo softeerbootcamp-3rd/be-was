@@ -3,9 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import controller.RequestDataController;
 import data.RequestData;
@@ -39,7 +36,7 @@ public class RequestHandler implements Runnable {
             RequestData requestData = RequestParserUtil.parseRequest(br);
 
             // 파싱한 요청의 세부 내용 출력
-            logger.debug(requestData.formatForOutput());
+            logger.debug(requestData.toString());
             System.out.println();
 
 //            if (url.equals("/")) {

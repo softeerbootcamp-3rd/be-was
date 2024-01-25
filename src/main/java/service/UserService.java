@@ -17,7 +17,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public static void registerUser(RequestData requestData) {
-        Map<String, String> userProps = RequestParserUtil.parseUserRegisterQuery(requestData.getRequestContent());
+        Map<String, String> userProps = RequestParserUtil.parseUserRegisterQuery(requestData.getBody());
 
         String userId = userProps.get("userId");
         String password = userProps.get("password");
