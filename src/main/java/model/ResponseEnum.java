@@ -1,4 +1,4 @@
-package webserver;
+package model;
 
 public enum ResponseEnum {
     DEFAULT("html", "src/main/resources/templates", "text/html"),

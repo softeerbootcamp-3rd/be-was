@@ -1,70 +1,38 @@
 package model;
 
-import webserver.HttpStatus;
-import webserver.ResponseEnum;
-
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static constant.HttpRequestConstant.*;
+import static constant.HttpResponseConstant.*;
+import static model.HttpStatus.FOUND;
+import static model.HttpStatus.OK;
 
 public class HttpResponse {
-    private static final String VERSION = "HTTP/1.1 ";
-    private static final String CONTENT_TYPE = "Content-Type: ";
-    private static final String CONTENT_LENGTH = "Content-Length: ";
-    private static final String LOCATION = "Location: ";
-    private static final byte[] NO_BODY = "".getBytes();
-    private static final String CRLF = "\r\n";
-
     private final HttpStatus httpStatus;
-    private Map<String, String> header;
-    private byte[] body;
+    private final Map<String, String> header;
+    private final byte[] body;
 
     public HttpResponse(HttpStatus httpStatus, Map<String, String> header, byte[] body) {
         this.httpStatus = httpStatus;
         this.header = header;
         this.body = body;
     }
-
-    public void send(OutputStream out) {
-        String startLine =  VERSION + httpStatus.getCode() + " " + httpStatus.getStatus() + " " + CRLF;
-
-        try (DataOutputStream dos = new DataOutputStream(out)){
-            dos.writeBytes(startLine);
-            for (Map.Entry<String, String> header : header.entrySet()) {
-                dos.writeBytes(header.getKey() + header.getValue());
-            }
-            dos.writeBytes(CRLF);
-
-            if(body == NO_BODY){
-                return;
-            }
-            try {//body
-                dos.write(body, 0, body.length);
-                dos.flush();
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static HttpResponse redirect(HttpStatus httpStatus, String location) {
+    public static HttpResponse redirect(String location) {
         Map<String, String> header = new HashMap<>();
         header.put(LOCATION, location);
 
-        return new HttpResponse(httpStatus, header, NO_BODY);
+        return new HttpResponse(FOUND, header, NO_BODY);
     }
 
     public static HttpResponse errorResponse(HttpStatus httpStatus, String errorMessage) {
-        byte[] errorMessageBytes = errorMessage.getBytes(StandardCharsets.UTF_8);
+        byte[] errorMessageBytes;
+
+        try {
+            errorMessageBytes = errorMessage.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         Map<String, String> header = new HashMap<>();
         header.put(CONTENT_TYPE, "text/plain;charset=utf-8" + CRLF);
@@ -73,22 +41,42 @@ public class HttpResponse {
         return new HttpResponse(httpStatus, header, errorMessageBytes);
     }
 
-    public static HttpResponse response200(HttpStatus httpStatus, String extension, String path) throws IOException {
-        byte[] body = Files.readAllBytes(new File(ResponseEnum.getPathName(extension) + path).toPath());
+    public static HttpResponse response200(String extension, String path) throws IOException {
+        File file = new File(ResponseEnum.getPathName(extension) + path);
+        byte[] body = new byte[(int) file.length()];
 
-        Map<String, String> header = new HashMap<>();
-        header.put(CONTENT_TYPE, ResponseEnum.getContentType(extension)+";charset=utf-8" + CRLF);
-        header.put(CONTENT_LENGTH, String.valueOf(body.length) + CRLF);
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            fileInputStream.read(body);
 
-        return new HttpResponse(httpStatus, header, body);
+            Map<String, String> header = new HashMap<>();
+            header.put(CONTENT_TYPE, ResponseEnum.getContentType(extension) + ";charset=utf-8" + CRLF);
+            header.put(CONTENT_LENGTH, body.length + CRLF);
+
+            return new HttpResponse(OK, header, body);
+        }
+    }
+
+    public String getStartLine() {
+        return VERSION + httpStatus.getCode() + " " + httpStatus.getStatus() + " " + CRLF;
+    }
+
+    public Map<String, String> getHeader() {
+        return header;
+    }
+
+    public byte[] getBody() {
+        return body;
     }
 
     @Override
     public String toString() {
-        return "HttpResponse{" +
-                "httpStatus=" + httpStatus +
-                ", body=" + new String(body, StandardCharsets.UTF_8) +
-                '}';
+        try {
+            return "HttpResponse{" +
+                    "httpStatus=" + httpStatus +
+                    ", body=" + new String(body, "UTF-8") +
+                    '}';
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
-
 }

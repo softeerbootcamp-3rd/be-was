@@ -24,5 +24,4 @@ class DatabaseTest {
                 .extracting("userId", "password", "name", "email")
                 .contains("user1", "1234", "test", "test@naver.com");
     }
-
 }
