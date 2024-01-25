@@ -1,5 +1,7 @@
 package webserver.http;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,10 +47,9 @@ public class HttpHeader {
         return headers.get(CONTENT_TYPE).get(0);
     }
 
-    public void setContentType(String contentType) {
-        headers.put(CONTENT_TYPE, Collections.singletonList(contentType));
+    public String getContentLength() {
+        return headers.containsKey(CONTENT_LENGTH) ? headers.get(CONTENT_LENGTH).get(0) : null;
     }
-
 
     public String getLocation() {
         return headers.containsKey(LOCATION) ? headers.get(LOCATION).get(0) : null;
@@ -58,6 +59,22 @@ public class HttpHeader {
         return headers.get(SET_COOKIE)
                 .stream()
                 .collect(Collectors.joining("; "));
+    }
+
+    public String getCookie() {
+        return headers.containsKey(COOKIE) ? headers.get(COOKIE).get(0) : null;
+    }
+
+    public String getHost() {
+        return headers.containsKey(HOST) ? headers.get(HOST).get(0) : null;
+    }
+
+    public String getAccept() {
+        return headers.containsKey(ACCEPT) ? headers.get(ACCEPT).get(0) : null;
+    }
+
+    public void setContentType(String contentType) {
+        headers.put(CONTENT_TYPE, Collections.singletonList(contentType));
     }
 
     public boolean hasSetCookie() {

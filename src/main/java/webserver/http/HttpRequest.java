@@ -8,64 +8,65 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HttpRequest {
 
-    private Map<String, String> header;
+    private String ip;
+    private String port;
+    private String method;
+    private String path;
+    private String protocol;
+    private HttpHeader requestHeader;
     private Map<String, String> params;
     private Map<String, String> body;
 
     public HttpRequest(Socket socket, InputStream in) throws IndexOutOfBoundsException, IOException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line = br.readLine();
 
-        Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("ip", socket.getInetAddress().toString());
-        headerMap.put("port", String.valueOf(socket.getPort()));
+        // Read the request line
+        String requestLine = br.readLine();
+        String[] requestLineParts = requestLine.split(" ");
+        this.ip = socket.getInetAddress().toString();
+        this.port = String.valueOf(socket.getPort());
+        this.method = requestLineParts[0];
+        this.path = requestLineParts[1];
+        this.protocol = requestLineParts[2];
 
-        String[] array = line.split(" ");
-        String httpMethod = array[0];
-        headerMap.put("httpMethod", httpMethod);
-        headerMap.put("path", array[1]);
-        headerMap.put("httpVersion", array[2]);
-
-        while (!(line = br.readLine()).isEmpty()) {
-            String[] components = line.split(":", 2);
-            if (components[1].startsWith(" "))
-                components[1] = components[1].substring(1);
-
-            headerMap.put(components[0], components[1]);
+        Map<String, List<String>> headers = new HashMap<>();
+        String line;
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
+            String[] headerParts = line.split(": ");
+            String headerName = headerParts[0];
+            String headerValue = headerParts[1];
+            headers.computeIfAbsent(headerName, key -> {
+                return List.of(headerValue);
+            });
         }
+        this.requestHeader = new HttpHeader(headers);
 
-        if (httpMethod.equals("GET")) {
-            String[] uri = array[1].split("\\?");
-            Map<String, String> paramsMap = new HashMap<>();
-            if (uri.length > 1) {
-                paramsMap = StringParser.parseKeyVaue(uri[1]);
-            }
-            this.params = paramsMap;
-        } else if (httpMethod.equals("POST")) {
-            Map<String, String> bodyMap = new HashMap<>();
-            Integer bodySize = Integer.parseInt(headerMap.get("Content-Length"));
+        this.params = StringParser.parseQueryString(requestLineParts[1]);
 
+        if (requestHeader.getContentLength() != null) {
+            Integer bodySize = Integer.parseInt(requestHeader.getContentLength());
             char[] bodyArr = new char[bodySize];
             String bodyStr = "";
             if ((br.read(bodyArr, 0, bodySize)) != -1) {
                 bodyStr = new String(bodyArr, 0, bodySize);
             }
-            bodyMap = StringParser.parseKeyVaue(bodyStr);
+            Map<String, String> bodyMap = StringParser.parseKeyVaue(bodyStr);
             this.body = bodyMap;
         }
-        this.header = headerMap;
     }
 
     public String getHttpMethod() {
-        return header.get("httpMethod");
+        return method;
     }
 
     public String getPath() {
-        return header.get("path");
+        return path;
     }
 
     public Map<String, String> getParams() {
@@ -77,17 +78,15 @@ public class HttpRequest {
     }
 
     public String getCookie() {
-        if (header.containsKey("Cookie"))
-            return header.get("Cookie");
-        return null;
+        return requestHeader.getCookie();
     }
 
     @Override
     public String toString() {
-        return "Request [ip=" + header.get("ip") + ", port=" + header.get("port")
-                + ", method=" + header.get("httpMethod") + ", path=" + header.get("path")
-                + ", http_version=" + header.get("httpVersion") + ", host=" + header.get("Host")
-                + ", accept=" + header.get("Accept") + ", cookie=" + getCookie() + "]";
+        return "Request [ip=" + ip + ", port=" + port
+                + ", method=" + method + ", path=" + path
+                + ", http_version=" + protocol + ", host=" + requestHeader.getHost()
+                + ", accept=" + requestHeader.getAccept() + ", cookie=" + getCookie() + "]";
     }
 
 
