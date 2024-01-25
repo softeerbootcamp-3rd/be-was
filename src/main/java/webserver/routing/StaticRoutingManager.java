@@ -10,7 +10,15 @@ import webserver.http.response.enums.HttpStatus;
 import java.io.IOException;
 
 public class StaticRoutingManager {
-    public static HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
+    private static final StaticRoutingManager instance = new StaticRoutingManager();
+
+    private StaticRoutingManager(){}
+
+    public static StaticRoutingManager getInstance(){
+        return instance;
+    }
+
+    public HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.getPath();
         byte[] body = ResourceReader.getFileContents(path);
 

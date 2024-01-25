@@ -38,10 +38,10 @@ public class RequestHandler implements Runnable {
             HttpResponse httpResponse;
 
             // 정적 로직 라우팅
-            httpResponse = StaticRoutingManager.handleRequest(httpRequest);
+            httpResponse = StaticRoutingManager.getInstance().handleRequest(httpRequest);
             // 동적 로직 라우팅
             if(httpResponse == null){
-                httpResponse = DynamicRoutingManager.handleRequest(httpRequest);
+                httpResponse = DynamicRoutingManager.getInstance().handleRequest(httpRequest);
             }
 
             responseLogging(httpResponse);
