@@ -20,25 +20,22 @@ public class HttpResponse {
     }
     public static HttpResponse redirect(String location) {
         Map<String, String> header = new HashMap<>();
-        header.put(LOCATION, location);
+        header.put(LOCATION, location+CRLF);
 
         return new HttpResponse(FOUND, header, NO_BODY);
     }
 
     public static HttpResponse errorResponse(HttpStatus httpStatus, String errorMessage) {
-        byte[] errorMessageBytes;
-
         try {
-            errorMessageBytes = errorMessage.getBytes("UTF-8");
+            byte[] errorMessageBytes = errorMessage.getBytes("UTF-8");
+            Map<String, String> header = new HashMap<>();
+            header.put(CONTENT_TYPE, "text/plain;charset=utf-8" + CRLF);
+            header.put(CONTENT_LENGTH, errorMessageBytes.length + CRLF);
+
+            return new HttpResponse(httpStatus, header, errorMessageBytes);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-
-        Map<String, String> header = new HashMap<>();
-        header.put(CONTENT_TYPE, "text/plain;charset=utf-8" + CRLF);
-        header.put(CONTENT_LENGTH, errorMessageBytes.length + CRLF);
-
-        return new HttpResponse(httpStatus, header, errorMessageBytes);
     }
 
     public static HttpResponse response200(String extension, String path) throws IOException {
@@ -54,6 +51,11 @@ public class HttpResponse {
 
             return new HttpResponse(OK, header, body);
         }
+    }
+
+    public void addCookie(String cookieName, String sessionId) {
+        String cookieValue = cookieName+"="+sessionId+"; ";
+        this.header.put(COOKIE, cookieValue + "Path=/");
     }
 
     public String getStartLine() {
@@ -73,6 +75,7 @@ public class HttpResponse {
         try {
             return "HttpResponse{" +
                     "httpStatus=" + httpStatus +
+                    ", header=" + header +
                     ", body=" + new String(body, "UTF-8") +
                     '}';
         } catch (UnsupportedEncodingException e) {
