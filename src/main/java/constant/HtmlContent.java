@@ -2,6 +2,7 @@ package constant;
 
 public enum HtmlContent {
     LOGIN_BTN("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>"),
+    USER_NAME("<li><a id=\"userName\">{{user-name}}</a></li>"),
     USER_LIST("<tr>" +
             "   <th scope=\"row\">1</th>" +
             "   <td>{{user-id}}</td>" +
