@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FrontController {
-    private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
+    private final Map<String, Controller> controllerMap = new HashMap<>(); //controller list
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
     private final String RESOURCES_STATIC_URL = "src/main/resources/static";
 
@@ -16,7 +16,7 @@ public class FrontController {
         controllerMap.put("/user/login", new LoginController());
     }
 
-    public String process(HttpRequest request, HttpResponse response) {
+    public void process(HttpRequest request, HttpResponse response) {
         String url = request.getUrl();
 
         String path = null;
@@ -32,6 +32,5 @@ public class FrontController {
         }
 
         response.setPath(path);
-        return path;
     }
 }
