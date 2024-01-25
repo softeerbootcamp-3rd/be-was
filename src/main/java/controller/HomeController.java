@@ -50,6 +50,7 @@ public class HomeController implements Controller {
             response.setCode(200);
             response.setBody(body);
             response.addHeader("Content-Type", ContentType.findContentType(filePath));
+            response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
             response.setBody(e.getMessage());
@@ -59,7 +60,7 @@ public class HomeController implements Controller {
     /**
      * 페이지 외의 파일을 찾아 응답 메시지를 설정합니다.
      *
-     * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다..
+     * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다.
      *
      * @param url 요청 타겟
      * @param response 응답 메시지
@@ -69,9 +70,11 @@ public class HomeController implements Controller {
 
         try{
             byte[] body = PageReader.getPage(filePath);
+
             response.setCode(200);
             response.setBody(body);
             response.addHeader("Content-Type", ContentType.findContentType(filePath));
+            response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
             response.setBody(e.getMessage());
