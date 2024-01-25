@@ -50,6 +50,8 @@ public class RequestHandler {
     }
 
     public void handleRequest(Request request) {
+        if (request.getHttpMethod() == HttpMethod.NULL)
+            throw new IllegalArgumentException("Method NULL");
         String requestTarget = request.getRequestTarget().split("\\?")[0];
         Route inputRoute = new Route(request.getHttpMethod() ,requestTarget);
         if (routeHandlers.containsKey(inputRoute)) {

@@ -42,15 +42,13 @@ public class ParserFactory {
 
 
     public static ContentParser getParser(ContentType contentType) {
-        switch (contentType) {
-            case APPLICATION_JSON:
-                return new JsonParser();
-            case APPLICATION_X_WWW_FORM_URLENCODED:
-                return new FormUrlEncodedParser();
-            default:
-                throw new IllegalArgumentException("Unsupported content type");
+        if (contentType == ContentType.APPLICATION_JSON) {
+            return new JsonParser();
+        } else if (contentType == ContentType.APPLICATION_X_WWW_FORM_URLENCODED) {
+            return new FormUrlEncodedParser();
+        } else {
+            throw new IllegalArgumentException("Unsupported content type");
         }
     }
-
 
 }
