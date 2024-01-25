@@ -55,7 +55,7 @@ public enum ContentType {
         try {
             String type = contentTypes.get(extension);
             ContentType contentType = ContentType.valueOf(type);
-            return contentType.getContentType();
+            return contentType.getContentType() + "; charset=utf-8";
         } catch (NullPointerException e) {
             throw new NullPointerException("no such content type.");
         }

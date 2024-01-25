@@ -1,5 +1,6 @@
 package controller;
 
+import constants.ContentType;
 import java.io.IOException;
 import model.Request;
 import model.Response;
@@ -78,7 +79,8 @@ public class UserController implements Controller {
 
             response.setCode(200);
             response.setBody(body);
-            response.addHeader("Content-Type", "text/html");
+            response.addHeader("Content-Type", ContentType.findContentType(filePath));
+            response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
             response.setBody(e.getMessage());
