@@ -2,11 +2,12 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
-import controller.Controller;
-import controller.UserController;
+import controller.FrontController;
+import http.HttpRequest;
+import http.HttpResponse;
+import http.HttpResponseHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,15 +16,13 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
 
-    private Map<String, Controller> controllerMap = new HashMap<>(); //controller list
-
-    private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
-    private final String RESOURCES_STATIC_URL = "src/main/resources/static";
-    private final String DEFAULT_URL = "/index.html";
+    private FrontController frontController;
+    private HttpResponseHandler responseHandler;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        controllerMap.put("/user/create", new UserController());
+        this.frontController = new FrontController();
+        this.responseHandler = new HttpResponseHandler();
     }
 
     public void run() {
@@ -39,27 +38,10 @@ public class RequestHandler implements Runnable {
 
             HttpResponse response = new HttpResponse(dos);
 
-            String path;
-            Controller controller = controllerMap.get(request.getUrl());
-            if (controller == null) { //.html
-                if (request.getUrl().endsWith(".html")) {
-                    path = RESOURCES_TEMPLATES_URL + request.getUrl();
+            frontController.process(request, response);
 
-                } else { //.js .css ...
-                    path = RESOURCES_STATIC_URL + request.getUrl();
-                }
-            } else {
-                path = controller.process(request.getRequestParam()) + ".html";
-            }
-
-            byte[] body = null;
-
-            if (path.startsWith("redirect:")) {
-                response.response301RedirectHeader(path.substring("redirect:".length()));
-                response.responseBody(body);
-            } else {
-                response.response200Header(path);
-            }
+            responseHandler.setHttpResponse(response);
+            response.sendResponse();
 
         } catch (IOException e) {
             logger.error(e.getMessage());
