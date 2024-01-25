@@ -119,7 +119,7 @@ public class RequestDataController {
         if (cookieData != null) {
             return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
         }
-        return new Response(HttpStatusCode.FOUND, "/index.html");
+        return new Response(HttpStatusCode.FOUND, "/user/login_failed.html");
     }
 
     @Route("/user/logout")
