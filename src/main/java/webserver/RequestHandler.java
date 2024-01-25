@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static webserver.Status.*;
-import static common.util.Util.getSessionId;
 import static webserver.WebServerConfig.*;
 
 public class RequestHandler implements Runnable {
@@ -36,7 +35,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(br);
-            HttpResponse response = new HttpResponse(out, request);
+            HttpResponse response = new HttpResponse(out, request); //TODO : response 다른 클래스에서 생성하기
 
             if (request.getMethod().equals("GET")) {
                 response.setStatus(OK);
@@ -63,10 +62,10 @@ public class RequestHandler implements Runnable {
                 }
                 if (request.getPath().equals("/user/login")) {
                     try {
-                        userController.login(body);
+                        String sessionId = userController.login(body);
                         response.setStatus(REDIRECT);
                         response.setPath(INDEX_FILE_PATH);
-                        response.setHeader("Set-Cookie", "SID=" + getSessionId());
+                        response.setHeader("Set-Cookie", "SID=" + sessionId);
                     } catch (LoginFailException e) {
                         logger.debug(e.getMessage());
                         response.setStatus(REDIRECT);

@@ -17,7 +17,7 @@ public class Util {
         return URLDecoder.decode(input, UTF_8);
     }
 
-    public static String getSessionId() {  //10자리 랜덤 문자열 생성
+    public static String getRandomString() {  //10자리 랜덤 문자열 생성
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
         int sessionIdLength = 10;

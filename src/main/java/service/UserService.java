@@ -19,7 +19,7 @@ public class UserService {
         return user.getUserId();
     }
 
-    public String login(LoginRequest loginRequest) {
+    public User login(LoginRequest loginRequest) {
         String userId = loginRequest.getUserId();
         User user = Database.findUserById(userId);
 
@@ -32,6 +32,6 @@ public class UserService {
             throw new LoginFailException();
         }
 
-        return user.getUserId();
+        return user;
     }
 }
