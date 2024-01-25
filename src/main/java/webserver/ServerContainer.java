@@ -62,7 +62,7 @@ public class ServerContainer implements Runnable {
         String line = bufferedReader.readLine();
         StartLine startLine = parsingStringLine(line);
 
-        HashMap<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
         line = bufferedReader.readLine();
         while (!line.isEmpty()) {
             headers.put(line.split(": ")[0], line.split(": ")[1]);
