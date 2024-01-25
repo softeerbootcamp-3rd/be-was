@@ -15,23 +15,29 @@ public class UserController {
     public static HTTPResponse createAccount(HTTPRequest request) {
         HTTPResponse response = null;
         try {
-            String url = request.getUrl();
-            String data = url.split("/")[2].split("\\?")[1];
-            System.out.println("전달 받은 파라미터 원형: " + data);
-            //userId=asdf&password=sadf&name=asdf&email=asdf%40asdf
-            Map<String, String> map = querytoMap(data);
-            User user = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+            //request에서 구현된 Body의 hashMap을 이용
+            String userId = request.getBody().get("userId");
+            String password = request.getBody().get("password");
+            String name = request.getBody().get("name");
+            String email = request.getBody().get("email");
+
+            //유저 저장
+            User user = new User(userId, password, name, email);
             Database.addUser(user);
+
+            //성공메세지 (feature5 브렌치에서 개인정보를 보내는 것을 삭제)
             byte[] body = user.toString().getBytes();
-            byte[] head = ("HTTP/1.1" + ResponseCode.OK.code + ResponseCode.OK +" \r\n"+
-                    "Content-Type: text/html;charset=utf-8\r\n"+
+            byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code+ " " + ResponseCode.REDIRECT +"\r\n"+
+                    "Content-Type: "+ request.getHead().get("Accept").split(",")[0] +"\r\n"+
+                    "Location: /index.html" + "\r\n" +
                     "Content-Length: " + body.length  + "\r\n").getBytes();
-            response = new HTTPResponse("HTTP/1.1",ResponseCode.OK.code, ResponseCode.OK.toString(), head, body);
+
+            response = new HTTPResponse("HTTP/1.1",ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
 
         }
         catch(Exception e){
             byte[] body = new byte[0];
-            byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + ResponseCode.SERVER_ERROR +" \r\n"+
+            byte[] head = ("HTTP/1.1" + ResponseCode.SERVER_ERROR.code + " " + ResponseCode.SERVER_ERROR +" \r\n"+
                     "Content-Type: text/html;charset=utf-8\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
             response = new HTTPResponse("HTTP/1.1",ResponseCode.SERVER_ERROR.code, ResponseCode.SERVER_ERROR.toString(), head, body);

@@ -7,28 +7,12 @@ import controller.UserController;
 
 public enum ControllerHandler {
 
-    INDEX("/index.html"){
-        @Override
-        public HTTPResponse toController(HTTPRequest request){
-            HTTPResponse response;
-            //컨트롤러 배정후 리스폰스 값 리턴
-            response = PageController.getPage(request);
-            return response;
-        }
-    },
+    //url별로 컨트롤러에게 작업 할당
     CREATE_ACCOUNT("/user/create"){
         @Override
         public HTTPResponse toController(HTTPRequest request){
             HTTPResponse response;
             response = UserController.createAccount(request);
-            return response;
-        }
-    },
-    USER_FORM("/user/form.html"){
-        @Override
-        public HTTPResponse toController(HTTPRequest request){
-            HTTPResponse response;
-            response = PageController.getPage(request);
             return response;
         }
     }
