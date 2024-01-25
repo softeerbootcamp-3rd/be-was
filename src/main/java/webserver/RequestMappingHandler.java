@@ -56,8 +56,10 @@ public class RequestMappingHandler {
     private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
         // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
         if (method.isAnnotationPresent(ResponseBody.class)) {
+            String body = JsonConverter.convertObjectToJson(response.getBody());
             response.getHeaders().setContentType("application/json");
-            response.setBody(JsonConverter.convertObjectToJson(response.getBody()));
+            response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
+            response.setBody(body);
         }
         return response;
     }
