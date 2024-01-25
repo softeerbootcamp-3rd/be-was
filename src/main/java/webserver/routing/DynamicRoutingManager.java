@@ -1,14 +1,11 @@
 package webserver.routing;
 
 import controller.UserController;
-import webserver.http.request.enums.HttpMethod;
 import webserver.http.request.HttpRequest;
+import webserver.http.request.enums.HttpMethod;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpResponseBuilder;
-import webserver.http.response.enums.HttpStatus;
 
 public class DynamicRoutingManager {
-    public static final byte[] NOT_FOUND_MESSAGE = "The requested resource was not found on this server.".getBytes();
     private static final DynamicRoutingManager instance = new DynamicRoutingManager();
 
     private DynamicRoutingManager() {}
@@ -27,6 +24,6 @@ public class DynamicRoutingManager {
             return userController.login(httpRequest);
         }
 
-        return HttpResponseBuilder.getInstance().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
+        return null;
     }
 }

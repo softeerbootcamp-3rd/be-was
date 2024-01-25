@@ -37,11 +37,11 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponse httpResponse;
 
-            // 정적 로직 라우팅
-            httpResponse = StaticRoutingManager.getInstance().handleRequest(httpRequest);
             // 동적 로직 라우팅
+            httpResponse = DynamicRoutingManager.getInstance().handleRequest(httpRequest);
+            // 정적 로직 라우팅
             if(httpResponse == null){
-                httpResponse = DynamicRoutingManager.getInstance().handleRequest(httpRequest);
+                httpResponse = StaticRoutingManager.getInstance().handleRequest(httpRequest);
             }
 
             responseLogging(httpResponse);
