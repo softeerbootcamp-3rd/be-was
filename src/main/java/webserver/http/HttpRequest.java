@@ -1,6 +1,6 @@
-package webserver;
+package webserver.http;
 
-import util.URIParer;
+import util.StringParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class HttpRequest {
             String[] uri = array[1].split("\\?");
             Map<String, String> paramsMap = new HashMap<>();
             if (uri.length > 1) {
-                paramsMap = URIParer.parserKeyValue(uri[1]);
+                paramsMap = StringParser.parseKeyVaue(uri[1]);
             }
             this.params = paramsMap;
         } else if (httpMethod.equals("POST")) {
@@ -54,7 +54,7 @@ public class HttpRequest {
             if ((br.read(bodyArr, 0, bodySize)) != -1) {
                 bodyStr = new String(bodyArr, 0, bodySize);
             }
-            bodyMap = URIParer.parserKeyValue(bodyStr);
+            bodyMap = StringParser.parseKeyVaue(bodyStr);
             this.body = bodyMap;
         }
         this.header = headerMap;
@@ -76,12 +76,18 @@ public class HttpRequest {
         return null;
     }
 
+    public String getCookie() {
+        if (header.containsKey("Cookie"))
+            return header.get("Cookie");
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Request [ip=" + header.get("ip") + ", port=" + header.get("port")
                 + ", method=" + header.get("httpMethod") + ", path=" + header.get("path")
                 + ", http_version=" + header.get("httpVersion") + ", host=" + header.get("Host")
-                + ", accept=" + header.get("Accept") + "]";
+                + ", accept=" + header.get("Accept") + ", cookie=" + getCookie() + "]";
     }
 
 
