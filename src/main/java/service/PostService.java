@@ -98,9 +98,10 @@ public class PostService {
             // 기존 세션 가져오기
             session = Database.findSessionById(sessionId);
             System.out.println(session);
-            // 로그인한 아이디와 기존 세션의 아이디가 동일할 경우 -> 마지막 접속 시간 업데이트
+            // 로그인한 아이디와 기존 세션의 아이디가 동일할 경우 -> 세션 재사용
             if(session.getUserId().equals(userId)) {
                 session.setLastAccessTime(LocalDateTime.now());
+                session.setExpires();
                 logger.debug("login success - last access: {}", session.getLastAccessTime());
                 done = true;
             }
