@@ -10,6 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestParser {
+    private static final HttpRequestParser instance = new HttpRequestParser();
+
+    private HttpRequestParser(){}
+
+    public static HttpRequestParser getInstance() {
+        return instance;
+    }
 
     public HttpRequest parse(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
