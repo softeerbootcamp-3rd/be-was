@@ -48,7 +48,7 @@ public class RequestHandler implements Runnable {
 
             Response response = RequestDataController.routeRequest(requestData);
 
-            DataOutputStream dos = ResponseBuilder.buildResponse(out, response);
+            DataOutputStream dos = ResponseBuilder.buildResponse(out, response, requestData);
 
             dos.flush();
 

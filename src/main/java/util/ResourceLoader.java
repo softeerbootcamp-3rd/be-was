@@ -1,6 +1,7 @@
 package util;
 
 import controller.ResourceMapping;
+import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class ResourceLoader {
 
     public static final String url = "/Users/admin/Softeer/be-was/src/main/resources";
 
-    public static byte[] loadResource(String resourcePath) throws IOException {
+    public static byte[] loadResource(String resourcePath, RequestData requestData) throws IOException {
         logger.debug("resourcePath: " + resourcePath);
 
         String extension = getFileExtension(resourcePath);

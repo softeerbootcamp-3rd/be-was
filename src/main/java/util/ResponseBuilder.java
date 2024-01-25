@@ -3,6 +3,7 @@ package util;
 import controller.HttpStatusCode;
 import controller.ResourceMapping;
 import data.CookieData;
+import data.RequestData;
 import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +17,19 @@ public class ResponseBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static DataOutputStream buildResponse(OutputStream out, Response response) throws IOException {
+    public static DataOutputStream buildResponse(OutputStream out, Response response, RequestData requestData) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
         HttpStatusCode statusCode = response.getStatus();
 
-        byte[] body = buildResponseHeader(dos, response);
+        byte[] body = buildResponseHeader(dos, response, requestData);
         buildResponseBody(dos, statusCode, body);
 
         return dos;
     }
 
-    private static byte[] buildResponseHeader(DataOutputStream dos, Response response) throws IOException {
+    private static byte[] buildResponseHeader(DataOutputStream dos, Response response, RequestData requestData) throws IOException {
         writeResponseStatus(dos, response.getStatus());
-        byte[] body = writeContentInfo(dos, response.getPath());
+        byte[] body = writeContentInfo(dos, response.getPath(), requestData);
         if (response.getStatus() == HttpStatusCode.FOUND) writeRedirectLocation(dos, response.getPath());
         if (response.getCookie() != null) writeCookieHeader(dos, response.getCookie());
         dos.writeBytes("\r\n"); // eof
@@ -39,10 +40,10 @@ public class ResponseBuilder {
         dos.writeBytes("HTTP/1.1 " + statusCode.getStatusCode() + "\r\n");
     }
 
-    private static byte[] writeContentInfo(DataOutputStream dos, String targetPath) throws IOException {
+    private static byte[] writeContentInfo(DataOutputStream dos, String targetPath, RequestData requestData) throws IOException {
         String extension = RequestParserUtil.getFileExtension(targetPath);
         String contentType = ResourceMapping.valueOf(extension.toUpperCase()).getContentType();
-        byte[] body = ResourceLoader.loadResource(targetPath);
+        byte[] body = ResourceLoader.loadResource(targetPath, requestData);
 
         dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + body.length + "\r\n");
