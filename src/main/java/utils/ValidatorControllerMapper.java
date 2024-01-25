@@ -1,9 +1,9 @@
 package utils;
 
 import controller.UserController;
+import http.request.HttpRequest;
 import http.response.HttpResponse;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -12,22 +12,18 @@ import java.util.function.Function;
  * method + path 에 맞는 validator(유효성 검증 메소드)와 controller 맵핑
  */
 
-public enum PostControllerMapper {
-    SIGNUP(Validator::validateSignUpInfo, UserController::signup),
-    LOGIN(Validator::validateLoginInfo, UserController::login),
+public enum ValidatorControllerMapper {
+    SIGNUP("POST /user/create", Validator::validateSignUpInfo, UserController::signup),
+    LOGIN("POST /user/create", Validator::validateLoginInfo, UserController::login),
     ;
 
+    private String path;
     private Function<Map<String, String>, Boolean> validator;
-    private Function<Map<String, String>, HttpResponse> controller;
+    private Function<HttpRequest, HttpResponse> controller;
 
-    private static Map<String, PostControllerMapper> MAPPER = new HashMap<>();
-
-    static {
-        MAPPER.put("/user/create", SIGNUP);
-        MAPPER.put("/user/login", LOGIN);
-    }
-
-    PostControllerMapper(Function<Map<String, String>, Boolean> validator, Function<Map<String, String>, HttpResponse> controller) {
+    ValidatorControllerMapper(String path, Function<Map<String, String>, Boolean> validator,
+                              Function<HttpRequest, HttpResponse> controller) {
+        this.path = path;
         this.validator = validator;
         this.controller = controller;
     }
@@ -36,11 +32,16 @@ public enum PostControllerMapper {
         return validator;
     }
 
-    public Function<Map<String, String>, HttpResponse> getController() {
+    public Function<HttpRequest, HttpResponse> getController() {
         return controller;
     }
 
-    public static PostControllerMapper getValidatorAndController(String requestURL) {
-        return MAPPER.getOrDefault(requestURL, null);
+    public static ValidatorControllerMapper getValidatorAndControllerByPath(String path) {
+        for (ValidatorControllerMapper vc : values()) {
+            if (vc.path.equals(path)) {
+                return vc;
+            }
+        }
+        return null;
     }
 }
