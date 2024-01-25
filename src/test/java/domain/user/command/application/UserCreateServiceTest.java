@@ -3,8 +3,10 @@ package domain.user.command.application;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import common.db.Database;
 import common.http.response.HttpResponse;
 import common.http.response.HttpStatusCode;
+import domain.user.command.domain.User;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +21,14 @@ class UserCreateServiceTest {
 
     @BeforeEach
     void setUp() {
+        Database.Users().clear();
         httpResponse = new HttpResponse(null, null, null);
         ResponseThreadLocal.setHttpResponse(httpResponse);
     }
 
     @AfterEach
     void tearDown() {
+        Database.Users().clear();
         ResponseThreadLocal.clearHttpResponse();
     }
 
@@ -38,6 +42,9 @@ class UserCreateServiceTest {
         userCreateService.makeNewUser(userCreateRequest);
 
         // then
+        User dbUser = Database.Users().get("userId");
+        assertEquals(dbUser.getUserId(), userCreateRequest.getUserId());
+
         HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
 
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.FOUND);
@@ -47,4 +54,20 @@ class UserCreateServiceTest {
         assertEquals(headers.get("Location"), "/index.html");
     }
 
+    @Test
+    @DisplayName("유저 중복시 BAD_REQUEST 테스트")
+    void duplicatedUserIdRequest() {
+        // given
+        Database.Users().put("1", new User("1", "password", "name", "email"));
+        UserCreateRequest userCreateRequest = new UserCreateRequest("1", "password", "name", "email");
+
+        // when
+        userCreateService.makeNewUser(userCreateRequest);
+
+        // then
+        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+
+        assertEquals(Database.Users().size(), 1);
+        assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.BAD_REQUEST);
+    }
 }
