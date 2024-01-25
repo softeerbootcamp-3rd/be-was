@@ -3,6 +3,7 @@ package controller;
 import annotation.Controller;
 import annotation.RequestBody;
 import annotation.RequestMapping;
+import constant.HttpHeader;
 import constant.HttpStatus;
 import db.Database;
 import dto.LoginDto;
@@ -27,7 +28,7 @@ public class UserController {
         Database.addUser(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
-                .addHeader("Location", "/index.html")
+                .addHeader(HttpHeader.LOCATION, "/index.html")
                 .build();
     }
 
@@ -37,7 +38,7 @@ public class UserController {
         if (existUser == null || !existUser.getPassword().equals(loginInfo.getPassword()))
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/login_failed.html")
+                    .addHeader(HttpHeader.LOCATION, "/user/login_failed.html")
                     .build();
 
         String sessionId = SessionManager.generateSessionId();
@@ -45,8 +46,8 @@ public class UserController {
 
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
-                .addHeader("Set-Cookie", "SID=" + sessionId + "; Path=/; HttpOnly")
-                .addHeader("Location", "/index.html")
+                .addHeader(HttpHeader.SET_COOKIE, "SID=" + sessionId + "; Path=/; HttpOnly")
+                .addHeader(HttpHeader.LOCATION, "/index.html")
                 .build();
     }
 }

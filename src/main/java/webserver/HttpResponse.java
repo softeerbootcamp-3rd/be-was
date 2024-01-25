@@ -1,5 +1,6 @@
 package webserver;
 
+import constant.HttpHeader;
 import constant.HttpStatus;
 import org.slf4j.Logger;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 public class HttpResponse {
 
     private HttpStatus status;
-    private final Map<String, String> header;
+    private final Map<HttpHeader, String> header;
     private byte[] body;
 
     public HttpResponse() {
@@ -22,7 +23,7 @@ public class HttpResponse {
 
     public void setBody(String body) {
         this.body = body.getBytes();
-        this.header.put("Content-Length", Integer.toString(this.body.length));
+        this.header.put(HttpHeader.CONTENT_LENGTH, Integer.toString(this.body.length));
     }
 
     public static HttpResponseBuilder builder() {
@@ -33,7 +34,7 @@ public class HttpResponse {
         return this.status;
     }
 
-    public Map<String, String> getHeader() {
+    public Map<HttpHeader, String> getHeader() {
         return this.header;
     }
 
@@ -53,20 +54,20 @@ public class HttpResponse {
             return this;
         }
 
-        public HttpResponseBuilder addHeader(String key, String value) {
-            this.httpResponse.header.put(key, value);
+        public HttpResponseBuilder addHeader(HttpHeader header, String value) {
+            this.httpResponse.header.put(header, value);
             return this;
         }
 
         public HttpResponseBuilder body(String body) {
             this.httpResponse.body = body.getBytes();
-            addHeader("Content-Length", Integer.toString(this.httpResponse.body.length));
+            addHeader(HttpHeader.CONTENT_LENGTH, Integer.toString(this.httpResponse.body.length));
             return this;
         }
 
         public HttpResponseBuilder body(byte[] body) {
             this.httpResponse.body = body;
-            addHeader("Content-Length", Integer.toString(body.length));
+            addHeader(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length));
             return this;
         }
 
@@ -84,8 +85,8 @@ public class HttpResponse {
         try {
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes("HTTP/1.1 " + this.status.getFullMessage() + " \r\n");
-            for (Map.Entry<String, String> entry : header.entrySet()) {
-                dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+            for (Map.Entry<HttpHeader, String> entry : header.entrySet()) {
+                dos.writeBytes(entry.getKey().getValue() + ": " + entry.getValue() + "\r\n");
             }
             dos.writeBytes("\r\n");
             dos.write(this.body, 0, this.body.length);

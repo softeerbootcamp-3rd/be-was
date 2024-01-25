@@ -1,6 +1,7 @@
 package util;
 
 
+import constant.HttpHeader;
 import model.User;
 import webserver.HttpRequest;
 
@@ -24,7 +25,7 @@ public class SessionManager {
     }
 
     public static User getLoggedInUser(HttpRequest request) {
-        String sid = RequestParser.parseCookie(request.getHeader().get("Cookie")).get("SID");
+        String sid = RequestParser.parseCookie(request.getHeader().get(HttpHeader.COOKIE)).get("SID");
         return getUserBySessionId(sid);
     }
 

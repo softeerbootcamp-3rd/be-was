@@ -1,5 +1,6 @@
 package webserver;
 
+import constant.HttpHeader;
 import constant.HttpStatus;
 import constant.MimeType;
 import exception.ResourceNotFoundException;
@@ -44,13 +45,14 @@ public class RequestHandler implements Runnable {
                 RequestMapper.invoke(handler, request).send(out, logger);
             } else if (request.getMethod().equals("GET")) {
                 byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
+
                 // html 파일이면 동적으로 내용 변경
                 if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(request.getPath())))
                     fileContent = HtmlBuilder.process(request, fileContent);
 
                 HttpResponse.builder()
                         .status(HttpStatus.OK)
-                        .addHeader("Content-Type", ResourceLoader.getMimeType(request.getPath()))
+                        .addHeader(HttpHeader.CONTENT_TYPE, ResourceLoader.getMimeType(request.getPath()))
                         .body(fileContent)
                         .build()
                         .send(out, logger);
@@ -60,7 +62,7 @@ public class RequestHandler implements Runnable {
         } catch (ResourceNotFoundException e) {
             HttpResponse.builder()
                     .status(HttpStatus.NOT_FOUND)
-                    .addHeader("Content-Type", "text/plain")
+                    .addHeader(HttpHeader.CONTENT_TYPE, "text/plain")
                     .body(HttpStatus.NOT_FOUND.getFullMessage())
                     .build()
                     .send(out, logger);

@@ -1,5 +1,6 @@
 package util;
 
+import constant.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.HttpRequest;
@@ -72,7 +73,7 @@ public class RequestParser {
             IllegalAccessException, NoSuchMethodException, InstantiationException {
 
         Map<String, String> queryMap;
-        String contentType = request.getHeader().get("Content-Type");
+        String contentType = request.getHeader().get(HttpHeader.CONTENT_TYPE);
         String[] entries = new String[1];
         entries[0] = contentType;
 

@@ -1,5 +1,6 @@
 package webserver;
 
+import constant.HttpHeader;
 import util.ObjectMapper;
 import util.RequestParser;
 
@@ -13,7 +14,7 @@ public class HttpRequest {
     private final String method;
     private final String path;
     private final Map<String, String> paramMap;
-    private final Map<String, String> header;
+    private final Map<HttpHeader, String> header;
     private final char[] body;
 
     public HttpRequest(BufferedReader reader) throws IOException {
@@ -28,11 +29,13 @@ public class HttpRequest {
         while ((s = reader.readLine()) != null && !s.isEmpty()) {
             requestParts = s.split(":\\s*", 2);
             if (requestParts.length == 2) {
-                this.header.put(requestParts[0], requestParts[1]);
+                try {
+                    this.header.put(HttpHeader.of(requestParts[0]), requestParts[1]);
+                } catch (IllegalArgumentException ignored) {}
             }
         }
-        if (header.get("Content-Length") != null) {
-            body = new char[Integer.parseInt(header.get("Content-Length"))];
+        if (header.get(HttpHeader.CONTENT_LENGTH) != null) {
+            body = new char[Integer.parseInt(header.get(HttpHeader.CONTENT_LENGTH))];
             reader.read(body);
         }else
             body = new char[0];
@@ -50,7 +53,7 @@ public class HttpRequest {
         return this.paramMap;
     }
 
-    public Map<String, String> getHeader() {
+    public Map<HttpHeader, String> getHeader() {
         return this.header;
     }
 
