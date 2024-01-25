@@ -214,6 +214,70 @@ Keep-Alive: timeout=15, max=100
 - HTTP/1.1 의 기본 연결 방식: `Connection: Keep-alive`
 - persistent HTTP response time = 1RTT + (1RTT * 객체의수) + file transmission time
 
+## Cookie & Session
+### HTTP == Stateless 프로토콜
+* 각각의 요청이 서로 독립적이며, 이전 요청이나 응답에 대한 정보를 서버가 유지하지 않음
+  * WebSocket은 양방향 통신을 가능케 하는 프로토콜로, 한 번 연결된 후에는 계속 연결 상태를 유지함으로써 Stateless의 단점을 보완하고 상태(Stateful)를 지원하기 위한 기술
+  
+  👉 HTTP는 유저의 상태 정보를 어떻게 유지할까?
+
+### Cookie
+* HTTP 쿠키(웹 쿠키, 브라우저 쿠키)는 서버가 사용자의 웹 브라우저에 전송하는 작은 데이터 조각
+  * 서버는 **Set-Cookie** header 값으로 상태를 유지하고 싶은 값을 클라이언트에 전송
+* 브라우저는 그 데이터 조각들을 저장해 놓았다가, 동일한 서버에 재 요청 시 저장된 데이터를 함께 전송
+  * 클라이언트는 Set-Cookie에 담겨 있는 값을 꺼내 이후에 발생하는 모든 요청의 **Cookie** header로 다시 서버에 전송
+* 서버는 클라이언트에서 전송한 Cookie header 값에 따라 이전에 접속한 사용자인지를 판단
+
+![](https://s3.ap-northeast-2.amazonaws.com/lucas-image.codesquad.kr/1642377928644cookie.jpg)
+
+#### Cookie의 단점
+* 쿠키는 모든 HTTP 요청에 자동으로 포함되기 때문에, 모든 요청마다 중복된 데이터가 전송되어 네트워크 성능에 부담을 줄 수 있음
+* 쿠키에 저장할 수 있는 데이터 크기에 제한이 있음
+* 쿠키는 사용자의 브라우저에 저장되기 때문에 보안에 취약
+
+> 최근에는 웹 스토리지 API와 IndexedDB 같은 Modern Storage APIs를 사용하여 클라이언트 측에서 정보를 저장하는 것이 권장됨
+
+#### Cookie 만들기
+* **Set-Cookie** HTTP 응답 헤더를 사용해서 서버로부터 클라이언트로 전달
+  ```text
+  HTTP/1.0 200 OK
+  Content-type: text/html
+  Set-Cookie: yummy_cookie=choco
+  Set-Cookie: tasty_cookie=strawberry
+  
+  [page content]
+  ```
+* 브라우저는 Cookie 헤더를 사용하여 서버로 이전에 저장했던 모든 쿠키들을 회신
+  ```text
+  GET /sample_page.html HTTP/1.1
+  Host: www.example.org
+  Cookie: yummy_cookie=choco; tasty_cookie=strawberry
+  ```
+  
+#### 쿠키의 라이프 타임
+* **세션 쿠키(Session cookie)**: 현재 세션이 끝날 때 삭제; 브라우저는 "현재 세션"이 끝나는 시점을 정의하며, 어떤 브라우저들은 재시작할 때 세션을 복원해 세션 쿠키가 무기한 존재할 수 있도록 한다
+* **영속적인 쿠키(Permanent cookie)**: Expires 속성에 명시된 날짜에 삭제되거나, Max-Age 속성에 명시된 기간 이후에 삭제됨
+
+#### Cookie Attribute
+* `Domain=<domain-value>`: 쿠키가 전송되게 될 호스트들을 명시; 명시하는 경우 서브 도메인도 포함된다; 생략하는 경우 현재 도메인이 기본값으로 설정되고 서브 도메인은 포함하지 않는다
+  * ex) `Domain=mozilla.org`이 설정되면, 쿠키들은 `developer.mozilla.org`와 같은 서브도메인 상에 포함
+* `Path=<path-value>`: 헤더를 전송하기 위하여 요청되는 URL 내에 반드시 존재해야 하는 URL 경로
+  * ex) `Path=/docs` -> `/docs`, `/docs/Web/`, `/docs/Web/HTTP` 모두 매치됨
+* `Expires=<date>`: HTTP-date timestamp 타입으로 쿠키의 최대 라이프타임 명시; 생략하면 쿠키는 Session Cookie가 됨
+* `Max-Age=<number>`: 쿠키가 만료되기까지 남은 초(seconds)를 명시; 0이거나 음수인 경우 쿠키를 즉시 만료시킴
+  * `Expires`와 `Max-Age`가 동시에 설정되어 있는 경우 `Max-Age`가 우선순위를 가짐
+* `HttpOnly`: `Document.cookie` 등의 프로퍼티로 JavaScript에서 쿠키에 접근하는 것을 제하여 against cross-site scripting (XSS) 공격을 방지
+  * **XSS**: 웹 애플리케이션에서 발생하는 보안 취약점 중 하나로, 공격자가 악의적인 스크립트를 삽입하여 사용자의 브라우저에서 실행되도록 하는 공격
+* `Secure`: HTTPS 프로토콜 상에서 암호화된(encrypted) 요청일 경우에만 쿠키 전송
+
+### Session
+* 세션은 기본으로 Cookie를 사용하는 방법은 동일하지만 클라이언트와 서버간에 저장하고 싶은 데이터를 서버에 저장한 후 이 값에 대한 유일한 ID 값(Session ID)을 발급해서 Cookie로 전달한다
+* 클라이언트와 서버 사이는 Cookie를 통해 Session Id만 주고 받는다.
+* 서버는 클라이언트가 전송한 Session Id를 활용해 서버에 저장된 값을 꺼내와 사용한다.
+* 보안성이 높고, 민감한 정보를 안전하게 저장할 수 있다는 장점
+
+![](https://i1.wp.com/4.bp.blogspot.com/-FnbFMxnKkV4/WV565AN7ifI/AAAAAAAAQZg/5_p-m1oxBqUx2CCqyqS3Y9JAUwmGO34nQCLcBGAs/s1600/1.png?w=687&ssl=1)
+
 # MVC (Model View Controller)
 
 ## MVC의 등장
@@ -274,3 +338,4 @@ Keep-Alive: timeout=15, max=100
 ## Reference
 [HTTP (HyperText Transfer Protocol) - Basics](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html)
 [Properly configuring server MIME types - MDN](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Configuring_server_MIME_types)
+[HTTP Cookie - MDN](https://developer.mozilla.org/ko/docs/Web/HTTP/Cookies)

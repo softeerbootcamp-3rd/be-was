@@ -36,4 +36,33 @@ public class HttpResponseDtoBuilder {
     public HttpResponseDto build() {
         return new HttpResponseDto(status, message, headers, body);
     }
+
+    public HttpResponseDtoBuilder response200Header() {
+        setStatus("200").setMessage("OK");
+        return this;
+    }
+
+    public HttpResponseDtoBuilder response302Header() {
+        setStatus("302").setMessage("Found");
+        return this;
+    }
+
+    public HttpResponseDtoBuilder response400Header() {
+        setStatus("400").setMessage("Bad Request");
+        return this;
+    }
+
+    public HttpResponseDtoBuilder response404Header() {
+        setStatus("404").setMessage("Not Found");
+        return this;
+    }
+
+    public HttpResponseDtoBuilder setCookie(String key, String value, String[] attributes) {
+        StringBuilder cookies = new StringBuilder().append(key).append("=").append(value);
+        for (String attribute : attributes) {
+            cookies.append("; ").append(attribute);
+        }
+        setHeaders("Set-Cookie", cookies.toString());
+        return this;
+    }
 }

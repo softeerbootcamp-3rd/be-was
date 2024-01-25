@@ -119,6 +119,9 @@ public class WebUtil {
 
     // Parsing Request Body into Map<String, Stirng> Object
     public static Map<String, String> parseRequestBody(String body) {
+        if (body == null) {
+            throw new IllegalArgumentException("Require response body");
+        }
         Map<String, String> parameters = new HashMap<>();
         String encodedBody = URLDecoder.decode(body, StandardCharsets.UTF_8);
         String[] pairs = encodedBody.split("&");

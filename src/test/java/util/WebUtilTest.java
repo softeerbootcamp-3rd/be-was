@@ -14,16 +14,16 @@ import java.util.Map;
 public class WebUtilTest {
 
     @Test
-    @DisplayName("WebUtil.httpRequestParser() Test")
+    @DisplayName("httpRequestParser(): HTTP Request 요청을 HttpRequestDto로 적절하게 파싱한다.")
     public void httpRequestParseTest() {
         // given
-        String mockRequest = "GET /index.html HTTP/1.1\n" +
+        String testRequest = "GET /index.html HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
                 "Connection: keep-alive\n" +
                 "Accept: */*\n" +
                 "Content-Length: 12\n\n" +
                 "request body";
-        InputStream inputStream = new ByteArrayInputStream(mockRequest.getBytes());
+        InputStream inputStream = new ByteArrayInputStream(testRequest.getBytes());
 
         // when
         HttpRequestDto parsedRequest = WebUtil.httpRequestParse(inputStream);
@@ -40,36 +40,36 @@ public class WebUtilTest {
     }
 
     @Test()
-    @DisplayName("WebUtil.getContentType() Test")
+    @DisplayName("getContentType(): URI를 인자로 받아서 알맞은 contentType을 반환한다.")
     public void getContentTypeTest() {
         // given
-        String mockUri = "/index.html";
+        String testUri = "/index.html";
 
         // when
-        String contentType = WebUtil.getContentType(mockUri);
+        String contentType = WebUtil.getContentType(testUri);
 
         // then
         Assertions.assertThat(contentType).isEqualTo("text/html");
     }
 
     @Test()
-    @DisplayName("WebUtil.getPath() Test")
+    @DisplayName("getPath(): URI를 인자로 받아 요청 리소스의 위치를 반환한다.")
     public void getPathTest() {
         // given
-        String mockUri = "/index.html";
-        String mockUri2 = "/css/bootstrap.min.css";
+        String testUri = "/index.html";
+        String testUri2 = "/css/bootstrap.min.css";
 
         // when
-        String path = WebUtil.getPath(mockUri);
-        String path2 = WebUtil.getPath(mockUri2);
+        String path = WebUtil.getPath(testUri);
+        String path2 = WebUtil.getPath(testUri2);
 
         // then
-        Assertions.assertThat(path).isEqualTo("./src/main/resources/templates" + mockUri);
-        Assertions.assertThat(path2).isEqualTo("./src/main/resources/static" + mockUri2);
+        Assertions.assertThat(path).isEqualTo("./src/main/resources/templates" + testUri);
+        Assertions.assertThat(path2).isEqualTo("./src/main/resources/static" + testUri2);
     }
 
     @Test()
-    @DisplayName("WebUtil.parseQueryString() Test")
+    @DisplayName("parseQueryString(): URI에서 쿼리 스트링을 파싱하여 Map 형태로 반환한다.")
     public void parseQueryStringTest() {
         // given
         String uri = "/user/create?userId=userId&password=password&name=testName&email=softeer@example.com";
@@ -86,7 +86,7 @@ public class WebUtilTest {
     }
 
     @Test()
-    @DisplayName("WebUtil.parseRequestBody() Test")
+    @DisplayName("parseRequestBody(): Body를 파싱하여 Map 형태로 반환한다.")
     public void parseRequestBodyTest() {
         // given
         String body = "userId=1&password=hello&name=suji&email=example%40softeer.com";

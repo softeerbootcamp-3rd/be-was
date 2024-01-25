@@ -11,9 +11,13 @@ Java Web Application Server 2023
 ## ✏️ Study
 ### [Java Thread](./docs/JavaThread.md)
 
+### [Java IO vs. NIO](./docs/IOandNIO.md)
+
 ### [HTTP, WEB](./docs/HTTP.md)
 
-### [OOP와 클린 코딩](./docs/OOPandCleanCoding.md)
+### [OOP](./docs/OOPandCleanCoding.md)
+
+### [TEST 코드 작성 방법](./docs/Test)
 
 ***
 
@@ -112,3 +116,30 @@ int contentLength = Integer.parseInt(requestHeaders.getOrDefault("Content-Length
 > Mockito의 `mockStatic`을 이용하면 static method를 mocking할 수 있지만 복잡하고 런타임 오버헤드를 발생시킬 수 있으므로, 필요한 경우에만 사용해야 한다.
 > 
 > 나도 `HttpResponseUtil`과 `WebUtil` 두 개의 유틸리티 클래스 안에서 정적 메소드를 여러 개 사용하고 있는데, 정적 메소드가 OOP에 어긋나는 경우가 많고 유지보수를 어렵게 한다는 걸 테스트 코드를 작성하면서 깨닫게 되었다. 이 메소드를 정적 메소드로 만드는 것이 적절한지에 대해서 더 고민해보고 코드를 작성해야겠다.
+
+🌟 NIO 패키지라고 모두 Non-Blocking으로 동작하는 것은 아니다!
+> 
+> NIO 패키지 대신 IO 패키지를 사용하라는 요구사항을 적용하기 위해 내가 기존에 사용했던 nio 패키지 코드를 살펴 보았다.
+> ```java
+> import java.nio.file.Files;
+> /// 중략 ..
+> body = Files.readAllBytes(new File(request.getPath()).toPath());
+> ```
+> 나는 위와 같은 방식으로 nio 패키지를 사용하였는데, `Files.readAllBytes`은 Blocking 방식으로 작동하는 메서드였다.
+> 해당 메서드의 코드는 다음과 같다.
+> ```java
+>   public static byte[] readAllBytes(Path path) throws IOException {
+>       try (SeekableByteChannel sbc = Files.newByteChannel(path);
+>            InputStream in = Channels.newInputStream(sbc)) {
+>           if (sbc instanceof FileChannelImpl)
+>               ((FileChannelImpl) sbc).setUninterruptible();
+>           long size = sbc.size();
+>           if (size > (long) Integer.MAX_VALUE)
+>               throw new OutOfMemoryError("Required array size too large");
+>           return read(in, (int)size);
+>       }
+>   }
+>```
+> 메서드 내부에서 `Files.newByteChannel()`을 통해 생성되는 `SeekableByteChannel`은 `ReadableByteChannel`와 `WritableByteChannel`을 구현하고 있는데 해당 채널은 모두 blocking 방식으로만 동작하는 Channel이기 때문이다.
+> 
+> 따라서 nio 패키지라고 모두 non-blocking 방식으로 동작하는 것은 아니며, `Channel`을 사용하는 I/O는 언제나 Non-blocking 방식으로 동작하는 것이 아니라, "**non-blocking 방식도 가능하다**"는 것을 알고 있어야 한다.
