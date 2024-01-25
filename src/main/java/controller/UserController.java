@@ -4,11 +4,15 @@ import dto.request.UserLoginDto;
 import dto.request.UserSignUpDto;
 import model.HttpRequest;
 import model.HttpResponse;
+import service.SessionManager;
 import service.UserService;
 
 import static model.HttpStatus.BAD_REQUEST;
+import static service.SessionManager.createSession;
+import static service.SessionManager.existingSession;
 
 public class UserController {
+    private static final String COOKIE_NAME = "sid";
     public static HttpResponse createUser(HttpRequest httpRequest){
         try{
             UserSignUpDto userSignUpDto = UserSignUpDto.from(httpRequest.getBody());
@@ -22,10 +26,19 @@ public class UserController {
     public static HttpResponse login(HttpRequest httpRequest){
         try{
             UserLoginDto userLoginDto = UserLoginDto.from(httpRequest.getBody());
-            String redirectUrl = UserService.login(userLoginDto);
-            return HttpResponse.redirect(redirectUrl);
-        }catch (NullPointerException e){//로그인란에 빈란이 있는 경우
-            return HttpResponse.errorResponse(BAD_REQUEST, e.getMessage());
+            String userId = UserService.login(userLoginDto.getUserId(), userLoginDto.getPassword());
+            HttpResponse httpResponse = HttpResponse.redirect("/index.html");
+
+            if(existingSession(httpRequest, userId))
+            {
+                httpResponse.addCookie(COOKIE_NAME, httpRequest.getSessionId());
+                return httpResponse;
+            }
+
+            httpResponse.addCookie(COOKIE_NAME, createSession(userId));
+            return httpResponse;
+        }catch (IllegalArgumentException | NullPointerException e){
+            return HttpResponse.redirect("/user/login_failed.html");
         }
     }
 }

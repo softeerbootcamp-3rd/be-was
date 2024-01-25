@@ -12,7 +12,7 @@ import java.util.Map;
 import static constant.HttpResponseConstant.CRLF;
 
 public class ResponseSender {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResponseSender.class);
     private static final byte[] NO_BODY = "".getBytes();
 
     private ResponseSender() {
