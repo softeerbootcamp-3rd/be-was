@@ -15,7 +15,7 @@ public class PageController {
 
     static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
     static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
-    static public HTTPResponse getPage(HTTPRequest request) throws IOException {
+    static public HTTPResponse getPageStatic(HTTPRequest request) throws IOException {
 
         //파일 불러오기
         String url = request.getUrl();
@@ -54,6 +54,12 @@ public class PageController {
 
         return response;
     }
+    public static HTTPResponse getPageDynamic(HTTPRequest request){
+
+
+    }
+
+
     //MIME 타입 구하기 (여유되면 ENUM으로 뺴기)
     private static String MIMEType(String url){
         String type = "text/plain";
