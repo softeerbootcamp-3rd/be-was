@@ -58,8 +58,16 @@ public class HttpResponse {
         return statusLine.getStatusCode();
     }
 
+    public String getStatusCodeAndReasonPhrase() {
+        return statusLine.getStatusCode() + " " + statusLine.getReasonPhrase();
+    }
+
     public String getSid() {
         return sid;
+    }
+
+    public StatusLine getStatusLine() {
+        return statusLine;
     }
 
     private static byte[] readFileInBytes(String filePath) throws IOException { // 파일을 읽어서 byte[]로 반환
