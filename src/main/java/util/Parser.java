@@ -23,6 +23,7 @@ public class Parser {
     }
 
     private static Map<String, String> parseJson(String body) {
+
         String[] jsons = body.split("&");
         Map<String, String> keyValueMap = new HashMap<>();
 
@@ -30,6 +31,7 @@ public class Parser {
             String[] keyValue = s.split("=");
             keyValueMap.put(keyValue[0], keyValue[1]);
         }
+
         return keyValueMap;
     }
 
@@ -38,7 +40,7 @@ public class Parser {
             if (field.isAnnotationPresent(Column.class)) { // @Column 어노테이션이 있는 필드만 필드값 설정
                 String value = keyValueMap.get(field.getName());
 
-                if (value == null) throw new Exception("필드명이 잘못된 유효하지 않은 json 문자열입니다.");
+                if (value == null) throw new Exception("필드명이 유효하지 않습니다.");
 
                 field.setAccessible(true);
                 field.set(object, value);
