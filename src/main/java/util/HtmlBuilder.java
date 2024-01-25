@@ -12,12 +12,16 @@ public class HtmlBuilder {
             User user = SessionManager.getLoggedInUser(request);
             return new String(fileContent).replace("{{user-name}}", buildUserName(user))
                     .replace("{{login-btn}}", "")
+                    .replace("{{signup-btn}}", "")
+                    .replace("{{logout-btn}}", HtmlContent.LOGOUT_BTN.getValue())
                     .replace("{{user-list}}", buildUserList())
                     .getBytes();
         }
 
         return new String(fileContent).replace("{{user-name}}", "")
                 .replace("{{login-btn}}", HtmlContent.LOGIN_BTN.getValue())
+                .replace("{{signup-btn}}", HtmlContent.SIGNUP_BTN.getValue())
+                .replace("{{logout-btn}}", "")
                 .replace("{{user-list}}", "")
                 .getBytes();
     }

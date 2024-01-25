@@ -46,6 +46,10 @@ public class SessionManager {
         return sessionInfo.getUser();
     }
 
+    public static void removeSession(String sessionId) {
+        sessionMap.remove(sessionId);
+    }
+
     private static void cleanupExpiredSessions() {
         long currentTimestamp = System.currentTimeMillis();
         sessionMap.entrySet().removeIf(entry -> {
