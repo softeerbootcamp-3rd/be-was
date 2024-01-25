@@ -4,6 +4,8 @@ import service.UserService;
 import util.http.HttpStatus;
 import util.http.HttpRequest;
 import util.http.ResponseEntity;
+
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -34,7 +36,8 @@ public class UserController {
     }
 
     private String create() {
-        Map<String, String> query = httpRequest.getQueryMap();
+//        Map<String, String> query = httpRequest.getQueryMap();
+        Map<String, String> query = httpRequest.getBodyParams();
 
         String userId = query.get("userId");
         String password = query.get("password");
