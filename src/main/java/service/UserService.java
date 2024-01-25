@@ -1,7 +1,6 @@
 package service;
 
 import db.Database;
-import dto.request.UserLoginDto;
 import dto.request.UserSignUpDto;
 import model.User;
 
@@ -15,13 +14,13 @@ public class UserService {
         Database.addUser(user);
     }
 
-    public static String login(UserLoginDto userLoginDto) {
-        User findUser = Database.findUserById(userLoginDto.getUserId());
+    public static String login(String id, String password) {
+        User findUser = Database.findUserById(id);
 
-        if (findUser != null && findUser.getPassword().equals(userLoginDto.getPassword())) {
-            return "/index.html";
+        if (findUser == null || !findUser.getPassword().equals(password)) {
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 잘못되었습니다.");
         }
 
-        return "/user/login_failed.html";
+        return id;
     }
 }
