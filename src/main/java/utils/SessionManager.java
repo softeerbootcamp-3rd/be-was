@@ -10,8 +10,8 @@ public class SessionManager {
 
     private static Map<String, String> sessionIds = Maps.newConcurrentMap();
 
-    public static void addSessionId(String userId, String sessionId) {
-        sessionIds.put(userId, sessionId);
+    public static void addSessionId(String sessionId, String userId) {
+        sessionIds.put(sessionId, userId);
     }
 
     public static void deleteSessionId(String userId) {

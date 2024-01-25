@@ -29,7 +29,7 @@ public class UserService {
             return null;
         }
         String sessionId = SessionManager.createSessionId();
-        SessionManager.addSessionId(userId, sessionId);
+        SessionManager.addSessionId(sessionId, userId);
         return sessionId;
     }
 
