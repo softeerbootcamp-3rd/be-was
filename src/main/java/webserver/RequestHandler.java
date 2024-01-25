@@ -3,11 +3,13 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import http.response.HttpResponse;
 import http.request.HttpRequest;
 import http.HttpStatus;
+import model.User;
 import utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +44,18 @@ public class RequestHandler implements Runnable {
             }
 
             // 정적 자원부터 탐색 후 동적 자원 처리
-            // 정적 자원 처리 - basePath 찾은 경우
+            // 정적 자원 처리 - basePath 찾은 경우 or 세션 아이디가 없는 경우
+
+            // 세션 아이디 추출
+            String cookie = httpRequest.getEtcHeaders().getOrDefault("Cookie", "");
+            String sid = "";
+            if (!cookie.isEmpty()) {
+                sid = Parser.extractSid(cookie);
+            }
+            logger.info("sid : {}", sid);
+
             String basePath = FileReader.getBasePath(requestUrl);
-            if (!basePath.isEmpty()) {
+            if (!basePath.isEmpty() && !Objects.requireNonNull(sid).isEmpty()) {
                 String filePath = basePath + requestUrl;
                 File file = new File(filePath);
                 // 파일 존재할 경우 해당 파일 반환
