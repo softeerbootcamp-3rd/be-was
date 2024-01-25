@@ -1,5 +1,7 @@
 package DTO;
 
+import java.util.Random;
+
 public class Response {
 
     byte[] body;
@@ -9,7 +11,14 @@ public class Response {
 
     private String redirectUrl;
 
-    public Response(){};
+    private String sid;
+
+    private boolean sidSet;
+
+
+    public Response(){
+        this.sidSet = false;
+    };
     public Response(HttpStatus httpStatus, byte[] body){
         this.status = httpStatus;
         this.body = body;
@@ -32,6 +41,12 @@ public class Response {
         this.redirectUrl = redirectUrl;
     }
 
+    public void SetSid(){
+        Random random = new Random();
+        int sid = random.nextInt(900000) + 100000;
+        this.sid = String.valueOf(sid);
+    }
+
     public String getRedirectUrl(){
         return this.redirectUrl;
     }
@@ -40,8 +55,21 @@ public class Response {
     }
 
 
+    public void SetSidSet(){
+        this.sidSet = true;
+    }
+
+
     public HttpStatus getHttpStatus(){
         return this.status;
+    }
+
+    public boolean getSidSet(){
+        return this.sidSet;
+    }
+
+    public String getSid(){
+        return this.sid;
     }
 
     public byte[] getBody(){

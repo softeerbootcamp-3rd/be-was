@@ -8,8 +8,8 @@ public class Request {
     String URI;
     String Version;
     ArrayList<String> Accept = new ArrayList<>();
-
     String body;
+    String sid;
 
 
     public void SetHTTPMethod(String HTTPMethod){
@@ -32,6 +32,7 @@ public class Request {
         this.body = body;
     }
 
+    public void SetSid(String sid) { this.sid = sid; }
 
     public String GetHTTPMethod(){
         return this.HTTPMethod;
@@ -44,6 +45,8 @@ public class Request {
     public String GetVersion(){
         return this.Version;
     }
+
+    public String GetSid() {return this.sid; }
 
     public ArrayList<String> GetAccept(){
         return this.Accept;

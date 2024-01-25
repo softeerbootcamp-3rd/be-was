@@ -33,11 +33,13 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = null;
+
+
+
             Request Request = MakeRequest(in);
 
-
-
             HandlerMapping handlerMapping = new HandlerMapping(Request);
+
             Response response = handlerMapping.Controller();
 
             sendResponse(Request,response,dos);
@@ -56,6 +58,8 @@ public class RequestHandler implements Runnable {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder requestBuilder = new StringBuilder();
         String line;
+        String sid;
+
         line = reader.readLine();
         requestBuilder.append(line).append("\r\n");
         Request.SetHTTPMethod(line.split("\\s+")[0]);
@@ -74,6 +78,18 @@ public class RequestHandler implements Runnable {
                     Request.SetAccept(accept.trim().split(";")[0]);
                 }
             }
+            else if("Cookie".equals(line.split(":")[0])){
+
+                String[] cookieContentsString  = line.split(":")[1].trim().split(";");
+                for(String token : cookieContentsString){
+                    String head = token.trim().split("=")[0];
+                    if("sid".equals(head)){
+                        sid = token.split("=")[1];
+                        Request.SetSid(sid);
+                    }
+                }
+
+            }
         }
 
         StringBuilder bodyJson = new StringBuilder();
@@ -91,7 +107,7 @@ public class RequestHandler implements Runnable {
 
         Request.SetBody(bodyJson.toString());
 
-        logger.debug(requestBuilder.toString());
+        logger.debug("request make sid: "+ Request.GetSid());
 
         return Request;
     }
@@ -112,13 +128,9 @@ public class RequestHandler implements Runnable {
         return 0;
     }
 
-
-    ///
-
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            //dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
@@ -138,7 +150,12 @@ public class RequestHandler implements Runnable {
 
 
     public static void responseRedirectWithoutBody(DataOutputStream dos, Request request, Response response) throws IOException {
+
         dos.writeBytes(request.GetVersion() + " " + response.getStatus().getStatusCode() + " " + response.getStatus().getMessage() + "\r\n");
+        if(response.getSidSet()){
+            dos.writeBytes("Set-Cookie: " + "sid="+response.getSid()+"; "+"Path=/\r\n");
+
+        }
         dos.writeBytes("Location: " + response.getRedirectUrl() + "\r\n");
         dos.writeBytes("\r\n");
         dos.flush();

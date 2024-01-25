@@ -43,7 +43,6 @@ public class HandlerMapping {
         Response response = new Response();
         response.SetreturnType("text/html");
 
-
         String URI = request.GetURI();
         //body = urlParsing(URI, response);
         response = urlParsing(request, response);
@@ -78,6 +77,7 @@ public class HandlerMapping {
     }
 
     public Response HTML(String URI, Request request) throws IOException {
+
         Response response = new Response();
         byte[] body = null;
         String middleURI = URI.split("/")[1];
@@ -87,7 +87,7 @@ public class HandlerMapping {
             response.SetHttpStatus(HttpStatus.OK);
         }else if(middleURI.equals("user")){
             UserController userController = new UserController(URI.split("/")[2], request);
-            response = userController.UserLogic();
+            response = userController.UserLogic(request);
         }
         return response;
     }
