@@ -38,8 +38,9 @@ class UserControllerImplTest {
             "ResponseHeader를 Status : REDIRECT, Location : /user/login.html로  설정한다.")
     void UserControllerCallUserServiceAndSetResponseRedirectToLogin() {
         //given
-        String fakePathUrl = "/user/create?userId=test&password=123&name=John&email=test@example.com";
-        FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl);
+        String fakePathUrl = "/user/create";
+        byte[] fakeBody = "userId=dlwnsgus0&password=rdwg6867&name=%EC%9D%B4%EC%A4%80%ED%98%84&email=dlwnsgus07%40naver.com".getBytes();
+        FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl, fakeBody);
         FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
         //when
         userController.doGet(httpRequestMock, httpResponseDtoMock);
@@ -48,15 +49,17 @@ class UserControllerImplTest {
         assertThat(userServiceMock.wasMethodCalled("signUp")).isTrue();
         assertThat(httpResponseDtoMock.getStatus()).isEqualTo(Status.REDIRECT);
         assertThat(httpResponseDtoMock.getOptionHeader().containsKey("Location")).isTrue();
-        assertThat(httpResponseDtoMock.getOptionHeader().get("Location")).isEqualTo("/user/login.html");
+        assertThat(httpResponseDtoMock.getOptionHeader().get("Location")).isEqualTo("/index.html");
     }
 
     @Test
     @DisplayName("url이 /user/create 들어왔지만 정상적이지 않은 인자값을 갖고 있을때 BadRequestException을 return한다.")
     void ThrowBadRequestExceptionWhenInvalidRequest() {
         //given
-        String fakePathUrl = "/user/create?userId=test";
-        FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl);
+        String fakePathUrl = "/user/create";
+        byte[] fakeBody = "userId=&password=rdwg6867&name=%EC%9D%B4%EC%A4%80%ED%98%84&email=dlwnsgus07%40naver.com".getBytes();
+
+        FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl, fakeBody);
         FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
 
         //when & then

@@ -33,14 +33,15 @@ public class UserControllerImpl implements UserController {
     public void doGet(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         String pathUrl = httpRequest.getStartLine().getPathUrl();
         if (pathUrl.startsWith("/user/create")) {
-            handleUserCreateRequest(httpResponseDto, pathUrl);
+            httpResponseDto.setContent(httpRequest.getBody().getContent());
+            handleUserCreateRequest(httpResponseDto);
         }
     }
 
-    private void handleUserCreateRequest(HttpResponseDto httpResponseDto, String pathUrl) {
-        UserSignUpDto userSignUpDto = UserSignUpDto.fromUrlParameters(pathUrl);
+    private void handleUserCreateRequest(HttpResponseDto httpResponseDto) {
+        UserSignUpDto userSignUpDto = UserSignUpDto.fromRequestBody(httpResponseDto.getContent());
         userService.signUp(userSignUpDto);
         httpResponseDto.setStatus(Status.REDIRECT);
-        httpResponseDto.addHeader("Location", "/user/login.html");
+        httpResponseDto.addHeader("Location", "/index.html");
     }
 }

@@ -30,7 +30,7 @@ public class HttpRequest {
         return "\nHttpRequest{" +
                 "startLine=" + startLine +
                 ", headers=" + headers +
-                ", body=" + body +
+                ", body=" + (body.getContent() != null ? body.toString() : "null")+
                 '}';
     }
 }

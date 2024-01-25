@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import service.UserService;
 import service.UserServiceImpl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +26,7 @@ class UserServiceImplTest {
     }
     @Test
     @DisplayName("중복되는 사용자가 없으면 회원가입이 완료된다.")
-    void signUp() {
+    void signUp() throws UnsupportedEncodingException {
         //given
         UserSignUpDto userSignUpDto = new UserSignUpDto("테스트", "1234", "이준현", "dlwnsgus07@naver.com");
         //when
@@ -42,7 +43,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("중복되는 사용자가 있다면 BadRequestException을 Throw한다.")
-    void duplicateSignUp(){
+    void duplicateSignUp() throws UnsupportedEncodingException {
         //given
         Database.addUser(new User("테스트", "1234", "이준현", "dlwnsgus07@naver.com"));
         UserSignUpDto userSignUpDto = new UserSignUpDto("테스트", "1234", "이준현", "dlwnsgus07@naver.com");

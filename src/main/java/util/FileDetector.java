@@ -5,9 +5,9 @@ import exception.NotFound;
 import model.http.ContentType;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 
 public class FileDetector {
     private static class FileDetectorHolder {
@@ -36,19 +36,19 @@ public class FileDetector {
         int lastDotIndex = lastSegment.lastIndexOf('.');
         return (lastDotIndex != -1) ? lastSegment.substring(lastDotIndex + 1) : "";
     }
-    private Path getFilePath(String filePath) {
+    private File getFile(String filePath) {
         if (filePath.equals("/")) {
-            return new File(TEMPLATES_RESOURCE + "/index.html").toPath();
+            return new File(TEMPLATES_RESOURCE + "/index.html");
         }
         if (filePath.contains("html")) {
-            return new File(TEMPLATES_RESOURCE + filePath).toPath();
+            return new File(TEMPLATES_RESOURCE + filePath);
         }
-        return new File(STATIC_RESOURCES + filePath).toPath();
+        return new File(STATIC_RESOURCES + filePath);
     }
 
-    public byte[] getFile(String filePath) {
-        try {
-            return Files.readAllBytes(getFilePath(filePath));
+    public byte[] getFileByte(String filePath) {
+        try (InputStream fis = new FileInputStream(getFile(filePath))) {
+            return fis.readAllBytes();
         } catch (IOException e) {
             throw new NotFound("파일을 찾을 수 없습니다.");
         }
