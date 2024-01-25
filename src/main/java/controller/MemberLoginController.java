@@ -28,7 +28,7 @@ public class MemberLoginController extends CrudController{
             String sessionId = sessionManager.createSession(loginUser);
 
             responseHeaders.put(LOCATION, "/index.html");
-            responseHeaders.put(SET_COOKIE, "sid="+sessionId+"; Path=/");
+            responseHeaders.put(SET_COOKIE, "sid="+sessionId+"; Max-Age=300; Path=/");
             response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         }
     }
