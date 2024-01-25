@@ -33,6 +33,7 @@ public class RequestHandler implements Runnable {
             return;
         }
 
+        HttpResponse response = new HttpResponse();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(reader);
@@ -50,31 +51,29 @@ public class RequestHandler implements Runnable {
                 if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(request.getPath())))
                     fileContent = HtmlBuilder.process(request, fileContent);
 
-                HttpResponse.builder()
+                response = HttpResponse.builder()
                         .status(HttpStatus.OK)
                         .addHeader(HttpHeader.CONTENT_TYPE, ResourceLoader.getMimeType(request.getPath()))
                         .body(fileContent)
-                        .build()
-                        .send(out, logger);
+                        .build();
             } else
                 throw new ResourceNotFoundException(request.getPath());
 
         } catch (ResourceNotFoundException e) {
-            HttpResponse.builder()
+            response = HttpResponse.builder()
                     .status(HttpStatus.NOT_FOUND)
                     .addHeader(HttpHeader.CONTENT_TYPE, "text/plain")
                     .body(HttpStatus.NOT_FOUND.getFullMessage())
-                    .build()
-                    .send(out, logger);
+                    .build();
 
         } catch (IllegalStateException | IOException e) {
             logger.error("error processing request: {}", e.getMessage());
-            HttpResponse.builder()
+            response = HttpResponse.builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage())
-                    .build()
-                    .send(out, logger);
+                    .build();
         }
+        response.send(out, logger);
         closeConnections(in, out);
     }
 
