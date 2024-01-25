@@ -43,22 +43,30 @@ public class UserController implements Controller {
         }
 
         if (method.equals("POST")) {
-            if (uri.equals(USER_CREATE.getUri())) { // 회원가입
-                User user = Parser.jsonParser(User.class, httpRequest.getRequestBody());
-                userService.join(user);
 
-                return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), null);
+            if (uri.equals(USER_CREATE.getUri())) { // 회원가입
+                try {
+                    User user = Parser.jsonParser(User.class, httpRequest.getRequestBody());
+                    userService.join(user);
+
+                    return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), null);
+                } catch (Exception e) {
+                    return new HttpResponse(FOUND, "text/html", USER_FORM_FAILED.getUri(), null);
+                }
             }
 
             if (uri.equals("/user/login")) { // 로그인
+                try {
+                    LoginRequest loginRequest = Parser.jsonParser(LoginRequest.class, httpRequest.getRequestBody());
+                    if (!userService.login(loginRequest)) {
+                        return new HttpResponse(FOUND, "text/html", USER_LOGIN_FAILED.getUri(), null);
+                    }
+                    String sessionId = getSessionId(loginRequest.getUserId());
 
-                LoginRequest loginRequest = Parser.jsonParser(LoginRequest.class, httpRequest.getRequestBody());
-
-                if (!userService.login(loginRequest)) return new HttpResponse(FOUND, "text/html", USER_LOGIN_FAILED.getUri(), null);
-
-                String sessionId = getSessionId(loginRequest.getUserId());
-
-                return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), sessionId);
+                    return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), sessionId);
+                } catch (Exception e) {
+                    return new HttpResponse(FOUND, "text/html", USER_LOGIN_FAILED.getUri(), null);
+                }
             }
         }
         return new HttpResponse(NOT_FOUND);

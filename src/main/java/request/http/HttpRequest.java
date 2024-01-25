@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 public class HttpRequest {
-    //todo: 일급 컬렉션으로 변경
     private String method;
     private String uri;
     private String httpVersion;
