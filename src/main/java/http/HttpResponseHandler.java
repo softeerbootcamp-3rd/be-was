@@ -1,9 +1,13 @@
 package http;
 
+import java.io.File;
+
 public class HttpResponseHandler {
 
     public void setHttpResponse(HttpResponse response) {
         String path = response.getPath();
+
+        if (!path.startsWith("redirect:") && !isFileExists(path)) path=null;
 
         if (path == null) {
             response.setHttpStatus(HttpStatus.NOT_FOUND);
@@ -13,6 +17,9 @@ public class HttpResponseHandler {
         } else {
             response.setHttpStatus(HttpStatus.OK);
         }
+    }
 
+    private boolean isFileExists(String path) {
+        return new File(path).exists();
     }
 }

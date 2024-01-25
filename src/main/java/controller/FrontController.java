@@ -31,12 +31,7 @@ public class FrontController {
             path = controller.process(request, response) + ".html";
         }
 
-        if (!isFileExists(path)) path=null;
         response.setPath(path);
         return path;
-    }
-
-    private boolean isFileExists(String path) {
-        return new File(path).exists();
     }
 }
