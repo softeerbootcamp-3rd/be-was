@@ -1,7 +1,7 @@
 package webserver.mapper;
 
 import webserver.MyHttpServletRequest;
-import webserver.io.ControllerHandler;
+import webserver.handler.ControllerHandler;
 import webserver.parser.DoubleParser;
 import webserver.parser.IntegerParser;
 import webserver.parser.Parser;

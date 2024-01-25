@@ -35,3 +35,10 @@ repositories {
 compileJava {
     options.compilerArgs = ['-parameters']
 }
+jar {
+    manifest {
+        attributes 'Main-Class': 'webserver.io.WebServer'
+    }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
