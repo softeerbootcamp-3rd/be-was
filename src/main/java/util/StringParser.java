@@ -10,6 +10,19 @@ import java.util.regex.Pattern;
 
 public class StringParser {
 
+    public static Map<String, String> parseQueryString(String query) throws UnsupportedEncodingException {
+        if (!query.contains("\\?"))
+            return null;
+
+        String[] uri = query.split("\\?");
+        Map<String, String> paramsMap = new HashMap<>();
+        if (uri.length > 1) {
+            paramsMap = StringParser.parseKeyVaue(uri[1]);
+        }
+
+        return paramsMap;
+    }
+
     public static Map<String, String> parseKeyVaue(String query) throws UnsupportedEncodingException {
         Map<String, String> parseMap = new HashMap<>();
         for (String set: query.split("&")) {
