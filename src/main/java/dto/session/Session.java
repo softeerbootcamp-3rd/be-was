@@ -19,7 +19,8 @@ public class Session {
         this.userId = userId;
         this.createTime = LocalDateTime.now();
         this.lastAccessTime = LocalDateTime.now();
-        this.expires = createTime.plusHours(1);
+//        this.expires = createTime.plusHours(1);
+        this.expires = createTime.plusSeconds(10);
     }
 
     public String getId() {
@@ -52,5 +53,10 @@ public class Session {
         UUID uuid = UUID.randomUUID();
         // UUID를 문자열로 변환하여 세션 ID로 반환
         return uuid.toString();
+    }
+
+    // 세션이 유효할 경우 true 반환, 만료되었을 경우 false 반환
+    public boolean isValid() {
+        return LocalDateTime.now().isBefore(expires);
     }
 }

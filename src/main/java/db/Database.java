@@ -45,4 +45,14 @@ public class Database {
     public static void clearSessions() {
         sessions.clear();
     }
+
+    // 세션 가비지 컬렉터
+    public static void sessionGC() {
+        for(Map.Entry<String, Session> entry : sessions.entrySet()) {
+            if(entry.getValue().isValid())
+                continue;
+            // 만료된 세션일 경우 -> 저장소에서 삭제
+            deleteSession(entry.getKey());
+        }
+    }
 }
