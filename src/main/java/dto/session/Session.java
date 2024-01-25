@@ -42,6 +42,9 @@ public class Session {
     public void setLastAccessTime(LocalDateTime time) {
         this.lastAccessTime = time;
     }
+    public void setExpires() {
+        this.expires = lastAccessTime.plusHours(1);
+    }
 
     // 세션 ID 생성
     public String createSessionID() {
