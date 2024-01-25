@@ -85,7 +85,6 @@ public class HTTPRequest{
             // Content-Type 별로 파싱하는 방식이 다르다, 명시를 하지 않았을 경우 text/plain으로 가정
             String contentType = head.get("Content-Type");
 
-
             if(contentType == null) {
                 body.put("Data",bodyString);
             }

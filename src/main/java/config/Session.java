@@ -8,6 +8,7 @@ public class Session {
     private static final ConcurrentHashMap<UUID, String> sessions = new ConcurrentHashMap<>();
 
 
+    //새로운 세션 생성 후 저장
     public static UUID createSession(String userId){
         if (exitsByValue(userId))
             return null;
