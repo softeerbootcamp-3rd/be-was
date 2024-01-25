@@ -17,6 +17,11 @@ public class UserController implements Controller {
     private static final UserService userService = new UserService();
 
     public void route(Request request, Response response) {
+        String cookie = request.getHeader("Cookie");
+        if (cookie != null && Session.getUserBySessionId(cookie) != null) {
+            response.addHeader("Set-Cookie", cookie + "; Path=/; Max-Age=600");
+        }
+
         if (request.getUrl().startsWith("/user/create")) {
             createUser(request, response);
             return;
@@ -26,7 +31,6 @@ public class UserController implements Controller {
             return;
         }
         if (request.getUrl().startsWith("/user/list")) {
-            String cookie = request.getHeader("Cookie");
             if (cookie == null || Session.getUserBySessionId(cookie) == null) {
                 response.setCode(302);
                 response.addHeader("Location", "/user/login.html");
@@ -55,7 +59,7 @@ public class UserController implements Controller {
 
             response.setCode(302);
             response.addHeader("Location", "/");
-            response.addHeader("Set-Cookie", sid + "; Path=/; Max-Age=60");
+            response.addHeader("Set-Cookie", sid + "; Path=/; Max-Age=600");
         } catch (Exception e) {
             response.setCode(302);
             response.addHeader("location", "/user/login_failed.html");

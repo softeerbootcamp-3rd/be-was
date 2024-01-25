@@ -20,8 +20,4 @@ public class Session {
     public static User getUserBySessionId(String sessionId) {
         return session.get(sessionId);
     }
-
-    public static void removeSession(String sessionId) {
-        session.remove(sessionId);
-    }
 }

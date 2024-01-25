@@ -6,10 +6,16 @@ import model.Request;
 import model.Response;
 import utils.HtmlBuilder;
 import utils.PageReader;
+import webserver.Session;
 
 public class HomeController implements Controller {
 
     public void route(Request request, Response response) {
+        String cookie = request.getHeader("Cookie");
+        if (cookie != null && Session.getUserBySessionId(cookie) != null) {
+            response.addHeader("Set-Cookie", cookie + "; Path=/; Max-Age=600");
+        }
+
         if (request.getUrl().equals("/")) {
             redirectIndex(response);
             return;
