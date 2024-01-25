@@ -3,10 +3,14 @@ package controller;
 import config.HTTPRequest;
 import config.HTTPResponse;
 import config.ResponseCode;
+import config.Session;
+import db.Database;
+import model.User;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.Buffer;
+
+import static webserver.RequestHandler.threadUuid;
 
 public class PageController {
 
@@ -15,7 +19,7 @@ public class PageController {
 
     static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
     static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
-    static public HTTPResponse getPageStatic(HTTPRequest request) throws IOException {
+    static public HTTPResponse getPageStatic(HTTPRequest request){
 
         //파일 불러오기
         String url = request.getUrl();
@@ -55,6 +59,40 @@ public class PageController {
         return response;
     }
     public static HTTPResponse getPageDynamic(HTTPRequest request){
+        String userId = Session.getUserId(threadUuid.get());
+        User user = Database.findUserById(userId);
+
+        //파일 불러오기
+        String url = request.getUrl();
+        File file;
+
+        if (url.contains(".html"))
+            file = new File(TEMPLATE_FILE_PATH + url);
+        else
+            file = new File(STATIC_FILE_PATH + url);
+
+        HTTPResponse response = null;
+
+        try {
+            BufferedReader bf = new BufferedReader(new FileReader(file));
+            //<li><a href="user/login.html" role="button">로그인</a></li>
+            //<li><a href="user/form.html" role="button">회원가입</a></li>
+            String line;
+            StringBuilder sb = new StringBuilder();
+            while((line = bf.readLine()) != null){
+                sb.append(line);
+                // \n 을 사용하면 안되는 이유:
+                sb.append(System.lineSeparator());
+            }
+
+
+        }catch (FileNotFoundException e){
+
+        }catch (Exception e){
+
+        }
+
+
 
 
     }
