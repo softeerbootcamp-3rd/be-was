@@ -14,4 +14,7 @@ public class StatusLine {
     public Integer getStatusCode() {
         return statusCode.getStatus();
     }
+    public String getVersion() {
+        return version;
+    }
 }

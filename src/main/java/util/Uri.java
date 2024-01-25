@@ -6,6 +6,7 @@ public enum Uri {
     USER_FORM("/user/form.html"),
     USER_LIST("/user/list.html"),
     USER_LOGIN("/user/login.html"),
+    USER_LOGIN_FAILED("/user/login_failed.html"),
     USER_PROFILE("/user/profile.html"),
     USER_CREATE("/user/create");
 
