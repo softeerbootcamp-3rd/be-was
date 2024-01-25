@@ -22,7 +22,7 @@ public enum GetRequestEnum {
     USERLIST("/user/list") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return null;
+            return Config.httpGetService.showUserList(httpRequestDto);
         }
     },
     FILE("file") {

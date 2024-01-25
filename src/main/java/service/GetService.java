@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
 
 
 public class GetService {
@@ -100,6 +101,10 @@ public class GetService {
         // index.html일 경우 로그인 여부에 따라 동적인 화면 반환
         if(path.contains("index.html"))
             byteFile = makeIndexWithLoginInfo(httpRequestDto, byteFile);
+        // list.html일 경우 전체 사용자 목록 동적 생성 후 반환
+        if(path.contains("list.html"))
+            byteFile = makeList(byteFile);
+
         return byteFile;
     }
 
@@ -133,5 +138,52 @@ public class GetService {
         String indexHtml = new String(byteFile);
         indexHtml = indexHtml.replace("로그인", name);
         return indexHtml.getBytes();
+    }
+
+    // "/user/list" 요청 처리
+    public HTTPResponseDto showUserList(HTTPRequestDto httpRequestDto) throws IOException {
+        // 요청에 이미 세션이 있을 경우 기존 세션 아이디 가져오기
+        String sessionId = httpRequestDto.getSessionId();
+        // 로그인 상태가 아닐 경우
+        if(sessionId == null)
+            return HTTPResponseDto.create302Dto("/user/login.html");
+        // 로그인 상태일 경우
+        httpRequestDto.setRequestTarget("/user/list.html");
+        return requestFile(httpRequestDto);
+    }
+
+    // 전체 사용자 목록 추가하여 동적인 list.html 화면 반환
+    private byte[] makeList(byte[] byteFile) {
+        // list.html 문자열 변환
+        String listHtml = new String(byteFile);
+        // 사용자 목록을 추가하기 전 앞부분과 뒷부분의 html 파싱
+        String front = listHtml.substring(0, listHtml.indexOf("</tbody>"));
+        String back = listHtml.substring(listHtml.indexOf("</tbody>"));
+        String userList = getUserList();
+        listHtml = front + userList + back;
+        return listHtml.getBytes();
+    }
+
+    // 세션 저장소에 저장되어있는 전체 사용자 목록 html 형식으로 반환
+    private String getUserList() {
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        for(Session session : Database.findAllSession()) {
+            User user = Database.findUserById(session.getUserId());
+            String row = makeUserListOneRow(++index, user);
+            sb.append(row);
+        }
+        return sb.toString();
+    }
+
+    // 한명의 사용자에 대해 list.html에 띄울 행 문자열 반환
+    private String makeUserListOneRow(int index, User user) {
+        if(user == null)
+            return "";
+        return "<tr><th scope=\"row\">" + index
+                + "</th><td>" + user.getUserId()
+                + "</td><td>" + user.getName()
+                + "</td> <td>" + user.getEmail()
+                + "</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>";
     }
 }
