@@ -19,6 +19,12 @@ public enum GetRequestEnum {
             return Config.httpGetService.signup(httpRequestDto);
         }
     },
+    USERLIST("/user/list") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+            return null;
+        }
+    },
     FILE("file") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {

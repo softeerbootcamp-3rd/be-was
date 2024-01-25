@@ -120,7 +120,7 @@ public class GetService {
     // 세션 아이디를 이용하여 해당하는 유저의 이름 반환
     private String findUserName(String sessionId) {
         Session session = Database.findSessionById(sessionId);
-        if(session.getUserId() == null)
+        if(session == null || session.getUserId() == null)
             return null;
         User user = Database.findUserById(session.getUserId());
         if(user == null)
