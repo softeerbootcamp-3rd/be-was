@@ -9,6 +9,11 @@ import java.util.Map;
 
 public class Database {
     private static Map<String, User> users = Maps.newHashMap();
+    private static Map<String, String> sessoinDB = Maps.newConcurrentMap();
+
+    public static void addSession(String UUID, String userId) {
+        sessoinDB.put(UUID, userId);
+    }
 
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
