@@ -10,6 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.SessionManager;
+import util.StringParser;
 import webserver.http.*;
 
 public class RequestHandler implements Runnable {
@@ -38,13 +39,11 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = new HttpRequest(connection, in);
             logger.debug(httpRequest.toString());
 
-            // 로그인 했는데 또 로그인 할 경우, 메인 페이지로 redirect
-            if (httpRequest.getPath().equals("/user/login.html") && httpRequest.getCookie() != null) {
-                // 유효한 세션인지 검증
-                String sid = httpRequest.getCookie().split("=")[1];
-                if (SessionManager.isSessionPresent(sid) && !SessionManager.checkSessionTimeout(sid)) {
+            if (httpRequest.getPath().equals("/user/list.html")) {
+                String cookie = StringParser.getCookieValue(httpRequest.getCookie(), "SID");
+                if (cookie == null || !SessionManager.isSessionPresent(cookie)) {
                     Map<String, List<String>> headerMap = new HashMap<>();
-                    headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
+                    headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login.html"));
                     ResponseEntity response = new ResponseEntity<>(HttpStatus.FOUND, headerMap);
 
                     HttpResponse.send(dos, response);

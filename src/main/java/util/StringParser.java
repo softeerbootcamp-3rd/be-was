@@ -25,6 +25,9 @@ public class StringParser {
     }
 
     public static String getCookieValue(String cookieHeader, String cookieName) {
+        if (cookieHeader == null)
+            return null;
+
         String patternString = cookieName + "=([^;]+)";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(cookieHeader);
