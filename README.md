@@ -6,8 +6,7 @@
     - JVM 프로세스 안에서는 여러 개의 스레드가 실행됨
     - JVM 메모리는 각 Thread마다 생성되는 영역과 전체가 공유하는 영역으로 나누어짐
 
-  ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/09de7564-c4ad-4ce2-b25c-d8da1e7a3275/9bc4bb68-5535-4388-970a-12ba0113b53d/Untitled.png)
-
+<img width="587" alt="Thread1" src="https://github.com/insiderhj/be-was/assets/43667241/1383cdb7-f4f4-43b5-8841-90a7da9a366e">
 
 ### Green Thread Model
 
@@ -17,7 +16,7 @@
 - 가상 머신이나 런타임 언어에 의해 관리됨
 - 비교적 가벼우며, context switching이 어플리케이션 수준에서 제어되기 때문에 더 빠른 스위칭을 지원하지만, 동시성 제어와 관련된 문제가 있긴 하다
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/09de7564-c4ad-4ce2-b25c-d8da1e7a3275/4cde8f0f-29f5-41b6-9a83-42e62f3b1a6c/Untitled.png)
+<img width="261" alt="Thread2" src="https://github.com/insiderhj/be-was/assets/43667241/518b9c9f-03a6-4976-a55c-797c070bfcb5">
 
 ### Native Thread Model
 
@@ -27,7 +26,7 @@
 - **`java.lang.Thread`** 클래스를 통해 스레드를 생성하고 관리
 - **`wait()`**, **`notify()`**, **`notifyAll()`** 등을 사용하여 스레드 간 통신 및 동기화를 지원함
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/09de7564-c4ad-4ce2-b25c-d8da1e7a3275/070fabf9-e4fe-49cf-9084-ce72c5237304/Untitled.png)
+<img width="575" alt="Thread3" src="https://github.com/insiderhj/be-was/assets/43667241/396cff4d-d81f-4554-9f7e-8a9a116784d2">
 
 ### Virtual Thread
 
@@ -35,7 +34,7 @@
 - 스레드의 스케쥴링을 사용자가 직접 제어할 수 있도록 하는 API 제공
 - **`AutoCloseable`** 인터페이스를 구현하여 자동으로 자원을 해제할 수 있음
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/09de7564-c4ad-4ce2-b25c-d8da1e7a3275/569f9025-7261-42a4-97ac-cccbd2a5f70b/Untitled.png)
+<img width="661" alt="Thread4" src="https://github.com/insiderhj/be-was/assets/43667241/5962611d-ed34-4b1e-8de5-03ea46545163">
 
 ## Java Reflection
 
