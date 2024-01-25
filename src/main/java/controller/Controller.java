@@ -1,7 +1,10 @@
 package controller;
 
-import util.StatusCode;
+import request.HttpRequest;
+import response.HttpResponse;
+
+import java.io.IOException;
 
 public interface Controller {
-    StatusCode handleUserRequest(String requestLine);
+    HttpResponse handleUserRequest(HttpRequest httpRequest) throws IOException;
 }

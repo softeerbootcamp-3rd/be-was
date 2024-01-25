@@ -1,6 +1,10 @@
 package controller;
 
-import util.StatusCode;
+import request.HttpRequest;
+import response.HttpResponse;
+
+import java.io.File;
+import java.io.IOException;
 
 import static util.Uri.*;
 import static util.StatusCode.*;
@@ -19,14 +23,20 @@ public class HomeController implements Controller {
     }
 
     @Override
-    public StatusCode handleUserRequest(String requestLine) {
-        String URI = requestLine.split(" ")[1];
+    public HttpResponse handleUserRequest(HttpRequest httpRequest) throws IOException {
+        String uri = httpRequest.getUri();
+        String filePath = httpRequest.getFilePath(uri);
+        String method = httpRequest.getMethod();
 
-        if (URI.equals(HOME.getUrl())) {
-            return FOUND;
+        File file = new File(filePath);
+
+        if (file.exists() && method.equals("GET")) {
+            if (uri.equals(HOME.getUri())) {
+                return new HttpResponse(FOUND, "text/html", "/index.html");
+            }
+            return new HttpResponse(OK, filePath);
         }
-        else {
-            return OK;
-        }
+
+        return new HttpResponse(NOT_FOUND);
     }
 }

@@ -1,18 +1,19 @@
 package model;
 
+import annotation.Column;
+
 public class User {
+    @Column
     private String userId;
+    @Column
     private String password;
+    @Column
     private String name;
+    @Column
     private String email;
 
-    public User(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+    private User() {
     }
-
 
     public String getUserId() {
         return userId;

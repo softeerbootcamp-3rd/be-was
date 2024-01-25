@@ -17,10 +17,11 @@ public enum MimeType {
     EOT(".eot", "font/eot"),
     WOFF2(".woff2", "font/woff2");
 
+
     private final String extension;
     private final String contentType;
 
-    private static final Map<String, String> MimeTypeBundle = Collections.unmodifiableMap(
+    private static final Map<String, String> mimeTypeBundle = Collections.unmodifiableMap(
             Stream.of(values()).collect(Collectors.toMap(MimeType::getExtension, MimeType::getContentType))
     );
 
@@ -38,6 +39,6 @@ public enum MimeType {
     }
 
     public static String getMimeType (String extension) {
-        return MimeTypeBundle.get(extension);
+        return mimeTypeBundle.get(extension);
     }
 }

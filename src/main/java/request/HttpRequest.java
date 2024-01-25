@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
+    //todo: 일급 컬렉션으로 변경
+    private String method;
+    private String uri;
+    private String httpVersion;
+    private final Map<String, String> requestHeaders = new HashMap<>();
+    private String requestBody;
 
-    private final String method;
-    private final String uri;
-    private final String httpVersion;
-    private final Map<String, String> headers = new HashMap<>();
     //헤더 정보 저장 & 테스트
     public HttpRequest(BufferedReader br) throws IOException {
         String readLine = br.readLine();
@@ -21,13 +23,12 @@ public class HttpRequest {
         this.uri = tokens[1];
         this.httpVersion = tokens[2];
 
-        //헤더 정보 저장
-        while (true) {
-            readLine = br.readLine();
-            if (readLine.isEmpty()) break;
+        //header 정보 저장
+        setRequestHeaders(readLine, br);
 
-            String[] headerTokens = readLine.split(": ");
-            headers.put(headerTokens[0], headerTokens[1]);
+        //body 정보 저장
+        if (requestHeaders.containsKey("Content-Length") && !requestHeaders.get("Content-Length").equals("0")) {
+            setRequestBody(br);
         }
     }
 
@@ -43,7 +44,29 @@ public class HttpRequest {
         return httpVersion;
     }
 
-    public String getRequestLine() {
-        return method + " " + uri + " " + httpVersion;
+    public String getRequestBody() {
+        return requestBody;
+    }
+
+    public void setRequestHeaders(String readLine, BufferedReader br) throws IOException {
+        for (readLine = br.readLine(); !readLine.isEmpty(); readLine = br.readLine()) {
+            String[] headerTokens = readLine.split(": ");
+            requestHeaders.put(headerTokens[0], headerTokens[1]);
+        }
+    }
+
+    public void setRequestBody(BufferedReader br) throws IOException {
+        int contentLength = Integer.parseInt(requestHeaders.get("Content-Length"));
+        char[] body = new char[contentLength];
+        br.read(body, 0, contentLength);
+
+        this.requestBody = String.valueOf(body);
+    }
+
+    public String getFilePath(String path) {
+        if (path.endsWith(".html")) {
+            return "src/main/resources/templates" + path;
+        }
+        return "src/main/resources/static" + path;
     }
 }

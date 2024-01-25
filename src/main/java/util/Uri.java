@@ -2,20 +2,20 @@ package util;
 
 public enum Uri {
     HOME("/"),
-    USER_FORM("/user/form"),
-    USER_LIST("/user/list"),
-    USER_LOGIN("/user/login"),
-    USER_LOGIN_FAILED("/user/login_failed"),
-    USER_PROFILE("/user/profile"),
+    HOME_INDEX("/index.html"),
+    USER_FORM("/user/form.html"),
+    USER_LIST("/user/list.html"),
+    USER_LOGIN("/user/login.html"),
+    USER_PROFILE("/user/profile.html"),
     USER_CREATE("/user/create");
 
-    private final String url;
+    private final String uri;
 
-    Uri(String url) {
-        this.url = url;
+    Uri(String uri) {
+        this.uri = uri;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUri() {
+        return uri;
     }
 }
