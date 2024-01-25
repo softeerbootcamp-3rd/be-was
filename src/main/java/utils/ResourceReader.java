@@ -10,7 +10,15 @@ public class ResourceReader {
     private static final String BASIC_PATH = "./src/main/resources/templates";
     private static final String STATIC_PATH = "./src/main/resources/static";
 
-    public static byte[] getFileContents(String path) throws IOException {
+    private static final ResourceReader instance = new ResourceReader();
+
+    private ResourceReader(){};
+
+    public static ResourceReader getInstance(){
+        return instance;
+    }
+
+    public byte[] getFileContents(String path) throws IOException {
         String fileExtension = getFileExtension(path);
         ContentType contentType = ContentType.toContentType(fileExtension);
 
@@ -28,12 +36,12 @@ public class ResourceReader {
         return null;
     }
 
-    public static String getFileExtension(String path){
+    public String getFileExtension(String path){
         int lastIndex = path.lastIndexOf(".");
         return (lastIndex != -1) ? path.substring(lastIndex + 1) : "";
     }
 
-    public static byte[] readAllBytes(File file) throws IOException {
+    public byte[] readAllBytes(File file) throws IOException {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);

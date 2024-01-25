@@ -20,10 +20,10 @@ public class StaticRoutingManager {
 
     public HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.getPath();
-        byte[] body = ResourceReader.getFileContents(path);
+        byte[] body = ResourceReader.getInstance().getFileContents(path);
 
         if (body != null) {
-            String fileExtension = ResourceReader.getFileExtension(path);
+            String fileExtension = ResourceReader.getInstance().getFileExtension(path);
             ContentType contentType = ContentType.toContentType(fileExtension);
 
             HttpResponse httpResponse = HttpResponseBuilder.getInstance().createSuccessResponse(HttpStatus.OK, body);
