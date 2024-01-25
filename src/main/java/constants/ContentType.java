@@ -1,4 +1,4 @@
-package utils;
+package constants;
 
 import java.util.Collections;
 import java.util.Map;
@@ -57,7 +57,7 @@ public enum ContentType {
             ContentType contentType = ContentType.valueOf(type);
             return contentType.getContentType();
         } catch (NullPointerException e) {
-            throw new NullPointerException();
+            throw new NullPointerException("no such content type.");
         }
     }
 }

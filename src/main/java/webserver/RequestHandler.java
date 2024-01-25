@@ -34,7 +34,8 @@ public class RequestHandler implements Runnable {
             String url = request.getUrl();
 
             Controller controller = getController(url);
-            Response response = controller.route(request);
+            Response response = new Response();
+            controller.route(request, response);
 
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes(HeaderBuilder.build(response));
@@ -49,6 +50,7 @@ public class RequestHandler implements Runnable {
 
     /**
      * 요청 url에 알맞는 컨트롤러를 반환합니다.
+     *
      * @param url 요청 url
      * @return url에 알맞는 컨트롤러
      */
