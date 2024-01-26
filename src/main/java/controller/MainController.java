@@ -69,7 +69,7 @@ public class MainController {
                         }
                         String string = stringBuilder.toString();
                         if(UserService.checkUserLogin(request))
-                            string = string.replaceAll("#이름", Session.findBySessionId(request.getCookie().get("sessionId")).getName());
+                            string = string.replaceAll("#이름", Session.findBySessionId(request.getCookie().get("sessionId")).getName()    );
                         body = string.getBytes();
                     }
                     else {
