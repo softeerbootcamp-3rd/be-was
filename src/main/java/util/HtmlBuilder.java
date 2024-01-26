@@ -1,7 +1,7 @@
 package util;
 
 import constant.HtmlTemplate;
-import db.Database;
+import db.UserDatabase;
 import model.User;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class HtmlBuilder {
         if (template == null)
             return "";
         StringBuilder sb = new StringBuilder();
-        List<User> userList = new ArrayList<>(Database.findAllUsers());
+        List<User> userList = new ArrayList<>(UserDatabase.findAll());
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
             sb.append(template.replace("{{order}}", String.valueOf(i + 1))

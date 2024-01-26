@@ -15,10 +15,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class RequestMapper {
@@ -43,8 +44,45 @@ public class RequestMapper {
         REQUEST_MAP = Map.copyOf(controllerMap);
     }
 
+
     public static Method getMethod(HttpRequest request) {
-        return REQUEST_MAP.get(request.getMethod() + " " + request.getPath());
+        for (Map.Entry<String, Method> entry : REQUEST_MAP.entrySet()) {
+            String mappedPath = entry.getKey();
+            String requestPath = request.getMethod() + " " + request.getPath();
+
+            Map<String, String> pathParams = getPathParams(mappedPath, requestPath);
+            if (pathParams != null) {
+                SharedData.pathParam.set(Map.copyOf(pathParams));
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private static Map<String, String> getPathParams(String mappedPath, String requestPath) {
+        // "GET /test/{id}" -> "GET /test/\\d+"
+        String regexPath = mappedPath.replaceAll("\\{[^/]+\\}", "\\\\d+");
+
+        Pattern pattern = Pattern.compile(regexPath);
+        Matcher matcher = pattern.matcher(requestPath);
+
+        if (matcher.matches())
+            return extractPathParams(mappedPath, matcher);
+        return null;
+    }
+    private static Map<String, String> extractPathParams(String mappedPath, Matcher matcher) {
+        Map<String, String> pathParams = new HashMap<>();
+
+        Pattern pathParamPattern = Pattern.compile("\\{(\\w+)}");
+        Matcher pathParamMatcher = pathParamPattern.matcher(mappedPath);
+
+        while (pathParamMatcher.find()) {
+            String paramName = pathParamMatcher.group(1);
+            String paramValue = matcher.group(paramName);
+            pathParams.put(paramName, paramValue);
+        }
+
+        return pathParams;
     }
 
     public static HttpResponse invoke(Method method) {

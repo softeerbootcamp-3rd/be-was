@@ -1,12 +1,11 @@
 package controller;
 
 import constant.HttpStatus;
-import db.Database;
+import db.UserDatabase;
 import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
 import org.junit.jupiter.api.Test;
-import util.ObjectMapper;
 import util.RequestParser;
 import util.SessionManager;
 import webserver.HttpResponse;
@@ -27,13 +26,13 @@ public class UserControllerTest {
         createUser(new UserCreateDto(userId, password, name, email));
 
         User expectedUser = new User("testUser", "testPassword", "TestName", "test@example.com");
-        assertEquals(expectedUser, Database.findUserById("testUser"));
+        assertEquals(expectedUser, UserDatabase.findUserById("testUser"));
     }
 
     @Test
     public void testLogin() {
         User user = new User("validUserId", "validPassword", "TestName", "test@example.com");
-        Database.addUser(user);
+        UserDatabase.addUser(user);
 
         LoginDto validLoginInfo = new LoginDto("validUserId", "validPassword");
         HttpResponse httpResponse = login(validLoginInfo);

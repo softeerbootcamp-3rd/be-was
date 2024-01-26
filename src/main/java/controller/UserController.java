@@ -5,7 +5,7 @@ import annotation.RequestBody;
 import annotation.RequestMapping;
 import constant.HttpHeader;
 import constant.HttpStatus;
-import db.Database;
+import db.UserDatabase;
 import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
@@ -21,7 +21,7 @@ public class UserController {
 
     @RequestMapping(method = "POST", path = "/user/create")
     public static HttpResponse createUser(@RequestBody UserCreateDto user) {
-        User existUser = Database.findUserById(user.getUserId());
+        User existUser = UserDatabase.findUserById(user.getUserId());
 
         if (existUser != null)
             return HttpResponse.builder()
@@ -29,7 +29,7 @@ public class UserController {
                     .body("The requested username is already in use.")
                     .build();
 
-        Database.addUser(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
+        UserDatabase.addUser(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
                 .addHeader(HttpHeader.LOCATION, "/index.html")
@@ -38,7 +38,7 @@ public class UserController {
 
     @RequestMapping(method = "POST", path = "/user/login")
     public static HttpResponse login(@RequestBody LoginDto loginInfo) {
-        User existUser = Database.findUserById(loginInfo.getUserId());
+        User existUser = UserDatabase.findUserById(loginInfo.getUserId());
         if (existUser == null || !existUser.getPassword().equals(loginInfo.getPassword()))
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
