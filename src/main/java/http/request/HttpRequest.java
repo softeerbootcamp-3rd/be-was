@@ -51,18 +51,6 @@ public class HttpRequest {
         }
     }
 
-    @Override
-    public String toString() {
-        return "\n======================HttpRequest======================" +
-                "\n요청 URI: " + requestLine.getUri() +
-                "\n요청 메서드: " + requestLine.getMethod() +
-                "\nHttp 버전: " + requestLine.getVersion() + "\n" +
-                "\n- General Header\n" + mapToString(generalHeader.getGeneralHeaders()) +
-                "\n- 기타 헤더\n" + mapToString(etcHeaders) +
-                (!params.isEmpty()? "\n- uri 쿼리 파라미터\n" + mapToString(params) : "") +
-                (!body.isEmpty()? "\n- 바디(페이로드)\n" + mapToString(body) : "");
-    }
-
     public String mapToString(Map<String, String> map) {
         StringBuilder sb = new StringBuilder();
         map.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
@@ -88,5 +76,17 @@ public class HttpRequest {
 
     public Map<String, String> getBody() {
         return body;
+    }
+
+    @Override
+    public String toString() {
+        return "\n======================HttpRequest======================" +
+                "\n요청 URI: " + requestLine.getUri() +
+                "\n요청 메서드: " + requestLine.getMethod() +
+                "\nHttp 버전: " + requestLine.getVersion() + "\n" +
+                "\n- General Header\n" + mapToString(generalHeader.getGeneralHeaders()) +
+                "\n- 기타 헤더\n" + mapToString(etcHeaders) +
+                (!params.isEmpty()? "\n- uri 쿼리 파라미터\n" + mapToString(params) : "") +
+                (!body.isEmpty()? "\n- 바디(페이로드)\n" + mapToString(body) : "");
     }
 }
