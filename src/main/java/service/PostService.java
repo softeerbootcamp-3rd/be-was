@@ -77,6 +77,25 @@ public class PostService {
 
     // 로그인 요청 처리
     public HTTPResponseDto login(HTTPRequestDto httpRequestDto) {
+        HTTPResponseDto httpResponseDto = checkLoginBadRequest(httpRequestDto);
+        if(httpResponseDto != null)
+            return httpResponseDto;
+
+        // body 파싱
+        HashMap<String, String> bodyMap = httpRequestDto.bodyParsing();
+        String userId = bodyMap.get("userId");
+        String password = bodyMap.get("password");
+
+        User user = Database.findUserById(userId);
+        // 로그인 실패 1 : 아이디에 해당하는 유저가 없을 경우 or 비밀번호가 틀렸을 경우
+        if(user == null || !user.getPassword().equals(password))
+            return HTTPResponseDto.create302Dto("/user/login_failed.html");
+        // 로그인 성공 -> 응답에 Set-Cookie 헤더 추가, index.html로 리다이렉트
+        return loginSuccess(httpRequestDto, userId);
+    }
+
+    // 로그인 요청이 bad request인지 판단
+    private HTTPResponseDto checkLoginBadRequest(HTTPRequestDto httpRequestDto) {
         // 1. request body가 null 일 경우
         if(httpRequestDto.getBody() == null)
             return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
@@ -94,21 +113,25 @@ public class PostService {
         if(userId.equals("") || password.equals(""))
             return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
 
-        User user = Database.findUserById(userId);
-        // 로그인 실패 1 : 아이디에 해당하는 유저가 없을 경우 or 비밀번호가 틀렸을 경우
-        if(user == null || !user.getPassword().equals(password)) {
-            HTTPResponseDto httpResponseDto = HTTPResponseDto.create302Dto("/user/login_failed.html");
-            return httpResponseDto;
-        }
-        // 로그인 성공 -> 응답에 Set-Cookie 헤더 추가, index.html로 리다이렉트
-        return loginSuccess(httpRequestDto, userId);
+        return null;        // 적절한 요청
     }
 
     // 로그인 성공 시 세션 및 응답 처리
     private HTTPResponseDto loginSuccess(HTTPRequestDto httpRequestDto, String userId) {
-        // 요청에 이미 세션이 있을 경우 기존 세션 아이디 가져오기
-        String sessionId = httpRequestDto.getSessionId();
+        // 로그인 정보 처리 후 세션 반환
+        Session session = sessionReturn(httpRequestDto.getSessionId(), userId);
 
+        // http response 생성
+        HTTPResponseDto httpResponseDto = HTTPResponseDto.create302Dto("/index.html");
+
+        // 쿠키는 여러 개일 수 있으므로 value에 전체 헤더를 저장
+        String setCookie = "sid=" + session.getId() + "; expires=" + session.getExpires() + "; Path=/; secure; HttpOnly\r\n";
+        httpResponseDto.addHeader("Set-Cookie", "Set-Cookie: " + setCookie);
+        return httpResponseDto;
+    }
+
+    // 로그인 요청 유저가 기존의 세션을 가지는지 여부에 따라 세션을 이용하여 유저 정보 업데이트 후 세션 반환
+    private Session sessionReturn(String sessionId, String userId) {
         Session session = null;
         boolean done = false;
         // 요청에 이미 세션이 있을 경우
@@ -132,12 +155,6 @@ public class PostService {
             Database.addSession(session);
             logger.debug("login success - new session created");
         }
-        // http response 생성
-        HTTPResponseDto httpResponseDto = HTTPResponseDto.create302Dto("/index.html");
-
-        // 쿠키는 여러 개일 수 있으므로 value에 전체 헤더를 저장
-        String setCookie = "sid=" + session.getId() + "; expires=" + session.getExpires() + "; Path=/; secure; HttpOnly\r\n";
-        httpResponseDto.addHeader("Set-Cookie", "Set-Cookie: " + setCookie);
-        return httpResponseDto;
+        return session;
     }
 }
