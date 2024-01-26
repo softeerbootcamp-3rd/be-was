@@ -1,5 +1,6 @@
 package common.validate;
 
+import common.InputValidator;
 import common.exception.EmptyFormException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ class InputValidateTest {
 
         //when, then
         assertDoesNotThrow(()
-                -> InputValidate.validateUserInfo(queryString));
+                -> InputValidator.validateUserInfo(queryString));
     }
 
     @Test
@@ -30,7 +31,7 @@ class InputValidateTest {
         String noEmailQueryString = "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=";
 
         //when, then
-        assertThatThrownBy(() -> InputValidate.validateUserInfo(noEmailQueryString))
+        assertThatThrownBy(() -> InputValidator.validateUserInfo(noEmailQueryString))
                 .isInstanceOf(EmptyFormException.class);
     }
 }

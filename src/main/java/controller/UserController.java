@@ -1,11 +1,11 @@
 package controller;
 
-import common.validate.InputValidate;
+import common.InputValidator;
 import dto.HttpResponse;
 import dto.LoginRequest;
 import model.User;
 
-import static common.binder.Binder.bindQueryStringToObject;
+import static common.Binder.bindQueryStringToObject;
 import static session.SessionManager.*;
 import static webserver.WebServerConfig.INDEX_FILE_PATH;
 import static webserver.WebServerConfig.userService;
@@ -13,7 +13,7 @@ import static webserver.WebServerConfig.userService;
 public class UserController {
 
     public HttpResponse create(String userInfo) throws Exception {
-        InputValidate.validateUserInfo(userInfo);
+        InputValidator.validateUserInfo(userInfo);
         User user = bindQueryStringToObject(userInfo, User.class);
         userService.create(user);
         return new HttpResponse().makeRedirect(INDEX_FILE_PATH);

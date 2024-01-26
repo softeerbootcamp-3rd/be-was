@@ -1,4 +1,4 @@
-package common.view;
+package common;
 
 import dto.HttpRequest;
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 
 import static webserver.RequestHandler.logger;
 
-public class OutputView {
+public class Logger {
 
     public static void printRequest(HttpRequest request) throws IllegalAccessException {
         for (Field field : request.getClass().getDeclaredFields()){

@@ -1,4 +1,4 @@
-package common.binder;
+package common;
 
 import common.util.Util;
 
