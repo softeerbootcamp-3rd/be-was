@@ -2,6 +2,7 @@ package webserver;
 
 import controller.Controller;
 import controller.HomeController;
+import controller.QnaController;
 import controller.UserController;
 import model.Response;
 import java.io.*;
@@ -17,6 +18,7 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final HomeController homeController = new HomeController();
     private static final UserController userController = new UserController();
+    private static final QnaController qnaController = new QnaController();
 
     private final Socket connection;
 
@@ -59,7 +61,7 @@ public class RequestHandler implements Runnable {
             return userController;
         }
         if (url.startsWith("/qna")) {
-            // todo : qna 컨트롤러, 서비스 개발
+            return qnaController;
         }
         return homeController;
     }
