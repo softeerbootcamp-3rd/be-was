@@ -15,11 +15,8 @@ public enum Status {
         this.msg = msg;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
+    @Override
+    public String toString() {
+        return code + " " + msg;
     }
 }

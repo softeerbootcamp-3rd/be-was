@@ -1,17 +1,10 @@
 package webserver;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.BufferedReader;
+import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
-import common.exception.LoginFailException;
 import dto.HttpRequest;
-import common.exception.DuplicateUserIdException;
-import common.exception.EmptyFormException;
 import dto.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,49 +26,35 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             HttpRequest request = new HttpRequest(br);
-            HttpResponse response = new HttpResponse(out, request); //TODO : response 다른 클래스에서 생성하기
+            HttpResponse response = new HttpResponse();
 
-            if (request.getMethod().equals("GET")) {
-                response.setStatus(OK);
-                response.setPath(request.getPath());
-            }
-            if (request.getMethod().equals("POST")) {
-                int contentLength = getContentLength(request);
-                String body = getRequestBody(br, contentLength);
-                if (request.getPath().equals("/user/create")) {
-                    try {
-                        userController.create(body);
-                        response.setStatus(REDIRECT);
-                        response.setPath(INDEX_FILE_PATH);
-                    } catch (EmptyFormException e) {
-                        logger.debug(e.getMessage());
-                        response.setStatus(BAD_REQUEST);
-                        response.setPath(USER_CREATE_FORM_FAIL_FILE_PATH);
+            String path = request.getPath();
+
+            try {
+                if (request.getMethod().equals("GET")) {
+                    response.makeBody(OK, path);
+                }
+                if (request.getMethod().equals("POST")) {
+                    int contentLength = getContentLength(request);
+                    String body = getRequestBody(br, contentLength);
+                    if (path.equals("/user/create")) {
+                        response = userController.create(body);
                     }
-                    catch (DuplicateUserIdException e) {
-                        logger.debug(e.getMessage());
-                        response.setStatus(CONFLICT);
-                        response.setPath(USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
+                    if (path.equals("/user/login")) {
+                        response = userController.login(body);
                     }
                 }
-                if (request.getPath().equals("/user/login")) {
-                    try {
-                        String sessionId = userController.login(body);
-                        response.setStatus(REDIRECT);
-                        response.setPath(INDEX_FILE_PATH);
-                        response.setHeader("Set-Cookie", "SID=" + sessionId);
-                    } catch (LoginFailException e) {
-                        logger.debug(e.getMessage());
-                        response.setStatus(REDIRECT);
-                        response.setPath(LOGIN_FAIL_FILE_PATH);
-                    }
-                }
+            } catch (Exception e) {
+                ExceptionHandler.process(e, response);
+                e.printStackTrace();
             }
-            response.send();
+
+            ResponseHandler.send(dos, response);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.debug(e.getMessage());
         }
     }
 

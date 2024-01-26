@@ -11,7 +11,7 @@ class ResponseTest {
 
     @Test
     @DisplayName("Path에서 MimeType을 추출한다")
-    void getMimeType() throws IOException {
+    void getMimeType() {
 
         //given
         String path = "/css/bootstrap.min.css";
