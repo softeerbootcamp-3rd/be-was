@@ -1,17 +1,13 @@
 package common.util;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import static webserver.RequestHandler.logger;
 
 public class FileManager {
 
     private static final String RESOURCES_PATH = "src/main/resources/";
 
-    public static byte[] getFile(String url, String contentType) throws IOException, FileNotFoundException {
+    public static byte[] getFile(String url, String contentType) throws IOException {
         String path = RESOURCES_PATH;
         if (contentType.equals("text/html")) {
             path += "templates";
@@ -19,12 +15,6 @@ public class FileManager {
             path += "static";
         }
         path += url;
-
-        File file = new File(path);
-        if (!file.exists()) {
-            logger.debug("-------------{}", "FileNotFoundException.class");
-            throw new FileNotFoundException();
-        }
         return fileToByte(path);
     }
 
