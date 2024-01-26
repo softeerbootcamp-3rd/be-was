@@ -7,8 +7,6 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import utils.Parser;
-import utils.SessionManager;
 
 import java.util.Map;
 
@@ -41,7 +39,7 @@ public class UserController {
         try {
             String sid = userService.join(body.get("userId"), body.get("password"));
             // 로그인에 성공할 경우 index.html로 리다이렉션 되며 쿠키 값에 sid값 추가
-            Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=" + sid + "; Max-Age=360; HttpOnly; Path=/");
+            Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=" + sid + "; Max-Age=3600; HttpOnly; Path=/");
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -49,18 +47,5 @@ public class UserController {
             Map<String, String> header = Map.of("Location", "/user/login_failed.html");
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
-    }
-
-    public static HttpResponse manageSession(HttpRequest request) {
-        // 세션 아이디 파싱
-        String cookie = request.getEtcHeaders().getOrDefault("Cookie", "");
-        String sid = "";
-        if (!cookie.isEmpty()) {
-            sid = Parser.extractSid(cookie);
-        }
-        logger.info("sid : {}", sid);
-        User user = SessionManager.findUserBySessionId(sid);
-
-        return null;
     }
 }
