@@ -79,9 +79,10 @@ public class HttpResponse {
         if (response.getBody().getClass().getName().equals("java.lang.String")) {
             String body = (String) response.getBody();
             return body.getBytes();
-        } else {
+        } else if (response.getBody().getClass().getName().equals("java.io.File")){
             return ResourceManager.readAllBytes((File)response.getBody());
         }
+        return null;
     }
 
 }
