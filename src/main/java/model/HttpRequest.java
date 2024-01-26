@@ -26,8 +26,8 @@ public class HttpRequest {
     public static HttpRequest from(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String line = br.readLine();
-
         String[] startLine = line.split(PATH_DELIMITER);
+
         String method = startLine[HTTP_METHOD_POS];
         URI uri = URI.create(startLine[PATH_POS]);
 
@@ -49,8 +49,11 @@ public class HttpRequest {
     }
 
     public String getSessionId(){
-        String value = headers.get(COOKIE);
-        return value.split(SID_DELIMITER)[SID_POS];
+        String cookieHeader = headers.get(COOKIE);
+        if(cookieHeader == null){
+            return null;
+        }
+        return cookieHeader.split(SID_DELIMITER)[SID_POS];
     }
 
     public URI getUri() {
