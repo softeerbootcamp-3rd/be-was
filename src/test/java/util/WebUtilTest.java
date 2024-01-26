@@ -100,4 +100,17 @@ public class WebUtilTest {
         Assertions.assertThat(parsedBody.get("name")).isEqualTo("suji");
         Assertions.assertThat(parsedBody.get("email")).isEqualTo("example@softeer.com");
     }
+
+    @Test
+    @DisplayName("parseCookie(): 헤더의 쿠키 값을 파싱하여 Map 형태로 반환한다.")
+    public void parseCookieTest() {
+        // given
+        String cookie = "Idea-69015365=809ed775-1433-48aa-bb94-f81d467909f8; sid=88ef7daf-c0ef-4723-8b96-04de53f5aab3";
+
+        // when
+        Map<String, String> parsedCookie = WebUtil.parseCookie(cookie);
+
+        // then
+        Assertions.assertThat(parsedCookie.get("sid")).isEqualTo("88ef7daf-c0ef-4723-8b96-04de53f5aab3");
+    }
 }
