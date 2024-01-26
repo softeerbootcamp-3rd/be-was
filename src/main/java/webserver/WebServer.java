@@ -25,7 +25,7 @@ public class WebServer {
             ExecutorService threadPool = Executors.newFixedThreadPool(10);
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                threadPool.submit(new RequestHandler(connection));
+                threadPool.submit(new HttpHandler(connection));
             }
             threadPool.shutdown();
         }

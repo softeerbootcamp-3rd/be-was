@@ -15,6 +15,8 @@ public class Response {
     public void setStatusCode(String statusCode) {this.statusCode = statusCode;}
     public void setBody(byte[] body) {this.body = body;}
     public void setMimeType(String mimeType) {this.mimeType = mimeType;}
+    public void setRedirectUrl(String redirectUrl) {this.redirectUrl = redirectUrl;}
+    public void setCookie(String cookie) {this.cookie = cookie;}
 
     public Response() {}
     public Response(String statusCode, byte[] body) {
