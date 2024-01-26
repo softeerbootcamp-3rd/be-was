@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ModelAndView {
     private String viewName;
-    private Map<String, String> model = new HashMap<>();
+    private Model model = new Model();
 
     public ModelAndView(String viewName) {
         this.viewName = viewName;
@@ -15,11 +15,11 @@ public class ModelAndView {
         return viewName;
     }
 
-    public Map<String, String> getModel() {
+    public Model getModel() {
         return model;
     }
 
-    public void setModel(Map<String, String> model) {
+    public void setModel(Model model) {
         this.model = model;
     }
 }
