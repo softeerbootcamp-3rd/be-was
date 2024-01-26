@@ -17,7 +17,7 @@ public class Database {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
+    public static Collection<User> findAllUsers() {
         return users.values();
     }
 }

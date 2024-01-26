@@ -14,6 +14,7 @@ public enum MimeType {
     TTF("ttf", "font/ttf"),
     WOFF("woff", "font/woff"),
     WOFF2("woff2", "woff2"),
+    TEXT("txt", "text/plain"),
     OCTET_STREAM("", "application/octet-stream");
 
     private final String extension;

@@ -19,7 +19,7 @@ public class ViewController {
 
     @RequestMapping(method = "GET", path = "/user/list")
     public static HttpResponse userList(HttpRequest request) throws IOException {
-        if (SharedData.requestUser == null)
+        if (SharedData.requestUser.get() == null)
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .addHeader(HttpHeader.LOCATION, "/index.html")

@@ -48,7 +48,7 @@ public class HtmlBuilder {
         if (template == null)
             return "";
         StringBuilder sb = new StringBuilder();
-        List<User> userList = new ArrayList<>(Database.findAll());
+        List<User> userList = new ArrayList<>(Database.findAllUsers());
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
             sb.append(template.replace("{{order}}", String.valueOf(i + 1))

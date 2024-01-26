@@ -54,7 +54,7 @@ public class RequestHandler implements Runnable {
             } catch (ResourceNotFoundException e) {
                 response = HttpResponse.builder()
                         .status(HttpStatus.NOT_FOUND)
-                        .addHeader(HttpHeader.CONTENT_TYPE, "text/plain")
+                        .addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.getMimeType())
                         .body(HttpStatus.NOT_FOUND.getFullMessage())
                         .build();
 
