@@ -13,6 +13,9 @@ public class ResourceManager {
 
     private static final Map<String, String> CONTENT_TYPE_MAP = new HashMap<>();
     private static final String DEFAULT_PATH = "src/main/resources";
+    private static final String LOGOUT_BUTTON = "logoutButton";
+    private static final String LOGIN_BUTTON = "loginButton";
+    private static final String SIGNUP_BUTTON = "signUpButton";
 
     static {
         CONTENT_TYPE_MAP.put("html", "text/html");
@@ -68,9 +71,17 @@ public class ResourceManager {
                 String userId = (String) SessionManager.getAttribute(SID, "user");
                 // 사용자 이름 표시
                 html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
+
                 header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(html.getBytes().length)));
                 return new ResponseEntity<>(HttpStatus.OK, header, html);
             }
+        } else if (path.endsWith(".html") && request.getCookie() == null) {
+            String html = new String(readAllBytes(file));
+            // 로그아웃 버튼 숨김
+            html = changeHTMLButtonStatus(html, LOGOUT_BUTTON, true);
+
+            header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(html.getBytes().length)));
+            return new ResponseEntity<>(HttpStatus.OK, header, html);
         }
 
         header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(file.length())));
@@ -92,6 +103,18 @@ public class ResourceManager {
         String changed = "<a id=\"userNameButton\" style=\"display: block;\">" + userName + " 님" + "</a>";
         return original.replace("<a id=\"userNameButton\" style=\"display: none;\"></a>",
                 changed);
+    }
+
+    public static String changeHTMLButtonStatus(String original, String buttonId, boolean hide) {
+        String originalStyle = "none";
+        String changedStyle = "block";
+        if (hide) {
+            originalStyle = "block";
+            changedStyle = "none";
+        }
+        String target = "id=\"" + buttonId + "\" style=\"display: " + originalStyle + ";\"";
+        String changed = "id=\"" + buttonId + "\" style=\"display: " + changedStyle + ";\"";
+        return original.replace(target, changed);
     }
 
 
