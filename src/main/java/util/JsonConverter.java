@@ -12,7 +12,7 @@ public class JsonConverter {
 
         // 객체의 각 필드를 처리
         if (object == null) {
-            return null;
+            return "";
         }
 
         Class<?> clazz = object.getClass();
