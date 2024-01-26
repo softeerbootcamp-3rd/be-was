@@ -34,14 +34,4 @@ public class ViewController {
                 .body(HtmlBuilder.process(fileContent))
                 .build();
     }
-
-    @RequestMapping(method = "GET", path = "/qna/show")
-    public static HttpResponse showQna(@RequestParam(value = "qnaId", required = true) Long qnaId) throws IOException {
-        byte[] fileContent = ResourceLoader.getFileContent("/qna/form.html");
-        return HttpResponse.builder()
-                .status(HttpStatus.OK)
-                .addHeader(HttpHeader.CONTENT_TYPE, MimeType.HTML.getMimeType())
-                .body(HtmlBuilder.process(fileContent))
-                .build();
-    }
 }

@@ -42,7 +42,7 @@ public enum HtmlTemplate {
             "                  <div class=\"wrap\">\n" +
             "                      <div class=\"main\">\n" +
             "                          <strong class=\"subject\">\n" +
-            "                              <a href=\"./qna/show?qnaId=<!--qna-id-->.html\"><!--title--></a>\n" +
+            "                              <a href=\"./qna/show.html?qnaId=<!--qna-id-->\"><!--title--></a>\n" +
             "                          </strong>\n" +
             "                          <div class=\"auth-info\">\n" +
             "                              <i class=\"icon-add-comment\"></i>\n" +
