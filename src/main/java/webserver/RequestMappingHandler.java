@@ -45,6 +45,11 @@ public class RequestMappingHandler {
         if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")) {
             response = invokeMethod(method, request);
         } else {
+
+            for (String s : request.getParams().keySet()) {
+                System.out.println(s + ", " + request.getParams().get(s));
+            }
+
             response = invokeMethod(method, createParams(method, request.getParams()));
         }
 
@@ -113,6 +118,11 @@ public class RequestMappingHandler {
 
                 String paramName = annotation.name();
                 Class<?> paramType = parameter.getType();
+
+                if (originParams.get(paramName) == null) {
+                    params[index++] = null;
+                    continue;
+                }
 
                 // 각 타입에 맞게 변환 처리
                 if (paramType == String.class) {

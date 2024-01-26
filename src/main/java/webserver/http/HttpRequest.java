@@ -40,15 +40,18 @@ public class HttpRequest {
         while ((line = br.readLine()) != null && !line.isEmpty()) {
             String[] headerParts = line.split(":");
             String headerName = headerParts[0];
-            String headerValue = headerParts[1];
-            if (headerName.startsWith(" "))
-                headerName = headerName.substring(1);
+            String headerValue;
+            if (headerParts[1].startsWith(" "))
+                headerValue = headerParts[1].substring(1);
+            else {
+                headerValue = headerParts[1];
+            }
             headers.computeIfAbsent(headerName, key -> {
                 return List.of(headerValue);
             });
         }
-        this.requestHeader = new HttpHeader(headers);
 
+        this.requestHeader = new HttpHeader(headers);
         this.params = StringParser.parseQueryString(requestLineParts[1]);
 
         if (requestHeader.getContentLength() != null) {
@@ -58,7 +61,7 @@ public class HttpRequest {
             if ((br.read(bodyArr, 0, bodySize)) != -1) {
                 bodyStr = new String(bodyArr, 0, bodySize);
             }
-            Map<String, String> bodyMap = StringParser.parseKeyVaue(bodyStr);
+            Map<String, String> bodyMap = StringParser.parseKeyValue(bodyStr);
             this.body = bodyMap;
         }
     }

@@ -17,13 +17,13 @@ public class StringParser {
         String[] uri = query.split("\\?");
         Map<String, String> paramsMap = new HashMap<>();
         if (uri.length > 1) {
-            paramsMap = StringParser.parseKeyVaue(uri[1]);
+            paramsMap = StringParser.parseKeyValue(uri[1]);
         }
 
         return paramsMap;
     }
 
-    public static Map<String, String> parseKeyVaue(String query) throws UnsupportedEncodingException {
+    public static Map<String, String> parseKeyValue(String query) throws UnsupportedEncodingException {
         Map<String, String> parseMap = new HashMap<>();
         for (String set: query.split("&")) {
             String[] keyValue = set.split("=");

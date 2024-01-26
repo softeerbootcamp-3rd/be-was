@@ -23,10 +23,18 @@ public class UserController {
                                   @RequestParam(name = "name") String name,
                                   @RequestParam(name = "email") String email) {
 
+        Map<String, List<String>> headerMap = new HashMap<>();
+        if (!validateInput(userId, password, name, email)) {
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
+            return new ResponseEntity<>(
+                    HttpStatus.FOUND,
+                    headerMap
+            );
+        }
+
         User user = new User(userId, password, name, email);
         Database.addUser(user);
 
-        Map<String, List<String>> headerMap = new HashMap<>();
         headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
 
         return new ResponseEntity<>(
@@ -85,6 +93,14 @@ public class UserController {
                 HttpStatus.OK,
                 headerMap
         );
+    }
+
+    private static boolean validateInput(Object... objects) {
+        for (Object o : objects) {
+            if (o == null)
+                return false;
+        }
+        return true;
     }
 
 }
