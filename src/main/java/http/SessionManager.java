@@ -1,11 +1,10 @@
 package http;
 
-import org.checkerframework.checker.units.qual.C;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
@@ -28,8 +27,20 @@ public class SessionManager {
         response.addCookie(new Cookie("Path","/"));
     }
 
-    public static Object getSession(Request request) {
-        Cookie sessionCookie = findCookie(request, SESSION_COOKIE_NAME);
+    public static List<User> getLoginedUsers() {
+        List<User> userList = new ArrayList<>();
+
+        for (Object value : sessionStore.values()) {
+            if (value instanceof User) {
+                userList.add((User) value);
+            }
+        }
+        logger.debug("userList = {}",userList);
+        return userList;
+    }
+
+    public static Object getSession(Request request, String cookieName) {
+        Cookie sessionCookie = findCookie(request, cookieName);
         if (sessionCookie == null) {
             return null;
         }
