@@ -31,7 +31,8 @@ public class RequestParser {
 
         while ((line = br.readLine()) != null && !line.equals("")) {
             String[] keyAndValue = line.split(": ");
-            requestDto.addHeader(keyAndValue[0], keyAndValue[1]);
+             if (keyAndValue.length == 2)
+                 requestDto.addHeader(keyAndValue[0], keyAndValue[1]);
         }
 
         readCookie(requestDto);
@@ -75,7 +76,8 @@ public class RequestParser {
 
         for (String s : str.split("&")) {
             String[] keyAndValue = s.split("=");
-            result.put(keyAndValue[0], keyAndValue[1]);
+            if (keyAndValue.length == 2)
+                result.put(keyAndValue[0], keyAndValue[1]);
         }
         return result;
     }
