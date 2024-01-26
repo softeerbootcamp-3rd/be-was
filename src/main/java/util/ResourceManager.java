@@ -15,7 +15,7 @@ public class ResourceManager {
     private static final String DEFAULT_PATH = "src/main/resources";
     private static final String LOGOUT_BUTTON = "logoutButton";
     private static final String LOGIN_BUTTON = "loginButton";
-    private static final String SIGNUP_BUTTON = "signUpButton";
+    private static final String SIGNUP_BUTTON = "singUpButton";
 
     static {
         CONTENT_TYPE_MAP.put("html", "text/html");
@@ -70,7 +70,8 @@ public class ResourceManager {
                 String html = new String(readAllBytes(file));
                 String userId = (String) SessionManager.getAttribute(SID, "user");
                 // 사용자 이름 표시
-                html = changeHTMLButtonStatus(html, LOGOUT_BUTTON, false);
+                html = changeHTMLButtonStatus(html, SIGNUP_BUTTON, true);
+                html = changeHTMLButtonStatus(html, LOGIN_BUTTON, true);
                 html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
                 header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(html.getBytes().length)));
                 return new ResponseEntity<>(HttpStatus.OK, header, html);
