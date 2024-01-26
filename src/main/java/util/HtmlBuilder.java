@@ -1,6 +1,6 @@
 package util;
 
-import constant.HtmlContent;
+import constant.HtmlTemplate;
 import db.Database;
 import model.User;
 import webserver.HttpRequest;
@@ -8,31 +8,38 @@ import webserver.HttpRequest;
 public class HtmlBuilder {
 
     public static byte[] process(HttpRequest request, byte[] fileContent) {
+        String result = new String(fileContent);
+
         if (SessionManager.isLoggedIn(request)) {
             User user = SessionManager.getLoggedInUser(request);
-            return new String(fileContent).replace("{{user-name}}", buildUserName(user))
-                    .replace("{{login-btn}}", "")
-                    .replace("{{signup-btn}}", "")
-                    .replace("{{logout-btn}}", HtmlContent.LOGOUT_BTN.getValue())
-                    .replace("{{user-list}}", buildUserList())
-                    .getBytes();
+
+            for (HtmlTemplate template : HtmlTemplate.values()) {
+                result = result.replace(template.getOriginalValue(),
+                        template.getLoggedInFunction().apply(template.getTemplate(), user));
+            }
+            return result.getBytes();
         }
 
-        return new String(fileContent).replace("{{user-name}}", "")
-                .replace("{{login-btn}}", HtmlContent.LOGIN_BTN.getValue())
-                .replace("{{signup-btn}}", HtmlContent.SIGNUP_BTN.getValue())
-                .replace("{{logout-btn}}", "")
-                .replace("{{user-list}}", "")
-                .getBytes();
+        for (HtmlTemplate template : HtmlTemplate.values()) {
+            result = result.replace(template.getOriginalValue(),
+                    template.getLoggedOutFunction().apply(template.getTemplate(), User.empty()));
+        }
+        return result.getBytes();
     }
 
-    private static String buildUserName(User user) {
-        String template = HtmlContent.USER_NAME.getValue();
-        return template.replace("{{user-name}}", user.getName());
+    public static String empty(String unusedString, User unusedUser) {
+        return "";
     }
 
-    private static String buildUserList() {
-        String template = HtmlContent.USER_LIST.getValue();
+    public static String replaceOne(String template, User loggedInUser) {
+        if (template == null)
+            return "";
+        return template.replace("{{user-name}}", loggedInUser.getName());
+    }
+
+    public static String replaceList(String template, User unusedUser) {
+        if (template == null)
+            return "";
         StringBuilder sb = new StringBuilder();
         for (User user : Database.findAll()) {
             sb.append(template.replace("{{user-id}}", user.getUserId())
