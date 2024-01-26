@@ -11,11 +11,11 @@ public class UserListController implements Controller {
         httpResponse.setStatusCode(statusCode);
 
         if (!httpRequest.getCookie().isEmpty()) {
-            httpResponse.setPath("/user/list.html");
+            httpResponse.setRedirectionPath("/user/list.html");
         }
 
         else{
-            httpResponse.setPath("/user/login.html");
+            httpResponse.setRedirectionPath("/user/login.html");
         }
     }
 }

@@ -1,47 +1,39 @@
 package controller;
 
 import httpmessage.ContentType;
+import httpmessage.HttpStatusCode;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
-import httpmessage.response.ResponsePasing;
+import httpmessage.response.FilePathContent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class HomeController implements Controller {
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        ResponsePasing responsePasing = new ResponsePasing();
+        FilePathContent filePathContent = new FilePathContent();
 
-        String path =  httpRequest.getPath();
-        String url = responsePasing.getUrl(path);
-        String contentType = ContentType.getContentType(path);
+        String filePath =  filePathContent.getFilePath(httpRequest.getPath());
+        String contentType = ContentType.getContentType(httpRequest.getPath());
         String statusLine;
         int statusCode;
         byte[] body;
 
-        if (url.contains("404")) {
-            statusCode = 404;
-            String errorPageContent = "<html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1></body></html>";
-            statusLine = responsePasing.getSatusCode(statusCode);
-            body = errorPageContent.getBytes("UTF-8");
+        statusCode = 200;
+        statusLine = HttpStatusCode.findBy(statusCode);
+
+        FileInputStream fis = new FileInputStream(filePath);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+
+        while ((bytesRead = fis.read(buffer)) != -1) {
+            bos.write(buffer, 0, bytesRead);
         }
-        else {
-            statusCode = 200;
-            statusLine = responsePasing.getSatusCode(statusCode);
-            FileInputStream fis = new FileInputStream(url);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, bytesRead);
-            }
-            body = bos.toByteArray();
-        }
-
+        body = bos.toByteArray();
         httpResponse.setHttpResponse(body,contentType,statusCode,statusLine);
-
     }
 }

@@ -5,7 +5,7 @@ public class HttpResponse {
     Integer statusCode;
     String statusLine;
     String contentType;
-    String redirectPath;
+    String redirectionPath;
     String sid = null;
     String expireDate;
 
@@ -24,8 +24,8 @@ public class HttpResponse {
         this.sid = sid;
     }
 
-    public void setPath(String path) {
-        this.redirectPath = path;
+    public void setRedirectionPath(String path) {
+        this.redirectionPath = path;
     }
 
     public void setBody(byte[] body) {
@@ -60,7 +60,7 @@ public class HttpResponse {
         return statusLine;
     }
 
-    public String getPath() { return this.redirectPath; }
+    public String getPath() { return this.redirectionPath; }
 
     public String getSid() {
         return this.sid;

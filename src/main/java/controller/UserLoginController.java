@@ -5,9 +5,6 @@ import httpmessage.HttpSession;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 import java.io.IOException;
 
@@ -24,10 +21,10 @@ public class UserLoginController implements Controller {
             HttpSession session = new HttpSession(user);
             httpResponse.setSid(session.getId());
             httpResponse.setExpireDate(session.getExpireDate());
-            httpResponse.setPath("/index.html");
+            httpResponse.setRedirectionPath("/index.html");
         } else {
             // 로그인 실패
-            httpResponse.setPath("/user/login_failed.html");
+            httpResponse.setRedirectionPath("/user/login_failed.html");
         }
     }
 }

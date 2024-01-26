@@ -47,7 +47,7 @@ public class UserCreateController implements Controller {
 
     public void makeHttpResponse(HttpResponse httpResponse){
         int statusCode = 302;
-        httpResponse.setPath(this.path);
+        httpResponse.setRedirectionPath(this.path);
         httpResponse.setStatusCode(statusCode);
 
     }
