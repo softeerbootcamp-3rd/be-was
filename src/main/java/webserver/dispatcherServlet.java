@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,18 +12,15 @@ import annotation.Controller;
 import annotation.RequestMapping;
 import controller.BasicController;
 import controller.RequestController;
-import http.Cookie;
 import http.Request;
 import http.Response;
-import http.SessionManager;
+import interceptor.Intercepter;
 import utils.ClassScanner;
 import webserver.adaptor.HandlerAdapter;
 import webserver.adaptor.RequestHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.view.InternalResourceView;
-import webserver.view.RedirectView;
-import webserver.view.View;
+import webserver.view.*;
 
 public class dispatcherServlet implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(dispatcherServlet.class);
@@ -64,15 +60,21 @@ public class dispatcherServlet implements Runnable {
             RequestController handler = getHandler(req);
             if (handler == null) {
                 String filePath = ViewResolver.getAbsolutePath(req.getUrl());
-                View view = new InternalResourceView(filePath);
-                view.render(req,res);
+                InternalResourceView view = new InternalResourceView(filePath);
+                view.render(req,res,null);
                 return;
             }
+
+
             HandlerAdapter adapter = getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(req, res, handler);
+
             View view = ViewResolver.resolve(mv.getViewName());
-            view.render(req, res);
-        } catch (Exception e) {
+            logger.debug("view = {}",view);
+            view.render(req, res, mv.getModel());
+
+        }
+        catch (Exception e) {
             logger.error("e.getMessage() = {}",e.getMessage());
             e.printStackTrace();
         }
