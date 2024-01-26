@@ -6,9 +6,10 @@ import http.Request;
 import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import webserver.Model;
+
+import java.io.*;
+import java.util.Base64;
 
 public class InternalResourceView implements View{
     private static final Logger logger = LoggerFactory.getLogger(InternalResourceView.class);
@@ -16,6 +17,7 @@ public class InternalResourceView implements View{
     public InternalResourceView(String viewPath) {
         this.viewPath = viewPath;
     }
+
     @Override
     public String getContentType() {
         int dotIndex = viewPath.lastIndexOf(".");
@@ -25,10 +27,11 @@ public class InternalResourceView implements View{
         }
         return null;
     }
+
     @Override
-    public void render(Request request, Response response){
+    public void render(Request request, Response response, Model model){
         try {
-            forward(request, response, viewPath);
+            forward(request, response);
         } catch (IOException e){
             return;
         }
@@ -38,18 +41,33 @@ public class InternalResourceView implements View{
         return viewPath;
     }
 
-    private void forward(Request request, Response response, String viewPath) throws IOException {
+    private void forward(Request request, Response response) throws IOException {
         File file = new File(viewPath);
         byte[] body;
         if (file.exists() && file.isFile()) {
-            body = Files.readAllBytes(file.toPath());
+            String fileContent = Base64.getEncoder().encodeToString(readAllBytes(file));
+
+            body = Base64.getDecoder().decode(fileContent);
             response.setStatus(HttpStatus.OK);
         }
         else{
-            body = Files.readAllBytes(new File("/not-found.html").toPath());
+            body = readAllBytes(new File("/not-found.html"));
             response.setStatus(HttpStatus.NOT_FOUND);
         }
         response.send(body,request);
     }
 
+    public static byte[] readAllBytes(File file) throws IOException {
+        try (InputStream inputStream = new FileInputStream(file);
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            return outputStream.toByteArray();
+        }
+    }
 }
