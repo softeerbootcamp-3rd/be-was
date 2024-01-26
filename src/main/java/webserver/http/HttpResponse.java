@@ -76,7 +76,7 @@ public class HttpResponse {
     }
 
     private static byte[] getResponseBodyBytes(ResponseEntity response) throws IOException {
-        if (response.getHeaders().getContentType().equals("application/json")) {
+        if (response.getBody().getClass().getName().equals("java.lang.String")) {
             String body = (String) response.getBody();
             return body.getBytes();
         } else {
