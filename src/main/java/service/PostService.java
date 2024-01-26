@@ -21,9 +21,8 @@ public class PostService {
     public HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
         HTTPResponseDto httpResponseDto = checkSignupBadRequest(httpRequestDto);
 
-        if(httpRequestDto != null)      // 400 Bad Request일 경우
+        if(httpResponseDto != null)      // 400 Bad Request일 경우
             return httpResponseDto;
-
         // 회원가입 정보 파싱
         HashMap<String, String> userInfo = httpRequestDto.bodyParsing();
 
@@ -52,12 +51,10 @@ public class PostService {
     private HTTPResponseDto checkSignupBadRequest(HTTPRequestDto httpRequestDto) {
         if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getBody() == null)
             return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
-
         String body = httpRequestDto.getBody();
         if(!body.contains("userId") || !body.contains("password")
                 || !body.contains("name") || !body.contains("email"))
             return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
-
         return null;
     }
 
@@ -71,7 +68,6 @@ public class PostService {
         // 중복 아이디 처리
         if(Database.findUserById(user.getUserId()) != null)
             return HTTPResponseDto.createResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
-
         return null;
     }
 
