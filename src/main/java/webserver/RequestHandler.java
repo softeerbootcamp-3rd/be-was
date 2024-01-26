@@ -28,6 +28,7 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             execute(in, dos);
+            out.close();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -53,7 +54,6 @@ public class RequestHandler implements Runnable {
 
             ResponseEntity response = RequestMappingHandler.handleRequest(httpRequest);
             HttpResponse.send(dos, response);
-
         } catch (IndexOutOfBoundsException e) {
             HttpResponse.send(dos, new ResponseEntity(HttpStatus.BAD_REQUEST));
         } catch (Exception e) {

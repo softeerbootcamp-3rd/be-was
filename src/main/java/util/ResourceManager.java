@@ -1,5 +1,6 @@
 package util;
 
+import db.Database;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.HttpHeader;
@@ -12,10 +13,6 @@ public class ResourceManager {
 
     private static final Map<String, String> CONTENT_TYPE_MAP = new HashMap<>();
     private static final String DEFAULT_PATH = "src/main/resources";
-
-    private static final String USER_NAME_CLASS = "userNameClass";
-    private static final String LOGIN_BUTTON = "loginButton";
-    private static final String LOGOUT_BUTTON = "logoutButton";
 
     static {
         CONTENT_TYPE_MAP.put("html", "text/html");
@@ -62,6 +59,20 @@ public class ResourceManager {
 
         Map<String, List<String>> header = new HashMap<>();
         header.put(HttpHeader.CONTENT_TYPE, Collections.singletonList(contentType));
+
+        // 동적 HTML : 로그인 상태
+        if (path.endsWith(".html") && request.getCookie() != null) {
+            String SID = StringParser.getCookieValue(request.getCookie(), "SID");
+            if (SessionManager.isValidateSession(SID)) {
+                String html = new String(readAllBytes(file));
+                String userId = (String) SessionManager.getAttribute(SID, "user");
+                // 사용자 이름 표시
+                html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
+                header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(html.getBytes().length)));
+                return new ResponseEntity<>(HttpStatus.OK, header, html);
+            }
+        }
+
         header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(file.length())));
         return new ResponseEntity<>(HttpStatus.OK, header, file);
     }
@@ -76,5 +87,12 @@ public class ResourceManager {
 
         return byteArray;
     }
+
+    public static String changeHTMLIncludeUserName(String original, String userName) {
+        String changed = "<a id=\"userNameButton\" style=\"display: block;\">" + userName + " 님" + "</a>";
+        return original.replace("<a id=\"userNameButton\" style=\"display: none;\"></a>",
+                changed);
+    }
+
 
 }
