@@ -31,17 +31,21 @@ public class Request {
         for(String field : fields){
             String[] data = field.split("=");
             String key = field.split("=")[0];
-            String value;
-            if(data.length==2) {
-                value = field.split("=")[1];
-            }
-            else {
-                value = "";
-            }
+            String value = (data.length == 2) ? decodeValue(data[1]) : "";
+
             this.body.put(key, value);
         }
     }
 
+    private String decodeValue(String value) {
+        try {
+            return URLDecoder.decode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // UTF-8 인코딩이 지원되지 않을 경우의 예외 처리
+            e.printStackTrace();
+            return value;
+        }
+    }
     //생성자
     public Request(InputStream inputStream) throws IOException {
         BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
