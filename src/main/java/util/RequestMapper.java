@@ -15,6 +15,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +23,11 @@ import java.util.stream.IntStream;
 
 public class RequestMapper {
     private static final Logger logger = LoggerFactory.getLogger(RequestMapper.class);
-    public static final Map<String, Method> REQUEST_MAP = new HashMap<>();
+    public static final Map<String, Method> REQUEST_MAP;
 
     static {
         List<Class<?>> controllers = ClassScanner.scanControllers("controller");
+        Map<String, Method> controllerMap = new HashMap<>();
 
         Class<? extends Annotation> requestMapping = RequestMapping.class;
         for (Class<?> c : controllers) {
@@ -34,10 +36,11 @@ public class RequestMapper {
             for (Method method : methods) {
                 if (method.isAnnotationPresent(requestMapping)) {
                     RequestMapping requestInfo = (RequestMapping) method.getAnnotation(requestMapping);
-                    REQUEST_MAP.put(requestInfo.method() + " " + requestInfo.path(), method);
+                    controllerMap.put(requestInfo.method() + " " + requestInfo.path(), method);
                 }
             }
         }
+        REQUEST_MAP = Map.copyOf(controllerMap);
     }
 
     public static Method getMethod(HttpRequest request) {
