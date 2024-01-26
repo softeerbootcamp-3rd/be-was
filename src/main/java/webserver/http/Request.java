@@ -1,5 +1,7 @@
 package webserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.RequestBodyParse.RequestBodyParser;
 
 import java.io.BufferedReader;
@@ -12,6 +14,7 @@ import static webserver.http.HttpMethod.convertHttpMethodType;
 import static webserver.http.Mime.convertMime;
 
 public class Request {
+    private static final Logger logger = LoggerFactory.getLogger(Request.class);
 
     private HttpMethod httpMethod;
     private String requestTarget;
@@ -82,20 +85,20 @@ public class Request {
 
     public void print()
     {
-        System.out.println("*******************************************");
-        System.out.println("httpMethod : " + this.httpMethod);
-        System.out.println("requestTarget : " + this.requestTarget);
-        System.out.println("httpVersion : " + this.httpVersion);
-        System.out.println("httpVersionNum : " + this.httpVersionNum);
-        System.out.println("mime : " + this.responseMimeType.getMimeType());
-        System.out.println("[ requestHeader ]");
+        logger.debug("*******************************************");
+        logger.debug("httpMethod : {}", this.httpMethod);
+        logger.debug("requestTarget : {}", this.requestTarget);
+        logger.debug("httpVersion : {}", this.httpVersion);
+        logger.debug("httpVersionNum : {}", this.httpVersionNum);
+        logger.debug("mime : {}", this.responseMimeType.getMimeType());
+        logger.debug("[ requestHeader ]");
         for (Map.Entry<String, String> entry : requestHeader.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
+            logger.debug("{} : {}", entry.getKey() ,entry.getValue());
         }
-        System.out.println("[ requestBody ]");
+        logger.debug("[ requestBody ]");
         if(!requestBody.isEmpty()){
             for (Map.Entry<String, String> entry : requestBody.entrySet()) {
-                System.out.println(entry.getKey() + " : " + entry.getValue());
+                logger.debug("{} {}",entry.getKey(), entry.getValue());
             }
         }
         System.out.println("*******************************************");

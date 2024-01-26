@@ -1,6 +1,8 @@
 package db;
 
 import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -8,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SessionManager {
+    private static final Logger logger = LoggerFactory.getLogger(SessionManager.class);
     SessionManager(){
 
     }
@@ -32,7 +35,7 @@ public class SessionManager {
         for (Map.Entry<String, User> entry : sessions.entrySet()) {
             String key = entry.getKey();
             User user = entry.getValue();
-            System.out.println("Key: " + key + ", Value: " + user);
+            logger.debug("Key: {}, Value : {}",key , user);
         }
     }
 }
