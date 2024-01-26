@@ -13,6 +13,7 @@ public class HttpRequest {
     private final String path;
     private final String queryString;
     private final Map<String, String> headers;
+    private final String body;
 
     public HttpRequest(BufferedReader br) throws IllegalAccessException, IOException {
         String line = br.readLine();
@@ -21,6 +22,12 @@ public class HttpRequest {
         this.path = tokens[0];
         this.queryString = tokens[1];
         this.headers = parseHeaders(br, line);
+        if (headers.containsKey("Content-Length")) {
+            int contentLength = Integer.parseInt(headers.get("Content-Length"));
+            this.body = getRequestBody(br, contentLength);
+        } else {
+            this.body = null;
+        }
         printRequest(this);
     }
 
@@ -38,5 +45,15 @@ public class HttpRequest {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    private String getRequestBody(BufferedReader br, int contentLength) throws IOException {
+        char[] buffer = new char[contentLength];
+        br.read(buffer, 0, contentLength);
+        return new String(buffer);
     }
 }
