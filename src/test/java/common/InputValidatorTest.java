@@ -1,6 +1,5 @@
 package common;
 
-import common.InputValidator;
 import common.exception.EmptyFormException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 
-class InputValidateTest {
+class InputValidatorTest {
 
     @Test
     @DisplayName("입력한 회원가입 정보 유효성 검증 성공 테스트")

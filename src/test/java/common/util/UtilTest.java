@@ -9,25 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UtilTest {
 
     @Test
-    @DisplayName("Request line을 http method, url, version으로 분리")
-    void splitRequestLine() {
-
-        //given
-        String requestLine = "GET /index.html HTTP/1.1";
-
-        //when
-        String[] result = split(requestLine, " ");
-
-        //then
-        assertThat(result).contains("GET", "/index.html", "HTTP/1.1");
-    }
-
-    @Test
     @DisplayName("10자리 랜덤 문자열 생성")
     void getSessionIdTest() {
 
         //when
-        String sessionId = getSessionId();
+        String sessionId = getRandomString();
 
         //then
         assertThat(sessionId.length()).isEqualTo(10);
