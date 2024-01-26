@@ -64,12 +64,12 @@ public class HtmlBuilder {
         String navHtml = HtmlContent.NAV_LOGOUT.getText();
         String navString;
 
-        if (request.getUrl().startsWith("/user")) {
-            navString = navHtml.replace("{{location-login}}", "../user/login.html")
-                    .replace("{{location-join}}", "../user/form.html");
-        } else {
+        if (request.getUrl().equals("/index.html")) {
             navString = navHtml.replace("{{location-login}}", "user/login.html")
                     .replace("{{location-join}}", "user/form.html");
+        } else {
+            navString = navHtml.replace("{{location-login}}", "../user/login.html")
+                    .replace("{{location-join}}", "../user/form.html");
         }
 
         return navString;
