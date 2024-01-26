@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.view.InternalResourceView;
 import webserver.view.RedirectView;
+import webserver.view.ThymeleafView;
 import webserver.view.View;
 
 import java.nio.file.Paths;
@@ -15,11 +16,14 @@ public class ViewResolver {
         if (isRedirect(viewName)){
             return new RedirectView(viewName);
         }
-        else if(isTemplate(viewName)||isStatic(viewName)){
+        else if(isTemplate(viewName)){
+            return new ThymeleafView(getAbsolutePath(viewName));
+        }
+        else if(isStatic(viewName)){
             return new InternalResourceView(getAbsolutePath(viewName));
         }
 
-        return new InternalResourceView(getAbsolutePath(viewName) + ".html");
+        return new ThymeleafView(getAbsolutePath(viewName) + ".html");
     }
 
     private static boolean isRedirect(String viewName) {
@@ -34,11 +38,13 @@ public class ViewResolver {
     }
 
     public static String getAbsolutePath(String viewPath){
-        if(viewPath.endsWith(".html")){
-            return Paths.get(System.getProperty("user.dir"), "src/main/resources/templates").toString()+"/"+viewPath;
+        if(isStatic(viewPath)){
+            return Paths.get(System.getProperty("user.dir"), "src/main/resources/static").toString() + viewPath;
+
         }
         else{
-            return Paths.get(System.getProperty("user.dir"), "src/main/resources/static").toString() + viewPath;
+            return Paths.get(System.getProperty("user.dir"), "src/main/resources/templates").toString()+"/"+viewPath;
+
         }
     }
 }
