@@ -30,7 +30,7 @@ public enum HtmlTemplate {
 
     USER_LIST("{{user-list}}",
             "<tr>" +
-            "   <th scope=\"row\">1</th>" +
+            "   <th scope=\"row\">{{order}}</th>" +
             "   <td>{{user-id}}</td>" +
             "   <td>{{user-name}}</td>" +
             "   <td>{{user-email}}</td>" +

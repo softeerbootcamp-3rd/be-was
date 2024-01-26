@@ -5,6 +5,10 @@ import db.Database;
 import model.User;
 import webserver.HttpRequest;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class HtmlBuilder {
 
     public static byte[] process(HttpRequest request, byte[] fileContent) {
@@ -41,8 +45,11 @@ public class HtmlBuilder {
         if (template == null)
             return "";
         StringBuilder sb = new StringBuilder();
-        for (User user : Database.findAll()) {
-            sb.append(template.replace("{{user-id}}", user.getUserId())
+        List<User> userList = new ArrayList<>(Database.findAll());
+        for (int i = 0; i < userList.size(); i++) {
+            User user = userList.get(i);
+            sb.append(template.replace("{{order}}", String.valueOf(i + 1))
+                    .replace("{{user-id}}", user.getUserId())
                     .replace("{{user-name}}", user.getName())
                     .replace("{{user-email}}", user.getEmail()));
         }
