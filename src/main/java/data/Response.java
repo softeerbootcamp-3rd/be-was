@@ -1,7 +1,6 @@
 package data;
 
 import controller.HttpStatusCode;
-import controller.RequestDataController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

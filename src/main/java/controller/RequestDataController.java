@@ -5,7 +5,6 @@ import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import util.RequestParserUtil;
 import util.ResourceLoader;
 import data.Response;
 
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static util.RequestParserUtil.getFileExtension;
-import static util.ResourceLoader.getResourceType;
 
 public class RequestDataController {
 

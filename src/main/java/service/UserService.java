@@ -5,15 +5,10 @@ import data.RequestData;
 import db.Database;
 import db.Session;
 import model.User;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.RequestParserUtil;
-import webserver.RequestHandler;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {

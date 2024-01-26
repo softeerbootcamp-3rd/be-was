@@ -3,7 +3,6 @@ package util;
 import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +18,6 @@ public class RequestParserUtil {
 
     public static RequestData parseRequest(BufferedReader br) throws IOException {
         String line = br.readLine();
-//        logger.debug("Request line : {}", line);
 
         if (line == null) {
             throw new IOException("Invalid HTTP request: Request line is null");
@@ -53,7 +51,6 @@ public class RequestParserUtil {
         String line = br.readLine();
 
         while (!line.equals("")) {
-//            logger.debug("Header: {}", line);
             String[] headerTokens = line.split(": ");
             if (headerTokens.length == 2) {
                 headers.put(headerTokens[0], headerTokens[1]);

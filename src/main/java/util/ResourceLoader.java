@@ -26,26 +26,6 @@ public class ResourceLoader {
 
         File file = new File(url + directory + resourcePath);
 
-        // 파일을 한번에 읽는 코드
-//        try (InputStream inputStream = new FileInputStream(file);
-//             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream)) {
-//
-//            byte[] buffer = new byte[(int) file.length()];
-//            bufferedInputStream.read(buffer);
-//            return buffer;
-//        }
-
-        // 라인 단위로 읽는 코드
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            StringBuilder content = new StringBuilder();
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                content.append(line).append(System.lineSeparator());
-//            }
-//            content.append("\r\n");
-//            return content.toString().getBytes();
-//        }
-
         // 바이트 단위로 읽는 코드
         try (InputStream inputStream = new FileInputStream(file)) {
             // 파일 내용을 바이트 배열로 읽어오기

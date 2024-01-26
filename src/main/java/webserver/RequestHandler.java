@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
 
 import controller.RequestDataController;
 import data.RequestData;
@@ -13,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import util.RequestParserUtil;
 import util.ResponseBuilder;
-
-import javax.xml.crypto.Data;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -40,11 +37,6 @@ public class RequestHandler implements Runnable {
 
             // 파싱한 요청의 세부 내용 출력
             logger.debug(requestData.toString());
-            System.out.println();
-
-//            if (url.equals("/")) {
-//                url = "/index.html";
-//            }
 
             Response response = RequestDataController.routeRequest(requestData);
 
