@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class HttpRequestParser {
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=", 2);
                 String key = keyValue[0];
-                String value = keyValue.length > 1 ? keyValue[1] : "";
+                String value = keyValue.length > 1 ? URLDecoder.decode(keyValue[1]) : "";
                 queryParams.put(key, value);
             }
         }
