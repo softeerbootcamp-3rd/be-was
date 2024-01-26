@@ -67,7 +67,7 @@ public class HttpResponse {
 
     private void readFile() throws IOException {
         File file = new File(path);
-        if (file != null && file.exists()) {
+        if (file.exists()) {
             FileInputStream fis = new FileInputStream(file);
             body = new byte[(int) file.length()];
             fis.read(body);

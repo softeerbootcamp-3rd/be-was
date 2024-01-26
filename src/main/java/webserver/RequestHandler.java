@@ -1,6 +1,7 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 import controller.FrontController;
@@ -43,7 +44,7 @@ public class RequestHandler implements Runnable {
             responseHandler.setHttpResponse(response);
             response.send();
 
-        } catch (IOException e) {
+        } catch (IOException | InvocationTargetException | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }
