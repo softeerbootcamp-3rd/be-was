@@ -14,8 +14,8 @@ public class SessionManager {
         sessionIds.put(sessionId, userId);
     }
 
-    public static void deleteSessionId(String userId) {
-        sessionIds.remove(userId);
+    public static void deleteSessionId(String sessionId) {
+        sessionIds.remove(sessionId);
     }
 
     public static String createSessionId() {
@@ -23,7 +23,11 @@ public class SessionManager {
     }
 
     public static Collection<String> findAllSessionIds() {
-        return sessionIds.values();
+        return sessionIds.keySet();
+    }
+
+    public static String getUserId(String sessionId) {
+        return sessionIds.get(sessionId);
     }
 
 }
