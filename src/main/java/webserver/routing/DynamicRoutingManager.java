@@ -26,7 +26,7 @@ public class DynamicRoutingManager {
             return userController.login(httpRequest);
         } else if (httpRequest.getMethod() == HttpMethod.GET && path.equals("/user/list.html")){
             UserController userController = new UserController();
-            return userController.listUsers();
+            return userController.listUsers(httpRequest);
         }
 
         return null;

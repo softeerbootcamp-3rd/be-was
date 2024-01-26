@@ -4,6 +4,7 @@ import model.User;
 import service.UserService;
 import utils.HtmlBuilder;
 import utils.ResourceReader;
+import utils.SessionManager;
 import webserver.http.request.HttpRequest;
 import webserver.http.response.HttpResponse;
 import webserver.http.response.HttpResponseBuilder;
@@ -39,7 +40,15 @@ public class UserController {
         return HttpResponseBuilder.getInstance().createRedirectResponse(HttpStatus.FOUND, "/user/login_failed.html");
     }
 
-    public HttpResponse listUsers() throws IOException {
+    public HttpResponse listUsers(HttpRequest request) throws IOException {
+        String sessionId = request.getSessionId();
+
+        // 로그인하지 않은 사용자 처리
+        if(!SessionManager.isLoggedInUser(sessionId)){
+            return HttpResponseBuilder.getInstance().createRedirectResponse(HttpStatus.FOUND, "/user/login.html");
+        }
+
+        // 로그인 사용자 처리
         List<User> loggedInUsers = userService.getLoginUsers();
         String userTableHtml = HtmlBuilder.userListHtml(loggedInUsers);
 

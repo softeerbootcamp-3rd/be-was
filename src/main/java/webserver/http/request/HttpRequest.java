@@ -2,6 +2,7 @@ package webserver.http.request;
 
 import webserver.http.request.enums.HttpMethod;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
@@ -43,6 +44,26 @@ public class HttpRequest {
 
     public Map<String, String> getBody(){
         return body;
+    }
+
+    public Map<String, String> getCookies() {
+        String cookieHeader = headers.get("Cookie");
+        Map<String, String> cookies = new HashMap<>();
+        if (cookieHeader != null && !cookieHeader.isEmpty()) {
+            String[] cookiePairs = cookieHeader.split("; ");
+            for (String pair : cookiePairs) {
+                String[] keyValue = pair.split("=", 2);
+                if (keyValue.length == 2) {
+                    cookies.put(keyValue[0], keyValue[1]);
+                }
+            }
+        }
+        return cookies;
+    }
+
+    public String getSessionId() {
+        Map<String, String> cookies = getCookies();
+        return cookies.get("sid");
     }
 
 }

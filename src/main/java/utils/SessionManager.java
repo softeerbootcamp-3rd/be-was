@@ -30,4 +30,9 @@ public class SessionManager {
         return sessionIds.get(sessionId);
     }
 
+    public static boolean isLoggedInUser(String sessionId){
+        String userId = sessionIds.get(sessionId);
+        return userId != null;
+    }
+
 }
