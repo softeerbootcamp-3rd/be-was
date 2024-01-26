@@ -47,12 +47,12 @@ public class RequestMapper {
         return REQUEST_MAP.get(request.getMethod() + " " + request.getPath());
     }
 
-    public static HttpResponse invoke(Method method, HttpRequest request) {
+    public static HttpResponse invoke(Method method) {
         try {
             Class<?> clazz = method.getDeclaringClass();
             Object instance = clazz.getDeclaredConstructor().newInstance();
 
-            Object result = method.invoke(instance, mapParams(method, request));
+            Object result = method.invoke(instance, mapParams(method));
             if (result instanceof HttpResponse) return (HttpResponse) result;
         } catch (IllegalArgumentException e) {
             return HttpResponse.builder()
@@ -70,7 +70,8 @@ public class RequestMapper {
                 .build();
     }
 
-    private static Object[] mapParams(Method method, HttpRequest request) {
+    private static Object[] mapParams(Method method) {
+        HttpRequest request = SharedData.request.get();
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
 

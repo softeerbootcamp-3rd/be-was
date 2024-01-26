@@ -8,6 +8,7 @@ import constant.MimeType;
 import util.HtmlBuilder;
 import util.ResourceLoader;
 import util.SessionManager;
+import util.SharedData;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
@@ -18,7 +19,7 @@ public class ViewController {
 
     @RequestMapping(method = "GET", path = "/user/list")
     public static HttpResponse userList(HttpRequest request) throws IOException {
-        if (!SessionManager.isLoggedIn(request))
+        if (SharedData.requestUser == null)
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .addHeader(HttpHeader.LOCATION, "/index.html")
@@ -28,7 +29,7 @@ public class ViewController {
         return HttpResponse.builder()
                 .status(HttpStatus.OK)
                 .addHeader(HttpHeader.CONTENT_TYPE, MimeType.HTML.getMimeType())
-                .body(HtmlBuilder.process(request, fileContent))
+                .body(HtmlBuilder.process(fileContent))
                 .build();
     }
 }

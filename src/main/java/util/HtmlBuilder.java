@@ -3,45 +3,48 @@ package util;
 import constant.HtmlTemplate;
 import db.Database;
 import model.User;
-import webserver.HttpRequest;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class HtmlBuilder {
 
-    public static byte[] process(HttpRequest request, byte[] fileContent) {
+    public static byte[] process(byte[] fileContent) {
         String result = new String(fileContent);
+        User user = SharedData.requestUser.get();
 
-        if (SessionManager.isLoggedIn(request)) {
-            User user = SessionManager.getLoggedInUser(request);
-
+        if (user != null) {
             for (HtmlTemplate template : HtmlTemplate.values()) {
                 result = result.replace(template.getOriginalValue(),
-                        template.getLoggedInFunction().apply(template.getTemplate(), user));
+                        template.getLoggedInFunction().apply(template.getTemplate()));
             }
             return result.getBytes();
         }
 
         for (HtmlTemplate template : HtmlTemplate.values()) {
             result = result.replace(template.getOriginalValue(),
-                    template.getLoggedOutFunction().apply(template.getTemplate(), User.empty()));
+                    template.getLoggedOutFunction().apply(template.getTemplate()));
         }
         return result.getBytes();
     }
 
-    public static String empty(String unusedString, User unusedUser) {
+    public static String empty(String unused) {
         return "";
     }
 
-    public static String replaceOne(String template, User loggedInUser) {
+    public static String getRaw(String template) {
         if (template == null)
             return "";
-        return template.replace("{{user-name}}", loggedInUser.getName());
+        return template;
     }
 
-    public static String replaceList(String template, User unusedUser) {
+    public static String replaceUser(String template) {
+        if (template == null)
+            return "";
+        return template.replace("{{user-name}}", SharedData.requestUser.get().getName());
+    }
+
+    public static String replaceUserList(String template) {
         if (template == null)
             return "";
         StringBuilder sb = new StringBuilder();

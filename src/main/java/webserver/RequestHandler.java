@@ -6,9 +6,7 @@ import constant.MimeType;
 import exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HtmlBuilder;
-import util.RequestMapper;
-import util.ResourceLoader;
+import util.*;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -29,19 +27,21 @@ public class RequestHandler implements Runnable {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 HttpRequest request = new HttpRequest(reader);
+                SharedData.request.set(request);
+                SharedData.requestUser.set(SessionManager.getLoggedInUser(request));
 
                 logger.debug("Connection IP : {}, Port : {}, request: {}",
                         connection.getInetAddress(), connection.getPort(), request.getPath());
 
                 Method handler = RequestMapper.getMethod(request);
                 if (handler != null) {
-                    RequestMapper.invoke(handler, request).send(out, logger);
+                    RequestMapper.invoke(handler).send(out, logger);
                 } else if (request.getMethod().equals("GET")) {
                     byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
 
                     // html 파일이면 동적으로 내용 변경
                     if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(request.getPath())))
-                        fileContent = HtmlBuilder.process(request, fileContent);
+                        fileContent = HtmlBuilder.process(fileContent);
 
                     response = HttpResponse.builder()
                             .status(HttpStatus.OK)
