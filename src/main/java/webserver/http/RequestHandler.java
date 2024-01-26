@@ -73,6 +73,11 @@ public class RequestHandler {
     private void postUserCreate(Request request) {
         HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
+
+        //같은 아이디 회원 가입 방지
+        if(Database.findUserById(user.getUserId()) != null)
+            return;
+
         Database.addUser(user);
         request.addRequestHeader("Location","/index.html");
     }
