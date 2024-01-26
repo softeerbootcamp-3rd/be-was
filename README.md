@@ -630,6 +630,9 @@ Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
 
 ## 5. Trouble Shooting
 
+## 6. 추가 학습 내용
+- [Java Reflection](https://velog.io/@tin9oo/Java-Reflection)
+- [JVM](https://velog.io/@tin9oo/JVM)
 
 </details>
 
