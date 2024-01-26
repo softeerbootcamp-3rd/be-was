@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
+import common.util.FileManager;
 import dto.HttpRequest;
 import dto.HttpResponse;
 import org.slf4j.Logger;
@@ -32,9 +33,10 @@ public class RequestHandler implements Runnable {
             HttpResponse response = new HttpResponse();
 
             String path = request.getPath();
+            String contentType = getContentType(path);
 
             try {
-                if (request.getMethod().equals("GET")) {
+                if (request.getMethod().equals("GET") && (FileManager.getFile(path, contentType)) != null) {
                     response.makeBody(OK, path);
                 }
                 if (request.getMethod().equals("POST")) {
@@ -49,7 +51,6 @@ public class RequestHandler implements Runnable {
                 }
             } catch (Exception e) {
                 ExceptionHandler.process(e, response);
-                e.printStackTrace();
             }
 
             ResponseHandler.send(dos, response);
@@ -68,5 +69,16 @@ public class RequestHandler implements Runnable {
         char[] buffer = new char[contentLength];
         br.read(buffer, 0, contentLength);
         return new String(buffer);
+    }
+
+    private static String getContentType(String path) {
+        String extension = getFileExtension(path);
+        return ContentType.getMimeType(extension);
+    }
+
+    private static String getFileExtension(String path) {
+        File file = new File(path);
+        String name = file.getName();
+        return name.substring(name.lastIndexOf(".") + 1);
     }
 }
