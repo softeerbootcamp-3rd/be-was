@@ -70,8 +70,8 @@ public class ResourceManager {
                 String html = new String(readAllBytes(file));
                 String userId = (String) SessionManager.getAttribute(SID, "user");
                 // 사용자 이름 표시
+                html = changeHTMLButtonStatus(html, LOGOUT_BUTTON, false);
                 html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
-
                 header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(html.getBytes().length)));
                 return new ResponseEntity<>(HttpStatus.OK, header, html);
             }
