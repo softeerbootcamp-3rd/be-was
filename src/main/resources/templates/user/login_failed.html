@@ -39,7 +39,7 @@
                         <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
                     </ul>
                 </li>
-                <li><a href="../user/list.html"><i class="glyphicon glyphicon-user"></i></a></li>
+                <li><a href="../user/list"><i class="glyphicon glyphicon-user"></i></a></li>
             </ul>
         </div>
     </div>
@@ -64,10 +64,7 @@
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="../index.html">Posts</a></li>
-                <li><a href="../user/login.html" role="button">로그인</a></li>
-                <li><a href="../user/form.html" role="button">회원가입</a></li>
-                <li><a href="/user/logout" role="button">로그아웃</a></li>
-                <li><a href="#" role="button">개인정보수정</a></li>
+
             </ul>
         </div>
     </div>
@@ -92,7 +89,22 @@
         </div>
     </div>
 </div>
+<script type = "text/javascript">
+    var userName = {{user.getName()}};
+    console.log("userName = "+userName);
+    if(userName){
+        var navbar = document.getElementById("navbar");
+        navbar.insertAdjacentHTML("afterbegin", "<li><p id='welcome'>안녕하세요 " + userName + "님</p></li>>");
 
+        navbar = document.querySelector("#navbar-collapse2 > ul");
+        navbar.insertAdjacentHTML("beforeend", "<li><a href='/user/logout' role='button'>로그아웃</a></li><li><a href='#' role='button'>개인정보수정</a></li>");
+    }
+    else{
+        navbar = document.querySelector("#navbar-collapse2 > ul");
+        navbar.insertAdjacentHTML("beforeend", "<li><a href='user/login.html' role='button'>로그인</a></li><li><a href='/user/create' role='button'>회원가입</a></li>");
+    }
+
+</script>
 <!-- script references -->
 <script src="../js/jquery-2.2.0.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
