@@ -4,7 +4,7 @@ import annotation.PostMapping;
 import dto.RequestDto;
 import dto.ResponseDto;
 import service.UserService;
-import session.Session;
+import session.SessionManager;
 
 import static constant.FilePath.MAIN_PAGE;
 
@@ -25,7 +25,7 @@ public class UserController {
         // 이전에 로그인한 유저 (요청 헤더 쿠키에 sessionId 가 있음) && 세션이 만료되지 않은 경우
         // MAIN_PAGE 로 리다이렉트
         String sessionId = requestDto.getCookies().get("sessionId");
-        if (sessionId != null && Session.getAttribute(sessionId) != null) {
+        if (sessionId != null && SessionManager.getSession(sessionId) != null) {
             return response;
         }
 

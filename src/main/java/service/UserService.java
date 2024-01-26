@@ -3,7 +3,7 @@ package service;
 import db.Database;
 import exception.WebServerException;
 import model.User;
-import session.Session;
+import session.SessionManager;
 
 import java.util.Map;
 
@@ -35,7 +35,12 @@ public class UserService {
             throw new WebServerException(USER_WRONG_PASSWORD);
         }
 
-        // id, password 일치하면 해당 유저에 sessionId 발급
-        return Session.setAttribute(userId);
+        // TODO 로그인 후 저장해둘 유저의 정보가 생기면 저장
+        // String sessionId = SessionManager.createSession();
+        // Session session = SessionManager.getSession(sessionId);
+        // session.setAttribute("", User);
+
+        // 새로운 세션 생성후 sessionId 리턴
+        return SessionManager.createSession();
     }
 }

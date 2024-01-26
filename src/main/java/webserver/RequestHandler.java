@@ -34,6 +34,8 @@ public class RequestHandler implements Runnable {
             RequestDto requestDto = RequestParser.getRequestDto(in);
             DataOutputStream dos = new DataOutputStream(out);
 
+            // TODO 분석한 요청의 경로를 이용해, 로그인한 사용자만 사용 가능한 건지 확인 후 처리
+
             FilePath basePath = FilePath.HTML_BASE;
             byte[] body;
 
