@@ -38,7 +38,8 @@ public class ResourceLoader {
             throw new ResourceNotFoundException(path);
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] content = new byte[(int) file.length()];
-            fis.read(content);
+            if (fis.read(content) == -1)
+                return new byte[0];
             return content;
         }
     }

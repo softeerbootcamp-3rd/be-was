@@ -7,14 +7,21 @@ import java.util.Collection;
 import java.util.Map;
 
 public class UserDatabase {
-    private static Map<String, User> users = Maps.newHashMap();
+    private static final Map<String, User> users = Maps.newHashMap();
 
-    public static void addUser(User user) {
+    public static void add(User user) {
         users.put(user.getUserId(), user);
     }
 
-    public static User findUserById(String userId) {
+    public static User findById(String userId) {
         return users.get(userId);
+    }
+
+    public static User findByIdOrEmpty(String userId) {
+        User user = users.get(userId);
+        if (user == null)
+            return new User("", "", "(알 수 없음)", "");
+        return user;
     }
 
     public static Collection<User> findAll() {

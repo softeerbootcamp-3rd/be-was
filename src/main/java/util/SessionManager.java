@@ -27,10 +27,6 @@ public class SessionManager {
         sessionMap.put(sessionId, new SessionInfo(user, System.currentTimeMillis()));
     }
 
-    public static boolean isLoggedIn(HttpRequest request) {
-        return getLoggedInUser(request) != null;
-    }
-
     public static User getLoggedInUser(HttpRequest request) {
         String sid = RequestParser.parseCookie(request.getHeader().get(HttpHeader.COOKIE)).get("SID");
         return getUserBySessionId(sid);

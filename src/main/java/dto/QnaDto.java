@@ -5,9 +5,8 @@ import annotation.NotEmpty;
 public class QnaDto {
     @NotEmpty
     private String title;
-
     @NotEmpty
-    private String content;
+    private String contents;
 
     public QnaDto() {}
 
@@ -15,15 +14,15 @@ public class QnaDto {
         return this.title;
     }
 
-    public String getContent() {
-        return this.content;
+    public String getContents() {
+        return this.contents;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 }

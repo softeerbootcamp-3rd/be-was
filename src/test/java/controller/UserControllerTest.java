@@ -26,13 +26,13 @@ public class UserControllerTest {
         createUser(new UserCreateDto(userId, password, name, email));
 
         User expectedUser = new User("testUser", "testPassword", "TestName", "test@example.com");
-        assertEquals(expectedUser, UserDatabase.findUserById("testUser"));
+        assertEquals(expectedUser, UserDatabase.findById("testUser"));
     }
 
     @Test
     public void testLogin() {
         User user = new User("validUserId", "validPassword", "TestName", "test@example.com");
-        UserDatabase.addUser(user);
+        UserDatabase.add(user);
 
         LoginDto validLoginInfo = new LoginDto("validUserId", "validPassword");
         HttpResponse httpResponse = login(validLoginInfo);

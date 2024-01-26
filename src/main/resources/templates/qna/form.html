@@ -32,7 +32,7 @@
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                {{user-name}}
+                <!--user-name-->
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
                     <ul class="dropdown-menu">
@@ -65,9 +65,9 @@
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="../index.html">Posts</a></li>
-                {{login-btn}}
-                {{signup-btn}}
-                {{logout-btn}}
+                <!--login-btn-->
+                <!--signup-btn-->
+                <!--logout-btn-->
                 <li><a href="#" role="button">개인정보수정</a></li>
             </ul>
         </div>
@@ -78,10 +78,6 @@
    <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
       <div class="panel panel-default content-main">
           <form name="question" method="post" action="/qna/post">
-              <div class="form-group">
-                  <label for="writer">글쓴이</label>
-                  <input class="form-control" id="writer" name="writer" placeholder="글쓴이"/>
-              </div>
               <div class="form-group">
                   <label for="title">제목</label>
                   <input type="text" class="form-control" id="title" name="title" placeholder="제목"/>

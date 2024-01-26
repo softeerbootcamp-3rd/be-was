@@ -61,7 +61,7 @@ public class RequestMapper {
 
     private static Map<String, String> getPathParams(String mappedPath, String requestPath) {
         // "GET /test/{id}" -> "GET /test/\\d+"
-        String regexPath = mappedPath.replaceAll("\\{[^/]+\\}", "\\\\d+");
+        String regexPath = mappedPath.replaceAll("\\{[^/]+}", "\\\\d+");
 
         Pattern pattern = Pattern.compile(regexPath);
         Matcher matcher = pattern.matcher(requestPath);

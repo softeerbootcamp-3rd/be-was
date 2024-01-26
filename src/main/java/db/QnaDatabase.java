@@ -2,23 +2,26 @@ package db;
 
 import com.google.common.collect.Maps;
 import model.Qna;
-import model.User;
 
 import java.util.Collection;
 import java.util.Map;
 
 public class QnaDatabase {
-    private static Map<Long, Qna> qnas = Maps.newHashMap();
+    private static Long lastId = 1L;
+    private static final Map<Long, Qna> qnas = Maps.newHashMap();
 
-    public static void addUser(User user) {
-        users.put(user.getUserId(), user);
+    public static void add(Qna qna) {
+        qna.setId(lastId + 1);
+        lastId += 1;
+
+        qnas.put(qna.getId(), qna);
     }
 
-    public static User findUserById(String userId) {
-        return users.get(userId);
+    public static Qna findById(Long id) {
+        return qnas.get(id);
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public static Collection<Qna> findAll() {
+        return qnas.values();
     }
 }

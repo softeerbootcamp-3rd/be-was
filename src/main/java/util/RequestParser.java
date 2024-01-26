@@ -45,22 +45,22 @@ public class RequestParser {
         if (queryString == null || queryString.isEmpty())
             return new HashMap<>();
         queryString = decodeUri(queryString);
-        return extractKeyValue(queryString, "&", "=");
+        return extractKeyValue(queryString, "&");
     }
 
     public static Map<String, String> parseCookie(String cookieString) {
         if (cookieString == null || cookieString.isEmpty())
             return new HashMap<>();
-        return extractKeyValue(cookieString, "; ", "=");
+        return extractKeyValue(cookieString, "; ");
     }
 
-    private static Map<String, String> extractKeyValue(String input, String delimiter1, String delimiter2) {
+    private static Map<String, String> extractKeyValue(String input, String delimiter1) {
         Map<String, String> result = new HashMap<>();
         if (input == null)
             return result;
         String[] entries = input.split(delimiter1);
         for (String entry : entries) {
-            String[] parts = entry.split(delimiter2);
+            String[] parts = entry.split("=");
             if (parts.length == 2) {
                 result.put(parts[0], parts[1]);
             }
