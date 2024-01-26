@@ -27,32 +27,12 @@ public class HTTPResponse {
         this.body = new byte[0];
     }
 
-    public String getHTTPType() {
-        return HTTPType;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
     public byte[] getHead() {
         return head;
     }
 
     public byte[] getBody() {
         return body;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
     }
 
 

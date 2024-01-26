@@ -75,7 +75,7 @@ public class PageController {
             String line;
             StringBuilder sb = new StringBuilder();
             while((line = bf.readLine()) != null){
-
+                // html 일부분 수정
                 if(line.contains("role=\"button\">회원가입</a></li>"))
                     continue;
                 else if(line.contains("role=\"button\">로그인</a></li>")){
@@ -115,8 +115,8 @@ public class PageController {
 
     }
 
+    //리디렉트 할 URL을 받고 해당 주소로 리디렉션 수행
     public static HTTPResponse RedirectStaticPage(String urlTo){
-
         byte[] body = new byte[0];
         byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
                 "Location: " + urlTo + "\r\n" +
