@@ -55,13 +55,13 @@ public class UserController implements RequestController {
             return "user/login_failed.html";
         }
 
-        sessionManager.createSession(loginMember, response);
+        sessionManager.createSession(loginMember, response, "SID");
         return "redirect:/index.html";
     }
 
     @GetMapping(url = "/logout")
     public String logout(Request req){
-        sessionManager.expire(req);
+        sessionManager.expire(req,"SID");
         return "redirect:/index.html";
     }
 }
