@@ -19,13 +19,10 @@ public class PostService {
 
     // 회원가입 요청 처리
     public HTTPResponseDto signup(HTTPRequestDto httpRequestDto) {
-        if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getBody() == null)
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+        HTTPResponseDto httpResponseDto = checkSignupBadRequest(httpRequestDto);
 
-        String body = httpRequestDto.getBody();
-        if(!body.contains("userId") || !body.contains("password")
-        || !body.contains("name") || !body.contains("email"))
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+        if(httpRequestDto != null)      // 400 Bad Request일 경우
+            return httpResponseDto;
 
         // 회원가입 정보 파싱
         HashMap<String, String> userInfo = httpRequestDto.bodyParsing();
@@ -37,6 +34,35 @@ public class PostService {
                 userInfo.get("name"),
                 userInfo.get("email"));
 
+        // 유저 객체를 이용해서 회원가입 요청이 적잘한지 판단
+        httpResponseDto = checkSignupWithUser(user);
+        if(httpResponseDto != null)                     // 적절한 유저 요청이 아닐 경우
+            return httpResponseDto;
+
+        // 성공적인 회원가입 처리
+        // 데이터베이스에 저장
+        Database.addUser(user);
+        logger.debug("새로운 유저: {}", user.toString());
+        logger.debug("전체 DB: {}", Database.findAllUser());
+        // /index.html로 리다이렉트
+        return HTTPResponseDto.create302Dto("/index.html");
+    }
+
+    // 회원가입 요청이 bad request인지 판단
+    private HTTPResponseDto checkSignupBadRequest(HTTPRequestDto httpRequestDto) {
+        if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getBody() == null)
+            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+
+        String body = httpRequestDto.getBody();
+        if(!body.contains("userId") || !body.contains("password")
+                || !body.contains("name") || !body.contains("email"))
+            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+
+        return null;
+    }
+
+    // 유저 객체를 이용해서 회원가입 요청이 제대로 들어왔는지 판단
+    private HTTPResponseDto checkSignupWithUser(User user) {
         // 필요한 정보가 제대로 들어오지 않았을 경우
         // 네가지 정보 모두 기입해야 회원가입 가능
         if(user.getUserId().equals("") || user.getPassword().equals("") || user.getName().equals("") || user.getEmail().equals(""))
@@ -46,13 +72,7 @@ public class PostService {
         if(Database.findUserById(user.getUserId()) != null)
             return HTTPResponseDto.createResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
 
-        // 성공적인 회원가입 처리
-        // 데이터베이스에 저장
-        Database.addUser(user);
-        logger.debug("새로운 유저: {}", user.toString());
-        logger.debug("전체 DB: {}", Database.findAllUser());
-        // /index.html로 리다이렉트
-        return HTTPResponseDto.create302Dto("/index.html");
+        return null;
     }
 
     // 로그인 요청 처리

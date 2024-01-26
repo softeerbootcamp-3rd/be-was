@@ -39,9 +39,8 @@ public class GetService {
             return HTTPResponseDto.createResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
 
         // 중복 아이디 처리
-        if(Database.findUserById(user.getUserId()) != null) {
+        if(Database.findUserById(user.getUserId()) != null)
             return HTTPResponseDto.createResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
-        }
 
         // 성공적인 회원가입 처리
         // 데이터베이스에 저장
