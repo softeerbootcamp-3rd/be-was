@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class Parser {
 
-    public static Map<String, String> splitRequestList(String request) {
+    public static Map<String, String> splitRequestList(String requestLine) {
         // " "로 request line 파싱
-        String[] tokens = request.split(" ", 3);
+        String[] tokens = requestLine.split(" ", 3);
 
         // 맵에 method, uri, version 저장
         Map<String, String> result = new HashMap<>();
@@ -18,9 +18,9 @@ public class Parser {
         return result;
     }
 
-    public static Map<String, String> extractParams(String request) {
+    public static Map<String, String> extractParams(String query) {
         // 요청에서 param 단위로 파싱
-        String[] tokens = request.split("&");
+        String[] tokens = query.split("&");
 
         // 맵에 param값 저장
         Map<String, String> result = new HashMap<>();
