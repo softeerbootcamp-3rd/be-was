@@ -24,5 +24,6 @@ public class Database {
 
     public static void clear() {
         users.clear();
+        System.out.println("당글 만세");
     }
 }
