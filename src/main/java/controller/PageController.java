@@ -14,11 +14,11 @@ import static webserver.RequestHandler.threadUuid;
 
 public class PageController {
 
-    static final String TEMPLATE_FILE_PATH = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/templates";
-    static final String STATIC_FILE_PATH = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/static";
+//    static final String TEMPLATE_FILE_PATH = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/templates";
+//    static final String STATIC_FILE_PATH = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/static";
 
-//    static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
-//    static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
+    static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
+    static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
     static public HTTPResponse getPageStatic(HTTPRequest request){
 
         //파일 불러오기
@@ -75,18 +75,12 @@ public class PageController {
             String line;
             StringBuilder sb = new StringBuilder();
             while((line = bf.readLine()) != null){
-                //<li><a href="../user/login.html" role="button">로그인</a></li>
-                //<li><a href="../user/form.html" role="button">회원가입</a></li>
 
-                //<li><a href="user/form.html" role="button">회원가입</a></li>
-                //<li><a href="user/login.html" role="button">로그인</a></li>
                 if(line.contains("role=\"button\">회원가입</a></li>"))
                     continue;
                 else if(line.contains("role=\"button\">로그인</a></li>")){
                     sb.append(line.replace("role=\"button\">","class=\"disabled\" role=\"button\">").replace("로그인",user.getName()));
                     sb.append(System.lineSeparator());
-                    System.out.println("OKOK");
-                    System.out.println("["+line+"]");
                     continue;
                 }
 
@@ -121,6 +115,17 @@ public class PageController {
 
     }
 
+    public static HTTPResponse RedirectStaticPage(String urlTo){
+
+        byte[] body = new byte[0];
+        byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
+                "Location: " + urlTo + "\r\n" +
+                "Content-Length: " + body.length + "\r\n").getBytes();
+
+        return new HTTPResponse("HTTP/1.1", ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
+
+
+    }
 
     //MIME 타입 구하기 (여유되면 ENUM으로 뺴기)
     private static String MIMEType(String url){

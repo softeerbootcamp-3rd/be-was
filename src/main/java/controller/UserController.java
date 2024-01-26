@@ -71,7 +71,6 @@ public class UserController {
             byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
                     "Location: /user/login_failed.html" + "\r\n" +
                     "Content-Length: " + body.length + "\r\n").getBytes();
-
             response = new HTTPResponse("HTTP/1.1", ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
         }
         // 로그인 성공시 세션 발급, index.html로 리디렉션

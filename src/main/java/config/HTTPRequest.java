@@ -30,17 +30,10 @@ public class HTTPRequest{
     public HashMap<String, String> getBody() {
         return body;
     }
-
-    @Override
-    public String toString() {
-        return "HTTPRequest{" +
-                "method='" + method + '\'' +
-                ", url='" + url + '\'' +
-                ", HTTPType='" + HTTPType + '\'' +
-                ", head=" + head +
-                ", body=" + body +
-                '}';
+    public void setUrl(String url) {
+        this.url = url;
     }
+
 
     public HTTPRequest(BufferedReader br, Logger logger) throws IOException{
 
@@ -102,4 +95,15 @@ public class HTTPRequest{
 
         }
     }
+    @Override
+    public String toString() {
+        return "HTTPRequest{" +
+                "method='" + method + '\'' +
+                ", url='" + url + '\'' +
+                ", HTTPType='" + HTTPType + '\'' +
+                ", head=" + head +
+                ", body=" + body +
+                '}';
+    }
+
 }
