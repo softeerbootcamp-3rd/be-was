@@ -1,4 +1,4 @@
-package common.validate;
+package common;
 
 import common.InputValidator;
 import common.exception.EmptyFormException;

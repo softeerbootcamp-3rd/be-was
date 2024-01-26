@@ -7,8 +7,8 @@ import model.User;
 
 import static common.Binder.bindQueryStringToObject;
 import static session.SessionManager.*;
-import static webserver.WebServerConfig.INDEX_FILE_PATH;
-import static webserver.WebServerConfig.userService;
+import static common.WebServerConfig.INDEX_FILE_PATH;
+import static common.WebServerConfig.userService;
 
 public class UserController {
 

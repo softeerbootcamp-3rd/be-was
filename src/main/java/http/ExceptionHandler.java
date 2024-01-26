@@ -1,4 +1,4 @@
-package webserver;
+package http;
 
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
@@ -9,8 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static webserver.RequestHandler.logger;
-import static webserver.Status.*;
-import static webserver.WebServerConfig.*;
+import static http.Status.*;
+import static common.WebServerConfig.*;
 
 public class ExceptionHandler {
 

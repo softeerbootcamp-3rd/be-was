@@ -7,11 +7,13 @@ import java.util.Map;
 import common.util.FileManager;
 import dto.HttpRequest;
 import dto.HttpResponse;
+import http.ContentType;
+import http.ExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static webserver.Status.*;
-import static webserver.WebServerConfig.*;
+import static http.Status.*;
+import static common.WebServerConfig.*;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);

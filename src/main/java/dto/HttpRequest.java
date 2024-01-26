@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static common.Logger.printRequest;
-import static webserver.RequestParser.*;
+import static http.RequestParser.*;
 
 public class HttpRequest {
 

@@ -1,6 +1,5 @@
-package common.binder;
+package common;
 
-import common.Binder;
 import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

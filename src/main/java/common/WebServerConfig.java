@@ -1,4 +1,4 @@
-package webserver;
+package common;
 
 import controller.UserController;
 import service.UserService;

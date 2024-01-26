@@ -1,7 +1,7 @@
 package dto;
 
-import webserver.Status;
-import webserver.ContentType;
+import http.Status;
+import http.ContentType;
 
 import java.io.*;
 import java.util.Arrays;

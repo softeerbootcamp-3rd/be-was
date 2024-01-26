@@ -4,8 +4,8 @@ import common.util.Util;
 
 import java.lang.reflect.Field;
 
-import static webserver.RequestParser.PARAMETERS_DELIMITER;
-import static webserver.RequestParser.PARAMETER_DELIMITER;
+import static http.RequestParser.PARAMETERS_DELIMITER;
+import static http.RequestParser.PARAMETER_DELIMITER;
 
 
 public class Binder {

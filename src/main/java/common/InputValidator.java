@@ -2,8 +2,8 @@ package common;
 
 import common.exception.EmptyFormException;
 
-import static webserver.RequestParser.PARAMETERS_DELIMITER;
-import static webserver.RequestParser.PARAMETER_DELIMITER;
+import static http.RequestParser.PARAMETERS_DELIMITER;
+import static http.RequestParser.PARAMETER_DELIMITER;
 
 public class InputValidator {
 
