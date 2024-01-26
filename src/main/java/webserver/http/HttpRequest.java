@@ -38,9 +38,11 @@ public class HttpRequest {
         Map<String, List<String>> headers = new HashMap<>();
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
-            String[] headerParts = line.split(": ");
+            String[] headerParts = line.split(":");
             String headerName = headerParts[0];
             String headerValue = headerParts[1];
+            if (headerName.startsWith(" "))
+                headerName = headerName.substring(1);
             headers.computeIfAbsent(headerName, key -> {
                 return List.of(headerValue);
             });
