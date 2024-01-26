@@ -1,5 +1,6 @@
 package util;
 
+import model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,15 @@ public class ResponseBuilder {
         }
         dos.writeBytes("Content-Type: text/" + extension + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + bodyLength + "\r\n");
+        Model.getAttribute("sessionId").ifPresent(
+                value -> {
+                    try {
+                        dos.writeBytes("Set-Cookie: sid=" + value + "; Path=/\r\n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
         dos.writeBytes("\r\n");
     }
 }
