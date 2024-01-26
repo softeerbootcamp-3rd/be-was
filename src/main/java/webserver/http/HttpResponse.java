@@ -17,18 +17,18 @@ public class HttpResponse {
         StringBuilder logBuilder = new StringBuilder();
 
         String statusLine = "HTTP/1.1 " + httpStatus.getStatusCode() + " " + httpStatus.getStatusMessage();
-        dos.writeBytes(statusLine + "\r\n");
+        dos.writeBytes(statusLine + System.lineSeparator());
         logBuilder.append(statusLine);
 
         if (httpStatus == HttpStatus.OK) {
             logBuilder.append(response200Header(dos, responseEntity));
-            dos.writeBytes("\r\n");
+            dos.writeBytes(System.lineSeparator());
             responseBody(dos, responseEntity);
         } else if (httpStatus == HttpStatus.FOUND) {
             logBuilder.append(redirect(dos, responseEntity));
         }
 
-        dos.writeBytes("\r\n");
+        dos.writeBytes(System.lineSeparator());
         dos.flush();
         dos.close();
 
@@ -37,17 +37,17 @@ public class HttpResponse {
 
     private static String response200Header(DataOutputStream dos, ResponseEntity response) throws IOException {
         String contentType = "Content-Type: " + response.getHeaders().getContentType();
-        dos.writeBytes(contentType + "\r\n");
+        dos.writeBytes(contentType + System.lineSeparator());
 
         StringBuilder logBuilder = new StringBuilder(", ").append(contentType);
 
         String contentLength = "Content-Length: " + response.getHeaders().getContentLength();
-        dos.writeBytes(contentLength + "\r\n");
+        dos.writeBytes(contentLength + System.lineSeparator());
         logBuilder.append(", ").append(contentLength);
 
         if (response.getHeaders().hasSetCookie()) {
             String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
-            dos.writeBytes(cookie + "\r\n");
+            dos.writeBytes(cookie + System.lineSeparator());
             logBuilder.append(", ").append(cookie);
         }
 
@@ -56,13 +56,13 @@ public class HttpResponse {
 
     private static String redirect(DataOutputStream dos, ResponseEntity response) throws IOException {
         String redirectHeader = "Location: " + response.getHeaders().getLocation();
-        dos.writeBytes(redirectHeader + "\r\n");
+        dos.writeBytes(redirectHeader + System.lineSeparator());
 
         StringBuilder logBuilder = new StringBuilder(", ").append(redirectHeader);
 
         if (response.getHeaders().hasSetCookie()) {
             String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
-            dos.writeBytes(cookie + "\r\n");
+            dos.writeBytes(cookie + System.lineSeparator());
 
             logBuilder.append(", ").append(cookie);
         }

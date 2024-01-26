@@ -125,21 +125,22 @@ public class ResourceManager {
     }
 
     public static String changeHTMLGetUserList(String original) {
-        StringBuilder listBuilder = new StringBuilder("<tbody>\n");
+        StringBuilder listBuilder = new StringBuilder("<tbody>").append(System.lineSeparator());
         int id = 1;
         for (User user : Database.findAll()) {
-            listBuilder.append("<tr>\n");
+            listBuilder.append("<tr>").append(System.lineSeparator());
             listBuilder.append("<th scope=\"row\">").append(id).append("</th> ");
             listBuilder.append("<td>").append(user.getUserId()).append("</td> ");
             listBuilder.append("<td>").append(user.getName()).append("</td> ");
             listBuilder.append("<td>").append(user.getEmail()).append("</td>");
-            listBuilder.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n");
-            listBuilder.append("</tr>\n");
+            listBuilder.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>").append(System.lineSeparator());
+            listBuilder.append("</tr>").append(System.lineSeparator());
 
             id++;
         }
         listBuilder.append("</tbody>");
-        return original.replace("<tbody>\n" + "              </tbody>", listBuilder.toString());
+        return original.replace("<tbody>" + System.lineSeparator() + "              </tbody>",
+                listBuilder.toString());
     }
 
 
