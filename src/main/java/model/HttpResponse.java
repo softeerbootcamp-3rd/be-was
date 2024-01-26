@@ -53,9 +53,8 @@ public class HttpResponse {
         }
     }
 
-    public void addCookie(String cookieName, String sessionId) {
-        String cookieValue = cookieName+"="+sessionId+"; ";
-        this.header.put(COOKIE, cookieValue + "Path=/");
+    public void addCookie(String cookieHeader) {
+        this.header.put(COOKIE, cookieHeader);
     }
 
     public String getStartLine() {

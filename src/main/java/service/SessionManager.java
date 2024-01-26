@@ -1,36 +1,36 @@
 package service;
 
-import model.HttpRequest;
+import model.HttpResponse;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
-    private static final Duration SESSION_EXPIRATION = Duration.ofMinutes(30);
-    private static Map<String, Session> sessionStore = new ConcurrentHashMap<>();
 
-    private static class Session {
-        String userId;
-        Instant expirationTime;
-        Session(String userId, Instant expirationTime) {
-            this.userId = userId;
-            this.expirationTime = expirationTime;
-        }
-    }
-    public static String createSession(String userId) {
+    private static final String COOKIE_NAME = "sid";
+    private static final Map<String, String> sessionStore = new ConcurrentHashMap<>();
+
+    public static void createSession(String userId, HttpResponse httpResponse) {
         String sessionId = UUID.randomUUID().toString();
-        Instant expirationTime = Instant.now().plus(SESSION_EXPIRATION);
-        sessionStore.put(sessionId, new Session(userId, expirationTime));
-
-        return sessionId;
+        sessionStore.put(sessionId, userId);
+        String setCookieHeader = createCookieHeader(sessionId);
+        httpResponse.addCookie(setCookieHeader);
     }
 
-    public static boolean existingSession(HttpRequest httpRequest, String userId) {
-        Session session = sessionStore.get(httpRequest.getSessionId());
-        return session != null && Objects.equals(session.userId, userId);
+    public static boolean existingSession(String userId, String sessionId, HttpResponse httpResponse) {
+        String storedUserId = sessionStore.get(sessionId);
+
+        if (storedUserId != null && Objects.equals(storedUserId, userId)) {
+            String setCookieHeader = createCookieHeader(sessionId);
+            httpResponse.addCookie(setCookieHeader);
+            return true;
+        }
+        return false;
+    }
+
+    private static String createCookieHeader(String sessionId) {
+        return String.format("%s=%s; Path=/", COOKIE_NAME, sessionId);
     }
 }

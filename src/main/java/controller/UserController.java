@@ -4,7 +4,6 @@ import dto.request.UserLoginDto;
 import dto.request.UserSignUpDto;
 import model.HttpRequest;
 import model.HttpResponse;
-import service.SessionManager;
 import service.UserService;
 
 import static model.HttpStatus.BAD_REQUEST;
@@ -12,7 +11,6 @@ import static service.SessionManager.createSession;
 import static service.SessionManager.existingSession;
 
 public class UserController {
-    private static final String COOKIE_NAME = "sid";
     public static HttpResponse createUser(HttpRequest httpRequest){
         try{
             UserSignUpDto userSignUpDto = UserSignUpDto.from(httpRequest.getBody());
@@ -29,13 +27,13 @@ public class UserController {
             String userId = UserService.login(userLoginDto.getUserId(), userLoginDto.getPassword());
             HttpResponse httpResponse = HttpResponse.redirect("/index.html");
 
-            if(existingSession(httpRequest, userId))
-            {
-                httpResponse.addCookie(COOKIE_NAME, httpRequest.getSessionId());
-                return httpResponse;
+            if(httpRequest.getSessionId() != null){
+                if(existingSession(userId, httpRequest.getSessionId(), httpResponse)){//이미 세션이 존재하는 경우
+                    return httpResponse;
+                }
             }
 
-            httpResponse.addCookie(COOKIE_NAME, createSession(userId));
+            createSession(userId, httpResponse);//세션이 없는 경우 새로운 세션 생성
             return httpResponse;
         }catch (IllegalArgumentException | NullPointerException e){
             return HttpResponse.redirect("/user/login_failed.html");

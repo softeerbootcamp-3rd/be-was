@@ -22,7 +22,6 @@ public class UserSignUpDto {
     }
 
     public static UserSignUpDto from(String info){
-        System.out.println(info);
         Map<String, String> parameters = Arrays.stream(info.split("&"))
                 .map(param -> param.split("="))
                 .filter(pair -> pair.length > 1)

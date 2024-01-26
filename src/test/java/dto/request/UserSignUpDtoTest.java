@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserSignUpDtoTest {
 
-    @DisplayName("body의 문자열을 UserDto로 변환할 수 있다.")
+    @DisplayName("body의 문자열을 UserSignUpDto로 변환할 수 있다.")
     @Test
     void userDtoFrom(){
         //given
