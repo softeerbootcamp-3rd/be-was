@@ -71,7 +71,7 @@ public class UserController {
         String SID = httpRequest.getCookie().split("=")[1];
 
         // 서버 세션 저장소에서 세션 삭제
-        if (SessionManager.isSessionPresent(SID))
+        if (SessionManager.isSessinExist(SID))
             SessionManager.invalidateSession(SID);
         // 클라이언트에서도 쿠키 제거
         Map<String, List<String>> headerMap = new HashMap<>();
