@@ -1,5 +1,7 @@
 package config;
 
+import filter.AuthFilter;
+import filter.Filter;
 import controller.UserController;
 import controller.UserControllerImpl;
 import factory.HttpRequestFactory;
@@ -47,5 +49,9 @@ public class AppConfig {
 
     public static FileDetector fileDetector() {
         return FileDetector.getInstance();
+    }
+
+    public static Filter filter(){
+        return AuthFilter.getInstance();
     }
 }
