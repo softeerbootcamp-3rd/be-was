@@ -41,7 +41,7 @@ public enum HttpHeader {
 
     public static HttpHeader of(String value) {
         for (HttpHeader header : values()) {
-            if (header.value.equals(value)) {
+            if (header.value.equalsIgnoreCase(value)) {
                 return header;
             }
         }
