@@ -7,12 +7,17 @@ public class HttpResponse {
     String contentType;
     String redirectPath;
     String sid = null;
+    String expireDate;
 
     public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
         this.body = body;
         this.statusCode = statusCode;
         this.statusLine = statusLine;
         this.contentType = contentType;
+    }
+
+    public void setExpireDate(String expireDate) {
+        this.expireDate = expireDate;
     }
 
     public void setSid(String sid) {
@@ -34,6 +39,11 @@ public class HttpResponse {
     public void setStatusLine(String line) {
         this.statusLine = line;
     }
+
+    public String getExpireDate() {
+        return expireDate;
+    }
+
     public byte[] getBody() {
         return body;
     }

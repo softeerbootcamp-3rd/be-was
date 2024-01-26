@@ -60,7 +60,7 @@ public class RequestHandler implements Runnable {
         dos.writeBytes("Location: "+ httpResponse.getPath() + "\r\n");
 
         if(!httpResponse.getSid().isEmpty()){
-            dos.writeBytes("Set-Cookie: "+"sid="+httpResponse.getSid()+ ";" + "Path=/");
+            dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid()+ "; Expires=" + httpResponse.getExpireDate() + "; Path=/");
         }
 
         dos.writeBytes("\r\n");

@@ -1,5 +1,6 @@
 package controller;
 
+import httpmessage.ContentType;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
 import httpmessage.response.ResponsePasing;
@@ -14,7 +15,7 @@ public class HomeController implements Controller {
 
         String path =  httpRequest.getPath();
         String url = responsePasing.getUrl(path);
-        String contentType = responsePasing.getContentType(path);
+        String contentType = ContentType.getContentType(path);
         String statusLine;
         int statusCode;
         byte[] body;
