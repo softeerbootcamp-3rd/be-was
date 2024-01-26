@@ -106,7 +106,7 @@ public class HttpRequest {
         StringBuilder bodyBuilder = new StringBuilder();
         int read;
         int totalRead = 0;
-        char[] buffer = new char[1024];
+        char[] buffer = new char[contentLength];
 
         // 읽을 바이트 수가 Content-Length와 일치할 때까지 읽기
         while (totalRead < contentLength && (read = br.read(buffer, 0, Math.min(buffer.length, contentLength - totalRead))) != -1) {
