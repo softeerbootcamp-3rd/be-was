@@ -1,5 +1,7 @@
 package dto;
 
+import model.User;
+
 public class UserDto {
     private String userId;
     private String password;
@@ -14,6 +16,13 @@ public class UserDto {
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public UserDto(User user){
+        this.userId = user.getUserId();
+        this.password = user.getPassword();
+        this.name = user.getName();
+        this.email = user.getEmail();
     }
 
     public String getUserId() {
@@ -46,5 +55,16 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String toJsonString() {
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        json.append("\"userId\":\"").append(userId).append("\",");
+        json.append("\"password\":\"").append(password).append("\",");
+        json.append("\"name\":\"").append(name).append("\",");
+        json.append("\"email\":\"").append(email).append("\"");
+        json.append("}");
+        return json.toString();
     }
 }
