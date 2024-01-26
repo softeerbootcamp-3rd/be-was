@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import service.UserService;
+import util.FileDetector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,10 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UserControllerImplTest {
     private UserController userController;
     private FakeUserService userServiceMock;
+    private FileDetector fileDetector;
     @BeforeEach
     public void setUP(){
         userServiceMock = new FakeUserService();
-        userController = new UserControllerImpl(userServiceMock);
+        userController = new UserControllerImpl(userServiceMock, fileDetector);
     }
 
     @Test
