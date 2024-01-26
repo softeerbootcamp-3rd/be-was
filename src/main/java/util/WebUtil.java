@@ -135,4 +135,21 @@ public class WebUtil {
 
         return parameters;
     }
+
+    // Cookie 값의 key, value를 Map<String, String> 형태로 파싱
+    public static Map<String, String> parseCookie(String cookie) {
+        Map<String, String> parameters = new HashMap<>();
+        if (cookie == null) {
+            return parameters;
+        }
+
+        String[] pairs = cookie.split("; ");
+        for (String pair: pairs) {
+            String[] keyValue = pair.split("=");
+            if (keyValue.length == 2) {
+                parameters.put(keyValue[0], keyValue[1]);
+            }
+        }
+        return parameters;
+    }
 }
