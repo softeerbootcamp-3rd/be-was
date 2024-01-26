@@ -1,6 +1,7 @@
 package util;
 
 import db.Database;
+import model.User;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.HttpHeader;
@@ -73,6 +74,11 @@ public class ResourceManager {
                 html = changeHTMLButtonStatus(html, SIGNUP_BUTTON, true);
                 html = changeHTMLButtonStatus(html, LOGIN_BUTTON, true);
                 html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
+
+                if (path.equals("/user/list.html")) {
+                    html = changeHTMLGetUserList(html);
+                }
+
                 header.put(HttpHeader.CONTENT_LENGTH, Collections.singletonList(String.valueOf(html.getBytes().length)));
                 return new ResponseEntity<>(HttpStatus.OK, header, html);
             }
@@ -118,5 +124,24 @@ public class ResourceManager {
         return original.replace(target, changed);
     }
 
+    public static String changeHTMLGetUserList(String original) {
+        StringBuilder listBuilder = new StringBuilder("<tbody>\n");
+        int id = 1;
+        for (User user : Database.findAll()) {
+            listBuilder.append("<tr>\n");
+            listBuilder.append("<th scope=\"row\">").append(id).append("</th> ");
+            listBuilder.append("<td>").append(user.getUserId()).append("</td> ");
+            listBuilder.append("<td>").append(user.getName()).append("</td> ");
+            listBuilder.append("<td>").append(user.getEmail()).append("</td>");
+            listBuilder.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n");
+            listBuilder.append("</tr>\n");
+
+            id++;
+        }
+        listBuilder.append("</tbody>");
+        return original.replace("<tbody>\n" + "              </tbody>", listBuilder.toString());
+    }
+
 
 }
+
