@@ -10,13 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FrontController {
-    private final Map<String, Controller> controllerMap; //controller list
+    public final ControllerContainer container;
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
     private final String RESOURCES_STATIC_URL = "src/main/resources/static";
 
     public FrontController() {
-        controllerMap = new HashMap<>();
-        controllerMap.put("/user", new UserController());
+        container = ControllerContainer.getInstance();
     }
 
     public void process(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException {
@@ -32,7 +31,7 @@ public class FrontController {
             }
         } else {
             String[] urlToken = url.split("/");
-            Controller controller = controllerMap.get("/"+urlToken[1]);
+            Controller controller = container.get("/"+urlToken[1]);
             Method method = findMethod(controller, url,request.getMethod());
             path = (String)method.invoke(controller, request, response);
             path += ".html";
