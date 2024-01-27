@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Session {
+public class Session implements Comparable<Session> {
     private final String sessionId;
     private final String userId;
     private LocalDateTime expiredTime;
@@ -14,11 +14,17 @@ public class Session {
     public Session(String userId) {
         this.sessionId = String.valueOf(UUID.randomUUID());
         this.userId = userId;
-        this.expiredTime = LocalDateTime.now();
+        this.expiredTime = LocalDateTime.now().plusSeconds(SessionStorage.SESSION_TIME);
     }
     public String getSessionId() {return this.sessionId;}
+    public LocalDateTime getExpiredTime() {return this.expiredTime;}
 
     public void renewExpiredTime() {
-        this.expiredTime = this.expiredTime.plusSeconds(SessionStorage.SESSION_TIME);
+        this.expiredTime = LocalDateTime.now().plusSeconds(SessionStorage.SESSION_TIME);
+    }
+
+    @Override
+    public int compareTo(Session o) {
+        return this.expiredTime.compareTo(o.getExpiredTime());
     }
 }

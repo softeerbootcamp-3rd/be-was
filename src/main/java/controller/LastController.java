@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class LastController {
 
-    public static void route(Request request, Response response) {
+    public static void route(Request request, Response response, boolean login) {
         String path = request.getPath();
 
         if(request.getMimeType().equals("text/html"))

@@ -7,12 +7,12 @@ import java.util.UUID;
 
 public class UserController {
 
-    public static void route(Request request, Response response) {
+    public static void route(Request request, Response response, boolean login) {
 
         String path = request.getPath();
 
         if(request.getPath().equals("/user/list")) {
-            if(request.getSessionId() != null) {
+            if(login) {
                 response.setStatusCode("302");
                 response.setRedirectUrl("/user/list.html");
             }
@@ -52,6 +52,6 @@ public class UserController {
             return;
         }
 
-        LastController.route(request, response);
+        LastController.route(request, response, login);
     }
 }

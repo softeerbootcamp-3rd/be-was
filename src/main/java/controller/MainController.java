@@ -6,7 +6,7 @@ import model.Response;
 import model.Session;
 
 public class MainController {
-    public static void route(Request request, Response response){
+    public static void route(Request request, Response response, boolean login){
 
 
         String path = request.getPath();
@@ -17,6 +17,6 @@ public class MainController {
             return;
         }
 
-        LastController.route(request, response);
+        LastController.route(request, response, login);
     }
 }
