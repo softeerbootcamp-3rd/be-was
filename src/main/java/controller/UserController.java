@@ -6,6 +6,8 @@ import dto.HttpResponseDtoBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import util.HtmlBuilder;
+import util.HttpResponseUtil;
 import util.WebUtil;
 
 import java.util.Map;
@@ -28,7 +30,11 @@ public class UserController implements Controller {
         if (request.getMethod().equals("POST") && request.getUri().startsWith("/user/login")) {
             return loginUser(request);
         }
-        return getPage(request, logger);
+        if (request.getMethod().equals("GET") && request.getUri().startsWith("/user/list")) {
+            return printUserList(request);
+        }
+
+        return HttpResponseUtil.loadResource(request, logger);
     }
 
     public HttpResponseDto createUser(HttpRequestDto request) {
@@ -49,6 +55,7 @@ public class UserController implements Controller {
 
     public HttpResponseDto loginUser(HttpRequestDto request) {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+
         try {
             Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
             String sessionId = userService.loginUser(parameters);
@@ -63,5 +70,24 @@ public class UserController implements Controller {
             return responseDtoBuilder.response302Header()
                     .setHeaders("Location", "/user/login_failed.html").build();
         }
+    }
+
+    public HttpResponseDto printUserList(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+
+        if (request.getUser() != null) {
+            // 로그인 한 경우
+            byte[] body = HtmlBuilder.buildUserListPage(request);
+
+            return responseDtoBuilder.response200Header()
+                    .setHeaders("Content-Type", WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                    .setHeaders("Content-Length", Integer.toString(body.length))
+                    .setBody(body)
+                    .build();
+        }
+
+        // 로그인하지 않은 경우
+        return responseDtoBuilder.response302Header()
+                .setHeaders("Location", "/user/login.html").build();
     }
 }

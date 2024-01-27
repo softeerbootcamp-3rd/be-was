@@ -5,6 +5,9 @@ import dto.HttpResponseDto;
 import dto.HttpResponseDtoBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HtmlBuilder;
+import util.HttpResponseUtil;
+import util.WebUtil;
 
 public class DefaultController implements Controller {
     private static final Logger logger = LoggerFactory.getLogger(DefaultController.class);
@@ -17,6 +20,21 @@ public class DefaultController implements Controller {
             return responseDtoBuilder.response302Header()
                     .setHeaders("Location", "/index.html").build();
         }
-        return getPage(request, logger);
+        if (request.getUri().equals("/index.html")) {
+            return getIndexPage(request);
+        }
+
+        return HttpResponseUtil.loadResource(request, logger);
+    }
+
+    public HttpResponseDto getIndexPage(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        byte[] body = HtmlBuilder.buildIndexPage(request);
+
+        return responseDtoBuilder.response200Header()
+                .setHeaders("Content-Type", WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                .setHeaders("Content-Length", Integer.toString(body.length))
+                .setBody(body)
+                .build();
     }
 }

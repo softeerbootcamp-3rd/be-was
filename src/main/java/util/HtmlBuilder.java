@@ -22,8 +22,7 @@ public class HtmlBuilder {
     }
 
     // 로그인 여부에 따라 navBar를 변경한 /index.html 외의 templates 파일을 byte[]로 리턴
-    public static byte[] buildPage(HttpRequestDto request) {
-        String html = readHtmlInString(WebUtil.getPath(request.getUri()));
+    public static byte[] buildPage(HttpRequestDto request, String html) {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildNavBar(request.getUser()));
 
@@ -111,6 +110,7 @@ public class HtmlBuilder {
         try {
             return new String(Files.readAllBytes(new File(path).toPath()));
         } catch (IOException e) {
+            System.out.println(e);
             throw new RuntimeException(e);
         }
     }
