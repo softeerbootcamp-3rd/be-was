@@ -1,6 +1,7 @@
 package webserver;
 
 import common.logger.CustomLogger;
+import common.utils.AsyncExecutor;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +31,7 @@ public class WebServer {
             CustomLogger.printError(e);
         } finally {
             executorService.shutdown();
+            AsyncExecutor.shutdown();
         }
     }
 
