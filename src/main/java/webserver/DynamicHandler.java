@@ -1,10 +1,8 @@
-package util;
+package webserver;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
 import constant.ErrorCode;
-import dto.RequestDto;
-import dto.ResponseDto;
 import exception.WebServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,57 +14,57 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MethodMapper {
-    private static final Logger logger = LoggerFactory.getLogger(MethodMapper.class);
+public class DynamicHandler {
+    private static final Logger logger = LoggerFactory.getLogger(DynamicHandler.class);
     private static final Map<String, Method> CONTROLLER_METHOD = new HashMap<>();
 
     static {
         registerMethod();
     }
 
-
     /**
-     * <h3> 요청의 HTTP 메소드와 경로에 매핑되는 컨트롤러_메소드가 있는지 확인 </h3>
-     * @param methodAndPath
-     * @return 요청에 매핑되는 컨트롤러 메소드가 있는지 boolean
-     */
-    public static boolean hasMethod(String methodAndPath) {
-        return CONTROLLER_METHOD.containsKey(methodAndPath);
-    }
-
-
-    /**
-     * <h3> 요청에 매핑되는 컨트롤러의 메소드를 실행 </h3>
-     * @param requestDto
+     * <h3> 동적 요청을 처리 </h3>
+     * <p> 요청에 맞는 컨트롤러 메소드가 있는지 확인 후 실행하여 HttpResponse 를 반환 </p>
+     *
+     * @param httpRequest
      * @return
      */
-    public static ResponseDto execute(RequestDto requestDto) {
-        Method method = CONTROLLER_METHOD.get(requestDto.getMethodAndPath());
-        Class<?> controller = method.getDeclaringClass();
-        ResponseDto response = new ResponseDto();
+    public static HttpResponse handle(HttpRequest httpRequest) {
+        HttpResponse httpResponse = new HttpResponse();
+        Method method = CONTROLLER_METHOD.get(httpRequest.getMethod() + httpRequest.getPath());
 
-        try {
-            response = (ResponseDto) method.invoke(controller, requestDto);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            if (e.getCause().getClass().equals(WebServerException.class)) {
-                WebServerException wasE = (WebServerException) e.getCause();
-                response.makeError(wasE.getErrorCode());
-            } else {
-                // TODO
-                e.printStackTrace();
-                response.makeError(ErrorCode.PAGE_NOT_FOUND);
+        if (method != null) {
+            Class<?> controller = method.getDeclaringClass();
+
+            try {
+                httpResponse = (HttpResponse) method.invoke(controller, httpRequest);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                if (e.getCause().getClass().equals(WebServerException.class)) {
+                    WebServerException wasE = (WebServerException) e.getCause();
+                    httpResponse.makeError(wasE.getErrorCode());
+                } else {
+                    logger.error(e.getCause().getMessage());
+                    httpResponse.makeError(ErrorCode.SERVER_ERROR);
+                }
             }
+        } else {
+            // 정적, 동적 모두 아닌 경우 - PAGE_NOT_FOUND 예외 전송
+            httpResponse.makeError(ErrorCode.PAGE_NOT_FOUND);
         }
 
-        return response;
+        return httpResponse;
     }
 
+    /**
+     * <h3> CONTROLLER_METHOD 초기화 </h3>
+     * <p> 어노테이션을 이용해 컨트롤러 클래스에 작성한 메소드들을 그에 맞는 요청과 매핑 </p>
+     */
     public static void registerMethod() {
         // 컨트롤러 클래스들을 작성하는 controller 폴더 경로
         File folder = new File("src/main/java/controller");
         File[] files = folder.listFiles();
 
-        // controller 폴더에 있는 컨트롤러 클래스들을 가져와 controllers 에 추가
+        // controller 폴더에 있는 컨트롤러 클래스 파일들을 가져와 클래스명을 이용해 해당 클래스를 controllers 에 추가
         ArrayList<Class<?>> controllers = new ArrayList<>();
         if (files != null) {
             for (File file : files) {
@@ -98,7 +96,7 @@ public class MethodMapper {
                 }
                 // TODO : DELETE 등 다른 요청에 대한 처리 코드 추가
 
-                CONTROLLER_METHOD.put((httpMethod + " " + path), method);
+                CONTROLLER_METHOD.put((httpMethod + path), method);
             }
         }
     }
