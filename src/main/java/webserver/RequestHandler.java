@@ -36,7 +36,7 @@ public class RequestHandler implements Runnable {
             RequestData requestData = RequestParserUtil.parseRequest(br);
 
             // 파싱한 요청의 세부 내용 출력
-            logger.debug(requestData.toString());
+            logger.debug("RequestData: {}", requestData);
 
             Response response = RequestDataController.routeRequest(requestData);
 
