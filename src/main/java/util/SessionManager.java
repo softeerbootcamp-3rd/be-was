@@ -32,7 +32,8 @@ public class SessionManager {
         return sessionMap.get(sessionId);
     }
 
-    public static void removeSession(String sessionId) {
+    public static void removeSession(HttpRequest httpRequest) {
+        String sessionId = httpRequest.getCookieMap().get("SID");
         sessionMap.remove(sessionId);
     }
 }

@@ -115,6 +115,8 @@ public class HttpRequest {
         Map<String, String> cookieMap = new HashMap<>();
 
         String cookie = getHeader(HttpHeaders.COOKIE);
+        if (cookie == null)
+            return cookieMap;
 
         String[] tokens = cookie.split(";");
 

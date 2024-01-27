@@ -14,6 +14,7 @@ import util.http.ResponseEntity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.HttpCookie;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -43,6 +44,9 @@ public class UserController {
             }
             if (lastPath.equals("profile")) {
                 responseEntity = profile();
+            }
+            if (lastPath.equals("logout")) {
+                responseEntity = logout();
             }
             return responseEntity;
         } catch (FileNotFoundException e) {
@@ -158,5 +162,18 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
                 .body(body);
+    }
+
+    private ResponseEntity<?> logout() {
+        boolean isLoggedIn = SessionManager.isLoggedIn(httpRequest);
+
+        if (isLoggedIn) {
+            SessionManager.removeSession(httpRequest);
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.SET_COOKIE, "SID=; Path=/; Max-Age=0")
+                .location(URI.create("/index.html"))
+                .build();
     }
 }
