@@ -3,36 +3,14 @@ package util;
 import util.http.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ResourceUtils {
     private static final String TEMPLATES = "./src/main/resources/templates";
     private static final String STATIC = "./src/main/resources/static";
 
-    public static ResponseEntity<?> getStaticResource(HttpRequest httpRequest) throws IOException {
-        try {
-            String path = httpRequest.getPath();
-
-            byte[] body = Files.readAllBytes(getFileFromPath(path));
-            String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, contentType)
-                    .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
-                    .body(body);
-        } catch (FileNotFoundException e) {
-            return FileNotFoundExceptionHandler();
-        }
-    }
-
-    private static ResponseEntity<?> FileNotFoundExceptionHandler() throws IOException {
-        byte[] body = Files.readAllBytes(getFileFromPath("/notfound.html"));
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
-                .body(body);
+    public static byte[] getStaticResource(String path) throws IOException {
+        return Files.readAllBytes(getFileFromPath(path));
     }
 
     private static File getFileFromPath(String path) {
@@ -54,6 +32,13 @@ public class ResourceUtils {
 
     private static String getExtension(String path) {
         String[] tokens = path.split("\\.");
+        return tokens[tokens.length - 1];
+    }
+
+    public static String getLastPath(String path) {
+        if (path == null || "/".equals(path))
+            return path;
+        String[] tokens = path.split("/");
         return tokens[tokens.length - 1];
     }
 }

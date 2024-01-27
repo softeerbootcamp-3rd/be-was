@@ -4,13 +4,23 @@ import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.SessionStorage;
+import util.SessionManager;
+import java.util.Collection;
+
+import static util.StringUtils.*;
 
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String create(String userId, String password, String name, String email) {
-        User user = new User(userId, password, name, email);
+        String decodedUserId = decode(userId);
+        String decodedPassword = decode(password);
+        String decodedName = decode(name);
+        String decodedEmail = decode(email);
+
+//        isDuplicateUser();
+
+        User user = new User(decodedUserId, decodedPassword, decodedName, decodedEmail);
         Database.addUser(user);
         logger.debug(user.toString());
         return user.getUserId();
@@ -20,8 +30,14 @@ public class UserService {
         User user = Database.findUserById(userId);
         if (user == null || !user.getPassword().equals(password))
             return null;
-        String sessionId = SessionStorage.generateSessionId();
-        SessionStorage.addSession(sessionId, user);
+        String sessionId = SessionManager.generateSessionId();
+        SessionManager.addSession(sessionId, user);
         return sessionId;
     }
+
+    public Collection<User> list() {
+        return Database.findAll();
+    }
+
+
 }

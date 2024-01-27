@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import controller.HomeController;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class RequestHandler implements Runnable {
         }
 
         if (responseEntity == null)
-            responseEntity = ResourceUtils.getStaticResource(httpRequest);
+            responseEntity = new HomeController(httpRequest).run();
 
         HttpResponse.send(dos, responseEntity);
     }

@@ -102,4 +102,18 @@ public class HttpRequest {
         }
         return queryMap;
     }
+
+    public Map<String, String> getCookieMap() {
+        Map<String, String> cookieMap = new HashMap<>();
+
+        String cookie = getHeader(HttpHeaders.COOKIE);
+
+        String[] tokens = cookie.split(";");
+
+        for (String s : tokens) {
+            String[] keyVal = s.split("=");
+            cookieMap.put(keyVal[0].trim(), keyVal[1].trim());
+        }
+        return cookieMap;
+    }
 }
