@@ -1,18 +1,19 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.Socket;
 
 import common.util.FileManager;
 import dto.HttpRequest;
 import dto.HttpResponse;
+import http.MethodMapper;
 import http.ExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static dto.HttpResponse.*;
 import static http.Status.*;
-import static common.WebServerConfig.*;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -33,20 +34,21 @@ public class RequestHandler implements Runnable {
             HttpRequest request = new HttpRequest(br);
             HttpResponse response = new HttpResponse();
 
-            String path = request.getPath();
+            String requestMethod = request.getMethod();
+            String requestPath = request.getPath();
             try {
-                if (request.getMethod().equals("GET")
-                        && (FileManager.getFile(path, getContentType(request.getPath()))) != null) {
-                    response.makeBody(OK, path);
+                // 정적 컨텐츠 처리
+                if (requestMethod.equals("GET")
+                        && (FileManager.getFile(requestPath, getContentType(requestPath))) != null) {
+                    response.makeBody(OK, requestPath);
                 }
-                if (request.getMethod().equals("POST")) {
-                    String body = request.getBody();
-                    if (path.equals("/user/create")) {
-                        response = userController.create(body);
-                    }
-                    if (path.equals("/user/login")) {
-                        response = userController.login(body);
-                    }
+                // 동적 컨텐츠 처리
+                else {
+                    String endPoint = requestMethod + " " + requestPath;
+                    Method method = MethodMapper.getMethod(endPoint);
+                    response = (HttpResponse) method.invoke(
+                            method.getDeclaringClass().getConstructor().newInstance(),
+                            request.getBody());
                 }
             } catch (Exception e) {
                 ExceptionHandler.process(e, response);
