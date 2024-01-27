@@ -1,5 +1,7 @@
 package controller;
 
+import exception.DuplicateUserException;
+import exception.DuplicateUserExceptionHandler;
 import exception.FileNotFoundExceptionHandler;
 import model.User;
 import service.UserService;
@@ -39,13 +41,16 @@ public class UserController {
             if (lastPath.equals("list")) {
                 responseEntity = list();
             }
+            if (lastPath.equals("profile")) {
+                responseEntity = profile();
+            }
             return responseEntity;
         } catch (FileNotFoundException e) {
             return FileNotFoundExceptionHandler.handle();
         }
     }
 
-    private ResponseEntity<?> create() {
+    private ResponseEntity<?> create() throws IOException {
 //        Map<String, String> query = httpRequest.getQueryMap();
         Map<String, String> query = httpRequest.getBodyParams();
 
@@ -54,10 +59,14 @@ public class UserController {
         String name = query.get("name");
         String email = query.get("email");
 
-        userService.create(userId, password, name, email);
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("/index.html"))
-                .build();
+        try {
+            userService.create(userId, password, name, email);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("/index.html"))
+                    .build();
+        } catch (DuplicateUserException e) {
+            return DuplicateUserExceptionHandler.handle(e);
+        }
     }
 
     private ResponseEntity<?> login() {
@@ -89,15 +98,59 @@ public class UserController {
         }
 
         StringBuilder sb = new StringBuilder();
-        String line = "<tr><th scope=\"row\">1</th> <td>{{userId}}</td> <td>{{name}}</td> <td>{{email}}</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>";
-        Collection<User> userlist = userService.list();
-        for (User user : userlist) {
-            sb.append(line.replace("{{userId}}", user.getUserId())
+        String tr = "<tr><th scope=\"row\">1</th> <td>{{userId}}</td> <td>{{name}}</td> <td>{{email}}</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>";
+
+        Collection<User> users = userService.list();
+        for (User user : users) {
+            sb.append(tr.replace("{{userId}}", user.getUserId())
                     .replace("{{name}}", user.getName())
                     .replace("{{email}}", user.getEmail()));
         }
+
+        User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
+
+        String userId = "<li><a role=\"button\">{{userId}}</a></li>";
+        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
+
         String html = new String(ResourceUtils.getStaticResource("/user/list.html"));
-        byte[] body =  html.replace("<tr id=\"replace\"></tr>", sb.toString()).getBytes();
+        byte[] body =  html.replace("<tr id=\"users\"></tr>", sb.toString())
+                .replace("<li><a id=\"userId\" role=\"button\"></a></li>", userId)
+                .getBytes();
+
+        String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .body(body);
+    }
+
+    private ResponseEntity<?> profile() throws IOException {
+        boolean isLoggedIn = SessionManager.isLoggedIn(httpRequest);
+
+        if (!isLoggedIn) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("/user/login.html"))
+                    .build();
+        }
+
+        User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
+
+        String userId = "<li><a role=\"button\">{{userId}}</a></li>";
+        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
+
+        String name = "<h4 id=\"username\" class=\"media-heading\">{{name}}</h4>";
+        name = name.replace("{{name}}", loggedInUser.getName());
+
+        String email = "<a id=\"email\" href=\"#\" class=\"btn btn-xs btn-default\"><span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;{{email}}</a>";
+        email = email.replace("{{email}}", loggedInUser.getEmail());
+
+        String html = new String(ResourceUtils.getStaticResource("/user/profile.html"));
+        byte[] body =  html.replace("<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>", userId)
+                .replace("<li><a href=\"../user/form.html\" role=\"button\">회원가입</a></li>", "")
+                .replace("<h4 id=\"username\" class=\"media-heading\">자바지기</h4>", name)
+                .replace("<a id=\"email\" href=\"#\" class=\"btn btn-xs btn-default\"><span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;javajigi@slipp.net</a>", email)
+                .getBytes();
 
         String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
 

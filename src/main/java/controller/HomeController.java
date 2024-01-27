@@ -48,11 +48,15 @@ public class HomeController {
                     .body(body);
         }
 
-        String line = "<li><a role=\"button\">{{userId}}</a></li>";
-        User user = SessionManager.getLoggedInUser(httpRequest);
-        line = line.replace("{{userId}}", user.getUserId());
+        User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
+
+        String userId = "<li><a role=\"button\">{{userId}}</a></li>";
+        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
+
         String html = new String(ResourceUtils.getStaticResource(httpRequest.getPath()));
-        byte[] body =  html.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", line).getBytes();
+        byte[] body =  html.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", userId)
+                .replace("<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>", "")
+                .getBytes();
 
         String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
 

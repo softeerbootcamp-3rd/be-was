@@ -1,6 +1,7 @@
 package service;
 
 import db.Database;
+import exception.DuplicateUserException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,17 +14,29 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String create(String userId, String password, String name, String email) {
-        String decodedUserId = decode(userId);
-        String decodedPassword = decode(password);
-        String decodedName = decode(name);
-        String decodedEmail = decode(email);
+        userId = decode(userId);
+        password = decode(password);
+        name = decode(name);
+        email = decode(email);
 
-//        isDuplicateUser();
+        isDuplicateUser(userId, email);
 
-        User user = new User(decodedUserId, decodedPassword, decodedName, decodedEmail);
+        User user = new User(userId, password, name, email);
         Database.addUser(user);
         logger.debug(user.toString());
         return user.getUserId();
+    }
+
+    private void isDuplicateUser(String userId, String email) {
+        Collection<User> users = Database.findAll();
+        for (User user : users) {
+            if (user.getUserId().equals(userId)) {
+                throw new DuplicateUserException(DuplicateUserException.duplicateId);
+            }
+            if (user.getEmail().equals(email)) {
+                throw new DuplicateUserException(DuplicateUserException.duplicateEmail);
+            }
+        }
     }
 
     public String login(String userId, String password) {
