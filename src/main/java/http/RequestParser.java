@@ -42,6 +42,6 @@ public class RequestParser {
     }
 
     private static boolean isQueryStringExist(String url) {
-        return url.contains(URL_DELIMITER);
+        return url.contains("?");
     }
 }
