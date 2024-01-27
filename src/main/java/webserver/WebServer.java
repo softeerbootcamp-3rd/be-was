@@ -20,19 +20,20 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        // 현재 시스템에서 사용 가능한 프로세서(코어)의 수
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(availableProcessors * 2);
+
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
-
-            // 최대 10개의 쓰레드를 갖는 쓰레드 풀 생성
-            ExecutorService executorService = Executors.newFixedThreadPool(10);
 
             Socket connection;
 
             while ((connection = listenSocket.accept()) != null) {
                 executorService.submit(new RequestHandler(connection));
             }
-
+        } finally {
             // 서버 종료 시 쓰레드 풀 종료
             executorService.shutdown();
         }
