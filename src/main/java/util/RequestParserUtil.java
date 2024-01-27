@@ -1,5 +1,6 @@
 package util;
 
+import controller.HttpMethod;
 import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,11 @@ public class RequestParserUtil {
 
                 logger.debug("requestBody: {}", requestBody);
 
-                return new RequestData(tokens[0], tokens[1], tokens[2], headers, requestBody);
+                return new RequestData(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, requestBody);
             }
         }
 
-        return new RequestData(tokens[0], tokens[1], tokens[2], headers);
+        return new RequestData(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers);
     }
 
     private static Map<String, String> parseHeaders(BufferedReader br) throws IOException {
