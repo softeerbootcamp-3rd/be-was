@@ -17,6 +17,7 @@ public class UserController {
         methodMap.put("/user/create", this::generateUserResource);
         methodMap.put("/index.html", this::process);
         methodMap.put("/user/form.html", this::process);
+        methodMap.put("/user/login.html", this::process);
         methodMap.put("/user/login", this::loginUserResource);
     }
 
@@ -37,7 +38,7 @@ public class UserController {
 
     public Function<Object, ResourceDto> getCorrectMethod(String path) {
         for (String key : methodMap.keySet()) {
-            if (path.startsWith(key)) {
+            if (path.matches(key)) {
                 return methodMap.get(key);
             }
         }

@@ -7,6 +7,7 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ErrorCode;
+import util.Session;
 
 import java.util.Map;
 import java.util.UUID;
@@ -39,8 +40,8 @@ public class UserService {
         if (!user.getPassword().equals(Database.findUserById(data.get("password")))) {
             throw new SourceException(ErrorCode.NOT_VALID_PASSWORD);
         }
-        String uuid = UUID.randomUUID().toString();
-        Database.addSession(uuid, user.getUserId());
-        return uuid;
+        Session session = new Session(user.getUserId());
+        Database.addSession(session);
+        return session.getSessionId();
     }
 }
