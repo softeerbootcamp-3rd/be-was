@@ -7,7 +7,7 @@ import java.net.Socket;
 import controller.FrontController;
 import http.HttpRequest;
 import http.HttpResponse;
-import http.HttpResponseHandler;
+import http.ResponseHeaderMaker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +17,13 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
 
-    private FrontController frontController;
-    private HttpResponseHandler responseHandler;
+    private final FrontController frontController;
+    private final ResponseHeaderMaker responseHeaderMaker;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.frontController = new FrontController();
-        this.responseHandler = new HttpResponseHandler();
+        this.responseHeaderMaker = new ResponseHeaderMaker();
     }
 
     public void run() {
@@ -41,7 +41,7 @@ public class RequestHandler implements Runnable {
 
             frontController.process(request, response);
 
-            responseHandler.setHttpResponse(response);
+            responseHeaderMaker.setHttpResponse(response);
             response.send();
 
         } catch (IOException | InvocationTargetException | IllegalAccessException e) {

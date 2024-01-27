@@ -2,7 +2,7 @@ package http;
 
 import java.io.File;
 
-public class HttpResponseHandler {
+public class ResponseHeaderMaker {
 
     public void setHttpResponse(HttpResponse response) {
         String path = response.getPath();
