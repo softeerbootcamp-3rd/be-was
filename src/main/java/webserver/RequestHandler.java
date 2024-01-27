@@ -4,11 +4,13 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
+import auth.AuthFilter;
 import controller.FrontController;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.ResponseHeaderMaker;
 
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +21,13 @@ public class RequestHandler implements Runnable {
 
     private final FrontController frontController;
     private final ResponseHeaderMaker responseHeaderMaker;
+    private final AuthFilter authFilter;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.frontController = new FrontController();
         this.responseHeaderMaker = new ResponseHeaderMaker();
+        this.authFilter = new AuthFilter();
     }
 
     public void run() {
@@ -36,6 +40,8 @@ public class RequestHandler implements Runnable {
 
             HttpRequest request = new HttpRequest(in); //http request 정보 가져오기
             request.print(); //http request 정보 출력
+
+            authFilter.doFilter(request);
 
             HttpResponse response = new HttpResponse(dos);
 

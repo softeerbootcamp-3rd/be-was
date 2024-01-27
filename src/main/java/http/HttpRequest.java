@@ -20,6 +20,8 @@ public class HttpRequest {
     private String connection;
     private String accept;
     private Integer contentLength;
+    private String sessionId;
+    private String userId;
     private final Map<String, String> requestParam;
     private final Map<String, String> formData;
 
@@ -29,6 +31,8 @@ public class HttpRequest {
     public String getUrl() {
         return url;
     }
+    public String getSessionId() { return sessionId; }
+    public void setUserId(String userId) { this.userId = userId; }
     public Map<String, String> getRequestParam() { return requestParam; }
     public Map<String, String> getFormData() { return formData; }
 
@@ -70,6 +74,8 @@ public class HttpRequest {
                 host = line.substring("Host: ".length());
             } else if (line.startsWith("Content-Length: ")) {
                 contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
+            } else if (line.startsWith("Cookie:")) {
+                sessionId = line.substring("Cookie: ".length());
             }
             line = br.readLine();
         }

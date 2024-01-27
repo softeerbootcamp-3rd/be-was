@@ -22,7 +22,6 @@ public class HttpResponse {
     public HttpResponse(DataOutputStream dos) {
         headers = new HashMap<>();
         this.dos = dos;
-
     }
 
     public void setPath(String path) {
