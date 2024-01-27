@@ -36,6 +36,7 @@ public class WebUtilTest {
         Assertions.assertThat(parsedRequest.getHeaders().get("Connection")).isEqualTo("keep-alive");
         Assertions.assertThat(parsedRequest.getHeaders().get("Accept")).isEqualTo("*/*");
         Assertions.assertThat(parsedRequest.getBody()).isEqualTo("request body");
+        Assertions.assertThat(parsedRequest.getUser()).isNull();
 
     }
 

@@ -1,5 +1,7 @@
 package dto;
 
+import model.User;
+
 import java.util.Map;
 
 public class HttpRequestDtoBuilder {
@@ -12,6 +14,8 @@ public class HttpRequestDtoBuilder {
     private Map<String, String> headers;
 
     private String body;
+
+    private User user;
 
     public HttpRequestDtoBuilder(String method, String uri, String httpVersion) {
         this.method = method;
@@ -29,7 +33,12 @@ public class HttpRequestDtoBuilder {
         return this;
     }
 
+    public HttpRequestDtoBuilder setUser(User user) {
+        this.user = user;
+        return this;
+    }
+
     public HttpRequestDto build() {
-        return new HttpRequestDto(method, uri, httpVersion, headers, body);
+        return new HttpRequestDto(method, uri, httpVersion, headers, body, user);
     }
 }

@@ -1,6 +1,7 @@
 package util;
 
 import dto.HttpRequestDtoBuilder;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dto.HttpRequestDto;
@@ -56,6 +57,9 @@ public class WebUtil {
                 requestHeaders.put(requestHeader[0], requestHeader[1]);
             }
 
+            // 헤더의 쿠키 값을 이용해 유저 로그인 여부 확인
+            User user = SessionUtil.getUserByCookie(requestHeaders);
+
             // Parsing Request Body
             StringBuilder stringBuilder = new StringBuilder();
             int contentLength = Integer.parseInt(requestHeaders.getOrDefault("Content-Length", DEFAULT_CONTENT_LENGTH));
@@ -68,6 +72,7 @@ public class WebUtil {
             parsedRequest = new HttpRequestDtoBuilder(requestLines[0], requestLines[1], requestLines[2])
                     .setHeaders(requestHeaders)
                     .setBody(requestBody)
+                    .setUser(user)
                     .build();
 
         } catch (IOException e) {
