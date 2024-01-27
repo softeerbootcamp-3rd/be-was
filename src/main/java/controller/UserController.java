@@ -12,7 +12,7 @@ public class UserController {
         String path = request.getPath();
 
         if(request.getPath().equals("/user/list")) {
-            if(UserService.checkUserLogin(request.getSessionId())) {
+            if(request.getSessionId() != null) {
                 response.setStatusCode("302");
                 response.setRedirectUrl("/user/list.html");
             }

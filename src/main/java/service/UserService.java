@@ -1,6 +1,7 @@
 package service;
 
 import db.Database;
+import db.SessionStorage;
 import model.Request;
 import model.Session;
 import model.User;
@@ -23,18 +24,14 @@ public class UserService {
         }
     }
 
-    public static boolean checkUserLogin(String sessionId) {
-        return (sessionId != null && Session.containsSessionId(sessionId));
-    }
-
     public static String login(UserInfo userInfo) {
         String userId = userInfo.getUserId();
         String password = userInfo.getPassword();
-        User registeredUser = Database.findUserById(userId);
-        if(registeredUser == null || !registeredUser.getPassword().equals(password))
+        User user = Database.findUserById(userId);
+        if(user == null || !user.getPassword().equals(password))
             return null;
-        String sessionId = String.valueOf(UUID.randomUUID());
-        Session.addSession(sessionId, registeredUser);
-        return sessionId;
+        Session createdSession = new Session(userId);
+        SessionStorage.addSession(createdSession);
+        return createdSession.getSessionId();
     }
 }

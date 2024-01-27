@@ -1,15 +1,24 @@
 package model;
 
+import db.SessionStorage;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Session {
-    private static HashMap<String, User> sessionStorage = new HashMap<>();
+    private final String sessionId;
+    private final String userId;
+    private LocalDateTime expiredTime;
 
-    public static void addSession(String sessionId, User user) {
-        sessionStorage.put(sessionId, user);
+    public Session(String userId) {
+        this.sessionId = String.valueOf(UUID.randomUUID());
+        this.userId = userId;
+        this.expiredTime = LocalDateTime.now();
     }
-    public static User findBySessionId(String sessionId) {
-        return sessionStorage.get(sessionId);
+    public String getSessionId() {return this.sessionId;}
+
+    public void renewExpiredTime() {
+        this.expiredTime = this.expiredTime.plusSeconds(SessionStorage.SESSION_TIME);
     }
-    public static boolean containsSessionId(String sessionId) {return sessionStorage.containsKey(sessionId);}
 }
