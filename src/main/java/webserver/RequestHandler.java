@@ -46,9 +46,7 @@ public class RequestHandler implements Runnable {
                 else {
                     String endPoint = requestMethod + " " + requestPath;
                     Method method = MethodMapper.getMethod(endPoint);
-                    response = (HttpResponse) method.invoke(
-                            method.getDeclaringClass().getConstructor().newInstance(),
-                            request.getBody());
+                    response = (HttpResponse) method.invoke(method.getDeclaringClass(), request.getBody());
                 }
             } catch (Exception e) {
                 ExceptionHandler.process(e, response);
