@@ -8,8 +8,7 @@ import java.util.List;
 
 public class UserInfo {
     private HashMap<String, String> info;
-    public UserInfo(HashMap<String, String> params) throws IllegalArgumentException{
-        if(!validateInfo(params)) throw new IllegalArgumentException("Not valid Information !!");
+    public UserInfo(HashMap<String, String> params) {
         this.info = new HashMap<>();
         this.info.put("userId", params.getOrDefault("userId", ""));
         this.info.put("password", params.getOrDefault("password", ""));
@@ -23,6 +22,10 @@ public class UserInfo {
     public void deleteInfo(String key) {
         info.remove(key);
     }
+    public String getUserId() {return this.info.get("userId");}
+    public String getPassword() {return this.info.get("password");}
+    public String getName() {return this.info.get("name");}
+    public String getEmail() {return this.info.get("email");}
 
     public boolean validateInfo(HashMap<String, String> params) {
         List<String> list = new ArrayList<>();

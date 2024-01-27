@@ -1,6 +1,18 @@
 package model;
 
+import db.SessionStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+
 public class Response {
+    private static final HashMap<String, String> statusCodeMessage = new HashMap<>() {{
+        put("200", "OK"); put("302", "Found"); put("404", "Not Found"); }};
+    private static final Logger logger = LoggerFactory.getLogger(Response.class);
     private String statusCode;
     private byte[] body;
     private String mimeType;
@@ -33,5 +45,38 @@ public class Response {
         this.mimeType = mimeType;
         this.redirectUrl = redirectUrl;
         this.cookie = cookie;
+    }
+    public void write(DataOutputStream dos) {
+        handleResponseHeader(dos);
+        if(this.body != null)
+            handleResponseBody(dos);
+    }
+    private void handleResponseHeader(DataOutputStream dos) {
+        try {
+            dos.writeBytes("HTTP/1.1 " + statusCode + " " + statusCodeMessage.get(statusCode) + " \r\n");
+            if(cookie != null) {
+                dos.writeBytes("Set-Cookie: " + "sessionId=" + cookie + "; Path=/; Max-Age=" + SessionStorage.SESSION_TIME + "\r\n");
+                dos.writeBytes("Location: " + redirectUrl);
+            }
+            else
+            if(body != null) {
+                dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
+                dos.writeBytes("Content-Length: " + body.length + "\r\n");
+            }
+            else if(redirectUrl != null){
+                dos.writeBytes("Location: " + redirectUrl);
+            }
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+    private void handleResponseBody(DataOutputStream dos) {
+        try {
+            dos.write(body, 0, body.length);
+            dos.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
     }
 }
