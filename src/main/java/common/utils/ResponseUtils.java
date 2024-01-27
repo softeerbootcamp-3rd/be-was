@@ -46,4 +46,9 @@ public class ResponseUtils {
     }
 
 
+    public static Map<String, String> makeJsonResponseHeader() {
+        Map<String, String> header = new HashMap<>();
+        header.put("Content-Type", "application/json");
+        return header;
+    }
 }
