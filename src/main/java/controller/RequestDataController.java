@@ -18,34 +18,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import static util.MethodMapper.routeMap;
 import static util.RequestParserUtil.getFileExtension;
 
 public class RequestDataController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestDataController.class);
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Route {
-        String value();
-    }
-
-    private static Map<String, Method> routeMap = new HashMap<>();
-
-    static {
-        // 라우팅 메서드 등록
-        registerRoutes();
-    }
-
-    private static void registerRoutes() {
-        Method[] methods = RequestDataController.class.getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(Route.class)) {
-                Route route = method.getAnnotation(Route.class);
-                routeMap.put(route.value(), method);
-            }
-        }
-    }
 
     public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
@@ -95,12 +73,12 @@ public class RequestDataController {
         }
     }
 
-    @Route("/")
+    @Route(method = HttpMethod.GET, uri = "/")
     public static Response handleApiRedirectToHome(RequestData requestData) {
         return new Response(HttpStatusCode.FOUND, "/index.html");
     }
 
-    @Route("/user/create")
+    @Route(method = HttpMethod.POST, uri = "/user/create")
     public static Response handleApiSignup(RequestData requestData) {
         try {
             UserService.registerUser(requestData);
@@ -111,7 +89,7 @@ public class RequestDataController {
         }
     }
 
-    @Route("/user/login")
+    @Route(method = HttpMethod.POST, uri = "/user/login")
     private static Response handleApiLogin(RequestData requestData) {
         CookieData cookieData = UserService.login(requestData);
         if (cookieData != null) {
@@ -120,13 +98,13 @@ public class RequestDataController {
         return new Response(HttpStatusCode.FOUND, "/user/login_failed.html");
     }
 
-    @Route("/user/logout")
+    @Route(method = HttpMethod.POST, uri = "/user/logout")
     private static Response handleApiLogout(RequestData requestData) {
         CookieData cookieData = UserService.logout(requestData);
         return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
     }
 
-    @Route("/user/list.html")
+    @Route(method = HttpMethod.GET, uri = "/user/list.html")
     private static Response handleFileList(RequestData requestData) {
         if (requestData.getHeaderValue("Cookie") != null && UserService.isLoggedIn(requestData)) {
             return new Response(HttpStatusCode.OK, requestData.getRequestContent());
