@@ -1,18 +1,22 @@
 package domain.user.command.application;
 
 import common.http.response.HttpStatusCode;
+import common.utils.AsyncExecutor;
 import common.utils.ResponseUtils;
 import domain.user.command.domain.User;
 import domain.user.command.domain.UserRepository;
+import domain.user.infrastructure.QueryCommandHandler;
 import domain.user.infrastructure.UserRepositoryImpl;
 import java.util.HashMap;
 import webserver.container.ResponseThreadLocal;
 
 public class UserCreateService {
     private UserRepository userRepository;
+    private QueryCommandHandler queryCommandHandler;
 
     public UserCreateService() {
         userRepository = new UserRepositoryImpl();
+        queryCommandHandler = new QueryCommandHandler();
     }
 
     public void makeNewUser(UserCreateRequest userCreateRequest) {
@@ -26,6 +30,8 @@ public class UserCreateService {
         saveUser(newUser);
 
         ResponseThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeRedirection("/index.html"), new byte[0]);
+
+        AsyncExecutor.execute(() -> queryCommandHandler.asyncSaveUserInfoCommand(newUser));
     }
 
     private User createUserEntity(UserCreateRequest userCreateRequest) {
