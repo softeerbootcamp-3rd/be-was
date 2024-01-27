@@ -4,9 +4,9 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
 import controller.user.UserCreateController;
-import controller.user.UserFormController;
 import controller.user.UserLoginController;
 import model.Request;
+import model.Response;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -47,24 +47,26 @@ public class FrontController {
 
     public void service(Request request, OutputStream out) throws IOException {
         Object handler = getHandler(request);
+        Response response = new Response();
+
         if (handler == null) {
             View view = viewResolver(DEFAULT_PAGE);
-            view.render(request, out);
+            view.render(request, response, out);
             return;
         }
 
         HandlerAdapter adapter = getHandlerAdapter(handler);
-        ModelView mv = adapter.handle(request, handler);
+        ModelView mv = adapter.handle(request, response, handler);
 
         String viewName = mv.getViewName();
         View view = viewResolver(viewName);
 
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
-            view.render(request, out, resourceController.getType());
+            view.render(request, response, out, resourceController.getType());
             return;
         }
-        view.render(request, out);
+        view.render(request, response, out);
     }
 
     private View viewResolver(String viewName) {
