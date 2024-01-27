@@ -5,6 +5,7 @@ import common.utils.ResponseUtils;
 import common.utils.SessionGenerator;
 import domain.user.command.domain.User;
 import domain.user.command.domain.UserRepository;
+import domain.user.infrastructure.SessionStorageService;
 import domain.user.infrastructure.UserRepositoryImpl;
 import domain.user.presentation.UserLoginRequest;
 import java.util.Optional;
@@ -12,9 +13,11 @@ import webserver.container.ResponseThreadLocal;
 
 public class UserLoginService {
     private UserRepository userRepository;
+    private SessionStorageService sessionStorageService;
 
     public UserLoginService() {
         userRepository = new UserRepositoryImpl();
+        sessionStorageService = new SessionStorageService();
     }
 
     public void login(UserLoginRequest userLoginRequest) {
@@ -36,12 +39,12 @@ public class UserLoginService {
     }
 
     private String mapUserToSessionStorageAndGetSessionId(String userId) {
-        Optional<String> sessionIdByUserId = userRepository.getSessionIdByUserId(userId);
+        Optional<String> sessionIdByUserId = sessionStorageService.getSessionIdByUserId(userId);
         if (sessionIdByUserId.isPresent()) {
             return sessionIdByUserId.get();
         }
         String sessionId = SessionGenerator.generateSessionId();
-        userRepository.saveSession(sessionId, userId);
+        sessionStorageService.saveSession(sessionId, userId);
         return sessionId;
     }
 }
