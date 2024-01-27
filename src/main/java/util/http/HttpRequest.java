@@ -67,6 +67,9 @@ public class HttpRequest {
         return httpRequest;
     }
 
+    public HttpMethod getMethod() {
+        return this.request.getMethod();
+    }
 
     public String getPath() {
         return this.request.getUrl().getPath();
