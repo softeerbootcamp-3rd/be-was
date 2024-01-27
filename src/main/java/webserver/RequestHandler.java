@@ -38,13 +38,12 @@ public class RequestHandler implements Runnable {
 
             RequestHeader requestHeader = readRequest(br);
             String body = parseBody(br, Integer.parseInt(requestHeader.getContentLength()));
-            System.out.println("body = " + body);
 
             HttpRequest httpRequest = HttpRequest.of(requestHeader, body);
 
             CommonResponse response = FrontController.service(httpRequest);
 
-            ResponseBuilder.sendResponse(dos, response.getBody(), response.getHttpStatus(), response.getExtension());
+            ResponseBuilder.sendResponse(dos, response.getBody(), response.getPath(), response.getHttpStatus(), response.getExtension());
         } catch (ClassNotFoundException | IOException e) {
             logger.error(e.getMessage());
         }
