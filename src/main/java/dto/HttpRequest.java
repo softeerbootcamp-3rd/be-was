@@ -24,7 +24,7 @@ public class HttpRequest {
         this.headers = parseHeaders(br, line);
         if (headers.containsKey("Content-Length")) {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
-            this.body = getRequestBody(br, contentLength);
+            this.body = readRequestBody(br, contentLength);
         } else {
             this.body = null;
         }
@@ -51,7 +51,7 @@ public class HttpRequest {
         return body;
     }
 
-    private String getRequestBody(BufferedReader br, int contentLength) throws IOException {
+    private String readRequestBody(BufferedReader br, int contentLength) throws IOException {
         char[] buffer = new char[contentLength];
         br.read(buffer, 0, contentLength);
         return new String(buffer);
