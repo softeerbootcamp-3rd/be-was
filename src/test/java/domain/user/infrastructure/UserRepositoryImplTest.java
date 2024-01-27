@@ -17,13 +17,13 @@ import org.junit.jupiter.api.Test;
 @DisplayName("UserRepositoryImpl 클래스")
 class UserRepositoryImplTest {
 
-    private UserRepositoryImpl userRepository;
+    private UserRepositoryImpl userRepository = new UserRepositoryImpl();
+    private SessionStorageService sessionStorageService = new SessionStorageService();
 
     @BeforeEach
     void setUp() {
         // Database 초기화
         Database.Users().clear();
-        userRepository = new UserRepositoryImpl();
     }
 
     @AfterEach
@@ -80,17 +80,17 @@ class UserRepositoryImplTest {
         // given
 
         // when
-        userRepository.saveSession("sessionId", "1");
+        sessionStorageService.saveSession("sessionId", "1");
 
         // then
         assertEquals("1", Database.SessionStorage().get("sessionId"));
-        assertEquals(Optional.of("sessionId"), userRepository.getSessionIdByUserId("1"));
+        assertEquals(Optional.of("sessionId"), sessionStorageService.getSessionIdByUserId("1"));
     }
 
     @Test
     @DisplayName("유저 아이디로 세션 아이디 찾기 실패 테스트")
     void getSessionIdByUserId_SessionNotExists() {
-        assertEquals(Optional.empty(), userRepository.getSessionIdByUserId("nonexistent"));
+        assertEquals(Optional.empty(), sessionStorageService.getSessionIdByUserId("nonexistent"));
     }
 
     @Test
@@ -100,7 +100,7 @@ class UserRepositoryImplTest {
         Database.SessionStorage().put("sessionId", "1");
 
         // when
-        userRepository.removeSession("sessionId");
+        sessionStorageService.removeSession("sessionId");
 
         // then
         assertNull(Database.SessionStorage().get("sessionId"));
