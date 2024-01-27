@@ -105,7 +105,7 @@ public class RequestDataController {
         return new Response(HttpStatusCode.FOUND, "/user/login_failed.html");
     }
 
-    @Route(method = HttpMethod.POST, uri = "/user/logout")
+    @Route(method = HttpMethod.GET, uri = "/user/logout")
     private static Response handleApiLogout(RequestData requestData) {
         CookieData cookieData = UserService.logout(requestData);
         return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
