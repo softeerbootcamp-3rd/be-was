@@ -17,10 +17,18 @@ public class UserService {
         String email = createUserParams.get("email");
 
         if (userId != null && password != null && name != null && email != null) {
-            UserDatabase.addUser(new User(userId, password, name, email));
+            if (!isDuplicatedId(userId)) {
+                UserDatabase.addUser(new User(userId, password, name, email));
+            } else {
+                throw new IllegalArgumentException("Duplicate userId");
+            }
         } else {
             throw new IllegalArgumentException("Invalid Parameters");
         }
+    }
+
+    private boolean isDuplicatedId(String userId) {
+        return UserDatabase.findUserById(userId) != null;
     }
 
     // 사용자의 로그인 정보가 유효한 지 판단한 후 세션 ID 반환

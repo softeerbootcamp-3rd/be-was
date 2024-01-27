@@ -51,6 +51,23 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("createUser(): 중복된 userId를 입력한 경우 IllegalArgumentException이 발생한다.")
+    public void createDuplicateUserTest() {
+        // given
+        UserDatabase.addUser(new User("TestUserId", "1234", "name", "email@example.com"));
+        Map<String, String> createUserParams = new HashMap<>();
+        createUserParams.put("userId", "TestUserId");
+        createUserParams.put("password", "TestPassword");
+        createUserParams.put("name", "TestUser");
+        createUserParams.put("email", "email@example.com");
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> userService.createUser(createUserParams))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Duplicate userId");
+    }
+
+    @Test
     @DisplayName("loginUser(): 유효한 기존 세션 정보가 없는 유저가 로그인에 성공한 경우 새로운 Session을 저장하고 해당 sessionId를 리턴한다")
     public void loginNewUserTest() {
         // given
