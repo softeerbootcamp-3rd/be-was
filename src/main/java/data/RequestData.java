@@ -49,17 +49,11 @@ public class RequestData {
 
     @Override
     public String toString() {
-        StringBuilder output = new StringBuilder();
-        output.append("\n===\n");
-        output.append("Method: ").append(method).append("\n");
-        output.append("Request Content: ").append(requestContent).append("\n");
-        output.append("HTTP Version: ").append(httpVersion).append("\n===\n");
-
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            output.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-        }
-        output.append("===\n");
-
-        return output.toString();
+        return "\n===\n" +
+                "Method: \t" + method + "\n" +
+                "Request Content: \t" + requestContent + "\n" +
+                "HTTP Version: \t" + httpVersion + "\n===\n" +
+                "Cookie: \t" + headers.getOrDefault("Cookie", "Empty") + "\n" +
+                "Accept: \t" + headers.getOrDefault("Accept", "Empty") + "\n";
     }
 }
