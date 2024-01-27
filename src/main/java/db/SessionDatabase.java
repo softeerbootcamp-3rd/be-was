@@ -25,4 +25,18 @@ public class SessionDatabase {
         }
         return null;
     }
+
+    public static Session findValidSessionById(String sessionId) {
+        for (Session session: sessions.values()) {
+            if (session.getSessionId().equals(sessionId) && session.getIsValid()) {
+                return session;
+            }
+        }
+        return null;
+    }
+
+    public static void invaldateSession(Session session) {
+        session.setIsValid(false);
+        sessions.put(session.getSessionId(), session);
+    }
 }

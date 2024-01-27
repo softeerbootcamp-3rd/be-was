@@ -47,6 +47,10 @@ public class Session {
         return this.lastAccessDate;
     }
 
+    public void setIsValid(boolean isValid) {
+        this.isValid = isValid;
+    }
+
     private String generateSessionId() {
         return UUID.randomUUID().toString();
     }
