@@ -29,20 +29,20 @@ public class SessionUtil {
         return UserDatabase.findUserById(session.getUserId());
     }
 
-    // sessionId에 해당하는 세션이 유효한 지 확인 후 반환; 유효하지 않으면 isValid 필드 업데이트 후 null 반환
+    // sessionId에 해당하는 세션이 유효한 지 확인 후 반환; 유효하지 않으면 삭제 후 null 반환
     private static Session getValidSession(String sessionId) {
-        Session session = SessionDatabase.findValidSessionById(sessionId);
+        Session session = SessionDatabase.findSessionById(sessionId);
         if (session == null) return null;
 
         if (!isValidSession(session)) {
-            SessionDatabase.invaldateSession(session);
+            SessionDatabase.deleteSessionById(session.getSessionId());
             return null;
         }
         return session;
     }
 
     // Session의 expireDate를 현재 시간과 비교해서 유효성 여부 리턴
-    private static boolean isValidSession(Session session) {
+    public static boolean isValidSession(Session session) {
         LocalDateTime now = LocalDateTime.now();
         return session.getExpireDate().isAfter(now);
     }

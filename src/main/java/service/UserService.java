@@ -4,6 +4,7 @@ import db.SessionDatabase;
 import db.UserDatabase;
 import model.Session;
 import model.User;
+import util.SessionUtil;
 
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public class UserService {
         if (userId != null && password != null) {
             // 사용자가 입력한 로그인 정보 확인
             if (validateLogin(userId, password)) {
-                // 사용자의 세션 정보 업데이트 후 세션 ID 반환
-                return updateSessionAndReturnSessionId(userId);
+                // 로그인 정보가 유효한 경우 세션을 만들고 session Id 리턴
+                return createSession(userId);
             }
             throw new IllegalArgumentException("Invalid userId and password");
         } else {
@@ -45,16 +46,8 @@ public class UserService {
         return user != null && user.getPassword().equals(password);
     }
 
-    // 사용자 세션 정보 반환
-    private String updateSessionAndReturnSessionId(String userId) {
-        // 기존에 존재하는 유효한 Session 정보가 있는 경우 해당 Session ID 반환
-        Session existedSession = SessionDatabase.findValidSessionByUserId(userId);
-
-        if (existedSession != null) {
-            return existedSession.getSessionId();
-        }
-
-        // 기존에 존재하는 유효한 Session 정보가 없는 경우 새롭게 만든 후 해당 Session ID 반환
+    // 사용자에 해당하는 세션을 만들고 session Id 리턴
+    private String createSession(String userId) {
         Session newSession = new Session(userId);
         return SessionDatabase.addSession(newSession);
     }

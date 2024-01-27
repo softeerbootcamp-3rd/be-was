@@ -24,28 +24,4 @@ public class SessionDatabaseTest {
         Assertions.assertThat(addedSession.getExpireDate()).isEqualTo(testSession.getExpireDate());
         Assertions.assertThat(addedSession.getCreateDate()).isEqualTo(testSession.getCreateDate());
     }
-
-    @Test
-    @DisplayName("findValidSessionByUserId(): userId 값으로 isValid=true 인 세션 정보를 읽어오는 기능 테스트")
-    public void findValidSessionByUserIdTest() throws NoSuchFieldException, IllegalAccessException {
-        // given
-        Session invalidSession = new Session("testUserId");
-        Class<Session> clazz = Session.class;
-        Field isValid = clazz.getDeclaredField("isValid");
-        isValid.setAccessible(true);
-        isValid.set(invalidSession, false);
-        SessionDatabase.addSession(invalidSession);
-
-        Session validSession = new Session("testUserId");
-        SessionDatabase.addSession(validSession);
-
-        // when
-        Session addedSession = SessionDatabase.findValidSessionByUserId(validSession.getUserId());
-
-        // then
-        Assertions.assertThat(addedSession).isNotNull();
-        Assertions.assertThat(addedSession.getUserId()).isEqualTo(validSession.getUserId());
-        Assertions.assertThat(addedSession.getIsValid()).isEqualTo(true);
-        Assertions.assertThat(addedSession.getSessionId()).isEqualTo(validSession.getSessionId());
-    }
 }
