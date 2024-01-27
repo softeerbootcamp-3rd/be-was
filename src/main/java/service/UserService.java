@@ -1,7 +1,7 @@
 package service;
 
 import db.Database;
-import exception.DuplicateUserException;
+import exception.CreateUserException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +14,15 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String create(String userId, String password, String name, String email) {
+        if (userId == null)
+            throw new CreateUserException(CreateUserException.NULL_ID);
+        if (password == null)
+            throw new CreateUserException(CreateUserException.NULL_PASSWORD);
+        if (name == null)
+            throw new CreateUserException(CreateUserException.NULL_NAME);
+        if (email == null)
+            throw new CreateUserException(CreateUserException.NULL_EMAIL);
+
         userId = decode(userId);
         password = decode(password);
         name = decode(name);
@@ -31,10 +40,10 @@ public class UserService {
         Collection<User> users = Database.findAll();
         for (User user : users) {
             if (user.getUserId().equals(userId)) {
-                throw new DuplicateUserException(DuplicateUserException.duplicateId);
+                throw new CreateUserException(CreateUserException.DUPLICATE_ID);
             }
             if (user.getEmail().equals(email)) {
-                throw new DuplicateUserException(DuplicateUserException.duplicateEmail);
+                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
             }
         }
     }

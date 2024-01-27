@@ -1,7 +1,7 @@
 package controller;
 
-import exception.DuplicateUserException;
-import exception.DuplicateUserExceptionHandler;
+import exception.CreateUserException;
+import exception.CreateUserExceptionHandler;
 import exception.FileNotFoundExceptionHandler;
 import model.User;
 import service.UserService;
@@ -64,8 +64,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create("/index.html"))
                     .build();
-        } catch (DuplicateUserException e) {
-            return DuplicateUserExceptionHandler.handle(e);
+        } catch (CreateUserException e) {
+            return CreateUserExceptionHandler.handle(e);
         }
     }
 

@@ -9,8 +9,8 @@ import util.http.ResponseEntity;
 import java.io.IOException;
 
 
-public class DuplicateUserExceptionHandler {
-    public static ResponseEntity<?> handle(DuplicateUserException e) throws IOException {
+public class CreateUserExceptionHandler {
+    public static ResponseEntity<?> handle(CreateUserException e) throws IOException {
         String line = "<div class=\"alert alert-danger\" role=\"alert\">{{message}}</div>";
         line = line.replace("{{message}}", e.getMessage());
 

@@ -84,7 +84,11 @@ public class HttpRequest {
 
         for (String s : params) {
             String[] keyVal = s.split("=");
-            queryMap.put(keyVal[0], keyVal[1]);
+            String key = keyVal[0];
+            String value = null;
+            if (keyVal.length == 2)
+                value = keyVal[1];
+            queryMap.put(key, value);
         }
         return queryMap;
     }
@@ -98,7 +102,11 @@ public class HttpRequest {
 
         for (String s : params) {
             String[] keyVal = s.split("=");
-            queryMap.put(keyVal[0], keyVal[1]);
+            String key = keyVal[0];
+            String value = null;
+            if (keyVal.length == 2)
+                value = keyVal[1];
+            queryMap.put(key, value);
         }
         return queryMap;
     }
