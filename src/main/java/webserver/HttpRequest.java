@@ -3,7 +3,7 @@ package dto;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestDto {
+public class Request {
     private String method;
     private String path;
     private String methodAndPath;
@@ -12,7 +12,7 @@ public class RequestDto {
     private Map<String, String> body;
     private Map<String, String> cookies;
 
-    public RequestDto(String methodAndPath) {
+    public Request(String methodAndPath) {
         String[] arr = methodAndPath.split(" ");
         this.method = arr[0];
         this.path = arr[1];
@@ -70,6 +70,7 @@ public class RequestDto {
         return this.headers.get("Cookie");
     }
 
+    // todo static으로 빼기, model.. 안에는 게터랑 세터만..
     public Integer getContentLength() {
         String len;
         if ((len = this.headers.get("Content-Length")) != null) {

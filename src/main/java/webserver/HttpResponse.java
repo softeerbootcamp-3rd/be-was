@@ -7,10 +7,16 @@ import constant.HttpStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseDto {
-    private HttpStatus status = null;
-    private List<String> headers = new ArrayList<>();
-    private byte[] body = null;
+public class Response {
+    private HttpStatus status;
+    private List<String> headers;
+    private byte[] body;
+
+    public Response() {
+        this.status = null;
+        this.headers = new ArrayList<>();
+        this.body = null;
+    }
 
     public void makeError(ErrorCode errorCode) {
         this.status = errorCode.httpStatus;
@@ -18,7 +24,7 @@ public class ResponseDto {
         addContentType(MimeType.TXT.contentType);
     }
 
-    public ResponseDto makeRedirect(String redirectUrl) {
+    public Response makeRedirect(String redirectUrl) {
         this.status = HttpStatus.REDIRECT;
         addHeader("Location", redirectUrl);
         addContentType(MimeType.HTML.contentType);
