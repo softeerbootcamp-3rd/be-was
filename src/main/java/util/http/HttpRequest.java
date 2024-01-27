@@ -31,23 +31,23 @@ public class HttpRequest {
         logger.debug(line);
         while (!(line = br.readLine()).isEmpty()) {
             tokens = line.split(":");
-            if (tokens[0].equals("Accept")) {
+            if ("Accept".equalsIgnoreCase(tokens[0])) {
                 accept = tokens[1].split(",")[0].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Cookie")) {
+            if ("Cookie".equalsIgnoreCase(tokens[0])) {
                 cookie = tokens[1].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Content-Length")) {
+            if ("Content-Length".equalsIgnoreCase(tokens[0])) {
                 contentLength = tokens[1].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Content-Type")) {
+            if ("Content-Type".equalsIgnoreCase(tokens[0])) {
                 contentType = tokens[1].trim();
                 logger.debug(line);
             }
-            if (tokens[0].equals("Host") || tokens[0].equals("Connection"))
+            if ("Host".equalsIgnoreCase(tokens[0]) || "Connection".equalsIgnoreCase(tokens[0]))
                 logger.debug(line);
         }
 
