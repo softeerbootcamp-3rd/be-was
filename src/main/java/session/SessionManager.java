@@ -2,7 +2,7 @@ package session;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.UUID;
 
 public class SessionManager {
     private static Map<String, Session> sessions = new HashMap<>();
@@ -38,15 +38,6 @@ public class SessionManager {
     }
 
     public static String makeSessionId() {
-        int leftLimit = 48; // '0' 아스키 코드
-        int rightLimit = 122; // 'z'
-        int targetStringLength = 30;
-        Random random = new Random();
-
-        return random.ints(leftLimit,rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97)) // 숫자와, 알파벳 만 필터링
-                .limit(targetStringLength) // 설정한 길이만큼
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+        return UUID.randomUUID().toString();
     }
 }

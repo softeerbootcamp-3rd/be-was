@@ -2,9 +2,12 @@ package util;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
+import constant.ErrorCode;
 import dto.RequestDto;
 import dto.ResponseDto;
 import exception.WebServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -14,18 +17,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MethodMapper {
+    private static final Logger logger = LoggerFactory.getLogger(MethodMapper.class);
     private static final Map<String, Method> CONTROLLER_METHOD = new HashMap<>();
 
     static {
         registerMethod();
     }
 
-    // 요청이 들어온 HTTP 메소드와 경로에 매팽되어 있는 컨트롤러_메소드가 있는지 확인
+
+    /**
+     * <h3> 요청의 HTTP 메소드와 경로에 매핑되는 컨트롤러_메소드가 있는지 확인 </h3>
+     * @param methodAndPath
+     * @return 요청에 매핑되는 컨트롤러 메소드가 있는지 boolean
+     */
     public static boolean hasMethod(String methodAndPath) {
         return CONTROLLER_METHOD.containsKey(methodAndPath);
     }
 
-    // 요청에 맞게 매핑되는 컨트롤러_메소드 를 실행
+
+    /**
+     * <h3> 요청에 매핑되는 컨트롤러의 메소드를 실행 </h3>
+     * @param requestDto
+     * @return
+     */
     public static ResponseDto execute(RequestDto requestDto) {
         Method method = CONTROLLER_METHOD.get(requestDto.getMethodAndPath());
         Class<?> controller = method.getDeclaringClass();
@@ -34,8 +48,14 @@ public class MethodMapper {
         try {
             response = (ResponseDto) method.invoke(controller, requestDto);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            WebServerException wasE = (WebServerException) e.getCause();
-            response.makeError(wasE.getErrorCode());
+            if (e.getCause().getClass().equals(WebServerException.class)) {
+                WebServerException wasE = (WebServerException) e.getCause();
+                response.makeError(wasE.getErrorCode());
+            } else {
+                // TODO
+                e.printStackTrace();
+                response.makeError(ErrorCode.PAGE_NOT_FOUND);
+            }
         }
 
         return response;
@@ -76,9 +96,7 @@ public class MethodMapper {
                     httpMethod = "POST";
                     path = (method.getAnnotation(PostMapping.class)).path();
                 }
-//             TODO : DELETE 등 다른 요청에 대한 처리 코드 추가
-//                else if (method.isAnnotationPresent(PostMapping.class)) {
-//                }
+                // TODO : DELETE 등 다른 요청에 대한 처리 코드 추가
 
                 CONTROLLER_METHOD.put((httpMethod + " " + path), method);
             }

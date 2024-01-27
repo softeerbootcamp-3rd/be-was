@@ -1,7 +1,7 @@
 package util;
 
-import constant.FileContentType;
-import constant.FilePath;
+import constant.MimeType;
+import constant.StaticFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class FileManager {
 
-    public static byte[] getFileByPath(FilePath basePath, String path) throws IOException {
-        File file = new File(basePath.path + path);
+    public static byte[] getFileByPath(StaticFile baseFile, String subPath) throws IOException {
+        File file = new File(baseFile.path + subPath);
         if (file.exists()) {
             return fileToByte(file);
         }
@@ -19,8 +19,8 @@ public class FileManager {
     }
 
     public static String getContentType(String path) throws IOException {
-        int extensionPoint = path.lastIndexOf(".");
-        return FileContentType.of(path.substring(extensionPoint));
+        String extension = path.substring(path.lastIndexOf("."));
+        return MimeType.of(extension).contentType;
     }
 
     private static byte[] fileToByte(File file) throws IOException {

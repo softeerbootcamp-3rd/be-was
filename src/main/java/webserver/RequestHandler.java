@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 import constant.ErrorCode;
-import constant.FilePath;
+import constant.StaticFile;
 import dto.RequestDto;
 import dto.ResponseDto;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import util.FileManager;
 import util.MethodMapper;
 import util.RequestParser;
 
-import static constant.FilePath.MAIN_PAGE;
+import static constant.StaticFile.MAIN_PAGE;
 
 
 public class RequestHandler implements Runnable {
@@ -36,11 +36,11 @@ public class RequestHandler implements Runnable {
 
             // TODO 분석한 요청의 경로를 이용해, 로그인한 사용자만 사용 가능한 건지 확인 후 처리
 
-            FilePath basePath = FilePath.HTML_BASE;
+            StaticFile basePath = StaticFile.HTML_BASE;
             byte[] body;
 
             if (requestDto.getPath().equals("/")) { requestDto.setPath(MAIN_PAGE.path); }
-            if (!requestDto.getPath().endsWith(".html")) { basePath = FilePath.SUPPORT_FILE_BASE; }
+            if (!requestDto.getPath().endsWith(".html")) { basePath = StaticFile.SUPPORT_FILE_BASE; }
 
             ResponseDto response = new ResponseDto();
 

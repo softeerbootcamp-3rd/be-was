@@ -1,7 +1,7 @@
 package dto;
 
 import constant.ErrorCode;
-import constant.FileContentType;
+import constant.MimeType;
 import constant.HttpStatus;
 
 import java.util.ArrayList;
@@ -15,13 +15,13 @@ public class ResponseDto {
     public void makeError(ErrorCode errorCode) {
         this.status = errorCode.httpStatus;
         this.body = errorCode.errorMessage.getBytes();
-        addContentType(FileContentType.TXT.contentType);
+        addContentType(MimeType.TXT.contentType);
     }
 
     public ResponseDto makeRedirect(String redirectUrl) {
         this.status = HttpStatus.REDIRECT;
         addHeader("Location", redirectUrl);
-        addContentType(FileContentType.HTML.contentType);
+        addContentType(MimeType.HTML.contentType);
         return this;
     }
 
