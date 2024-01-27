@@ -13,10 +13,12 @@ public class WebServer {
 
     private final int port;
     private final ExecutorService executorService;
+    private final AsyncExecutor asyncExecutor;
 
     public WebServer(int port) {
         this.port = port;
         this.executorService = Executors.newFixedThreadPool(30);
+        this.asyncExecutor = AsyncExecutor.getInstance();
     }
 
     private void start() {
@@ -31,7 +33,7 @@ public class WebServer {
             CustomLogger.printError(e);
         } finally {
             executorService.shutdown();
-            AsyncExecutor.shutdown();
+            asyncExecutor.shutdown();
         }
     }
 
