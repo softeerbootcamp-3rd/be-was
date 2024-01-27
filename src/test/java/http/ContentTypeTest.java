@@ -3,7 +3,7 @@ package http;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static http.ContentType.getMimeType;
+import static http.constants.ContentType.getMimeType;
 import static org.assertj.core.api.Assertions.*;
 
 class ContentTypeTest {

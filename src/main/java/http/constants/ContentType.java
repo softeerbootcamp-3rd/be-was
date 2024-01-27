@@ -1,4 +1,4 @@
-package http;
+package http.constants;
 
 import java.util.Arrays;
 

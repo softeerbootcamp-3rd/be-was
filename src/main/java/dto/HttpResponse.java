@@ -1,7 +1,7 @@
 package dto;
 
-import http.Status;
-import http.ContentType;
+import http.constants.Status;
+import http.constants.ContentType;
 
 import java.io.*;
 import java.util.Arrays;

@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import static webserver.RequestHandler.logger;
-import static http.Status.*;
+import static http.constants.Status.*;
 import static common.WebServerConfig.*;
 
 public class ExceptionHandler {
