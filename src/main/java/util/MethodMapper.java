@@ -1,5 +1,6 @@
 package util;
 
+import controller.HttpMethod;
 import controller.RequestDataController;
 import controller.Route;
 
@@ -8,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MethodMapper {
-    public static Map<String, Method> routeMap = new HashMap<>();
+    public static Map<String, Method> getRouteMap = new HashMap<>();
+    public static Map<String, Method> postRouteMap = new HashMap<>();
 
     static {
         // 라우팅 메서드 등록
@@ -20,7 +22,12 @@ public class MethodMapper {
         for (Method method : methods) {
             if (method.isAnnotationPresent(Route.class)) {
                 Route route = method.getAnnotation(Route.class);
-                routeMap.put(route.uri(), method);
+                String uri = route.uri();
+                if (route.method() == HttpMethod.GET) {
+                    getRouteMap.put(uri, method);
+                } else if (route.method() == HttpMethod.POST) {
+                    postRouteMap.put(uri, method);
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import util.MethodMapper;
 import util.ResourceLoader;
 import data.Response;
 
@@ -18,7 +19,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import static util.MethodMapper.routeMap;
 import static util.RequestParserUtil.getFileExtension;
 
 public class RequestDataController {
@@ -31,8 +31,15 @@ public class RequestDataController {
         String extension = getFileExtension(url);
 
         try {
-            if (routeMap.containsKey(url)) {
-                Method method = routeMap.get(url);
+            Method method = null;
+
+            if (HttpMethod.GET == requestData.getMethod()) {
+                method = MethodMapper.getRouteMap.get(url);
+            } else if (HttpMethod.POST == requestData.getMethod()) {
+                method = MethodMapper.postRouteMap.get(url);
+            }
+
+            if (method != null) {
                 return (Response) method.invoke(null, requestData);
             } else {
                 return handleFileRequest(url, extension, requestData);
