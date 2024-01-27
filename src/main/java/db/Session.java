@@ -15,6 +15,7 @@ public class Session {
         sessionData.put(sessionId, userId);
         logger.debug("sessionId : " + sessionId);
         logger.debug("userId : " + userId);
+        showAllSessions();
 
         return sessionId;
     }
@@ -22,6 +23,7 @@ public class Session {
     public static void removeSession(String sessionId) {
         logger.debug("removeSession()");
         sessionData.remove(sessionId);
+        showAllSessions();
     }
 
     public static String getUserIdBySessionId(String sessionId) {
@@ -31,6 +33,16 @@ public class Session {
 
     public static Collection<String> getAllSessionId() {
         logger.debug("getAllSessions()");
+        showAllSessions();
         return new ArrayList<>(sessionData.keySet());
+    }
+
+    public static void showAllSessions() {
+        logger.debug("showAllSessions()");
+        for (Map.Entry<String, String> entry : sessionData.entrySet()) {
+            String sessionId = entry.getKey();
+            String userId = entry.getValue();
+            logger.debug("Session ID: {}, User ID: {}", sessionId, userId);
+        }
     }
 }
