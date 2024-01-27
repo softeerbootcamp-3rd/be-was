@@ -72,6 +72,6 @@ public class UserController {
             return;
         }
 
-        userSearchService.getLoginUserInfos();
+        userSearchService.getSignupUserInfos();
     }
 }
