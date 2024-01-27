@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import webserver.container.ResponseThreadLocal;
+import webserver.container.CustomThreadLocal;
 
 @DisplayName("UserControllerTest 클래스")
 class UserControllerTest {
@@ -29,14 +29,14 @@ class UserControllerTest {
         Database.Users().clear();
         Database.SessionStorage().clear();
         httpResponse = new HttpResponse(null, null, null);
-        ResponseThreadLocal.setHttpResponse(httpResponse);
+        CustomThreadLocal.setHttpResponse(httpResponse);
     }
 
     @AfterEach
     void tearDown() {
         Database.Users().clear();
         Database.SessionStorage().clear();
-        ResponseThreadLocal.clearHttpResponse();
+        CustomThreadLocal.clearHttpResponse();
     }
 
     @Test
@@ -49,7 +49,7 @@ class UserControllerTest {
         userController.signup(userCreateRequest);
 
         // then
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
         assertEquals(Database.Users().size(), 1);
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.FOUND);
         assertEquals(httpResponse.getHeader().getHeaders().get("Location"), "/index.html");
@@ -65,7 +65,7 @@ class UserControllerTest {
         userController.signup(userCreateRequest);
 
         // then
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
         assertEquals(Database.Users().size(), 0);
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.BAD_REQUEST);
     }
@@ -109,7 +109,7 @@ class UserControllerTest {
         userController.login(userLoginRequest);
 
         // then
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.FOUND);
         assertEquals(httpResponse.getHeader().getHeaders().get("Location"), "/user/login_failed.html");
     }

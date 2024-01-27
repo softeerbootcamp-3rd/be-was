@@ -87,7 +87,7 @@ public class FrontController {
 
             method.invoke(newInstance, parameterValues);
         } catch (Exception e) {
-            ResponseThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, null, "Bad Request".getBytes());
+            CustomThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, null, "Bad Request".getBytes());
         }
 
     }

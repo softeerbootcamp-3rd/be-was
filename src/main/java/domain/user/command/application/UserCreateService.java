@@ -8,7 +8,7 @@ import domain.user.command.domain.UserRepository;
 import domain.user.infrastructure.QueryCommandHandler;
 import domain.user.infrastructure.UserRepositoryImpl;
 import java.util.HashMap;
-import webserver.container.ResponseThreadLocal;
+import webserver.container.CustomThreadLocal;
 
 public class UserCreateService {
     private UserRepository userRepository;
@@ -22,14 +22,14 @@ public class UserCreateService {
     public void makeNewUser(UserCreateRequest userCreateRequest) {
 
         if (checkDuplicateUserId(userCreateRequest.getUserId())) {
-            ResponseThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, new HashMap<>(), "userId is duplicate".getBytes());
+            CustomThreadLocal.onFailure(HttpStatusCode.BAD_REQUEST, new HashMap<>(), "userId is duplicate".getBytes());
             return;
         };
 
         User newUser = createUserEntity(userCreateRequest);
         saveUser(newUser);
 
-        ResponseThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeRedirection("/index.html"), new byte[0]);
+        CustomThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeRedirection("/index.html"), new byte[0]);
 
         AsyncExecutor.execute(() -> queryCommandHandler.asyncSaveUserInfoCommand(newUser));
     }

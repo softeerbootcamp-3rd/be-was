@@ -9,7 +9,7 @@ import domain.user.infrastructure.SessionStorageService;
 import domain.user.infrastructure.UserRepositoryImpl;
 import domain.user.presentation.UserLoginRequest;
 import java.util.Optional;
-import webserver.container.ResponseThreadLocal;
+import webserver.container.CustomThreadLocal;
 
 public class UserLoginService {
     private UserRepository userRepository;
@@ -24,13 +24,13 @@ public class UserLoginService {
         User user = checkExistUser(userLoginRequest);
 
         if (user == null || !user.getPassword().equals(userLoginRequest.getPassword())) {
-            ResponseThreadLocal.onFailure(HttpStatusCode.FOUND, ResponseUtils.makeLoginFailedHeader(), new byte[0]);
+            CustomThreadLocal.onFailure(HttpStatusCode.FOUND, ResponseUtils.makeLoginFailedHeader(), new byte[0]);
             return;
         }
 
         String sessionId = mapUserToSessionStorageAndGetSessionId(user.getUserId());
 
-        ResponseThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeLoginHeader(sessionId), new byte[0]);
+        CustomThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeLoginHeader(sessionId), new byte[0]);
     }
 
     private User checkExistUser(UserLoginRequest userLoginRequest) {
