@@ -2,13 +2,10 @@ package service;
 
 import db.Database;
 import exception.AlreadyExistUserException;
+import exception.LoginFailedException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
-
-import javax.xml.crypto.Data;
-
 
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -27,5 +24,18 @@ public class UserService {
 
     public User findUserById(String userId) {
         return Database.findUserById(userId);
+    }
+
+    public void login(String userId, String password) {
+        User findUser = Database.findUserById(userId);
+
+        if (findUser == null || isUnmatchedPassword(password, findUser.getPassword())) {
+            throw new LoginFailedException("userId 혹은 password가 일치하지 않습니다.");
+        }
+
+    }
+
+    private static boolean isUnmatchedPassword(String password, String userPassword) {
+        return !password.equals(userPassword);
     }
 }

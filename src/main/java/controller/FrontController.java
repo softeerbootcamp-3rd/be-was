@@ -34,6 +34,7 @@ public class FrontController {
         handlerMappingMap.put("html", new ResourceController("html"));
 
         handlerMappingMap.put("/user/create", new UserCreateController());
+        handlerMappingMap.put("/user/login", new UserLoginController());
 
         // qna 추가
     }
