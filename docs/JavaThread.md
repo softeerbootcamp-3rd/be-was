@@ -141,12 +141,92 @@ static class StartExecutor implements Executor {
 * `newScheduledThreadPool`: 일정 시간 뒤 혹은 주기적으로 실행되어야 하는 작업을 위한 쓰레드 풀 생성, `ScheduledExecutorService` 인터페이스를 구현한 `ScheduledThreadPoolExecutor` 객체가 생성됨
 * `newSingleThreadExecutor`, `newSingleThreadScheduledExecutor`: 1개의 쓰레드만을 갖는 쓰레드 풀 생성
 
+## Thread Safe
+### Thread Safe
+* 멀티 스레드 프로그래밍에서 일반적으로 어떤 함수나 변수, 혹은 객체가 여러 스레드로부터 동시에 접근이 이루어져도 프로그램의 실행에 문제가 없는 것
+* **Data Race**를 피하는 것: 여러 스레드가 데이터에 동시에 접근하고 수정할 때, 작업의 순서에 따라 데이터가 올바른 값으로 설정될 수도, 잘못된 값으로 설정될 수도 있는 상황
+
+### Thread Safe in Java
+#### Syncronization: `syncronized`
+* 한 번에 하나의 스레드만 접근할 수 있도록 lock을 걸어서 데이터의 일관성을 유지하는 방법
+* critical section을 생성할 때 `syncronized` 키워드를 이용
+* 생성자는 동기화할 수 없음: 객체를 생성하는 스레드만이 객체가 생성되는 동안 해당 객체에 액세스할 수 있기 때문에 의미가 없다
+* synchronized methods
+  ```java
+  public class SynchronizedCounter {
+    private int c = 0;
+  
+    public synchronized void increment() {
+        c++;
+    }
+
+    public synchronized void decrement() {
+        c--;
+    }
+
+    public synchronized int value() {
+        return c;
+    }
+  ```
+* synchronized statements: 메소드와 다르게 intrinsic lock을 설정할 object를 지정해야 한다
+  ```java
+  public void addName(String name) {
+      synchronized(this) {
+          lastName = name;
+          nameCount++;
+      }
+      nameList.add(name);
+  }
+  ```
+  * addName 메서드는 lastName과 nameCount의 변경 사항을 동기화해야 하지만, nameList.add 메서드 호출을 동기화하지 않는다
+
+#### `volatile`
+* Main Memory에 read & write를 보장하는 키워드
+* 하나의 Thread가 write하고 나머지 Thread가 읽는 상황이거나 변수의 값이 최신의 값으로 읽어와야 하는 경우에 적합
+  * 하나의 Thread가 아닌 여러 Thread가 write하는 상황에서는 적합하지 않음
+* CPU Cache보다 Main Memory가 비용이 더 크기 때문에 변수 값 일치을 보장해야 하는 경우에만 `volatile` 키워드를 사용하는 게 좋음
+*  any write to a `volatile` variable establishes a happens-before relationship with subsequent reads of that same variable. This means that changes to a `volatile` variable are always visible to other threads.
+  * https://stackoverflow.com/questions/19738651/volatile-variable-explanation-in-java-docs
+
+#### Atomic Variables
+* `java.util.concurrent.atomic` 패키지
+* **CAS(compare-and-swap)**: CPU가 MainMemory의 자원을 CPU Cache Memory로 가져와 연산을 수행하는 동안 다른 스레드에서 연산이 수행되어 MainMemory의 자원 값이 바뀌었을 경우 기존 연산을 실패처리하고, 새로 바뀐 MainMemory 값으로 재수행하는 방식
+```java
+import java.util.concurrent.atomic.AtomicInteger;
+
+class AtomicCounter {
+    private AtomicInteger c = new AtomicInteger(0);
+
+    public void increment() {
+        c.incrementAndGet();
+    }
+
+    public void decrement() {
+        c.decrementAndGet();
+    }
+
+    public int value() {
+        return c.get();
+    }
+
+}
+```
+#### `final`
+* `final` 변수는 한 번 할당되면 다른 값으로 변경될 수 없기 때문에 Thread-safe 하다
+
+### ConcurrentHashMap
+* Hashtable과 유사하지만, ConcurrentHashMap은 읽기 연산 시 락을 걸지 않고 전체 해시 테이블에 대한 단일 락을 사용하지 않아 성능이 더 우수함
+* HashMap 클래스는 동기화 기능을 제공하지 않기 때문에 thread-safe 하지 않아 여러 스레드가 동시에 HashMap을 수정하면 예측할 수 없는 결과가 발생할 수 있음
+
 ***
 ## Reference
 - [Java의 미래, Virtual Thread - 김태헌](https://techblog.woowahan.com/15398/)
 
-- [[Java] Thread와 Runnable에 대한 이해 및 사용법 출처](https://mangkyu.tistory.com/258)
+- [[Java] Thread와 Runnable에 대한 이해 및 사용법](https://mangkyu.tistory.com/258)
 
 - [[Java] Callable, Future 및 Executors, Executor, ExecutorService, ScheduledExecutorService에 대한 이해 및 사용법](https://mangkyu.tistory.com/259)
 
 - [[Java] Java 에서의 Thread, Light Weight Process](https://blogshine.tistory.com/338)
+- [Oracle Java Tutorials: Synchronization method](https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html)
+- [[Java] ConcurrentHashMap 이란 무엇일까?](https://devlog-wjdrbs96.tistory.com/269)
+- [Oracle ConcurrentHashMap](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentHashMap.html)

@@ -1,12 +1,12 @@
 package db;
 
-import com.google.common.collect.Maps;
 import model.Session;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionDatabase {
-    private static final Map<String, Session> sessions = Maps.newHashMap();
+    private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
     public static String addSession(Session session) {
         sessions.put(session.getSessionId(), session);
