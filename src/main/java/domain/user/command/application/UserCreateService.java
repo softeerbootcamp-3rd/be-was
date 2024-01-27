@@ -1,7 +1,7 @@
 package domain.user.command.application;
 
 import common.http.response.HttpStatusCode;
-import common.utils.AsyncExecutor;
+import common.logger.CustomLogger;
 import common.utils.ResponseUtils;
 import domain.user.command.domain.User;
 import domain.user.command.domain.UserRepository;
@@ -28,10 +28,10 @@ public class UserCreateService {
 
         User newUser = createUserEntity(userCreateRequest);
         saveUser(newUser);
-
+        CustomLogger.printInfo("save user");
         CustomThreadLocal.onSuccess(HttpStatusCode.FOUND, ResponseUtils.makeRedirection("/index.html"), new byte[0]);
 
-        AsyncExecutor.execute(() -> queryCommandHandler.asyncSaveUserInfoCommand(newUser));
+        queryCommandHandler.addSaveUserInfoEventCommand(newUser);
     }
 
     private User createUserEntity(UserCreateRequest userCreateRequest) {
