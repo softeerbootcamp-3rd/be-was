@@ -29,7 +29,7 @@ public class UserController implements Controller{
 
         if (data.get("password").equals(user.getPassword())) {
             String sid = generateSessionId();
-            response.setHeader("Set-Cookie","sid="+sid+"; Path=/");
+            response.setHeader("Set-Cookie","sid="+sid+"; Max-Age=300; Path=/");
             SessionManager.addSession(sid, user);
             return "redirect:/index";
         } else {
