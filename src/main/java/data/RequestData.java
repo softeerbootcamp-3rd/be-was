@@ -57,11 +57,14 @@ public class RequestData {
 
     @Override
     public String toString() {
-        return "\n===\n" +
-                "Method: \t" + method + "\n" +
-                "Request Content: \t" + requestContent + "\n" +
-                "HTTP Version: \t" + httpVersion + "\n===\n" +
-                "Cookie: \t" + headers.getOrDefault("Cookie", "Empty") + "\n" +
-                "Accept: \t" + headers.getOrDefault("Accept", "Empty") + "\n";
+        return "=== Request Data ===\n" +
+                "Method: " + method + "\n" +
+                "Request Content: " + requestContent + "\n" +
+                "HTTP Version: " + httpVersion + "\n===\n" +
+                "Cookie: " + headers.getOrDefault("Cookie", "Empty") + "\n" +
+                "Accept: " + headers.getOrDefault("Accept", "Empty") + "\n" +
+                "Body: " + (body != null ? body : "Empty") + "\n" +
+                "Logged In: " + loggedIn + "\n" +
+                "=====================\n";
     }
 }

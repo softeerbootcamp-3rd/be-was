@@ -28,14 +28,18 @@ public class Response {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
+        result.append("=== Response Data ===\n");
         result.append("HTTP Version: ").append(httpVer).append("\n");
         result.append("Status: ").append(status).append("\n");
         result.append("Path: ").append(path).append("\n");
 
         if (cookie != null) {
             result.append("Cookie: ").append(cookie).append("\n");
+        } else {
+            result.append("Cookie: Empty\n");
         }
 
+        result.append("=====================\n");
         return result.toString();
     }
 }
