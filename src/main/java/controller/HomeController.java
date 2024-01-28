@@ -2,6 +2,7 @@ package controller;
 
 import exception.FileNotFoundExceptionHandler;
 import model.User;
+import util.HtmlTemplate;
 import util.ResourceUtils;
 import util.SessionManager;
 import util.http.*;
@@ -50,12 +51,12 @@ public class HomeController {
 
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        String userId = "<li><a role=\"button\">{{userId}}</a></li>";
+        String userId = HtmlTemplate.USER_ID;
         userId = userId.replace("{{userId}}", loggedInUser.getUserId());
 
         String html = new String(ResourceUtils.getStaticResource(httpRequest.getPath()));
         byte[] body =  html.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", userId)
-                .replace("<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>", "")
+                .replace("<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>", HtmlTemplate.LOGOUT)
                 .getBytes();
 
         String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);

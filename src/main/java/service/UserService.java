@@ -28,8 +28,7 @@ public class UserService {
         name = decode(name);
         email = decode(email);
 
-        isDuplicateId(userId);
-        isDuplicateEmail(email);
+        createValidate(userId, email);
 
         User user = new User(userId, password, name, email);
         Database.addUser(user);
@@ -66,7 +65,7 @@ public class UserService {
         name = decode(name);
         email = decode(email);
 
-        isDuplicateEmail(email);
+        updateValidate(userId, email);
 
         User user = new User(userId, password, name, email);
         Database.addUser(user);
@@ -74,18 +73,23 @@ public class UserService {
         return user.getUserId();
     }
 
-    private void isDuplicateId(String userId) {
+    private void createValidate(String userId, String email) {
         Collection<User> users = Database.findAll();
         for (User user : users) {
             if (user.getUserId().equals(userId)) {
                 throw new CreateUserException(CreateUserException.DUPLICATE_ID);
             }
+            if (user.getEmail().equals(email)) {
+                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
+            }
         }
     }
 
-    private void isDuplicateEmail(String email) {
+    private void updateValidate(String userId, String email) {
         Collection<User> users = Database.findAll();
         for (User user : users) {
+            if (user.getUserId().equals(userId))
+                continue;
             if (user.getEmail().equals(email)) {
                 throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
             }
@@ -93,4 +97,21 @@ public class UserService {
     }
 
 
+//    private void isDuplicateId(String userId) {
+//        Collection<User> users = Database.findAll();
+//        for (User user : users) {
+//            if (user.getUserId().equals(userId)) {
+//                throw new CreateUserException(CreateUserException.DUPLICATE_ID);
+//            }
+//        }
+//    }
+//
+//    private void isDuplicateEmail(String email) {
+//        Collection<User> users = Database.findAll();
+//        for (User user : users) {
+//            if (user.getEmail().equals(email)) {
+//                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
+//            }
+//        }
+//    }
 }

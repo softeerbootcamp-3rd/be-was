@@ -5,6 +5,7 @@ import exception.CreateUserExceptionHandler;
 import exception.FileNotFoundExceptionHandler;
 import model.User;
 import service.UserService;
+import util.HtmlTemplate;
 import util.ResourceUtils;
 import util.SessionManager;
 import util.http.*;
@@ -116,12 +117,12 @@ public class UserController {
 
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        String userId = "<li><a role=\"button\">{{userId}}</a></li>";
+        String userId = HtmlTemplate.USER_ID;
         userId = userId.replace("{{userId}}", loggedInUser.getUserId());
 
         String html = new String(ResourceUtils.getStaticResource("/user/list.html"));
         byte[] body =  html.replace("<tr id=\"users\"></tr>", sb.toString())
-                .replace("<li><a id=\"userId\" role=\"button\"></a></li>", userId)
+                .replace("<li>userId</li>", userId)
                 .getBytes();
 
         String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
@@ -143,7 +144,7 @@ public class UserController {
 
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        String userId = "<li><a role=\"button\">{{userId}}</a></li>";
+        String userId = HtmlTemplate.USER_ID;
         userId = userId.replace("{{userId}}", loggedInUser.getUserId());
 
         String name = "<h4 id=\"username\" class=\"media-heading\">{{name}}</h4>";
@@ -153,8 +154,7 @@ public class UserController {
         email = email.replace("{{email}}", loggedInUser.getEmail());
 
         String html = new String(ResourceUtils.getStaticResource("/user/profile.html"));
-        byte[] body =  html.replace("<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>", userId)
-                .replace("<li><a href=\"../user/form.html\" role=\"button\">회원가입</a></li>", "")
+        byte[] body =  html.replace("<li>userId</li>", userId)
                 .replace("<h4 id=\"username\" class=\"media-heading\">자바지기</h4>", name)
                 .replace("<a id=\"email\" href=\"#\" class=\"btn btn-xs btn-default\"><span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;javajigi@slipp.net</a>", email)
                 .getBytes();
@@ -194,12 +194,12 @@ public class UserController {
         String input = "<input class=\"form-control\" id=\"userId\" name=\"userId\" placeholder=\"{{userId}}\" disabled>";
         input = input.replace("{{userId}}", loggedInUser.getUserId());
 
-        String li = "<li><a role=\"button\">{{userId}}</a></li>";
-        li = li.replace("{{userId}}", loggedInUser.getUserId());
+        String userId = HtmlTemplate.USER_ID;
+        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
 
         String html = new String(ResourceUtils.getStaticResource("/user/update.html"));
         byte[] body = html.replace("<input class=\"form-control\" id=\"userId\" name=\"userId\" placeholder=\"User ID\">", input)
-                .replace("<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>", li)
+                .replace("<li>userId</li>", userId)
                 .getBytes();
 
         String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
