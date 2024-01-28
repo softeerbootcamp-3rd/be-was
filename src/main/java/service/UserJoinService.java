@@ -11,13 +11,7 @@ import java.util.Map;
 public class UserJoinService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public boolean createUser(Map<String, String> params) {
-        if(!validation(params)) return false;
-        String userId = params.get("userId");
-        String password = params.get("password");
-        String name = params.get("name");
-        String email = params.get("email");
-
+    public boolean createUser(String userId, String password, String name, String email) {
         User user = new User(userId, password, name, email);
         logger.debug("New User : {}", user);
         Database.addUser(user);

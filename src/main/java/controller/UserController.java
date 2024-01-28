@@ -2,6 +2,7 @@ package controller;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
+import annotation.RequestParam;
 import db.Database;
 import model.User;
 import request.HttpRequest;
@@ -30,25 +31,28 @@ public class UserController {
     SessionManager sessionManager = new SessionManager();
 
     @PostMapping(url = "/user/create")
-    public void userJoin(HttpRequest request, HttpResponse response) {
-        Map<String, String> params = request.getParams();
+    public HttpResponse userJoin(@RequestParam(name = "userId") String userId,
+                                 @RequestParam(name = "password") String password,
+                                 @RequestParam(name = "name") String name,
+                                 @RequestParam(name = "email") String email) {
+        HttpResponse response = new HttpResponse();
         UserJoinService userJoinService = new UserJoinService();
 
-        if (userJoinService.createUser(params)) { // 회원 가입 성공 시 홈으로
+        if (userJoinService.createUser(userId, password, name, email)) { // 회원 가입 성공 시 홈으로
             responseHeaders.put(LOCATION, "/index.html");
             response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         } else { // 회원 가입 실패 시 다시 회원 가입 창으로
             responseHeaders.put(LOCATION, "/user/form.html");
             response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         }
+        return response;
     }
 
     @PostMapping(url = "/user/login")
-    public void userLogin(HttpRequest request, HttpResponse response) {
+    public HttpResponse userLogin(@RequestParam(name = "userId") String userId,
+                                  @RequestParam(name = "password") String password) {
+        HttpResponse response = new HttpResponse();
         UserLoginService userLoginService = new UserLoginService();
-
-        String userId = request.getParams().get("userId");
-        String password = request.getParams().get("password");
 
         User loginUser = userLoginService.login(userId, password);
         if (loginUser == null) { // 로그인 실패 시 로그인 실패 창으로
@@ -61,18 +65,21 @@ public class UserController {
             responseHeaders.put(SET_COOKIE, "sid="+sessionId+"; Max-Age=300; Path=/");
             response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         }
+        return response;
     }
 
     @PostMapping(url = "/user/logout")
-    public void userLogout(HttpRequest request, HttpResponse response) {
-
+    public HttpResponse userLogout(HttpRequest request) {
+        HttpResponse response = new HttpResponse();
         sessionManager.deleteSession(request);
         responseHeaders.put(LOCATION, "/index.html");
         response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+        return response;
     }
 
     @GetMapping(url = "/user/list.html")
-    public void doGet(HttpRequest request, HttpResponse response) {
+    public HttpResponse getList(HttpRequest request) {
+        HttpResponse response = new HttpResponse();
         User loginUser = sessionManager.getUserBySessionId(request);
         if (loginUser == null) {
             responseHeaders.put(LOCATION, "/user/login.html");
@@ -95,6 +102,7 @@ public class UserController {
                 throw new RuntimeException(e);
             }
         }
+        return response;
     }
 
     private String makeListHtml(Collection<User> users) {

@@ -22,17 +22,20 @@ public class MethodHandler {
         controllers.add(ResourceController.class);
     }
 
-    public void process(HttpRequest request, HttpResponse response) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Object process(HttpRequest request) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Method method = findTargetMethod(request.getMethod(), request.getUrl());
         Object instance = method.getDeclaringClass().getConstructor().newInstance();
 
+        Object response;
+
         Map<String, String> params = request.getParams();
         if(params.size() == 0) {
-            method.invoke(instance, request);
+            response = method.invoke(instance, request);
         } else {
             Object[] objects = bindParameters(method, params);
-            method.invoke(instance, objects);
+            response = method.invoke(instance, objects);
         }
+        return response;
     }
 
     private Method findTargetMethod(String requestMethod, String requestUrl) {

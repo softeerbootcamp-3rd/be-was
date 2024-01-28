@@ -20,7 +20,7 @@ public class HttpRequestUtils {
         parseBody(request, br);
 
         // POST Form 방식 처리 구현
-        if (request.getMethod().equals("POST") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
+        if (request.getMethod().equals("POST") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded") && !request.getUrl().equals("/user/logout")) {
             Map<String, String> params = parseQueryString(request.getBody());
             request.setParams(params);
         }

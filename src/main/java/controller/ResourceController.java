@@ -19,10 +19,8 @@ import java.util.regex.Pattern;
 
 public class ResourceController {
     Map<String, String> responseHeaders = new HashMap<>();
-    final String LOCATION = "Location";
     final String CONTENT_TYPE = "Content-Type";
     final String CONTENT_LENGTH = "Content-Length";
-    final String SET_COOKIE = "set-cookie";
 
     static Map<String, String> contentType = new HashMap<>();
     SessionManager sessionManager = new SessionManager();
@@ -36,7 +34,8 @@ public class ResourceController {
         contentType.put("ico", "image/x-icon");
     }
     @GetMapping(url = "/resources")
-    public void getResources(HttpRequest request, HttpResponse response) {
+    public HttpResponse getResources(HttpRequest request) {
+        HttpResponse response = new HttpResponse();
         String url;
         if (request.getUrl().endsWith(".html")) {
             url = "src/main/resources/templates" + request.getUrl();
@@ -65,7 +64,7 @@ public class ResourceController {
             responseHeaders.put(CONTENT_TYPE, "text/html;charset=utf-8");
             response.setResponse(HttpResponseStatus.NOT_FOUND, "404 NOT FOUND".getBytes(), responseHeaders);
         }
-
+        return response;
     }
 
     private String getContentType(String url) {
