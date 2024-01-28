@@ -52,4 +52,13 @@ public class StringParser {
         }
     }
 
+    public static String extractFileExtension(String filePath) {
+        if (filePath == null || filePath.isEmpty()) return "";
+
+        int lastDotIndex = filePath.lastIndexOf('.');
+        if (lastDotIndex == -1 || lastDotIndex == filePath.length() - 1) return "";
+
+        return filePath.substring(lastDotIndex + 1);
+    }
+
 }
