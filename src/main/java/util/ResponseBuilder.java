@@ -21,6 +21,9 @@ public class ResponseBuilder {
 
     public static void sendHeader(DataOutputStream dos, HttpStatus httpStatus, int bodyLength, String extension) throws IOException {
         dos.writeBytes("HTTP/1.1  " + httpStatus.getCode() + " " + httpStatus.getMessage() + "\r\n");
+        if (httpStatus == HttpStatus.REDIRECT) {
+            dos.writeBytes("Location: http://localhost:8080/index.html\r\n");
+        }
         dos.writeBytes("Content-Type: text/" + extension + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + bodyLength + "\r\n");
         dos.writeBytes("\r\n");

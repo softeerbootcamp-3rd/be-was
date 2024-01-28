@@ -18,7 +18,6 @@ public class UserController {
         methodMap.put("/user/form.html", this::process);
     }
 
-
     public ResourceDto generateUserResource(Object queryParams) {
         userService.createUser((QueryParams) queryParams);
         return ResourceDto.of("/index.html", 302);
