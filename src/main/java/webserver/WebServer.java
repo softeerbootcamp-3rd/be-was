@@ -38,7 +38,7 @@ public class WebServer {
             };
             scheduler.scheduleAtFixedRate(task, 60*60*1000, 60*60*1000);        // 1시간 후 1시간 간격으로 세션 저장소 청소
 
-            ExecutorService executorService = Executors.newFixedThreadPool(5);     // 고정 크키 5의 쓰레드 풀 생성
+            ExecutorService executorService = Executors.newFixedThreadPool(10);     // 고정 크키 5의 쓰레드 풀 생성
 
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;

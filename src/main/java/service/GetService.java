@@ -76,7 +76,7 @@ public class GetService {
         // 파일 읽어오기
         byte[] byteFile = readFile(path, httpRequestDto);
         if(byteFile == null)
-            return new HTTPResponseDto(500, null, null);
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
         return new HTTPResponseDto(200, httpRequestDto.getAccept(), byteFile);
     }
 

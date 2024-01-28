@@ -123,7 +123,7 @@ public class PostService {
         HTTPResponseDto httpResponseDto = new HTTPResponseDto("/index.html");
 
         // 쿠키는 여러 개일 수 있으므로 value에 전체 헤더를 저장
-        String setCookie = "sid=" + session.getId() + "; expires=" + session.getExpires() + "; Path=/; secure; HttpOnly\r\n";
+        String setCookie = "sid=" + session.getId() + "; expires=" + session.getExpiresWithFormat() + "; Path=/; secure; HttpOnly\r\n";
         httpResponseDto.setHeader("Set-Cookie", "Set-Cookie: " + setCookie);
         return httpResponseDto;
     }

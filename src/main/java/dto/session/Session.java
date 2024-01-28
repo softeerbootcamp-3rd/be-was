@@ -28,8 +28,12 @@ public class Session {
     public String getUserId() {
         return this.userId;
     }
+
+    public LocalDateTime getExpires() {
+        return this.expires;
+    }
     // 만료기간을 GMT 형식에 맞춰 반환
-    public String getExpires() {
+    public String getExpiresWithFormat() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
         return expires.format(formatter);
     }
