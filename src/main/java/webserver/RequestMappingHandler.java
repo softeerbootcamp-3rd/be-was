@@ -45,11 +45,6 @@ public class RequestMappingHandler {
         if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")) {
             response = invokeMethod(method, request);
         } else {
-
-            for (String s : request.getParams().keySet()) {
-                System.out.println(s + ", " + request.getParams().get(s));
-            }
-
             response = invokeMethod(method, createParams(method, request.getParams()));
         }
 

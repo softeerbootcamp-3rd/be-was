@@ -4,6 +4,7 @@ import annotation.*;
 import db.Database;
 import model.User;
 import util.SessionManager;
+import util.StringParser;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.HttpHeader;
@@ -71,7 +72,7 @@ public class UserController {
         SessionManager.setAttribute(SID, "user", userId);
         List<String> cookies = new ArrayList<>();
         cookies.add("SID=" + SID);
-        cookies.add("Max-Age=" + SessionManager.getSessionTimeoutSeconds());
+//        cookies.add("Max-Age=" + SessionManager.getSessionTimeoutSeconds());
         cookies.add("Path=" + "/");
         headerMap.put(HttpHeader.SET_COOKIE, cookies);
         headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
@@ -86,12 +87,11 @@ public class UserController {
     @ResponseBody
     public static ResponseEntity logout(HttpRequest httpRequest) {
 
-        String SID = httpRequest.getCookie().split("=")[1];
+        String SID = StringParser.getCookieValue(httpRequest.getCookie(), "SID");
 
         // 서버 세션 저장소에서 세션 삭제
-        if (SessionManager.isSessionExist(SID))
-            SessionManager.invalidateSession(SID);
-        // 클라이언트에서도 쿠키 제거
+        SessionManager.deleteSession(SID);
+        // 브라우저에서도 쿠키 제거
         Map<String, List<String>> headerMap = new HashMap<>();
         List<String> cookies = new ArrayList<>();
         cookies.add("SID=" + SID);
