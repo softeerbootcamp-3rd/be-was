@@ -1,11 +1,10 @@
-package utils;
+package webserver;
 
 import annotations.GetMapping;
 import annotations.PostMapping;
-import http.HttpRequest;
-import http.HttpResponse;
-import http.header.ResponseHeader;
-import http.status.HttpStatus;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +25,10 @@ public class MethodMapper {
             if (controllers != null) {
                 for (File controller : controllers) {
                     // controller 내의 모든 컨트롤러의 메소드를 가져온다.
+                    if (controller.isDirectory())
+                        continue;
                     String className = controller.getName().replace(".java", "");
-                    Class<?> cl = Class.forName("controller." +className);
+                    Class<?> cl = Class.forName("controller." + className);
 
                     for (Method method : cl.getDeclaredMethods()) {
                         if (method.isAnnotationPresent(GetMapping.class))
@@ -55,12 +56,14 @@ public class MethodMapper {
 
     public static void invokeMethod(Method method, HttpRequest request, HttpResponse response) {
         try {
-            method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), request, response);
+            Class<?> cl = method.getDeclaringClass();
+            Object instance = cl.getDeclaredMethod("getInstance").invoke(null);
+            // 메서드를 invoke할 인스턴스는 싱글톤 패턴으로 작성되었기 때문에
+            // 여러 번 메서드를 호출해도 단일한 컨트롤러 인스턴스에서 호출된다.
+            method.invoke(instance, request, response);
         } catch (Exception e) {
-            response.setHeader(
-                    ResponseHeader.of(HttpStatus.INTERNAL_SERVER_ERROR, Map.of())
-            );
-            response.setEmptyBody();
+            logger.debug(e.getClass().toString() + " " + e.getMessage());
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

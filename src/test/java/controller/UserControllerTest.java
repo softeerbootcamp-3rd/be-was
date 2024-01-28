@@ -1,9 +1,9 @@
 package controller;
 
 import db.Database;
-import http.HttpRequest;
-import http.HttpResponse;
-import http.status.HttpStatus;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import model.User;
 import org.junit.jupiter.api.Test;
 
@@ -28,11 +28,11 @@ class UserControllerTest {
 
         userController.signup(request, response);
 
-        assertThat(response.getHeader().getStatus())
+        assertThat(response.getStatusCode())
                 .isEqualTo(HttpStatus.FOUND);
 
-        assertThat(response.getHeader().getProperty("Location"))
-                .isEqualTo("/user/login.html");
+        assertThat(response.getHeaderProperty("Location"))
+                .isEqualTo("/index.html");
 
         User user = Database.findUserById("asdf");
         assertThat(user).isNotNull();

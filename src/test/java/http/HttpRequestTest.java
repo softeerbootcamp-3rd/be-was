@@ -2,13 +2,13 @@ package http;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webserver.http.HttpRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class HttpRequestTest {
 
@@ -32,11 +32,12 @@ class HttpRequestTest {
         assertThat(httpRequest.getQueryString())
                 .containsEntry("name", "hong")
                 .containsEntry("age", "26");
-        assertThat(httpRequest.getRequestHeader().getProperties())
-                .containsEntry("Host", "localhost:8080")
-                .containsEntry("Accept", "text/html,*/*")
-                .containsEntry("Connection", "keep-alive");
-        assertThat(httpRequest.getRequestBody())
+
+        assertThat(httpRequest.getHeaderProperty("Host")).isEqualTo("localhost:8080");
+        assertThat(httpRequest.getHeaderProperty("Accept")).isEqualTo("text/html,*/*");
+        assertThat(httpRequest.getHeaderProperty("Connection")).isEqualTo("keep-alive");
+
+        assertThat(httpRequest.getBody())
                 .hasFieldOrPropertyWithValue("rawString","");
     }
 }

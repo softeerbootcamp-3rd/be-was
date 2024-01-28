@@ -1,4 +1,4 @@
-package http.body;
+package webserver.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class RequestBody {
         for (String property : propertyString) {
             String[] property_split = property.split("=");
             if (property_split.length != 2 || property_split[1].isBlank())
-                throw new IOException("Incorrect Query String");
+                return result;
 
             property_split[1] = URLDecoder.decode(property_split[1], "UTF-8");
             result.put(property_split[0], property_split[1]);

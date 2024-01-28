@@ -1,8 +1,8 @@
 package utils;
 
-import http.HttpRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import controller.util.FileUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

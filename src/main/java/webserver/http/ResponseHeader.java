@@ -1,12 +1,10 @@
-package http.header;
-
-import http.status.HttpStatus;
+package webserver.http;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ResponseHeader extends Header {
+public class ResponseHeader {
     private HttpStatus status;
     private Map<String, String> properties;
 
@@ -27,11 +25,16 @@ public class ResponseHeader extends Header {
         return status;
     }
 
-    public String getProperty(String property) throws RuntimeException {
-        String result = properties.getOrDefault(property, null);
-        if (result == null)
-            throw new RuntimeException("No Such Property in ResponseHeader");
-        return result;
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
+
+    public String getProperty(String key) {
+        return properties.getOrDefault(key, "");
+    }
+
+    public void addProperty(String key, String value) {
+        properties.put(key, value);
     }
 
     @Override

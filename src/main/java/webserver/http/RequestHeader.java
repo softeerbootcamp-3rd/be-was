@@ -1,19 +1,15 @@
-package http.header;
+package webserver.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RequestHeader extends Header {
+public class RequestHeader {
     private Map<String, String> properties;
 
     private RequestHeader(Map<String, String> properties) {
         this.properties = properties;
-    }
-
-    public Map<String, String> getProperties() {
-        return properties;
     }
 
     public static RequestHeader createFromReader(BufferedReader reader) throws IOException {
@@ -37,24 +33,25 @@ public class RequestHeader extends Header {
         return new RequestHeader(properties);
     }
 
+    public String getHeaderProperty(String key) {
+        return properties.getOrDefault(key, "");
+    }
+
     @Override
     public String toString() {
-        Set<String> requiredHeaders = new HashSet<>();
+        Set<String> requiredHeaders = Set.of(
+                "Host",
+                "Connection",
+                "Referer",
+                "User-Agent",
+                "Accept",
+                "Accept-Language",
+                "Accept-Encoding"
+        );
 
-        requiredHeaders.add("Host");
-        requiredHeaders.add("Connection");
-        requiredHeaders.add("Referer");
-        requiredHeaders.add("User-Agent");
-        requiredHeaders.add("Accept");
-        requiredHeaders.add("Accept-Language");
-        requiredHeaders.add("Accept-Encoding");
-
-        return properties.entrySet().stream().map(e -> {
-                    if (requiredHeaders.contains(e.getKey()))
-                        return e.getKey() + ": " + e.getValue();
-                    else return "";
-                })
-                .filter(e -> !e.isEmpty())
+        return properties.entrySet().stream()
+                .filter(entry -> requiredHeaders.contains(entry.getKey()))
+                .map(entry -> entry.getKey() + ": " + entry.getValue())
                 .collect(Collectors.joining(" | "));
     }
 }

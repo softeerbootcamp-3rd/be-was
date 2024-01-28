@@ -1,7 +1,4 @@
-package http;
-
-import http.body.RequestBody;
-import http.header.RequestHeader;
+package webserver.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,16 +11,16 @@ public class HttpRequest {
     private final String url;
     private final String method;
     private Map<String, String> queryString;
-    private RequestHeader requestHeader;
+    private RequestHeader header;
 
-    private RequestBody requestBody;
+    private RequestBody body;
 
-    private HttpRequest(String method, String url, Map<String, String> queryString, RequestHeader requestHeader, RequestBody requestBody) {
+    private HttpRequest(String method, String url, Map<String, String> queryString, RequestHeader header, RequestBody body) {
         this.method = method;
         this.url = url;
         this.queryString = queryString;
-        this.requestHeader = requestHeader;
-        this.requestBody = requestBody;
+        this.header = header;
+        this.body = body;
     }
 
     public static HttpRequest createFromReader(BufferedReader reader) throws IOException {
@@ -54,8 +51,9 @@ public class HttpRequest {
         RequestHeader header = RequestHeader.createFromReader(reader);
 
         RequestBody body = RequestBody.createEmptyBody();
-        if (header.getProperties().containsKey("Content-Length")) {
-            int contentLength = Integer.parseInt(header.getProperties().get("Content-Length"));
+
+        if (!header.getHeaderProperty("Content-Length").isBlank()) {
+            int contentLength = Integer.parseInt(header.getHeaderProperty("Content-Length"));
             body = RequestBody.createFromReader(reader, contentLength);
         }
 
@@ -74,13 +72,32 @@ public class HttpRequest {
     public Map<String, String> getQueryString() {
         return queryString;
     }
-
-    public RequestHeader getRequestHeader() {
-        return requestHeader;
+    public RequestBody getBody() {
+        return body;
     }
 
-    public RequestBody getRequestBody() {
-        return requestBody;
+    public String getHeaderProperty(String key) {
+        return header.getHeaderProperty(key);
+    }
+
+    public Map<String, String> getCookie() throws IOException {
+        String cookie = header.getHeaderProperty("Cookie");
+        if (cookie.isBlank())
+            return Map.of();
+
+        Map<String, String> result = new HashMap<>();
+        String[] propertyString = cookie.split(";");
+
+        for (String property : propertyString) {
+            String[] property_split = property.split("=");
+
+            if (property_split.length != 2 || property_split[1].isBlank())
+                continue;
+            property_split[1] = URLDecoder.decode(property_split[1], "UTF-8");
+            result.put(property_split[0].trim(), property_split[1].trim());
+        }
+
+        return result;
     }
 
     @Override
@@ -91,6 +108,6 @@ public class HttpRequest {
 
         return "HttpRequest(method = " + method + ",url = " +
                 url + ", queryString = {" + query +
-                "}, header = {" + requestHeader.toString() + "})";
+                "}, header = {" + header.toString() + "})";
     }
 }

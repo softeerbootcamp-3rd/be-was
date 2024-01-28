@@ -1,5 +1,4 @@
-package utils;
-
+package controller.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +38,8 @@ public class FileUtil {
     public static File getFileFromUrl(String url) {
         String contentType = getContentType(url);
 
+        // 정적 파일이 html이면 templates 디렉토리를 이용해서 파일 객체를 생성하고
+        // 아니면 static 디렉토리를 이용해서 생성한다.
         if (contentType.equals("text/html")) {
             return new File("src/main/resources/templates" + url);
         } else {
@@ -61,6 +62,8 @@ public class FileUtil {
                     .filter(type -> type.getExtension().equals(urlExtension))
                     .findFirst().orElseThrow();
         } catch (NoSuchElementException e) {
+            // ContentType enum에 해당하는 객체가 없다면
+            // 일반 binary 파일이라는 의미의 ContentType을 반환한다.
             return "application/octet-stream";
         }
 
