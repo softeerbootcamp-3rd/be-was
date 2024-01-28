@@ -1,19 +1,16 @@
 package service;
 
+import db.Database;
 import db.Session;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import request.user.LoginRequest;
-import webserver.DispatcherServlet;
 
+import java.util.List;
 import java.util.UUID;
 
 import static db.Database.*;
 
 public class UserService {
-
-    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private volatile static UserService instance;
 
     private UserService() {
@@ -24,6 +21,10 @@ public class UserService {
             instance = new UserService();
         }
         return instance;
+    }
+
+    public List<User> findAll() {
+        return Database.findAll();
     }
 
     // 회원가입 요청을 처리하는 메소드
@@ -45,5 +46,9 @@ public class UserService {
         Session.addSession(uuid, loginRequest.getUserId());
 
         return true;
+    }
+
+    public void logout(String sessionId) {
+        Session.removeSession(sessionId);
     }
 }
