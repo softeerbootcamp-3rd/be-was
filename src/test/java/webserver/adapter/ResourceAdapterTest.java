@@ -72,7 +72,7 @@ class ResourceAdapterTest {
     }
 
     @Test
-    @DisplayName("/index1.html 파일을 요청할 때 예외 테스트")
+    @DisplayName("/index1.html 파일을 요청할 때 canRun 테스트")
     void cannotRunIndex1Html() {
         Request requestHeader = Request.of("GET", "/index1.html", "HTTP/1.1");
 
