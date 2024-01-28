@@ -8,9 +8,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public final class ViewResolver {
+import static db.Session.findUserBySessionId;
 
-    private static final Logger logger = LoggerFactory.getLogger(ViewResolver.class);
+public final class HttpResponseHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpResponseHandler.class);
 
     public static void response(HttpResponse httpResponse, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
@@ -34,8 +36,13 @@ public final class ViewResolver {
                 dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
             }
 
-            if (httpResponse.getSid() != null) {
-                dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid() + "; Max-Age=120\r\n");
+            if (httpResponse.getSid() != null && !httpResponse.getSid().equals("EXPIRED")) {
+                dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid() + "; Path=/; Max-Age=120\r\n");
+                dos.writeBytes("Set-Cookie: user-id=" + findUserBySessionId(httpResponse.getSid()).getUserId() + "; Path=/; Max-Age=120\r\n");
+            }
+            if (httpResponse.getSid() != null && httpResponse.getSid().equals("EXPIRED")) {
+                dos.writeBytes("Set-Cookie: sid=; Path=/; Max-Age=0\r\n");
+                dos.writeBytes("Set-Cookie: user-id=; Path=/; Max-Age=0\r\n");
             }
 
             dos.writeBytes("\r\n");
