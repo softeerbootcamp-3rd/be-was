@@ -30,6 +30,8 @@ public class ParamBuilder {
     /**
      * 분리된 쿼리문을 키와 값의 자료구조로 만듭니다.
      *
+     * <p> 퍼센트 인코딩되는 "@" 문자를 그대로 저장합니다.
+     *
      * @param splitQuery 분리된 쿼리문
      * @return 파라미터 (Map)
      */
@@ -38,6 +40,9 @@ public class ParamBuilder {
 
         for (String query : splitQuery) {
             String[] split = query.split("=", -1);
+            if (split[1].contains("%40")) {
+                split[1] = split[1].replace("%40", "@");
+            }
             params.put(split[0], split[1]);
         }
 
