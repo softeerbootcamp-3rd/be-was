@@ -35,7 +35,7 @@ class GetServiceTest {
         Database.clearSessions();
     }
 
-    @DisplayName(" '/' 요청이 들어왔을 경우 index.html로 리다이렉트")
+    @DisplayName(" / 요청이 들어왔을 경우 index.html로 리다이렉트")
     @Test
     void testDefaultGET() {
         // given
@@ -113,7 +113,7 @@ class GetServiceTest {
         assertTrue(actual.getStatusCode() == 200);
     }
 
-    // request target으로 null이 들어왔을 경우 파일 리턴 함수 테스트
+    @DisplayName("request target으로 null이 들어왔을 경우 파일 리턴 함수가 400을 응답하는지 테스트")
     @Test
     void testRequestNullFile() {
         // given
@@ -125,7 +125,7 @@ class GetServiceTest {
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
-    // index.html Get 요청이 들어왔을 경우 파일 리턴 함수 테스트
+    @DisplayName(" /index.html 요청이 들어왔을 경우 정적 파일 리턴 테스트")
     @Test
     void testRequestIndexHtml() {
         try {
@@ -149,7 +149,7 @@ class GetServiceTest {
         }
     }
 
-    // style.css 용청이 들어왔을 경우 파일 리턴 함수
+    @DisplayName(" /css/styles.css 요청이 들어왔을 경우 파일 리턴 테스트")
     @Test
     void testRequestStyleCss() {
         try {
