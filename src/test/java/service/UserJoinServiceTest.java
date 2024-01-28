@@ -11,9 +11,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MemberJoinServiceTest {
+class UserJoinServiceTest {
 
-    MemberJoinService memberJoinService = new MemberJoinService();
+    UserJoinService userJoinService = new UserJoinService();
 
     @AfterEach
     public void afterEach() {
@@ -29,7 +29,7 @@ class MemberJoinServiceTest {
         params.put("name", "kim");
         params.put("email", "123@naver.com");
 
-        memberJoinService.createUser(params);
+        userJoinService.createUser(params);
         assertThat(Database.findAll().size()).isEqualTo(1);
     }
 
@@ -42,7 +42,7 @@ class MemberJoinServiceTest {
         params.put("name", "");
         params.put("email", "456@google.com");
 
-        boolean result = memberJoinService.createUser(params);
+        boolean result = userJoinService.createUser(params);
         assertThat(result).isEqualTo(false);
     }
 
@@ -58,7 +58,7 @@ class MemberJoinServiceTest {
         params.put("name", "lee");
         params.put("email", "456@google.com");
 
-        boolean result = memberJoinService.createUser(params);
+        boolean result = userJoinService.createUser(params);
         assertThat(result).isEqualTo(false);
     }
 

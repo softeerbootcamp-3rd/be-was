@@ -7,6 +7,7 @@ import response.HttpResponse;
 import response.HttpResponseStatus;
 import session.SessionManager;
 
+import javax.naming.ldap.Control;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,7 +17,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ResourceController extends CrudController {
+public class ResourceController {
+    Map<String, String> responseHeaders = new HashMap<>();
+    final String LOCATION = "Location";
+    final String CONTENT_TYPE = "Content-Type";
+    final String CONTENT_LENGTH = "Content-Length";
+    final String SET_COOKIE = "set-cookie";
 
     static Map<String, String> contentType = new HashMap<>();
     SessionManager sessionManager = new SessionManager();
@@ -30,7 +36,7 @@ public class ResourceController extends CrudController {
         contentType.put("ico", "image/x-icon");
     }
     @GetMapping(url = "/resources")
-    public void doGet(HttpRequest request, HttpResponse response) {
+    public void getResources(HttpRequest request, HttpResponse response) {
         String url;
         if (request.getUrl().endsWith(".html")) {
             url = "src/main/resources/templates" + request.getUrl();

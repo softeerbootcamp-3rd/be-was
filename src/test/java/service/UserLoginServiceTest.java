@@ -7,9 +7,9 @@ import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MemberLoginServiceTest {
+class UserLoginServiceTest {
 
-    MemberLoginService memberLoginService = new MemberLoginService();
+    UserLoginService userLoginService = new UserLoginService();
 
     @AfterEach
     public void afterEach() {
@@ -25,7 +25,7 @@ class MemberLoginServiceTest {
         String userId = "id";
         String password = "pass";
 
-        User loginUser = memberLoginService.login(userId, password);
+        User loginUser = userLoginService.login(userId, password);
         assertThat(loginUser).isEqualTo(user);
     }
 
@@ -35,7 +35,7 @@ class MemberLoginServiceTest {
         String userId = "id";
         String password = "pass";
 
-        User loginUser = memberLoginService.login(userId, password);
+        User loginUser = userLoginService.login(userId, password);
         assertThat(loginUser).isNull();
     }
 
@@ -48,7 +48,7 @@ class MemberLoginServiceTest {
         String userId = "id";
         String password = "pass2";
 
-        User loginUser = memberLoginService.login(userId, password);
+        User loginUser = userLoginService.login(userId, password);
         assertThat(loginUser).isNull();
     }
 }

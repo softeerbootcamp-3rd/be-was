@@ -1,11 +1,14 @@
 package controller;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
 import db.Database;
 import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
 import response.HttpResponseStatus;
+import service.UserJoinService;
+import service.UserLoginService;
 import session.SessionManager;
 
 import java.io.File;
@@ -18,8 +21,55 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MemberListController extends CrudController {
+public class UserController {
+    Map<String, String> responseHeaders = new HashMap<>();
+    final String LOCATION = "Location";
+    final String CONTENT_TYPE = "Content-Type";
+    final String CONTENT_LENGTH = "Content-Length";
+    final String SET_COOKIE = "set-cookie";
     SessionManager sessionManager = new SessionManager();
+
+    @PostMapping(url = "/user/create")
+    public void userJoin(HttpRequest request, HttpResponse response) {
+        Map<String, String> params = request.getParams();
+        UserJoinService userJoinService = new UserJoinService();
+
+        if (userJoinService.createUser(params)) { // 회원 가입 성공 시 홈으로
+            responseHeaders.put(LOCATION, "/index.html");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+        } else { // 회원 가입 실패 시 다시 회원 가입 창으로
+            responseHeaders.put(LOCATION, "/user/form.html");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+        }
+    }
+
+    @PostMapping(url = "/user/login")
+    public void userLogin(HttpRequest request, HttpResponse response) {
+        UserLoginService userLoginService = new UserLoginService();
+
+        String userId = request.getParams().get("userId");
+        String password = request.getParams().get("password");
+
+        User loginUser = userLoginService.login(userId, password);
+        if (loginUser == null) { // 로그인 실패 시 로그인 실패 창으로
+            responseHeaders.put(LOCATION, "/user/login_failed.html");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+        } else { // 로그인 성공 시 홈으로
+            String sessionId = sessionManager.createSession(loginUser);
+
+            responseHeaders.put(LOCATION, "/index.html");
+            responseHeaders.put(SET_COOKIE, "sid="+sessionId+"; Max-Age=300; Path=/");
+            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+        }
+    }
+
+    @PostMapping(url = "/user/logout")
+    public void userLogout(HttpRequest request, HttpResponse response) {
+
+        sessionManager.deleteSession(request);
+        responseHeaders.put(LOCATION, "/index.html");
+        response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+    }
 
     @GetMapping(url = "/user/list.html")
     public void doGet(HttpRequest request, HttpResponse response) {

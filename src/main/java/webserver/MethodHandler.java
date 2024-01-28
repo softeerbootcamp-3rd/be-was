@@ -15,10 +15,7 @@ public class MethodHandler {
     private static final List<Class<?>> controllers = new ArrayList<>();
 
     static {
-        controllers.add(MemberJoinController.class);
-        controllers.add(MemberListController.class);
-        controllers.add(MemberLoginController.class);
-        controllers.add(MemberLogoutController.class);
+        controllers.add(UserController.class);
         controllers.add(ResourceController.class);
     }
 
@@ -29,7 +26,7 @@ public class MethodHandler {
     }
 
     private Method findTargetMethod(String requestMethod, String requestUrl) {
-        if(requestUrl.contains(".")) {
+        if(requestUrl.contains(".") && !requestUrl.equals("/user/list.html")) {
             requestUrl = "/resources";
         }
         for (Class<?> c : controllers) {

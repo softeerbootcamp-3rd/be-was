@@ -2,16 +2,13 @@ package service;
 
 import db.Database;
 import model.User;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-public class MemberJoinService {
+public class UserJoinService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     public boolean createUser(Map<String, String> params) {
