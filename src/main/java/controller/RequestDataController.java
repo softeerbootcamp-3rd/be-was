@@ -60,22 +60,33 @@ public class RequestDataController {
 
     private static Response handleFileRequest(String url, String extension, RequestData requestData) {
         try {
-            if (extension.isEmpty()) {
-                throw new UnsupportedOperationException("유효하지 않은 API 접근입니다.");
-            }
+            validateExtension(extension);
 
             String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
             File file = new File(ResourceLoader.url + directory + url);
-            if (file.exists() && !file.isDirectory()) {
+
+            if (isValidFile(file)) {
                 return new Response(HttpStatusCode.OK, url);
             } else {
                 logger.debug("유효하지 않은 파일 경로입니다.");
                 return new Response(HttpStatusCode.NOT_FOUND, ERROR_NOT_FOUND_HTML);
             }
-        } catch (IllegalArgumentException | UnsupportedOperationException e) {
+        } catch (IllegalArgumentException e) {
             logger.debug("유효하지 않은 접근: {}", e.getMessage());
             return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
         }
+    }
+
+    // 확장자 유효성 검사
+    private static void validateExtension(String extension) {
+        if (extension.isEmpty()) {
+            throw new IllegalArgumentException("유효하지 않은 API 접근입니다.");
+        }
+    }
+
+    // 파일의 유효성 검사
+    private static boolean isValidFile(File file) {
+        return file.exists() && !file.isDirectory();
     }
 
     @Route(method = HttpMethod.GET, uri = "/")
