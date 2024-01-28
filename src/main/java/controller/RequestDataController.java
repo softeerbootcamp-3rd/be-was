@@ -25,6 +25,13 @@ public class RequestDataController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestDataController.class);
 
+    // 중복된 문자열 리터럴을 상수로 대체
+    private static final String INDEX_HTML = "/index.html";
+    private static final String ERROR_NOT_FOUND_HTML = "/error/notfound.html";
+    private static final String ERROR_BAD_REQUEST_HTML = "/error/badrequest.html";
+    private static final String USER_LOGIN_HTML = "/user/login.html";
+    private static final String USER_LOGIN_FAILED_HTML = "/user/login_failed.html";
+
     public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
 
@@ -42,7 +49,7 @@ public class RequestDataController {
             return handleFileRequest(url, extension, requestData);
         } catch (IllegalAccessException | InvocationTargetException e) {
             logger.error("Error invoking method: {}", e.getMessage());
-            return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
+            return new Response(HttpStatusCode.NOT_FOUND, ERROR_NOT_FOUND_HTML);
         }
     }
 
@@ -63,27 +70,27 @@ public class RequestDataController {
                 return new Response(HttpStatusCode.OK, url);
             } else {
                 logger.debug("유효하지 않은 파일 경로입니다.");
-                return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
+                return new Response(HttpStatusCode.NOT_FOUND, ERROR_NOT_FOUND_HTML);
             }
         } catch (IllegalArgumentException | UnsupportedOperationException e) {
             logger.debug("유효하지 않은 접근: {}", e.getMessage());
-            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+            return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
         }
     }
 
     @Route(method = HttpMethod.GET, uri = "/")
     public static Response handleApiRedirectToHome(RequestData requestData) {
-        return new Response(HttpStatusCode.FOUND, "/index.html");
+        return new Response(HttpStatusCode.FOUND, INDEX_HTML);
     }
 
     @Route(method = HttpMethod.POST, uri = "/user/create")
     public static Response handleApiSignup(RequestData requestData) {
         try {
             UserService.registerUser(requestData);
-            return new Response(HttpStatusCode.FOUND, "/index.html");
+            return new Response(HttpStatusCode.FOUND, INDEX_HTML);
         } catch (IllegalArgumentException e) {
             logger.debug("회원가입을 위한 파라미터의 수가 부족합니다.");
-            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+            return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
         }
     }
 
@@ -91,15 +98,15 @@ public class RequestDataController {
     private static Response handleApiLogin(RequestData requestData) {
         CookieData cookieData = UserService.login(requestData);
         if (cookieData != null) {
-            return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
+            return new Response(HttpStatusCode.FOUND, INDEX_HTML, cookieData);
         }
-        return new Response(HttpStatusCode.FOUND, "/user/login_failed.html");
+        return new Response(HttpStatusCode.FOUND, USER_LOGIN_FAILED_HTML);
     }
 
     @Route(method = HttpMethod.GET, uri = "/user/logout")
     private static Response handleApiLogout(RequestData requestData) {
         CookieData cookieData = UserService.logout(requestData);
-        return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
+        return new Response(HttpStatusCode.FOUND, INDEX_HTML, cookieData);
     }
 
     @Route(method = HttpMethod.GET, uri = "/user/list.html")
@@ -107,14 +114,14 @@ public class RequestDataController {
         if (requestData.isLoggedIn()) {
             return new Response(HttpStatusCode.OK, requestData.getRequestContent());
         }
-        return new Response(HttpStatusCode.FOUND, "/index.html");
+        return new Response(HttpStatusCode.FOUND, INDEX_HTML);
     }
 
     @Route(method = HttpMethod.GET, uri = "/user/login.html")
     private static Response handleFileLogin(RequestData requestData) {
         if (requestData.isLoggedIn()) {
-            return new Response(HttpStatusCode.FOUND, "/index.html");
+            return new Response(HttpStatusCode.FOUND, INDEX_HTML);
         }
-        return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+        return new Response(HttpStatusCode.OK, USER_LOGIN_HTML);
     }
 }
