@@ -1,5 +1,6 @@
 package webserver.response;
 
+import webserver.session.Session;
 import webserver.status.HttpStatus;
 import webserver.type.ContentType;
 
@@ -39,6 +40,12 @@ public class Response {
     public static Response redirect(String location){
         return new Response(HttpStatus.FOUND, null)
                 .setHeader("Location", location);
+    }
+
+    public static Response redirect(String location, Session session){
+        return new Response(HttpStatus.FOUND, null)
+                .setHeader("Location", location)
+                .setHeader("Set-Cookie", session.toString());
     }
 
     public static Response onSuccess(byte[] body){
