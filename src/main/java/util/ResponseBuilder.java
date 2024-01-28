@@ -30,7 +30,7 @@ public class ResponseBuilder {
         writeResponseStatus(dos, response.getStatus());
         byte[] body = writeContentInfo(dos, response.getPath(), requestData);
         if (response.getStatus() == HttpStatusCode.FOUND) writeRedirectLocation(dos, response.getPath());
-        if (response.getCookie() != null) writeCookieHeader(dos, response.getCookie());
+        if (response.getCookie() != null || !requestData.isLoggedIn()) writeCookieHeader(dos, response.getCookie(), requestData);
         dos.writeBytes("\r\n"); // eof
         return body;
     }
@@ -54,8 +54,9 @@ public class ResponseBuilder {
         dos.writeBytes("Location: " + targetPath + "\r\n");
     }
 
-    private static void writeCookieHeader(DataOutputStream dos, CookieData cookieData) throws IOException {
-        dos.writeBytes("Set-Cookie: " + cookieData.toString() + " Path=/" + "\r\n");
+    private static void writeCookieHeader(DataOutputStream dos, CookieData cookieData, RequestData requestData) throws IOException {
+        if (cookieData != null) dos.writeBytes("Set-Cookie: " + cookieData.toString() + " Path=/" + "\r\n");
+        if (!requestData.isLoggedIn()) dos.writeBytes("Set-Cookie: " + requestData.getHeaderValue("Cookie") + "; Max-Age=0; Path=/;\r\n");
     }
 
     private static void buildResponseBody(DataOutputStream dos, HttpStatusCode statusCode, byte[] body) throws IOException {
