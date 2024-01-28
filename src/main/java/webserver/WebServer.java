@@ -33,7 +33,7 @@ public class WebServer {
                 @Override
                 public void run() {
                     Database.sessionGC();
-                    System.out.println("가비지 컬렉터 실행! 사이즈: " + Database.findAllSession().size());
+                    logger.debug("가비지 컬렉터 실행! 유효 세션 개수: {}", Database.findAllSession().size());
                 }
             };
             scheduler.scheduleAtFixedRate(task, 60*60*1000, 60*60*1000);        // 1시간 후 1시간 간격으로 세션 저장소 청소
