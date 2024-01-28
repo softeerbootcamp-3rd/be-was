@@ -65,11 +65,8 @@ public class RequestDataController {
                 logger.debug("유효하지 않은 파일 경로입니다.");
                 return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
             }
-        } catch (IllegalArgumentException e) {
-            logger.debug("유효하지 않은 확장자로 접근!");
-            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
-        } catch (UnsupportedOperationException e) {
-            logger.error("유효하지 않은 API로 접근!");
+        } catch (IllegalArgumentException | UnsupportedOperationException e) {
+            logger.debug("유효하지 않은 접근: {}", e.getMessage());
             return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
         }
     }
