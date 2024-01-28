@@ -1,5 +1,6 @@
 package controller;
 
+import annotation.GetMapping;
 import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
@@ -28,7 +29,7 @@ public class ResourceController extends CrudController {
         contentType.put("jpg", "image/jpg");
         contentType.put("ico", "image/x-icon");
     }
-    @Override
+    @GetMapping(url = "/index.html")
     public void doGet(HttpRequest request, HttpResponse response) {
         String url;
         if (request.getUrl().endsWith(".html")) {

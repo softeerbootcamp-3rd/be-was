@@ -1,6 +1,7 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.Map;
 
@@ -31,13 +32,20 @@ public class RequestHandler implements Runnable {
             HttpRequest request = HttpRequestUtils.makeHttpRequest(in);
             HttpResponse response = new HttpResponse();
 
-            Controller controller = ControllerMappingMap.getController(request.getMethod(), request.getUrl());
-            controller.process(request, response);
+
+            if (request.getMethod().equals("GET")) {
+                GetMethodHandler getMethodHandler = new GetMethodHandler();
+                getMethodHandler.process(request, response);
+            }
+
+//            Controller controller = ControllerMappingMap.getController(request.getMethod(), request.getUrl());
+//            controller.process(request, response);
 
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponseUtils.renderResponse(dos, response);
 
-        } catch (IOException e) {
+        } catch (IOException | NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }
