@@ -102,14 +102,17 @@ public class Request {
     }
 
     public String getCookie(String key) {
-        if (cookieMap.size() == 0) {
+        if (cookieMap == null) {
             initCookieMap();
         }
 
-        String value = cookieMap.get(key);
-        if (value != null) {
-            return value;
+        if (cookieMap.size() != 0) {
+            String value = cookieMap.get(key);
+            if (value != null) {
+                return value;
+            }
         }
+
         throw new IllegalArgumentException("일치하는 cookie가 존재하지 않습니다.");
     }
 
@@ -122,5 +125,7 @@ public class Request {
             String[] keyValue = cookie.split("=");
             cookieMap.put(keyValue[0], keyValue[1]);
         }
+
+        this.cookieMap = cookieMap;
     }
 }
