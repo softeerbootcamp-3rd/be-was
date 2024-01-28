@@ -58,6 +58,10 @@ public enum HtmlTemplate {
             "              </li>",
             HtmlBuilder::replaceQnaList, HtmlBuilder::replaceQnaList),
 
+    QNA_PAGINATION("<!--qna-pagination-->",
+            "<li class=\"<!--active-->\"><a href=\"/index.html?page=<!--link-->\"><!--page-number--></a></li>",
+            HtmlBuilder::replacePagination, HtmlBuilder::replacePagination),
+
     QNA_TITLE("<!--qna-->",
             "<header class=\"qna-header\">\n" +
                     "              <h2 class=\"qna-title\"><!--title--></h2>\n" +

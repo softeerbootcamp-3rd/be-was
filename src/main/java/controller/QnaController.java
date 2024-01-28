@@ -21,10 +21,7 @@ public class QnaController {
     public static HttpResponse postQna(@RequestBody QnaDto qna) {
         User currentUser = SharedData.requestUser.get();
         if (currentUser == null)
-            return HttpResponse.builder()
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(HttpStatus.FORBIDDEN.getFullMessage())
-                    .build();
+            return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         QnaDatabase.add(new Qna(currentUser.getUserId(), qna.getTitle(), qna.getContents(), new Date()));
         return HttpResponse.builder()

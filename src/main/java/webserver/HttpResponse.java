@@ -2,6 +2,7 @@ package webserver;
 
 import constant.HttpHeader;
 import constant.HttpStatus;
+import constant.MimeType;
 import org.slf4j.Logger;
 
 import java.io.DataOutputStream;
@@ -77,6 +78,13 @@ public class HttpResponse {
             }
             return this.httpResponse;
         }
+    }
+
+    public static HttpResponse of(HttpStatus status) {
+        return builder().status(status)
+                .addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.getMimeType())
+                .body(status.getFullMessage())
+                .build();
     }
 
     public void send(OutputStream out, Logger logger) {

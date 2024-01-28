@@ -92,20 +92,12 @@ public class RequestMapper {
 
             Object result = method.invoke(instance, mapParams(method));
             if (result instanceof HttpResponse) return (HttpResponse) result;
-        } catch (IllegalArgumentException e) {
-            return HttpResponse.builder()
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage())
-                    .build();
         } catch (RuntimeException | NoSuchMethodException
                  | InvocationTargetException | InstantiationException
                  | IllegalAccessException e) {
             logger.error(e.getMessage());
         }
-        return HttpResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(HttpStatus.INTERNAL_SERVER_ERROR.getFullMessage())
-                .build();
+        return HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static Object[] mapParams(Method method) {

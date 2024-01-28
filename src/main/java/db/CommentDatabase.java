@@ -2,10 +2,10 @@ package db;
 
 import com.google.common.collect.Maps;
 import model.Comment;
-import model.Qna;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CommentDatabase {
 
@@ -26,7 +26,7 @@ public class CommentDatabase {
     public static Collection<Comment> findByQnaId(Long qnaId) {
         return comments.values().stream()
                 .filter(comment -> comment.getQnaId().equals(qnaId))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public static Long countByQnaId(Long qnaId) {

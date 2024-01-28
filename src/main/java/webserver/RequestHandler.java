@@ -23,7 +23,7 @@ public class RequestHandler implements Runnable {
 
     public void run() {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpResponse response = new HttpResponse();
+            HttpResponse response;
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 HttpRequest request = new HttpRequest(reader);
@@ -35,7 +35,7 @@ public class RequestHandler implements Runnable {
 
                 Method handler = RequestMapper.getMethod(request);
                 if (handler != null) {
-                    RequestMapper.invoke(handler).send(out, logger);
+                    response = RequestMapper.invoke(handler);
                 } else if (request.getMethod().equals("GET")) {
                     byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
 
@@ -52,18 +52,12 @@ public class RequestHandler implements Runnable {
                     throw new ResourceNotFoundException(request.getPath());
 
             } catch (ResourceNotFoundException e) {
-                response = HttpResponse.builder()
-                        .status(HttpStatus.NOT_FOUND)
-                        .addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.getMimeType())
-                        .body(HttpStatus.NOT_FOUND.getFullMessage())
-                        .build();
-
+                response = HttpResponse.of(HttpStatus.NOT_FOUND);
+            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                response = HttpResponse.of(HttpStatus.BAD_REQUEST);
             } catch (IllegalStateException | IOException e) {
                 logger.error("error processing request: {}", e.getMessage());
-                response = HttpResponse.builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(e.getMessage())
-                        .build();
+                response = HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
             }
             response.send(out, logger);
         } catch (IOException e) {

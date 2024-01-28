@@ -5,6 +5,7 @@ import annotation.RequestBody;
 import annotation.RequestMapping;
 import constant.HttpHeader;
 import constant.HttpStatus;
+import constant.MimeType;
 import db.UserDatabase;
 import dto.LoginDto;
 import dto.UserCreateDto;
@@ -26,6 +27,7 @@ public class UserController {
         if (existUser != null)
             return HttpResponse.builder()
                     .status(HttpStatus.CONFLICT)
+                    .addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.getMimeType())
                     .body("The requested username is already in use.")
                     .build();
 
