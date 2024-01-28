@@ -7,10 +7,7 @@ import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
 import factory.HttpResponseFactory;
 import factory.HttpResponseFactoryImpl;
-import handler.DynamicResponseHandler;
-import handler.DynamicResponseHandlerImpl;
-import handler.StaticResponseHandler;
-import handler.StaticResponseHandlerImpl;
+import handler.*;
 import service.HttpResponseSendService;
 import service.HttpResponseSendServiceImpl;
 import service.UserService;
@@ -52,5 +49,9 @@ public class AppConfig {
 
     public static Filter filter(){
         return AuthFilter.getInstance();
+    }
+
+    public static UrlControllerMapper urlControllerMapper(){
+        return UrlControllerMapper.getInstance();
     }
 }

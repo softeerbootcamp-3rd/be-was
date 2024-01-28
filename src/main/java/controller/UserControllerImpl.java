@@ -13,7 +13,6 @@ import model.http.Cookie;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import service.UserService;
-import service.UserServiceImpl;
 import util.FileDetector;
 import util.HtmlParser;
 
@@ -26,7 +25,7 @@ import static config.AppConfig.fileDetector;
 import static config.AppConfig.userService;
 
 @Controller
-@RequestMapping(path = "/user")
+@RequestMapping(value = "/user")
 public class UserControllerImpl{
     private static class UserControllerHolder {
         public static final UserControllerImpl INSTANCE = new UserControllerImpl(userService(), fileDetector());
