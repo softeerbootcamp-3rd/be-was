@@ -14,7 +14,7 @@ public class ResourcePathMappingTest {
         String expect = getExpectDirectory(extensions);
 
         // When
-        String actual = ResourcePathMapping.getDirectory(extensions);
+        String actual = ResourceMapping.valueOf(extensions.toUpperCase()).getDirectory();
 
         // Then
         assertThat(actual).isEqualTo(expect)
@@ -28,7 +28,7 @@ public class ResourcePathMappingTest {
         String expect = getExpectContentType(extensions);
 
         // When
-        String actual = ResourcePathMapping.getContentType(extensions);
+        String actual = ResourceMapping.valueOf(extensions.toUpperCase()).getContentType();
 
         // Then
         assertThat(actual).isEqualTo(expect)

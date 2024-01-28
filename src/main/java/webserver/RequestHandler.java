@@ -7,11 +7,14 @@ import java.net.URL;
 import controller.RequestDataController;
 import data.RequestData;
 
+import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import util.RequestParserUtil;
 import util.ResponseBuilder;
+
+import javax.xml.crypto.Data;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -43,9 +46,11 @@ public class RequestHandler implements Runnable {
 //                url = "/index.html";
 //            }
 
-            String statusCodeUrl = RequestDataController.routeRequest(requestData);
+            Response response = RequestDataController.routeRequest(requestData);
 
-            ResponseBuilder.buildResponse(out, statusCodeUrl);
+            DataOutputStream dos = ResponseBuilder.buildResponse(out, response);
+
+            dos.flush();
 
         } catch (IOException e) {
             logger.error(e.getMessage());

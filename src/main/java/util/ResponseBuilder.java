@@ -1,9 +1,13 @@
 package util;
 
-import controller.ResourcePathMapping;
+import controller.HttpStatusCode;
+import controller.ResourceMapping;
+import data.CookieData;
+import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.crypto.Data;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,75 +16,51 @@ public class ResponseBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
-    public static void buildResponse(OutputStream out, String StatusCodeUrl) throws IOException {
+    public static DataOutputStream buildResponse(OutputStream out, Response response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
+        HttpStatusCode statusCode = response.getStatus();
 
-        String[] tokens = StatusCodeUrl.split(" ");
-        String statusCode = tokens[0];
-        String targetPath = tokens[1];
+        byte[] body = buildResponseHeader(dos, response);
+        buildResponseBody(dos, statusCode, body);
 
+        return dos;
+    }
+
+    private static byte[] buildResponseHeader(DataOutputStream dos, Response response) throws IOException {
+        writeResponseStatus(dos, response.getStatus());
+        byte[] body = writeContentInfo(dos, response.getPath());
+        if (response.getStatus() == HttpStatusCode.FOUND) writeRedirectLocation(dos, response.getPath());
+        if (response.getCookie() != null) writeCookieHeader(dos, response.getCookie());
+        dos.writeBytes("\r\n"); // eof
+        return body;
+    }
+
+    private static void writeResponseStatus(DataOutputStream dos, HttpStatusCode statusCode) throws IOException {
+        dos.writeBytes("HTTP/1.1 " + statusCode.getStatusCode() + "\r\n");
+    }
+
+    private static byte[] writeContentInfo(DataOutputStream dos, String targetPath) throws IOException {
         String extension = RequestParserUtil.getFileExtension(targetPath);
-        String contentType = ResourcePathMapping.getContentType(extension);
+        String contentType = ResourceMapping.valueOf(extension.toUpperCase()).getContentType();
+        byte[] body = ResourceLoader.loadResource(targetPath);
 
-        byte[] body;
+        dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
 
-        if(statusCode.equals("200")) {
-            body = ResourceLoader.loadResource(targetPath);
-            response200Header(dos, body.length, contentType);
+        return body;
+    }
+
+    private static void writeRedirectLocation(DataOutputStream dos, String targetPath) throws IOException {
+        dos.writeBytes("Location: " + targetPath + "\r\n");
+    }
+
+    private static void writeCookieHeader(DataOutputStream dos, CookieData cookieData) throws IOException {
+        dos.writeBytes("Set-Cookie: " + cookieData.toString() + " Path=/" + "\r\n");
+    }
+
+    private static void buildResponseBody(DataOutputStream dos, HttpStatusCode statusCode, byte[] body) throws IOException {
+        if (statusCode != HttpStatusCode.FOUND) {
             responseBody(dos, body);
-        } else if(statusCode.equals("302")) {
-            response302Header(dos, targetPath);
-        } else if (statusCode.equals("400")) {
-            body = ResourceLoader.loadResource(targetPath);
-            response400Header(dos);
-            responseBody(dos, body);
-        } else if (statusCode.equals("404")) {
-            body = ResourceLoader.loadResource(targetPath);
-            response404Header(dos);
-            responseBody(dos, body);
-        } else {
-            logger.error("지원하지 않는 상태 코드입니다.");
-            return;
-        }
-    }
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private static void response302Header(DataOutputStream dos, String redirectLocation) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found\r\n");
-            dos.writeBytes("Location: " + redirectLocation + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private static void response400Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 400 Bad Request\r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private static void response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
     }
 
@@ -92,4 +72,6 @@ public class ResponseBuilder {
             logger.error(e.getMessage());
         }
     }
+
+
 }

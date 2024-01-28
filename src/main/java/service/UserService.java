@@ -1,8 +1,11 @@
 package service;
 
+import data.CookieData;
 import data.RequestData;
 import db.Database;
+import db.Session;
 import model.User;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.RequestParserUtil;
@@ -36,5 +39,78 @@ public class UserService {
         Database.addUser(newUser);
 
         logger.debug(newUser.toString());
+    }
+
+    public static CookieData login(RequestData requestData) {
+        logger.debug("login() method");
+
+        Map<String, String> loginData = RequestParserUtil.parseUserRegisterQuery(requestData.getBody());
+
+        String id = loginData.get("userId");
+        String password = loginData.get("password");
+
+        User user = Database.findUserById(loginData.get("userId"));
+
+        if(user != null && user.getPassword().equals(password)) {
+            logger.debug("사용자 " + user.getUserId() + " 의 로그인이 성공했습니다.");
+            String sid = Session.createSession(user.getUserId());
+            return new CookieData(sid, 60 * 5);
+        } else {
+            logger.debug("ID 입력값 " + id + " 으로 비정상적인 접근이 있었습니다.");
+            return null;
+        }
+
+    }
+
+    public static boolean isLoggedIn(RequestData requestData) {
+        logger.debug("isLoggedIn()");
+
+        String[] sid = requestData.getHeaderValue("Cookie").split("=");
+
+        logger.debug("Cookie");
+        logger.debug("\t" + sid[0] + " : " + sid[1]);
+
+        // 쿠키에 sid가 없는 경우
+        if (!sid[0].equals("sid")) {
+            logger.debug("Session is not exists!");
+            return false;
+        }
+
+        // 쿠키의 세션 id가 서버에 없는 경우
+        if (Session.getUserIdBySessionId(sid[1]) == null) {
+            logger.debug("Session is not exists!");
+            return false;
+        }
+
+        logger.debug("Session already exists!");
+        return true;
+    }
+
+    public static CookieData logout(RequestData requestData) {
+        logger.debug("logout()");
+
+        String cookie = requestData.getHeaderValue("Cookie");
+
+        if (cookie != null) {
+            String[] tokens = cookie.split("=");
+
+            if (tokens.length >= 2) {
+                String cookieName = tokens[0];
+                String sid = tokens[1];
+
+                Session.removeSession(sid);
+                logger.debug("[Database]");
+                for (User user: Database.findAll()) {
+                    logger.debug(user.toString());
+                }
+                logger.debug("[Session]");
+                for (String sessionId: Session.getAllSessionId()) {
+                    logger.debug("sessionId: " + sessionId + ", userId: " + Session.getUserIdBySessionId(sessionId));
+                }
+                return new CookieData(sid, 0);
+            }
+        }
+
+        return null;
     }
 }

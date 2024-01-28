@@ -1,14 +1,23 @@
 package controller;
 
+import data.CookieData;
 import data.RequestData;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import util.RequestParserUtil;
 import util.ResourceLoader;
-import webserver.RequestHandler;
+import data.Response;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import static util.RequestParserUtil.getFileExtension;
 import static util.ResourceLoader.getResourceType;
@@ -17,65 +26,105 @@ public class RequestDataController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestDataController.class);
 
-    private static UserService userService;
-
-    static {
-        userService = new UserService();
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Route {
+        String value();
     }
 
-    public static String routeRequest(RequestData requestData) {
+    private static Map<String, Method> routeMap = new HashMap<>();
+
+    static {
+        // 라우팅 메서드 등록
+        registerRoutes();
+    }
+
+    private static void registerRoutes() {
+        Method[] methods = RequestDataController.class.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(Route.class)) {
+                Route route = method.getAnnotation(Route.class);
+                routeMap.put(route.value(), method);
+            }
+        }
+    }
+
+    public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
 
         String extension = getFileExtension(url);
 
         try {
-            File file;
-
-            String directory = ResourcePathMapping.getDirectory(extension);
-
-            file = new File(ResourceLoader.url + directory + url);
-
-            String fileOrApi = getResourceType(url); // URL이 FILE을 나타내는지 API를 나타내는지 문자열로 반환
-
-            if (fileOrApi.equals("FILE")) {
-                if (file.exists() && !file.isDirectory()) {
-                    return getFilePath(url);
-                } else {
-                    logger.debug("유효하지 않은 파일 경로입니다.");
-                    return notFound();
-                }
-            } else if (fileOrApi.equals("API")) {
-                if (url.equals("/")) {
-                    return redirectHome();
-                } else if (url.startsWith("/user/create")) {
-                    userService.registerUser(requestData);
-                    return redirectHome();
-                } else {
-                    logger.debug("유효하지 않은 API입니다.");
-                    return notFound();
-                }
+            if (routeMap.containsKey(url)) {
+                Method method = routeMap.get(url);
+                return (Response) method.invoke(null, requestData);
             } else {
-                return notFound();
+                return handleFileRequest(url, extension, requestData);
             }
-        } catch (IllegalArgumentException e) {
-            logger.debug("IllegalArgumentException caught: {}", e.getMessage());
-            return badRequest();
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.error("Error invoking method: {}", e.getMessage());
+            return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
         }
     }
 
-    private static String redirectHome() {
-        return "302 /index.html";
+    private static Response handleFileRequest(String url, String extension, RequestData requestData) {
+        try {
+            if (extension.isEmpty()) {
+                throw new UnsupportedOperationException("유효하지 않은 API 접근입니다.");
+            }
+
+            String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
+            File file = new File(ResourceLoader.url + directory + url);
+            if (file.exists() && !file.isDirectory()) {
+                if (url.equals("/user/login.html")) {
+                    if (requestData.getHeaderValue("Cookie") != null) {
+                        if (UserService.isLoggedIn(requestData)) {
+                            return new Response(HttpStatusCode.FOUND, "/index.html");
+                        }
+                    }
+                }
+                return new Response(HttpStatusCode.OK, url);
+            } else {
+                logger.debug("유효하지 않은 파일 경로입니다.");
+                return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
+            }
+        } catch (IllegalArgumentException e) {
+            logger.debug("유효하지 않은 확장자로 접근!");
+            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+        } catch (UnsupportedOperationException e) {
+            logger.error("유효하지 않은 API로 접근!");
+            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+        }
     }
 
-    private static String getFilePath(String filePath) {
-        return "200 " + filePath;
+    @Route("/")
+    public static Response handleApiRedirectToHome(RequestData requestData) {
+        return new Response(HttpStatusCode.FOUND, "/index.html");
     }
 
-    private static String notFound() {
-        return "404 /error/notfound.html";
+    @Route("/user/create")
+    public static Response handleApiSignup(RequestData requestData) {
+        try {
+            UserService.registerUser(requestData);
+            return new Response(HttpStatusCode.FOUND, "/index.html");
+        } catch (IllegalArgumentException e) {
+            logger.debug("회원가입을 위한 파라미터의 수가 부족합니다.");
+            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+        }
     }
 
-    private static String badRequest() {
-        return "400 /error/badrequest.html";
+    @Route("/user/login")
+    private static Response handleApiLogin(RequestData requestData) {
+        CookieData cookieData = UserService.login(requestData);
+        if (cookieData != null) {
+            return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
+        }
+        return new Response(HttpStatusCode.FOUND, "/user/login_failed.html");
+    }
+
+    @Route("/user/logout")
+    private static Response handleApiLogout(RequestData requestData) {
+        CookieData cookieData = UserService.logout(requestData);
+        return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
     }
 }
