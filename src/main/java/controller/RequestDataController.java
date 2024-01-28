@@ -33,11 +33,13 @@ public class RequestDataController {
         try {
             Method method = findMethod(requestData.getMethod(), url);
 
+            // 매핑된 메서드가 있으면 호출
             if (method != null) {
                 return (Response) method.invoke(null, requestData);
-            } else {
-                return handleFileRequest(url, extension, requestData);
             }
+
+            // 매핑된 메서드가 없으면 파일 요청
+            return handleFileRequest(url, extension, requestData);
         } catch (IllegalAccessException | InvocationTargetException e) {
             logger.error("Error invoking method: {}", e.getMessage());
             return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
