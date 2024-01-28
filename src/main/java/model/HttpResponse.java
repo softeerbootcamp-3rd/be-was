@@ -1,6 +1,7 @@
 package model;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import static model.HttpStatus.OK;
 public class HttpResponse {
     private final HttpStatus httpStatus;
     private final Map<String, String> header;
-    private final byte[] body;
+    private byte[] body;
 
     public HttpResponse(HttpStatus httpStatus, Map<String, String> header, byte[] body) {
         this.httpStatus = httpStatus;
@@ -51,6 +52,11 @@ public class HttpResponse {
 
             return new HttpResponse(OK, header, body);
         }
+    }
+    public void setBody(String target, String bodyInfo) throws UnsupportedEncodingException {
+        String currentBody = new String(this.body, "UTF-8");
+        byte[] replaceBody = currentBody.replace(target, bodyInfo).getBytes("UTF-8");
+        this.body = replaceBody;
     }
 
     public void addCookie(String cookieHeader) {

@@ -6,7 +6,10 @@ import model.HttpRequest;
 import model.HttpResponse;
 import service.UserService;
 
+import java.io.IOException;
+
 import static model.HttpStatus.BAD_REQUEST;
+import static model.HttpStatus.INTERNAL_SERVER_ERROR;
 import static service.SessionManager.createSession;
 import static service.SessionManager.existingSession;
 
@@ -37,6 +40,22 @@ public class UserController {
             return httpResponse;
         }catch (IllegalArgumentException | NullPointerException e){
             return HttpResponse.redirect("/user/login_failed.html");
+        }
+    }
+
+    public static HttpResponse userList(HttpRequest httpRequest) {
+        try{
+            if(httpRequest.getSessionId() == null){//로그인이 되지 않은 경우 -> 로그인 화면으로
+                return HttpResponse.redirect("/user/login.html");
+            }
+
+            String userList = UserService.userList();
+            HttpResponse httpResponse = HttpResponse.response200(httpRequest.getExtension(), httpRequest.getPath());
+            httpResponse.setBody("{{list}}",userList);
+
+            return httpResponse;
+        }catch (IOException e){
+            return HttpResponse.errorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }

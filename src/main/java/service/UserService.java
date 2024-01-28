@@ -2,7 +2,10 @@ package service;
 
 import db.Database;
 import dto.request.UserSignUpDto;
+import model.HttpRequest;
 import model.User;
+
+import java.util.Collection;
 
 public class UserService {
     public static void signUp(UserSignUpDto userSignUpDto) {
@@ -22,5 +25,28 @@ public class UserService {
         }
 
         return id;
+    }
+
+    public static String userList() {
+        Collection<User> users = Database.findAll();
+
+        return getUserList(users);
+    }
+
+    private static String getUserList(Collection<User> users) {
+        StringBuilder sb = new StringBuilder();
+        int pos = 1;
+
+        for (User user : users) {
+            sb.append("<tr>\n")
+                    .append("<th scope=\"row\">").append(pos++).append("</th>")
+                    .append("<td>").append(user.getUserId()).append("</td>")
+                    .append("<td>").append(user.getName()).append("</td>")
+                    .append("<td>").append(user.getEmail()).append("</td>")
+                    .append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n")
+                    .append("</tr>\n");
+        }
+
+        return sb.toString();
     }
 }
