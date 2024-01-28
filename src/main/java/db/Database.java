@@ -21,4 +21,9 @@ public class Database {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static void clear() {
+        users.clear();
+        System.out.println("당글 만세");
+    }
 }
