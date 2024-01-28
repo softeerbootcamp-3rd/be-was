@@ -25,4 +25,19 @@ public class UserRequest {
             return email;
         }
     }
+
+    public static class Login{
+        private String userId;
+        private String password;
+
+        public Login(){}
+
+        public String getUserId(){
+            return userId;
+        }
+
+        public String getPassword(){
+            return password;
+        }
+    }
 }
