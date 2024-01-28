@@ -50,12 +50,6 @@ public class FrontController {
         Object handler = getHandler(request);
         Response response = new Response();
 
-        if (handler == null) {
-            View view = viewResolver(DEFAULT_PAGE);
-            view.render(request, response, out);
-            return;
-        }
-
         HandlerAdapter adapter = getHandlerAdapter(handler);
         ModelView mv = adapter.handle(request, response, handler);
 
@@ -64,10 +58,11 @@ public class FrontController {
 
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
-            view.render(request, response, out, resourceController.getType());
+            view.render(request, response, mv, out, resourceController.getType());
             return;
         }
-        view.render(request, response, out);
+
+        view.render(request, response, mv, out);
     }
 
     private View viewResolver(String viewName) {

@@ -15,7 +15,7 @@ public class View {
         this.viewPath = viewPath;
     }
 
-    public void render(Request request, Response response, OutputStream out) {
+    public void render(Request request, Response response, ModelView mv, OutputStream out) {
         DataOutputStream dos = new DataOutputStream(out);
 
         File file = new File(viewPath);
@@ -49,7 +49,7 @@ public class View {
         }
     }
 
-    public void render(Request request, Response response, OutputStream out, String type) {
+    public void render(Request request, Response response, ModelView mv, OutputStream out, String type) {
         DataOutputStream dos = new DataOutputStream(out);
 
         File file = new File(viewPath);
