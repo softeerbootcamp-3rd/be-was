@@ -18,6 +18,12 @@ public enum PostRequestEnum {
             return Config.httpPostService.login(httpRequestDto);
         }
     },
+    CREATEPOST("/qna/form.html") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return Config.httpPostService.createPost(httpRequestDto);
+        }
+    },
     ERROR("wrong request") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {

@@ -1,8 +1,10 @@
 package service;
 
 import db.Database;
+import dto.request.FirstClassCollection;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
+import model.Post;
 import model.Session;
 import model.User;
 import org.slf4j.Logger;
@@ -151,5 +153,42 @@ public class PostService {
             logger.debug("login success - new session created");
         }
         return session;
+    }
+
+    // 게시글 생성 요청 처리
+    public HTTPResponseDto createPost(HTTPRequestDto httpRequestDto) {
+        String sessionId = httpRequestDto.getSessionId();
+        User user = Database.findUserBySessionId(sessionId);
+        HTTPResponseDto httpResponseDto = checkCreatePostBadRequest(httpRequestDto, user);
+        if(httpResponseDto != null)         // 400 bad request일 경우
+            return httpResponseDto;
+
+        String writer = httpRequestDto.getBody().getValue("writer");
+        String title = httpRequestDto.getBody().getValue("title");
+        String contents = httpRequestDto.getBody().getValue("contents");
+
+        // 글쓴이가 비어있을 경우 -> 유저의 이름 자동으로 넣어주기
+        if(writer == null || writer.equals(""))
+            writer = user.getName();
+
+        // 게시물 저장
+        Post post = new Post(user.getUserId(), writer, title, contents);
+        Database.addPost(post);
+
+        // /index.html로 리다이렉트
+        return new HTTPResponseDto("/index.html");
+    }
+    private HTTPResponseDto checkCreatePostBadRequest(HTTPRequestDto httpRequestDto, User user) {
+        // body 또는 유저가 null일 경우
+        if(httpRequestDto.getBody() == null || user == null)
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        // body에 title, contents가 하나라도 들어있지 않은 경우
+        FirstClassCollection body = httpRequestDto.getBody();
+        String title = body.getValue("title");
+        String contents = body.getValue("contents");
+        if(title == null || title.isEmpty() || contents == null || contents.isEmpty())
+            return new HTTPResponseDto(400, "text/plain", "제목과 내용을 모두 입력해주세요.".getBytes());
+
+        return null;
     }
 }

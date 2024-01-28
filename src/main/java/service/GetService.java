@@ -185,7 +185,7 @@ public class GetService {
         return "<li><div class=\"wrap\"><div class=\"main\"><strong class=\"subject\"><a href=\"./qna/show.html/"
                 + post.getId() + "\">"
                 + post.getTitle() + "</a></strong><div class=\"auth-info\"><i class=\"icon-add-comment\"></i><span class=\"time\">"
-                + post.getCreateAt() + "</span><a href=\"./user/profile.html\" class=\"author\">"
+                + post.getCreateAt() + " </span><a href=\"./user/profile.html\" class=\"author\">"
                 + post.getUserId() + "</a></div><div class=\"reply\" title=\"댓글\"><i class=\"icon-reply\"></i><span class=\"point\">"
                 + post.getId() + "</span></div></div></div></li>";
     }

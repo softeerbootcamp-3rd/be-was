@@ -117,7 +117,7 @@ public class RequestHandler implements Runnable {
 
             // 한글 파라미터 decoding 후 body 저장
             bodyMapParsing(URLDecoder.decode(new String(body), StandardCharsets.UTF_8));
-            logger.debug("Request Body: {}", httpRequestDto.getBody());
+            logger.debug("Request Body: {}", httpRequestDto.getBody().getMap().toString());
         }
     }
 
