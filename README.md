@@ -2,7 +2,7 @@
 Java Web Application Server 2023   
 
 ## 프로젝트 설계
-<img src="https://github.com/jiaeYoon/softeer3-be-was/assets/68904755/31d5fbf7-36f6-46e3-900f-3ffaa441b66c" alt="project_architecture" width="85%"/>
+<img src="https://github.com/jiaeYoon/softeer3-be-was/assets/68904755/5447b55a-0cd5-4cfe-b1bd-a2c4ed9a594c" width="90%"/>
 
 # 1단계
 
@@ -57,7 +57,7 @@ Java Web Application Server 2023
 
 # 4단계
 ### 요구사항
-- 로그인을 GET에서 POST로 수정 후 정상 동작하도록 구현하기 
+- 회원가입을 GET에서 POST로 수정 후 정상 동작하도록 구현하기 
 - 가입을 완료하면 /index.html 페이지로 이동하기
 - 불필요한 외부 의존성 제거(자바 기본 패키지, Junit, AssertJ, Logger 외의 외부 패키지 사용 X)
 - java.nio 에서 java.io로 변환
@@ -75,6 +75,24 @@ Java Web Application Server 2023
 - [java.io와 java.nio](https://github.com/jiaeYoon/softeer3-be-was/wiki/JAVA-%7C-java.io%EC%99%80-java.nio)
 - redirect
 - BufferedReader의 read()와 readline()
+
+# 5단계
+### 요구사항
+- 로그인 기능 구현
+- 로그인 성공 시, index.html로 이동 + HTTP 헤더의 쿠키 값을 SID=세션 ID로 응답
+- 로그인 실패 시, /user/login_failed.html로 이동
+
+### 체크리스트
+- [x] 로그인 기능 구현
+- [x] 로그인 성공 시, index.html로 리다이렉트
+- [x] 로그인 실패 시, /user/login_failed.html로 리다이렉트
+- [x] 로그인 성공 시, 쿠키 값에 세션 ID를 넣어 반환
+- [x] 요청한 파일이 없는 경우, 404 Not Found 페이지 응답
+
+### 학습 내역
+- 쿠키와 세션
+- Dispatcher Servlet의 동작 방식
+- Reflection Method Invoke
 
 <hr>
 
