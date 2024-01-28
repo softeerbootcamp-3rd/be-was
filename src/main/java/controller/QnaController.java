@@ -70,4 +70,5 @@ public class QnaController {
                 .addHeader(HttpHeader.LOCATION, "/index.html")
                 .build();
     }
+
 }

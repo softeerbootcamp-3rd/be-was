@@ -35,6 +35,10 @@ public class CommentDatabase {
                 .count();
     }
 
+    public static void deleteById(Long commentId) {
+        comments.remove(commentId);
+    }
+
     public static Collection<Comment> findAll() {
         return comments.values();
     }

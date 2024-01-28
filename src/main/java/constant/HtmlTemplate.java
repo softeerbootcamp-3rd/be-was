@@ -136,10 +136,10 @@ public enum HtmlTemplate {
 
     COMMENT_BTN_GROUP(null,
             "         <div class=\"btn-group-horizontal\" style=\"margin-bottom:30px\">\n" +
-                    "                     <form class=\"form-delete\" action=\"/questions/<!--qna-id-->/comments/<!--comment-id-->/delete\" method=\"post\">\n" +
+                    "                     <form class=\"form-delete\" action=\"/comments/<!--comment-id-->/delete\" method=\"post\">\n" +
                     "                         <button class=\"btn btn-danger pull-right\" type=\"submit\">삭제</button>\n" +
                     "                     </form>\n" +
-                    "                     <a href=\"/questions/<!--qna-id-->/comments/<!--comment-id-->/form\" class=\"btn btn-warning pull-right\" role=\"button\">수정</a>" +
+                    "                     <a href=\"/comments/<!--comment-id-->/form\" class=\"btn btn-warning pull-right\" role=\"button\">수정</a>" +
                     "             </div>\n",
             null, null),
 
