@@ -4,12 +4,15 @@ import com.google.common.io.ByteStreams;
 import db.Database;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
+import model.Post;
 import model.Session;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 
 public class GetService {
@@ -118,7 +121,7 @@ public class GetService {
             byteFile = makeIndex(httpRequestDto, byteFile);
         // list.html일 경우 전체 사용자 목록 동적 생성 후 반환
         if(path.contains("list.html"))
-            byteFile = makeList(byteFile);
+            byteFile = makeUserList(byteFile);
         if(path.contains("profile.html"))
             byteFile = makeProfile(httpRequestDto, byteFile);
         return byteFile;
@@ -140,19 +143,55 @@ public class GetService {
 
     // index.html의 동적 화면 처리
     private byte[] makeIndex(HTTPRequestDto httpRequestDto, byte[] byteFile) {
-        String sessionId = httpRequestDto.getSessionId();
-        // 로그인 되어있지 않을 경우
+        String stringFile = new String(byteFile);
+        // 1. 로그인 되어있을 경우 -> 로그인 버튼의 '로그인'을 유저의 이름으로 변경
+        stringFile = replaceLogin2Name(stringFile, httpRequestDto.getSessionId());
+        // 2. 게시물 목록 탐색하여 화면에 추가
+        String front = stringFile.substring(0, stringFile.indexOf("<ul class=\"list\">") + "<ul class=\"list\">".length());
+        String back = stringFile.substring(stringFile.indexOf("<div class=\"row\">"));
+        String postList = getPostList() + "</ul";
+        return (front + postList + back).getBytes();
+    }
+
+    // 로그인 버튼의 '로그인'을 유저의 이름으로 변경
+    private String replaceLogin2Name(String stringFile, String sessionId) {
         if(sessionId == null)
-            return byteFile;
-        // 로그인 되어있을 경우 -> 로그인 버튼의 '로그인'을 유저의 이름으로 변경
+            return stringFile;
         User user = Database.findUserBySessionId(sessionId);
         if(user == null || user.getName() == null)
-            return byteFile;
-        return new String(byteFile).replace("로그인", user.getName()).getBytes();
+            return stringFile;
+        return stringFile.replace("로그인", user.getName());
+    }
+
+    // 게시물 저장소에 저장되어있는 전체 게시물 목록 html 형식으로 반환
+    private String getPostList() {
+        StringBuilder sb = new StringBuilder();
+        List<Post> posts = Database.findAllPost();
+        Collections.sort(posts);        // id 낮은 순 정렬
+
+        for(Post post: posts) {
+            String row = makePostListOneRow(post);
+            sb.append(row);
+        }
+
+        return sb.toString();
+    }
+
+    // 한 개의 게시물에 대해 index.html에 띄울 행 문자열 반환
+    private String makePostListOneRow(Post post) {
+        if(post == null)
+            return "";
+
+        return "<li><div class=\"wrap\"><div class=\"main\"><strong class=\"subject\"><a href=\"./qna/show.html/"
+                + post.getId() + "\">"
+                + post.getTitle() + "</a></strong><div class=\"auth-info\"><i class=\"icon-add-comment\"></i><span class=\"time\">"
+                + post.getCreateAt() + "</span><a href=\"./user/profile.html\" class=\"author\">"
+                + post.getUserId() + "</a></div><div class=\"reply\" title=\"댓글\"><i class=\"icon-reply\"></i><span class=\"point\">"
+                + post.getId() + "</span></div></div></div></li>";
     }
 
     // 전체 사용자 목록 추가하여 동적인 list.html 화면 반환
-    private byte[] makeList(byte[] byteFile) {
+    private byte[] makeUserList(byte[] byteFile) {
         String stringFile = new String(byteFile);
         // 사용자 목록을 추가하기 전 앞부분과 뒷부분의 html 파싱
         String front = stringFile.substring(0, stringFile.indexOf("</tbody>"));

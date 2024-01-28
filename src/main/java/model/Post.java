@@ -2,13 +2,18 @@ package model;
 
 import config.Config;
 
-public class Post {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
+public class Post implements Comparable<Post>{
 
     private Long id;
     private String userId;      // 글 작성자 아이디 (이후 글 작성자 확인용)
     private String writerName;      // 글 작성자가 입력한 글쓴이
     private String title;
     private String contents;
+    private LocalDateTime createdAt;
 
     public Post(String userId, String writerName, String title, String contents) {
         this.id = ++Config.postId;
@@ -16,6 +21,7 @@ public class Post {
         this.writerName = writerName;
         this.title = title;
         this.contents = contents;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -33,6 +39,10 @@ public class Post {
     public String getContents() {
         return contents;
     }
+    public String getCreateAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return createdAt.format(formatter);
+    }
 
     public void setWriterName(String writerName) {
         this.writerName = writerName;
@@ -43,10 +53,20 @@ public class Post {
     public void setContents(String contents) {
         this.contents = contents;
     }
+    public void setCreatedAt() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     // 글 작성자와 아이디가 일치하는지 검증
     public boolean checkWriter(String userId) {
         return this.userId.equals(userId);
     }
 
+    @Override
+    public int compareTo(Post p) {
+        if(this.id < p.getId())
+            return -1;
+        else
+            return 1;
+    }
 }

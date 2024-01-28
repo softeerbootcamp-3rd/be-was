@@ -6,7 +6,9 @@ import model.Post;
 import model.Session;
 import model.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
@@ -81,7 +83,7 @@ public class Database {
         posts.remove(postId);
     }
 
-    public static Collection<Post> findAllPost() {
-        return posts.values();
+    public static List<Post> findAllPost() {
+        return new ArrayList<>(posts.values());
     }
 }
