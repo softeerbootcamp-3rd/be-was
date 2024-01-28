@@ -56,7 +56,7 @@ public class Request {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
 
             // 본문 읽기
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[contentLength];
             int bytesRead;
             int totalBytesRead = 0;
 
