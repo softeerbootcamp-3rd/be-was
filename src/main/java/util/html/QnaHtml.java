@@ -1,6 +1,5 @@
 package util.html;
 
-import constant.HtmlTemplate;
 import db.CommentDatabase;
 import db.QnaDatabase;
 import db.UserDatabase;
@@ -114,7 +113,7 @@ public class QnaHtml {
         User user = SharedData.requestUser.get();
         if (user == null || !user.getUserId().equals(comment.getWriterId()))
             return "";
-        return HtmlTemplate.COMMENT_BTN_GROUP.getTemplate()
+        return HtmlTemplates.get("<!--comment-btn-group-->").getTemplate()
                 .replace("<!--qna-id-->", Long.toString(qnaId))
                 .replace("<!--comment-id-->", Long.toString(comment.getId()));
     }

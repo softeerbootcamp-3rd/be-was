@@ -1,8 +1,9 @@
 package util.html;
 
-import constant.HtmlTemplate;
 import model.User;
 import util.web.SharedData;
+
+import java.util.Map;
 
 public class HtmlBuilder {
 
@@ -10,21 +11,21 @@ public class HtmlBuilder {
         String result = new String(fileContent);
         User user = SharedData.requestUser.get();
 
+        // 로그인 된 상태
         if (user != null) {
-            for (HtmlTemplate template : HtmlTemplate.values()) {
-                if (template.getOriginalValue() == null
-                || !result.contains(template.getOriginalValue())) continue;
-                result = result.replace(template.getOriginalValue(),
-                        template.getLoggedInFunction().apply(template.getTemplate()));
+            for (Map.Entry<String, HtmlTemplate> template : HtmlTemplates.values().entrySet()) {
+                if (!result.contains(template.getKey())) continue;
+                result = result.replace(template.getKey(),
+                        template.getValue().getLoggedInFunction().apply(template.getValue().getTemplate()));
             }
             return result.getBytes();
         }
 
-        for (HtmlTemplate template : HtmlTemplate.values()) {
-            if (template.getOriginalValue() == null
-            || !result.contains(template.getOriginalValue())) continue;
-            result = result.replace(template.getOriginalValue(),
-                    template.getLoggedOutFunction().apply(template.getTemplate()));
+        //로그인 안된 상태
+        for (Map.Entry<String, HtmlTemplate> template : HtmlTemplates.values().entrySet()) {
+            if (!result.contains(template.getKey())) continue;
+            result = result.replace(template.getKey(),
+                    template.getValue().getLoggedOutFunction().apply(template.getValue().getTemplate()));
         }
         return result.getBytes();
     }
