@@ -5,11 +5,10 @@ import java.net.Socket;
 
 import controller.HomeController;
 import controller.UserController;
-import request.HttpRequest;
+import request.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponse;
-import util.StatusCode;
+import response.http.HttpResponse;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static webserver.ViewResolver.response;
@@ -30,10 +29,7 @@ public class DispatcherServlet implements Runnable {
 
             HttpRequest httpRequest = new HttpRequest(br);
 
-            logger.debug("request method : {}, filePath : {}, http version : {}\n",
-                    httpRequest.getMethod(), httpRequest.getUri(), httpRequest.getHttpVersion()); // request line 출력
-
-            HttpResponse httpResponse = findController(httpRequest); // request line을 통해 적절한 controller를 찾아서 처리 및 status 반환
+            HttpResponse httpResponse = findController(httpRequest);
 
             response(httpResponse, out);
 

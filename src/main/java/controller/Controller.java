@@ -1,10 +1,8 @@
 package controller;
 
-import request.HttpRequest;
-import response.HttpResponse;
-
-import java.io.IOException;
+import request.http.HttpRequest;
+import response.http.HttpResponse;
 
 public interface Controller {
-    HttpResponse handleUserRequest(HttpRequest httpRequest) throws IOException;
+    HttpResponse handleUserRequest(HttpRequest httpRequest) throws Exception;
 }

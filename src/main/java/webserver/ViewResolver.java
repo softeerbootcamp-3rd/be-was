@@ -2,7 +2,7 @@ package webserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import response.HttpResponse;
+import response.http.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,52 +14,33 @@ public final class ViewResolver {
 
     public static void response(HttpResponse httpResponse, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-
-        if (httpResponse.getStatusCode() == 200) {
-            response200Header(dos, httpResponse.getBodyLength(), httpResponse.getContentType());
-            responseBody(dos, httpResponse.getBody());
-            return;
-        }
-        if (httpResponse.getStatusCode() == 302) {
-            response302Header(dos, httpResponse.getRedirectUri());
-            return;
-        }
-        if (httpResponse.getStatusCode() == 404) {
-            response404Header(dos);
-            responseBody(dos, httpResponse.getBody());
-        }
+        responseHeader(httpResponse, dos);
+        responseBody(dos, httpResponse.getBody());
     }
 
-    private static void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
+    public static void responseHeader(HttpResponse httpResponse, DataOutputStream dos) throws IOException {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes(httpResponse.getStatusLine().getVersion() + " " +
+                            httpResponse.getStatusCodeAndReasonPhrase() + "\r\n");
+            if (httpResponse.getStatusCode() == 404) { // 404 Not Found 이면
+                dos.writeBytes("\r\n");
+                return;
+            }
+            if (httpResponse.getRedirectUri() != null) { // Redirect Uri가 존재하면
+                dos.writeBytes("Location: " + httpResponse.getRedirectUri() + "\r\n");
+            }
+            if (httpResponse.getSid() != null) { // sessionId가 존재하면
+                dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid() + "; Path=/");
+            }
+            dos.writeBytes("Content-Type: " + httpResponse.getContentType() + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + httpResponse.getBodyLength() + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
 
-    private static void response302Header(DataOutputStream dos, String location) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+        responseBody(dos, httpResponse.getBody());
     }
-
-    private static void response404Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found \r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
 
     private static void responseBody(DataOutputStream dos, byte[] body) {
         try {
