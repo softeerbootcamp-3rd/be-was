@@ -1,7 +1,5 @@
 package util.html;
 
-import com.google.common.base.Strings;
-import constant.HtmlTemplate;
 import db.CommentDatabase;
 import db.QnaDatabase;
 import db.UserDatabase;
@@ -15,13 +13,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class QnaHtml {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static final int pageSize = 10;
     private static final int paginationSize = 5;
 
-    public static String replaceQnaList(String template) {
+    public static String qnaList(String template) {
         if (template == null)
             return "";
         int pageNumber = SharedData.getParamDataOrElse("page", Integer.class, 1);
@@ -39,7 +38,7 @@ public class QnaHtml {
         return sb.toString();
     }
 
-    public static String replacePagination(String template) {
+    public static String pagination(String template) {
         if (template == null)
             return "";
 
@@ -67,7 +66,7 @@ public class QnaHtml {
         return sb.toString();
     }
 
-    public static String replaceQna(String template) {
+    public static String qnaContent(String template) {
         if (template == null)
             return "";
         Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
@@ -79,11 +78,21 @@ public class QnaHtml {
                 .replace("<!--create-date-->", dateFormat.format(qna.getCreateDatetime()))
                 .replace("<!--contents-->", "<p>" + qna.getContents().replace("\n", "</br>") + "</p>")
                 .replace("<!--qna-id-->", Long.toString(qna.getId()))
-                .replace("<!--comment-count-->", Long.toString(CommentDatabase.countByQnaId(qnaId)))
-                .replace("<!--comments-->", replaceComments(HtmlTemplate.QNA_COMMENTS.getTemplate()));
+                .replace("<!--comment-count-->", Long.toString(CommentDatabase.countByQnaId(qnaId)));
     }
 
-    public static String replaceComments(String template) {
+    public static String qnaBtnGroup(String template) {
+        if (template == null)
+            return "";
+        Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
+        Qna qna = QnaDatabase.findById(qnaId);
+        User user = SharedData.requestUser.get();
+        if (!Objects.equals(user.getUserId(), qna.getWriterId()))
+            return "";
+        return template.replace("<!--qna-id-->", Long.toString(qnaId));
+    }
+
+    public static String comments(String template) {
         if (template == null)
             return "";
         Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
@@ -97,5 +106,12 @@ public class QnaHtml {
                     .replace("<!--content-->", comment.getContent().replace("\n", "</br>")));
         }
         return sb.toString();
+    }
+
+    public static String answerForm(String template) {
+        if (template == null)
+            return "";
+        Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
+        return template.replace("<!--qna-id-->", Long.toString(qnaId));
     }
 }
