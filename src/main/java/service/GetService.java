@@ -4,13 +4,12 @@ import com.google.common.io.ByteStreams;
 import db.Database;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
-import dto.session.Session;
+import model.Session;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.Collection;
 
 
 public class GetService {

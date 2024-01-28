@@ -5,8 +5,6 @@ import controller.Controller;
 import db.Database;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
-import dto.session.Session;
-import model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 

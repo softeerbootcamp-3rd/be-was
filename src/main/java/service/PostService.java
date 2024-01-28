@@ -1,17 +1,14 @@
 package service;
 
-import config.Config;
 import db.Database;
-import dto.request.FirstClassCollection;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
-import dto.session.Session;
+import model.Session;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 public class PostService {
