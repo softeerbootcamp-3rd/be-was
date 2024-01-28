@@ -12,10 +12,12 @@ import static session.SessionManager.*;
 public class UserController {
 
     public static HttpResponse create(String userInfo) throws Exception {
-        validateForm(userInfo);
-        User user = bindQueryStringToObject(userInfo, User.class);
-        userService.create(user);
-        return new HttpResponse().makeRedirect(INDEX_FILE_PATH);
+        if (validateForm(userInfo)) {
+            User user = bindQueryStringToObject(userInfo, User.class);
+            userService.create(user);
+            return new HttpResponse().makeRedirect(INDEX_FILE_PATH);
+        }
+        return new HttpResponse().makeRedirect(USER_CREATE_FORM_FILE_PATH);
     }
 
     public static HttpResponse login(String loginInfo) throws Exception {
