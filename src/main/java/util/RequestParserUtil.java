@@ -58,7 +58,6 @@ public class RequestParserUtil {
             }
             line = br.readLine();
         }
-        System.out.println();
 
         return headers;
     }
