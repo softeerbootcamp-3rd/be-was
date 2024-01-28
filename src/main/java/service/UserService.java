@@ -3,6 +3,7 @@ package service;
 import db.Database;
 import exception.AlreadyExistUserException;
 import exception.LoginFailedException;
+import exception.UserNotFoundException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,11 @@ public class UserService {
     }
 
     public User findUserById(String userId) {
-        return Database.findUserById(userId);
+        User findUser = Database.findUserById(userId);
+        if (findUser == null) {
+            throw new UserNotFoundException("일치하는 user가 존재하지 않습니다");
+        }
+        return findUser;
     }
 
     public void login(String userId, String password) {
