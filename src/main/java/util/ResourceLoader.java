@@ -1,11 +1,9 @@
 package util;
 
-import constant.HttpStatus;
 import constant.MimeType;
+import exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.HttpRequest;
-import webserver.HttpResponse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,35 +27,19 @@ public class ResourceLoader {
         return filePath.substring(lastDotIndex + 1);
     }
 
-    public static HttpResponse getFileResponse(HttpRequest request) throws IOException {
+    public static byte[] getFileContent(String path) throws IOException {
         String basePath = "src/main/resources/templates";
-        if (request.getPath().startsWith("/css/") || request.getPath().startsWith("/fonts/")
-                || request.getPath().startsWith("/images/") || request.getPath().startsWith("/js/"))
+        if (path.startsWith("/css/") || path.startsWith("/fonts/")
+                || path.startsWith("/images/") || path.startsWith("/js/"))
             basePath = "src/main/resources/static";
 
-        File file = new File(basePath + request.getPath());
-        if (file.exists() && file.isFile()) {
-            try (FileInputStream fis = new FileInputStream(file)) {
-                byte[] content = new byte[(int) file.length()];
-                fis.read(content);
-                return HttpResponse.builder()
-                        .status(HttpStatus.OK)
-                        .addHeader("Content-Type", getMimeType(request.getPath()))
-                        .body(content)
-                        .build();
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-                return HttpResponse.builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(HttpStatus.INTERNAL_SERVER_ERROR.getFullMessage())
-                        .build();
-            }
-        } else {
-            return HttpResponse.builder()
-                    .status(HttpStatus.NOT_FOUND)
-                    .addHeader("Content-Type", "text/plain")
-                    .body(HttpStatus.NOT_FOUND.getFullMessage())
-                    .build();
+        File file = new File(basePath + path);
+        if (!file.exists() || !file.isFile())
+            throw new ResourceNotFoundException(path);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] content = new byte[(int) file.length()];
+            fis.read(content);
+            return content;
         }
     }
 }

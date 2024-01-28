@@ -1,7 +1,6 @@
 package db;
 
 import com.google.common.collect.Maps;
-
 import model.User;
 
 import java.util.Collection;
@@ -18,7 +17,7 @@ public class Database {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
+    public static Collection<User> findAllUsers() {
         return users.values();
     }
 }

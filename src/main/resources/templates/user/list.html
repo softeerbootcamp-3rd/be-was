@@ -32,6 +32,7 @@
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
+                {{user-name}}
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
                     <ul class="dropdown-menu">
@@ -39,7 +40,7 @@
                         <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
                     </ul>
                 </li>
-                <li><a href="../user/list.html"><i class="glyphicon glyphicon-user"></i></a></li>
+                <li><a href="../user/list"><i class="glyphicon glyphicon-user"></i></a></li>
             </ul>
         </div>
     </div>
@@ -63,10 +64,10 @@
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="../index.html">Posts</a></li>
-                <li><a href="../user/login.html" role="button">로그인</a></li>
-                <li><a href="../user/form.html" role="button">회원가입</a></li>
-                <li><a href="#" role="button">로그아웃</a></li>
+                <li><a href="../index.html">Posts</a></li>
+                {{login-btn}}
+                {{signup-btn}}
+                {{logout-btn}}
                 <li><a href="#" role="button">개인정보수정</a></li>
             </ul>
         </div>
@@ -83,12 +84,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                    <th scope="row">1</th> <td>javajigi</td> <td>자바지기</td> <td>javajigi@sample.net</td><td><a href="#" class="btn btn-success" role="button">수정</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th> <td>slipp</td> <td>슬립</td> <td>slipp@sample.net</td><td><a href="#" class="btn btn-success" role="button">수정</a></td>
-                </tr>
+              {{user-list}}
               </tbody>
           </table>
         </div>

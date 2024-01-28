@@ -1,13 +1,9 @@
 package model;
 
-import annotation.NotEmpty;
-
 import java.util.Objects;
 
 public class User {
-    @NotEmpty
     private String userId;
-    @NotEmpty
     private String password;
     private String name;
     private String email;
@@ -35,6 +31,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public static User empty() {
+        return new User("", "", "", "");
     }
 
     @Override

@@ -3,18 +3,24 @@ package controller;
 import annotation.Controller;
 import annotation.RequestBody;
 import annotation.RequestMapping;
-import annotation.RequestParam;
-import db.Database;
-import model.User;
-import util.SessionManager;
-import webserver.HttpResponse;
+import constant.HttpHeader;
 import constant.HttpStatus;
+import db.Database;
+import dto.LoginDto;
+import dto.UserCreateDto;
+import model.User;
+import util.RequestParser;
+import util.SessionManager;
+import webserver.HttpRequest;
+import webserver.HttpResponse;
+
+import java.util.Map;
 
 @Controller
 public class UserController {
 
     @RequestMapping(method = "POST", path = "/user/create")
-    public static HttpResponse createUser(@RequestBody User user) {
+    public static HttpResponse createUser(@RequestBody UserCreateDto user) {
         User existUser = Database.findUserById(user.getUserId());
 
         if (existUser != null)
@@ -23,29 +29,41 @@ public class UserController {
                     .body("The requested username is already in use.")
                     .build();
 
-        Database.addUser(user);
+        Database.addUser(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
-                .addHeader("Location", "/index.html")
+                .addHeader(HttpHeader.LOCATION, "/index.html")
                 .build();
     }
 
     @RequestMapping(method = "POST", path = "/user/login")
-    public static HttpResponse login(@RequestBody User user) {
-        User existUser = Database.findUserById(user.getUserId());
-        if (existUser == null || !existUser.getPassword().equals(user.getPassword()))
+    public static HttpResponse login(@RequestBody LoginDto loginInfo) {
+        User existUser = Database.findUserById(loginInfo.getUserId());
+        if (existUser == null || !existUser.getPassword().equals(loginInfo.getPassword()))
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/login_failed.html")
+                    .addHeader(HttpHeader.LOCATION, "/user/login_failed.html")
                     .build();
 
         String sessionId = SessionManager.generateSessionId();
-        SessionManager.addSession(sessionId, user);
+        SessionManager.addSession(sessionId, existUser);
 
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
-                .addHeader("Set-Cookie", "SID=" + sessionId + "; Path=/; HttpOnly")
-                .addHeader("Location", "/index.html")
+                .addHeader(HttpHeader.SET_COOKIE, "SID=" + sessionId + "; Path=/;")
+                .addHeader(HttpHeader.LOCATION, "/index.html")
+                .build();
+    }
+
+    @RequestMapping(method = "GET", path = "/user/logout")
+    public static HttpResponse logout(HttpRequest request) {
+        Map<String, String> cookies = RequestParser.parseCookie(request.getHeader().get(HttpHeader.COOKIE));
+        String sessionId = cookies.get("SID");
+        SessionManager.removeSession(sessionId);
+
+        return HttpResponse.builder()
+                .status(HttpStatus.FOUND)
+                .addHeader(HttpHeader.LOCATION, "/index.html")
                 .build();
     }
 }
