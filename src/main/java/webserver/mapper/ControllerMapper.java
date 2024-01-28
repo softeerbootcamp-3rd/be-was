@@ -1,29 +1,41 @@
 package webserver.mapper;
 
-import webserver.controller.Controller;
+import webserver.controller.GetMapping;
 import webserver.controller.MyController;
+import webserver.controller.PostMapping;
 import webserver.handler.ControllerHandler;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class ControllerMapper {
-  private final HashMap<String,Method> controllerMethodMap = new HashMap<>();
+  private final HashMap<String,Method> getMethodMap = new HashMap<>();
+  private final HashMap<String,Method> postMethodMap = new HashMap<>();
   public ControllerMapper(){
     //MyController가 가진 모든 method 획득
     Method[] methods = MyController.class.getDeclaredMethods();
     for (Method m : methods){
-      Controller annotation = m.getAnnotation(Controller.class);
-      if(annotation==null)
-        continue;
-      String uri = annotation.uri();
-      controllerMethodMap.put(uri,m);
+      GetMapping getAnnotation = m.getAnnotation(GetMapping.class);
+      if(getAnnotation!=null) {
+        String uri = getAnnotation.uri();
+        getMethodMap.put(uri, m);
+      }
+      PostMapping postAnnotation = m.getAnnotation(PostMapping.class);
+      if(postAnnotation!=null){
+        String uri = postAnnotation.uri();
+        postMethodMap.put(uri, m);
+      }
     }
   }
 
-  public void findAppropriateControllerMethod(ControllerHandler handler, String uri){
+  public void findAppropriateControllerMethod(ControllerHandler handler, String uri, String httpMethod){
     MyController myController = new MyController();
-    Method controllerMethod = controllerMethodMap.get(uri);
+    Method controllerMethod = null;
+    if(httpMethod.equals("GET")){
+      controllerMethod=getMethodMap.get(uri);
+    }else if(httpMethod.equals("POST")){
+      controllerMethod= postMethodMap.get(uri);
+    }
     if(controllerMethod==null)
       throw new ControllerMapperException();
     handler.setByControllerMapper(myController,controllerMethod);

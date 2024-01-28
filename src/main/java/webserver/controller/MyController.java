@@ -4,21 +4,59 @@ import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.session.CustomSession;
+
+import java.util.Map;
+import java.util.UUID;
 
 public class MyController {
   private final Logger logger = LoggerFactory.getLogger(MyController.class);
-  @Controller(uri = "/user/form.html")
+  @GetMapping(uri = "/user/form.html")
   public String joinForm(String word,Integer age){
     logger.info("Controller executed word : {}, age :{}",word,age);
-    return "/user/form.html";
+    return "/templates/user/form.html";
   }
-  ///create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
-  @Controller(uri = "/user/create")
-  public String join(String userId,String password,String email,String name){
-    if(Database.findUserById(userId)==null)
-      Database.addUser(new User(userId, password, name, email));
+  @GetMapping(uri = "/user/login.html")
+  public String loginForm(){
+    return "/templates/user/login.html";
+  }
+  @GetMapping(uri = "/index.html")
+  public String mainPage(){
+    Map.Entry<String,String> e;
+    return "/templates/index.html";
+  }
+  @PostMapping(uri = "/user/create")
+  public String join(@RequestBody UserForm userForm){
+    if(Database.findUserById(userForm.getUserId())==null)
+      Database.addUser(new User(userForm.getUserId(), userForm.getPassword(), userForm.getName(), userForm.getEmail()));
     else
       throw new DuplicateUserException();
-    return "redirect:/user/form.html";
+    return "redirect:/index.html";
+  }
+
+  @PostMapping(uri = "/user/login")
+  public String login(@RequestBody LoginForm loginForm){
+    User findUser = Database.findUserById(loginForm.userId);
+    if(findUser==null)
+      throw new RuntimeException();
+    if(loginForm.correctUser(findUser)) {
+      UUID sessionKey = CustomSession.registerUser(findUser.getUserId());
+      CustomSession.setCookie.set(sessionKey);
+      return "redirect:/index.html";
+    }
+    return "redirect:/user/login_failed.html";
+  }
+  @GetMapping(uri = "/user/login_failed.html")
+  public String failedLogin(){
+    return "/templates/user/login_failed.html";
+  }
+  public static class LoginForm{
+    private String userId;
+    private String password;
+    public LoginForm(){
+    }
+    public boolean correctUser(User user){
+      return this.userId.equals(user.getUserId()) && this.password.equals(user.getPassword());
+    }
   }
 }

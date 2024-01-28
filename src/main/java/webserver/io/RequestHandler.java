@@ -15,6 +15,7 @@ import webserver.MyHttpServletResponse;
 import webserver.handler.ControllerHandler;
 import webserver.handler.Handler;
 import webserver.handler.StaticResourceHandler;
+import webserver.session.CustomSession;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -34,6 +35,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             MyHttpServletRequest httpServletRequest = printReceivedRequest(in);
+            CustomSession.initCurrentSession(httpServletRequest);
             logger.debug("http request : {}",httpServletRequest.toString());
 
             MyHttpServletResponse httpResponse = null;
@@ -49,17 +51,19 @@ public class RequestHandler implements Runnable {
             }catch (Exception e){
                 httpResponse = exceptionResolver.resolve(e);
             }
+            httpResponse.addCookieHeader();
             HttpResponseBuilder responseBuilder = new HttpResponseBuilder(new DataOutputStream(out));
             //responseBuilder에게 socket에 http응답정보를 작성하도록 요청한다.
             responseBuilder.flushHttpResponse(httpResponse);
-
         } catch (IOException e) {
             logger.error(e.getMessage());
+        } finally {
+            CustomSession.finishCurrentSession();
         }
     }
 
     private MyHttpServletRequest printReceivedRequest(InputStream in) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(in,"UTF-8"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String line = URLDecoder.decode(br.readLine(), StandardCharsets.UTF_8);
         logger.debug("request line : {}",line);
         //Http Method & Version & URI 파싱
@@ -69,10 +73,16 @@ public class RequestHandler implements Runnable {
         //Http Header 파싱
         while(true){
             line=br.readLine();
-            if (line.equals(""))
+            if(line.equals(""))
                 break;
             logger.debug("header : {}",line);
             servletRequest.setFieldByName(line);
+        }
+        if(servletRequest.canReadBody()){
+            char[] httpBody = new char[servletRequest.getContentLength()];
+            br.read(httpBody);
+            String beforeDecoding = new String(httpBody);
+            servletRequest.setBody(URLDecoder.decode(beforeDecoding,StandardCharsets.UTF_8));
         }
         return servletRequest;
     }
