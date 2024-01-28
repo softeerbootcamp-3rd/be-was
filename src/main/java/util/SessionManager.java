@@ -74,7 +74,7 @@ public class SessionManager {
     }
 
     // 세션 존재하는 지 확인
-    public static boolean isSessinExist(String sessionId) {
+    public static boolean isSessionExist(String sessionId) {
         return sessions.containsKey(sessionId) ? true : false;
     }
 
@@ -83,7 +83,7 @@ public class SessionManager {
     }
 
     public static boolean isValidateSession(String sessionId) {
-        if (isSessinExist(sessionId) && !checkSessionTimeout(sessionId))
+        if (isSessionExist(sessionId) && !checkSessionTimeout(sessionId))
             return true;
         return false;
     }

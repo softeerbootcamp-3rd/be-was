@@ -42,7 +42,7 @@ public class RequestHandler implements Runnable {
 
             if (httpRequest.getPath().equals("/user/list.html")) {
                 String cookie = StringParser.getCookieValue(httpRequest.getCookie(), "SID");
-                if (cookie == null || !SessionManager.isSessinExist(cookie)) {
+                if (cookie == null || !SessionManager.isSessionExist(cookie)) {
                     Map<String, List<String>> headerMap = new HashMap<>();
                     headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login.html"));
                     ResponseEntity response = new ResponseEntity<>(HttpStatus.FOUND, headerMap);

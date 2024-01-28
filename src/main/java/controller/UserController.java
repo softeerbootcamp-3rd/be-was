@@ -4,7 +4,6 @@ import annotation.*;
 import db.Database;
 import model.User;
 import util.SessionManager;
-import util.StringParser;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.HttpHeader;
@@ -90,7 +89,7 @@ public class UserController {
         String SID = httpRequest.getCookie().split("=")[1];
 
         // 서버 세션 저장소에서 세션 삭제
-        if (SessionManager.isSessinExist(SID))
+        if (SessionManager.isSessionExist(SID))
             SessionManager.invalidateSession(SID);
         // 클라이언트에서도 쿠키 제거
         Map<String, List<String>> headerMap = new HashMap<>();
