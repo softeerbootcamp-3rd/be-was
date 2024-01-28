@@ -66,7 +66,7 @@ public class Session {
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
             String sessionId = entry.getKey();
-            long sessionCreationTime = Long.parseLong(sessionId.split("-")[0]); // Extract creation time from session ID
+            long sessionCreationTime = Long.parseLong(sessionId.split("-")[0], 16); // Extract creation time from session ID
 
             if (currentTime - sessionCreationTime > SESSION_EXPIRATION_TIME) {
                 logger.debug("Expired session removed: {}", sessionId);
