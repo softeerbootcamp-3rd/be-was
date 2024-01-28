@@ -87,9 +87,14 @@ public class HttpResponse {
         byte[] buffer = new byte[(int) file.length()];
         bis.read(buffer);
 
-        String replacedBuffer = new String(buffer);
-        replacedBuffer = replacedBuffer.replace("{{userList}}", builder.toString());
-        return replacedBuffer.getBytes();
+        String fileContent = new String(buffer);
+
+        StringBuilder replacedBuffer = new StringBuilder(fileContent);
+        replacedBuffer.replace(replacedBuffer.indexOf("{{userList}}"),
+                replacedBuffer.indexOf("{{userList}}") + "{{userList}}".length(),
+                builder.toString());
+
+        return replacedBuffer.toString().getBytes();
     }
 
     public static byte[] readFileInBytes(String filePath) throws IOException { // 파일을 읽어서 byte[]로 반환
