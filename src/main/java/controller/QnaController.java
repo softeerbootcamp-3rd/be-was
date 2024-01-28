@@ -66,6 +66,7 @@ public class QnaController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         QnaDatabase.deleteById(qnaId);
+        CommentDatabase.deleteByQnaId(qnaId);
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
                 .addHeader(HttpHeader.LOCATION, "/index.html")

@@ -70,6 +70,7 @@ public class QnaHtml {
         if (template == null)
             return "";
         Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
+        System.out.println("qnaId: " + qnaId);
         Qna qna = QnaDatabase.findById(qnaId);
         if (qna == null)
             throw new ResourceNotFoundException(SharedData.request.get().getPath());

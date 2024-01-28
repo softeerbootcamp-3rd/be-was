@@ -65,6 +65,9 @@ public class RequestHandler implements Runnable {
             } catch (IllegalStateException | IOException e) {
                 logger.error("error processing request: {}", e.getMessage());
                 response = HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (Exception e) {
+                e.printStackTrace();
+                response = HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
             }
             response.send(out, logger);
         } catch (IOException e) {
