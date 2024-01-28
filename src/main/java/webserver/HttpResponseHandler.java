@@ -38,11 +38,11 @@ public final class HttpResponseHandler {
 
             if (httpResponse.getSid() != null && !httpResponse.getSid().equals("EXPIRED")) {
                 dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid() + "; Path=/; Max-Age=120\r\n");
-                dos.writeBytes("Set-Cookie: user-id=" + findUserBySessionId(httpResponse.getSid()).getUserId() + "; Path=/; Max-Age=120\r\n");
+                dos.writeBytes("Set-Cookie: user-name=" + findUserBySessionId(httpResponse.getSid()).getName() + "; Path=/; Max-Age=120\r\n");
             }
             if (httpResponse.getSid() != null && httpResponse.getSid().equals("EXPIRED")) {
                 dos.writeBytes("Set-Cookie: sid=; Path=/; Max-Age=0\r\n");
-                dos.writeBytes("Set-Cookie: user-id=; Path=/; Max-Age=0\r\n");
+                dos.writeBytes("Set-Cookie: user-name=; Path=/; Max-Age=0\r\n");
             }
 
             dos.writeBytes("\r\n");
