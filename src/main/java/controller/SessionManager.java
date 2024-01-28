@@ -1,14 +1,12 @@
 package controller;
 
-import model.User;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
 
     private static SessionManager instance = new SessionManager();
-    private static final Map<String, User> sessionStore = new ConcurrentHashMap<>();
+    private static final Map<String, String> sessionStore = new ConcurrentHashMap<>();
 
     private SessionManager() {
 
@@ -18,11 +16,12 @@ public class SessionManager {
         return instance;
     }
 
-    public static void addSession(String sessionId, User user) {
-        sessionStore.put(sessionId, user);
+    public static void addSession(String sessionId, String userId) {
+        sessionStore.put(sessionId, userId);
     }
 
-    public static User getUserBySessionId(String sessionId) {
+    public static String getUserBySessionId(String sessionId) {
         return sessionStore.get(sessionId);
     }
+
 }

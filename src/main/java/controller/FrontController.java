@@ -3,14 +3,16 @@ package controller;
 import annotation.RequestMapping;
 import http.HttpRequest;
 import http.HttpResponse;
+import view.View;
+import view.ViewMaker;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FrontController {
-    public final ControllerContainer container;
+    private final ControllerContainer container;
+    private ViewMaker viewMaker;
     private final String RESOURCES_TEMPLATES_URL = "src/main/resources/templates";
     private final String RESOURCES_STATIC_URL = "src/main/resources/static";
 
@@ -18,9 +20,8 @@ public class FrontController {
         container = ControllerContainer.getInstance();
     }
 
-    public void process(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException {
+    public void process(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
         String url = request.getUrl();
-
         String path = null;
 
         if (url.contains(".")) {
@@ -28,6 +29,8 @@ public class FrontController {
                 path = RESOURCES_TEMPLATES_URL + url;
             } else { //.js .css .g..
                 path = RESOURCES_STATIC_URL + url;
+                response.setPath(path);
+                return;
             }
         } else {
             String[] urlToken = url.split("/");
@@ -36,8 +39,14 @@ public class FrontController {
             path = (String)method.invoke(controller, request, response);
             path += ".html";
         }
-
         response.setPath(path);
+
+        if(!path.startsWith("redirect:")) {
+            View view = new View();
+            viewMaker = new ViewMaker(path, view);
+            String bodyString = viewMaker.readFile(request);
+            response.readString(bodyString);
+        }
     }
 
     public Method findMethod(Controller controller, String url, String method) {

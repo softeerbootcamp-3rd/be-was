@@ -51,7 +51,7 @@ public class HttpResponse {
             }
         }
         dos.writeBytes("\r\n");
-        readFile();
+        if(!path.endsWith("html"))readFile();
         if (body != null) {
             dos.write(body, 0, body.length);
         }
@@ -71,6 +71,14 @@ public class HttpResponse {
             body = new byte[(int) file.length()];
             fis.read(body);
             fis.close();
+        }
+    }
+
+    public void readString(String string) {
+        try {
+            body = string.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 }

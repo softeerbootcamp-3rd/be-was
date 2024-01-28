@@ -33,6 +33,7 @@ public class HttpRequest {
     }
     public String getSessionId() { return sessionId; }
     public void setUserId(String userId) { this.userId = userId; }
+    public String getUserId() { return userId; }
     public Map<String, String> getRequestParam() { return requestParam; }
     public Map<String, String> getFormData() { return formData; }
 
