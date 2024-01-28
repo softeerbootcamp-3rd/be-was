@@ -18,8 +18,7 @@ public class UserControllerHandlerAdapter implements HandlerAdapter{
     public ModelView handle(Request request, Response response, Object handler) throws IOException {
         UserController controller = (UserController) handler;
 
-        Map<String, String> paramMap = request.getParamMap();
-        ModelView mv = controller.process(paramMap, response);
+        ModelView mv = controller.process(request, response);
 
         return mv;
     }

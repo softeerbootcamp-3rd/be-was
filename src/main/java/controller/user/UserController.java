@@ -1,6 +1,7 @@
 package controller.user;
 
 import controller.ModelView;
+import model.Request;
 import model.Response;
 import service.UserService;
 
@@ -10,5 +11,5 @@ public interface UserController {
 
     UserService userService = new UserService();
 
-    ModelView process(Map<String, String> paramMap, Response response);
+    ModelView process(Request request, Response response);
 }

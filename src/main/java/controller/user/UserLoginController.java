@@ -2,16 +2,14 @@ package controller.user;
 
 import controller.ModelView;
 import exception.LoginFailedException;
+import model.Request;
 import model.Response;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class UserLoginController implements UserController{
     @Override
-    public ModelView process(Map<String, String> paramMap, Response response) {
-        String userId = paramMap.get("userId");
-        String password = paramMap.get("password");
+    public ModelView process(Request request, Response response) {
+        String userId = request.getParameter("userId");
+        String password = request.getParameter("password");
 
         response.set302Redirect();
         String path = "";
@@ -30,7 +28,7 @@ public class UserLoginController implements UserController{
         // 로그인 성공
         path = "/index.html";
         response.putToHeaderMap("Location", path);
-        response.putToHeaderMap("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=30");
+        response.putToHeaderMap("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=1800");
 
         return new ModelView(path);
     }

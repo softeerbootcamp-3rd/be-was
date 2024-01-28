@@ -2,6 +2,7 @@ package controller.user;
 
 import controller.ModelView;
 import exception.AlreadyExistUserException;
+import model.Request;
 import model.Response;
 
 import java.util.HashMap;
@@ -10,11 +11,11 @@ import java.util.Map;
 public class UserCreateController implements UserController {
 
     @Override
-    public ModelView process(Map<String, String> paramMap, Response response) {
-        String userId = paramMap.get("userId");
-        String password = paramMap.get("password");
-        String name = paramMap.get("name");
-        String email = paramMap.get("email");
+    public ModelView process(Request request, Response response) {
+        String userId = request.getParameter("userId");
+        String password = request.getParameter("password");
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
 
         response.set302Redirect();
         String path = "";
