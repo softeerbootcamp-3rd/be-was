@@ -59,11 +59,6 @@ public class RequestDataController {
             String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
             File file = new File(ResourceLoader.url + directory + url);
             if (file.exists() && !file.isDirectory()) {
-                if (url.equals("/user/login.html")) {
-                    if (requestData.isLoggedIn()) {
-                        return new Response(HttpStatusCode.FOUND, "/index.html");
-                    }
-                }
                 return new Response(HttpStatusCode.OK, url);
             } else {
                 logger.debug("유효하지 않은 파일 경로입니다.");
@@ -115,5 +110,13 @@ public class RequestDataController {
             return new Response(HttpStatusCode.OK, requestData.getRequestContent());
         }
         return new Response(HttpStatusCode.FOUND, "/index.html");
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/user/login.html")
+    private static Response handleFileLogin(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.FOUND, "/index.html");
+        }
+        return new Response(HttpStatusCode.OK, requestData.getRequestContent());
     }
 }
