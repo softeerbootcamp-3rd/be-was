@@ -8,6 +8,8 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -42,5 +44,9 @@ public class UserService {
 
     private static boolean isUnmatchedPassword(String password, String userPassword) {
         return !password.equals(userPassword);
+    }
+
+    public static Collection<User> findAll() {
+        return Database.findAll();
     }
 }

@@ -4,6 +4,7 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
 import controller.user.UserCreateController;
+import controller.user.UserListController;
 import controller.user.UserLoginController;
 import model.Request;
 import model.Response;
@@ -35,6 +36,7 @@ public class FrontController {
 
         handlerMappingMap.put("/user/create", new UserCreateController());
         handlerMappingMap.put("/user/login", new UserLoginController());
+        handlerMappingMap.put("/user/list", new UserListController());
 
         // qna 추가
     }

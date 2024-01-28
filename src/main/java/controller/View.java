@@ -4,8 +4,10 @@ import model.Request;
 import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HtmlBuilder;
 
 import java.io.*;
+import java.util.Map;
 
 public class View {
     private static final Logger logger = LoggerFactory.getLogger(View.class);
@@ -25,6 +27,19 @@ public class View {
             fileInputStream.read(body);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+
+        // 동적 페이지 변환을 위한 데이터가 존재한다면
+        if (mv.getModel().size() > 0) {
+            String fileString = new String(body);
+            Map<String, Object> model = mv.getModel();
+            for (String key : model.keySet()) {
+                String renderedHtml = HtmlBuilder.replace(key, model.get(key));
+                fileString = fileString.replace(key, renderedHtml);
+            }
+
+            body = fileString.getBytes();
         }
 
         response.setBody(body);
