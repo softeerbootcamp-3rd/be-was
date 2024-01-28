@@ -7,12 +7,12 @@ import model.User;
 import java.util.Collection;
 import java.util.Map;
 
-public class Database {
-    private static Database instance = new Database();
+public class UserRepository {
+    private static UserRepository instance = new UserRepository();
 
     private static Map<String, User> users = Maps.newHashMap();
 
-    public static Database getInstance() {
+    public static UserRepository getInstance() {
         return instance;
     }
 
