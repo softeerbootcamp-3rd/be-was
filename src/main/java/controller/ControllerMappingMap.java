@@ -9,6 +9,7 @@ public class ControllerMappingMap {
     static {
         controllerMappingMap.put("resource", new ResourceController());
         controllerMappingMap.put("POST /user/create", new MemberJoinController());
+        controllerMappingMap.put("POST /user/login", new MemberLoginController());
     }
 
     public static Controller getController(String method, String url) {

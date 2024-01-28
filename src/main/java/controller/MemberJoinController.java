@@ -1,5 +1,6 @@
 package controller;
 
+import db.Database;
 import request.HttpRequest;
 import response.HttpResponse;
 import response.HttpResponseStatus;
@@ -23,7 +24,7 @@ public class MemberJoinController implements Controller {
             }
         }
 
-        if (memberJoinService.getUserIds().contains(params.get("userId"))) {
+        if (Database.findUserById(params.get("userId")) != null) {
             headers.put("Location", "/user/form.html");
             response.setResponse(HttpResponseStatus.FOUND, null, headers);
             return;

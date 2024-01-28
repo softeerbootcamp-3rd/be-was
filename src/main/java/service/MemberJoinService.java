@@ -1,5 +1,6 @@
 package service;
 
+import db.Database;
 import model.User;
 import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import java.util.Map;
 
 public class MemberJoinService {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static List<User> userList = new ArrayList<>();
 
     public void createUser(Map<String, String> params) {
         String userId = params.get("userId");
@@ -22,14 +22,6 @@ public class MemberJoinService {
 
         User user = new User(userId, password, name, email);
         logger.debug("New User : {}", user);
-        userList.add(user);
-    }
-
-    public List<String> getUserIds() {
-        List<String> userIds = new ArrayList<>();
-        for (User user : userList) {
-            userIds.add(user.getUserId());
-        }
-        return userIds;
+        Database.addUser(user);
     }
 }
