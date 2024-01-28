@@ -13,15 +13,15 @@ public class FakeHttpRequest extends HttpRequest {
     public FakeHttpRequest() {
         super(new StartLine(HttpMethod.GET, "", ""),
                 new RequestHeaders("host", "userAgent", "*/*", new HashMap<>()),
-                new Body("".getBytes()));
+                new Body(""));
     }
 
     public FakeHttpRequest(String fakePath) {
         super(new StartLine(HttpMethod.GET, fakePath, ""),
                 new RequestHeaders("host", "userAgent", "*/*", new HashMap<>()),
-                new Body("".getBytes()));
+                new Body(""));
     }
-    public FakeHttpRequest(String fakePath, byte[] body) {
+    public FakeHttpRequest(String fakePath, String body) {
         super(new StartLine(HttpMethod.GET, fakePath, ""),
                 new RequestHeaders("host", "userAgent", "*/*", new HashMap<>()),
                 new Body(body));

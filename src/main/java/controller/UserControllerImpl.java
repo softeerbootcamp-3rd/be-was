@@ -1,16 +1,16 @@
 package controller;
 
-import config.AppConfig;
 import dto.HttpResponseDto;
+import dto.UserLoginDto;
 import dto.UserSignUpDto;
-import exception.BadRequestException;
-import model.http.ContentType;
+import exception.InvalidLogin;
+import model.http.Cookie;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import service.UserService;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static config.AppConfig.*;
 
@@ -32,16 +32,36 @@ public class UserControllerImpl implements UserController {
     @Override
     public void doGet(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         String pathUrl = httpRequest.getStartLine().getPathUrl();
+
         if (pathUrl.startsWith("/user/create")) {
-            httpResponseDto.setContent(httpRequest.getBody().getContent());
-            handleUserCreateRequest(httpResponseDto);
+            handleUserCreateRequest(httpRequest, httpResponseDto);
+        }
+        if (pathUrl.startsWith("/user/login")) {
+            handleUserLoginRequest(httpRequest, httpResponseDto);
         }
     }
 
-    private void handleUserCreateRequest(HttpResponseDto httpResponseDto) {
-        UserSignUpDto userSignUpDto = UserSignUpDto.fromRequestBody(httpResponseDto.getContent());
+    private void handleUserLoginRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+        try {
+            UUID sessionId = userService.login(UserLoginDto.fromRequestBody(httpRequest.getBody().getContent()));
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("Path", "/");
+
+            Cookie cookie = new Cookie("sid", sessionId.toString(), map);
+            httpResponseDto.addHeader("Set-Cookie", cookie.getCookieList());
+            redirectToPath(httpResponseDto, "/index.html");
+        } catch (InvalidLogin e) {
+            redirectToPath(httpResponseDto, "/user/login_failed.html");
+        }
+    }
+    private void handleUserCreateRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+        UserSignUpDto userSignUpDto = UserSignUpDto.fromRequestBody(httpRequest.getBody().getContent());
         userService.signUp(userSignUpDto);
+        redirectToPath(httpResponseDto, "/index.html");
+    }
+    private void redirectToPath(HttpResponseDto httpResponseDto, String path) {
         httpResponseDto.setStatus(Status.REDIRECT);
-        httpResponseDto.addHeader("Location", "/index.html");
+        httpResponseDto.addHeader("Location", path);
     }
 }

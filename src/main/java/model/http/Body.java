@@ -1,20 +1,20 @@
 package model.http;
 
 public class Body {
-    private final byte[] content;
+    private final String content;
 
-    public Body(byte[] content) {
+    public Body(String content) {
         this.content = content;
     }
 
-    public byte[] getContent() {
+    public String getContent() {
         return content;
     }
 
     @Override
     public String toString() {
         return "Body{" +
-                "content=" + new String(content) +
+                "content=" + content +
                 '}';
     }
 }

@@ -19,7 +19,7 @@ import static config.AppConfig.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final List<String> dynamicElements = List.of("/user/create");
+    private static final List<String> dynamicElements = List.of("/user/create", "/user/login");
     private final Socket connection;
     private final HttpResponseFactory httpResponseFactory;
     private final HttpResponseSendService httpResponseSendService;
@@ -48,7 +48,7 @@ public class RequestHandler implements Runnable {
 
             logger.debug(httpRequest.toString());
 
-            boolean isDynamic = dynamicElements.stream().anyMatch(httpRequest.getStartLine().getPathUrl()::startsWith);
+            boolean isDynamic = dynamicElements.stream().anyMatch(httpRequest.getStartLine().getPathUrl()::equals);
             if (isDynamic) {
                 logger.debug("동적인 response 전달");
                 dynamicResponseHandler.handle(httpRequest, httpResponseDto);

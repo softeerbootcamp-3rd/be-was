@@ -4,6 +4,7 @@ import model.http.ContentType;
 import model.http.Header;
 import model.http.Status;
 
+import java.util.Base64;
 import java.util.HashMap;
 
 public class HttpResponseDto {
@@ -15,7 +16,7 @@ public class HttpResponseDto {
     private final String charSet;
     private Integer contentLength;
     private final HashMap<String, String> optionHeader;
-    private byte[] content;
+    private String content;
 
     public HttpResponseDto() {
         this.version = HTTP_VERSION;
@@ -55,7 +56,7 @@ public class HttpResponseDto {
     public void addHeader(String header, String content) {
         optionHeader.put(header, content);
     }
-    public byte[] getContent() {
+    public String getContent() {
         return content;
     }
 
@@ -64,7 +65,11 @@ public class HttpResponseDto {
     }
 
     public void setContent(byte[] content) {
-        this.content = content;
+        this.content = Base64.getEncoder().encodeToString(content);
         this.contentLength = content.length;
+    }
+
+    public void setContentLength(Integer contentLength) {
+        this.contentLength = contentLength;
     }
 }

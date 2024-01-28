@@ -45,7 +45,7 @@ public class StaticResponseHandlerImpl implements StaticResponseHandler {
     }
 
     private void handleStaticFileRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setContent(fileDetector.getFileByte(httpRequest.getStartLine().getPathUrl()));
+        httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
         httpResponseDto.setStatus(Status.OK);
         httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept(), httpRequest.getStartLine().getPathUrl()));
     }

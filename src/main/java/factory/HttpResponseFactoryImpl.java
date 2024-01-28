@@ -29,7 +29,7 @@ public class HttpResponseFactoryImpl implements HttpResponseFactory {
     }
 
     private Body getBody(HttpResponseDto responseDto) {
-        byte[] content = responseDto.getContent();
+        String content = responseDto.getContent();
         return content != null ? new Body(content) : null;
     }
 

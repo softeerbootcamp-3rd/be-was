@@ -39,7 +39,7 @@ class UserControllerImplTest {
     void UserControllerCallUserServiceAndSetResponseRedirectToLogin() {
         //given
         String fakePathUrl = "/user/create";
-        byte[] fakeBody = "userId=dlwnsgus0&password=rdwg6867&name=%EC%9D%B4%EC%A4%80%ED%98%84&email=dlwnsgus07%40naver.com".getBytes();
+        String fakeBody = "userId=dlwnsgus0&password=rdwg6867&name=%EC%9D%B4%EC%A4%80%ED%98%84&email=dlwnsgus07%40naver.com";
         FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl, fakeBody);
         FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
         //when
@@ -57,7 +57,7 @@ class UserControllerImplTest {
     void ThrowBadRequestExceptionWhenInvalidRequest() {
         //given
         String fakePathUrl = "/user/create";
-        byte[] fakeBody = "userId=&password=rdwg6867&name=%EC%9D%B4%EC%A4%80%ED%98%84&email=dlwnsgus07%40naver.com".getBytes();
+        String fakeBody = "userId=&password=rdwg6867&name=%EC%9D%B4%EC%A4%80%ED%98%84&email=dlwnsgus07%40naver.com";
 
         FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl, fakeBody);
         FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();

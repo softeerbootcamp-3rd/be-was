@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 
 public class FileDetector {
     private static class FileDetectorHolder {
@@ -36,7 +37,7 @@ public class FileDetector {
         int lastDotIndex = lastSegment.lastIndexOf('.');
         return (lastDotIndex != -1) ? lastSegment.substring(lastDotIndex + 1) : "";
     }
-    private File getFile(String filePath) {
+    private File getFileData(String filePath) {
         if (filePath.equals("/")) {
             return new File(TEMPLATES_RESOURCE + "/index.html");
         }
@@ -46,8 +47,8 @@ public class FileDetector {
         return new File(STATIC_RESOURCES + filePath);
     }
 
-    public byte[] getFileByte(String filePath) {
-        try (InputStream fis = new FileInputStream(getFile(filePath))) {
+    public byte[] getFile(String filePath) {
+        try (InputStream fis = new FileInputStream(getFileData(filePath))) {
             return fis.readAllBytes();
         } catch (IOException e) {
             throw new NotFound("파일을 찾을 수 없습니다.");
