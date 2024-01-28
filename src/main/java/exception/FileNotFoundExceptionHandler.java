@@ -13,8 +13,8 @@ public class FileNotFoundExceptionHandler {
         byte[] body = ResourceUtils.getStaticResource("/notfound.html");
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .contentType(MediaType.TEXT_HTML)
+                .contentLength(body.length)
                 .body(body);
     }
 }

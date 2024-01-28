@@ -12,7 +12,6 @@ import util.http.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpCookie;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -32,10 +31,12 @@ public class UserController {
 
             ResponseEntity<?> responseEntity = null;
             if (lastPath.equals("create")) {
-                responseEntity = create();
+                if (httpRequest.getMethod() == HttpMethod.POST)
+                    responseEntity = create();
             }
             if (lastPath.equals("login")) {
-                responseEntity = login();
+                if (httpRequest.getMethod() == HttpMethod.POST)
+                    responseEntity = login();
             }
             if (lastPath.equals("list")) {
                 responseEntity = list();
@@ -117,19 +118,14 @@ public class UserController {
 
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        String userId = HtmlTemplate.USER_ID;
-        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
-
         String html = new String(ResourceUtils.getStaticResource("/user/list.html"));
         byte[] body =  html.replace("<tr id=\"users\"></tr>", sb.toString())
-                .replace("<li>userId</li>", userId)
+                .replace("<li>userId</li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
                 .getBytes();
 
-        String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
-
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, contentType)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .contentType(MediaType.getContentType(httpRequest))
+                .contentLength(body.length)
                 .body(body);
     }
 
@@ -144,9 +140,6 @@ public class UserController {
 
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        String userId = HtmlTemplate.USER_ID;
-        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
-
         String name = "<h4 id=\"username\" class=\"media-heading\">{{name}}</h4>";
         name = name.replace("{{name}}", loggedInUser.getName());
 
@@ -154,16 +147,14 @@ public class UserController {
         email = email.replace("{{email}}", loggedInUser.getEmail());
 
         String html = new String(ResourceUtils.getStaticResource("/user/profile.html"));
-        byte[] body =  html.replace("<li>userId</li>", userId)
+        byte[] body =  html.replace("<li>userId</li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
                 .replace("<h4 id=\"username\" class=\"media-heading\">자바지기</h4>", name)
                 .replace("<a id=\"email\" href=\"#\" class=\"btn btn-xs btn-default\"><span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;javajigi@slipp.net</a>", email)
                 .getBytes();
 
-        String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
-
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, contentType)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .contentType(MediaType.getContentType(httpRequest))
+                .contentLength(body.length)
                 .body(body);
     }
 
@@ -194,19 +185,14 @@ public class UserController {
         String input = "<input class=\"form-control\" id=\"userId\" name=\"userId\" placeholder=\"{{userId}}\" disabled>";
         input = input.replace("{{userId}}", loggedInUser.getUserId());
 
-        String userId = HtmlTemplate.USER_ID;
-        userId = userId.replace("{{userId}}", loggedInUser.getUserId());
-
         String html = new String(ResourceUtils.getStaticResource("/user/update.html"));
         byte[] body = html.replace("<input class=\"form-control\" id=\"userId\" name=\"userId\" placeholder=\"User ID\">", input)
-                .replace("<li>userId</li>", userId)
+                .replace("<li>userId</li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
                 .getBytes();
 
-        String contentType = httpRequest.getHeader(HttpHeaders.ACCEPT);
-
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, contentType)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .contentType(MediaType.getContentType(httpRequest))
+                .contentLength(body.length)
                 .body(body);
     }
 

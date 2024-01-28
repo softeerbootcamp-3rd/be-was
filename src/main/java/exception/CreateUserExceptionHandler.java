@@ -17,8 +17,8 @@ public class CreateUserExceptionHandler {
         byte[] body =  html.replace("<div id=\"replace\"></div>", line).getBytes();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .contentType(MediaType.TEXT_HTML)
+                .contentLength(body.length)
                 .body(body);
     }
 
@@ -41,8 +41,8 @@ public class CreateUserExceptionHandler {
                 .getBytes();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE)
-                .header(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length))
+                .contentType(MediaType.TEXT_HTML)
+                .contentLength(body.length)
                 .body(body);
     }
 }

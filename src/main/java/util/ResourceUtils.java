@@ -1,7 +1,5 @@
 package util;
 
-import util.http.*;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -30,7 +28,7 @@ public class ResourceUtils {
         return file;
     }
 
-    private static String getExtension(String path) {
+    public static String getExtension(String path) {
         String[] tokens = path.split("\\.");
         return tokens[tokens.length - 1];
     }
