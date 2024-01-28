@@ -9,9 +9,10 @@ import java.util.List;
 public class HtmlBuilder {
 
     public static String replace(String key, Object value) {
+        StringBuilder sb = new StringBuilder();
+
         if (key.equals("{{user-list}}")) {
             List<User> users = new ArrayList<>((Collection<User>) value);
-            StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < users.size(); i++) {
                 User user = users.get(i);
@@ -24,7 +25,14 @@ public class HtmlBuilder {
                 sb.append("</tr>");
             }
             return sb.toString();
+        }
 
+        if (key.equals("{{welcome}}")) {
+            String username = (String) value;
+            sb.append("<li> 안녕하세요! ");
+            sb.append(username);
+            sb.append("님.</li>");
+            return sb.toString();
         }
         throw new IllegalArgumentException("해당하는 html template이 존재하지 않습니다.");
     }
