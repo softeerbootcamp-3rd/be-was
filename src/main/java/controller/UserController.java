@@ -60,7 +60,7 @@ public class UserController {
         User user = Database.findUserById(userId);
         Map<String, List<String>> headerMap = new HashMap<>();
 
-        if (!user.getPassword().equals(password)) {
+        if (!validateInput(userId, password) || !user.getPassword().equals(password)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
