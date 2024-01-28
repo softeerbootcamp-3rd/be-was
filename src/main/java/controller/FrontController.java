@@ -9,6 +9,7 @@ import controller.user.UserLoginController;
 import model.Request;
 import model.Response;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -60,11 +61,14 @@ public class FrontController {
 
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
-            view.render(request, response, mv, out, resourceController.getType());
+            view.render(request, response, mv, resourceController.getType());
+            response.send(out);
             return;
         }
 
-        view.render(request, response, mv, out);
+        view.render(request, response, mv);
+
+        response.send(out);
     }
 
     private View viewResolver(String viewName) {
