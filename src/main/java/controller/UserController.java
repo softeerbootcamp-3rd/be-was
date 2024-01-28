@@ -1,6 +1,7 @@
 package controller;
 
 import db.Database;
+import db.SessionStorage;
 import model.*;
 import service.UserService;
 import java.util.UUID;
@@ -14,11 +15,11 @@ public class UserController {
         if(request.getPath().equals("/user/list")) {
             if(login) {
                 response.setStatusCode("302");
-                response.setRedirectUrl("/user/list.html");
+                response.addHeader("Location", "/user/list.html");
             }
             else {
                 response.setStatusCode("302");
-                response.setRedirectUrl("/user/login.html");
+                response.addHeader("Location", "/user/login.html");
             }
             return;
         }
@@ -28,11 +29,11 @@ public class UserController {
             User user = UserService.create(userInfo);
             if (user != null) {
                 response.setStatusCode("302");
-                response.setRedirectUrl("/index.html");
+                response.addHeader("Location", "/index.html");
             }
             else {
                 response.setStatusCode("302");
-                response.setRedirectUrl("/user/form.html");
+                response.addHeader("Location", "/user/form.html");
             }
             return;
         }
@@ -42,12 +43,25 @@ public class UserController {
             String sessionId = UserService.login(userInfo);
             if(sessionId != null) {
                 response.setStatusCode("302");
-                response.setRedirectUrl("/index.html");
-                response.setCookie(sessionId);
+                response.addHeader("Location", "/index.html");
+                response.addHeader("Set-Cookie", "sessionId=" + sessionId + "; Path=/; Max-Age=" + SessionStorage.SESSION_TIME);
             }
             else {
                 response.setStatusCode("302");
-                response.setRedirectUrl("/user/login_failed.html");
+                response.addHeader("Location", "/user/login_failed.html");
+            }
+            return;
+        }
+
+        if(request.getPath().equals("/user/logout")) {
+            if(login) {
+                response.setStatusCode("302");
+                response.addHeader("Location", "/index.html");
+                response.addHeader("Set-Cookie", "sessionId=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; HttpOnly");
+            }
+            else {
+                response.setStatusCode("302");
+                response.addHeader("Location", "/user/login.html");
             }
             return;
         }

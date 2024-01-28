@@ -17,6 +17,7 @@ public class Session implements Comparable<Session> {
         this.expiredTime = LocalDateTime.now().plusSeconds(SessionStorage.SESSION_TIME);
     }
     public String getSessionId() {return this.sessionId;}
+    public String getUserId() {return this.userId;}
     public LocalDateTime getExpiredTime() {return this.expiredTime;}
 
     public void renewExpiredTime() {

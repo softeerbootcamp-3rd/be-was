@@ -13,7 +13,7 @@ public class FirstController {
         // 요청에 실린 sessionId가 유효한지 판단해서 로그인 여부 저장
         boolean login = SessionStorage.verifySession(request.getSessionId());
 
-        Response response = new Response(null, null, request.getMimeType(), null, null);
+        Response response = new Response();
 
         if(request.getPath().startsWith("/user"))
             UserController.route(request, response, login);

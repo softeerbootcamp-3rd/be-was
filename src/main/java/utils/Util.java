@@ -51,7 +51,7 @@ public class Util {
         return hashMap;
     }
 
-    public static void readFile(StringBuilder stringBuilder, String path) {
+    public static String readFile(StringBuilder stringBuilder, String path, HashMap<String, String> replace) {
         try (FileInputStream fileInputStream = new FileInputStream(path);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
 
@@ -59,8 +59,15 @@ public class Util {
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
             }
+            for(String key : replace.keySet()) {
+                int indexOfKey = stringBuilder.indexOf(key);
+                if(indexOfKey == -1) continue;
+                stringBuilder.replace(indexOfKey, indexOfKey + key.length(), replace.get(key));
+            }
+            return stringBuilder.toString();
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
     }
 }

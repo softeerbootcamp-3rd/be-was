@@ -13,7 +13,7 @@ public class MainController {
 
         if (path.equals("/")) {
             response.setStatusCode("302");
-            response.setRedirectUrl("/index.html");
+            response.addHeader("Location", "/index.html");
             return;
         }
 

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Request {
-    private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(Request.class);
     private static final HashSet<String> printedKey =  // logger.debug로 출력할 헤더값들
             new HashSet<>(Arrays.asList("accept", "cookie")); // etc. User-Agent, Host
     private String method, path, version;
