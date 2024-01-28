@@ -27,8 +27,10 @@ public class DynamicRoutingManager {
         } else if (httpRequest.getMethod() == HttpMethod.GET && path.equals("/user/list.html")){
             UserController userController = new UserController();
             return userController.listUsers(httpRequest);
+        } else if (httpRequest.getMethod() == HttpMethod.GET && path.equals("/index.html")) {
+            UserController userController = new UserController();
+            return userController.home(httpRequest);
         }
-
         return null;
     }
 }

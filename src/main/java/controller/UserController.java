@@ -1,5 +1,6 @@
 package controller;
 
+import db.Database;
 import model.User;
 import service.UserService;
 import utils.HtmlBuilder;
@@ -54,6 +55,29 @@ public class UserController {
 
         String htmlTemplate = ResourceReader.getInstance().getFileTemplate("/user/list.html");
         String finalHtml = htmlTemplate.replace("<!-- UserList -->", userTableHtml);
+
+        byte[] body = finalHtml.getBytes();
+        return HttpResponseBuilder.getInstance().createSuccessResponse(HttpStatus.OK, body);
+    }
+
+    public HttpResponse home(HttpRequest request) throws IOException {
+        String sessionId = request.getSessionId();
+        String htmlTemplate = ResourceReader.getInstance().getFileTemplate("/index.html");
+
+        // 로그인하지 않은 사용자 처리
+        if(!SessionManager.isLoggedInUser(sessionId)){
+            htmlTemplate = htmlTemplate.replace("<!-- GuestUser_start -->", "<!--");
+            htmlTemplate = htmlTemplate.replace("<!-- GuestUser_end -->", "-->");
+            return HttpResponseBuilder.getInstance().createSuccessResponse(HttpStatus.OK, htmlTemplate.getBytes());
+        }
+
+        // 로그인 사용자 처리
+        User user = Database.findUserById(SessionManager.getUserId(sessionId));
+        String homeHtml = HtmlBuilder.loggedInHomeHtml(user.getName());
+
+        htmlTemplate = htmlTemplate.replace("<!-- LoggedInUser_start -->", "<!--");
+        htmlTemplate = htmlTemplate.replace("<!-- LoggedInUser_end -->", "-->");
+        String finalHtml = htmlTemplate.replace("<!-- UserName -->", homeHtml);
 
         byte[] body = finalHtml.getBytes();
         return HttpResponseBuilder.getInstance().createSuccessResponse(HttpStatus.OK, body);

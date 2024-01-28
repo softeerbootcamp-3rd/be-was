@@ -19,4 +19,12 @@ public class HtmlBuilder {
         }
         return userListHtml.toString();
     }
+
+    public static String loggedInHomeHtml(String userName) {
+        StringBuilder homeHtml = new StringBuilder();
+        homeHtml.append("&nbsp&nbsp<strong>")
+                .append(userName)
+                .append("</strong>");
+        return homeHtml.toString();
+    }
 }
