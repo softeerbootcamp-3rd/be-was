@@ -11,7 +11,7 @@ public class ResourceController {
         return type;
     }
 
-    public ModelView process(String uri) {
+    public ModelView process(String uri) { // todo 해당 역할은 viewResolver에서 일어나도록 리팩토링
         if (isTemplatesResourceType(uri)) {
             return new ModelView("/templates" + uri);
         }
