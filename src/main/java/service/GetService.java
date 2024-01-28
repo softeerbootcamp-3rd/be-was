@@ -169,8 +169,8 @@ public class GetService {
         List<Post> posts = Database.findAllPost();
         Collections.sort(posts);        // id 낮은 순 정렬
 
-        for(Post post: posts) {
-            String row = makePostListOneRow(post);
+        for(int i = 1; i <= posts.size(); i++) {
+            String row = makePostListOneRow(posts.get(i), i);
             sb.append(row);
         }
 
@@ -178,16 +178,16 @@ public class GetService {
     }
 
     // 한 개의 게시물에 대해 index.html에 띄울 행 문자열 반환
-    private String makePostListOneRow(Post post) {
+    private String makePostListOneRow(Post post, int index) {
         if(post == null)
             return "";
 
         return "<li><div class=\"wrap\"><div class=\"main\"><strong class=\"subject\"><a href=\"./qna/show.html/"
                 + post.getId() + "\">"
                 + post.getTitle() + "</a></strong><div class=\"auth-info\"><i class=\"icon-add-comment\"></i><span class=\"time\">"
-                + post.getCreateAt() + " </span><a href=\"./user/profile.html\" class=\"author\">"
+                + post.getCreateAtWithFormat() + " </span><a href=\"./user/profile.html\" class=\"author\">"
                 + post.getUserId() + "</a></div><div class=\"reply\" title=\"댓글\"><i class=\"icon-reply\"></i><span class=\"point\">"
-                + post.getId() + "</span></div></div></div></li>";
+                + index + "</span></div></div></div></li>";
     }
 
     // 전체 사용자 목록 추가하여 동적인 list.html 화면 반환

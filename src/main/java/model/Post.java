@@ -39,7 +39,10 @@ public class Post implements Comparable<Post>{
     public String getContents() {
         return contents;
     }
-    public String getCreateAt() {
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public String getCreateAtWithFormat() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return createdAt.format(formatter);
     }
@@ -62,11 +65,14 @@ public class Post implements Comparable<Post>{
         return this.userId.equals(userId);
     }
 
+    // 최신순 정렬
     @Override
     public int compareTo(Post p) {
-        if(this.id < p.getId())
+        if(this.createdAt.isAfter(p.getCreatedAt()))
             return -1;
-        else
+        else if(this.createdAt.isBefore(p.getCreatedAt()))
             return 1;
+        else
+            return 0;
     }
 }
