@@ -2,7 +2,6 @@ package http;
 
 import common.exception.DuplicateUserIdException;
 import common.exception.EmptyFormException;
-import common.exception.LoginFailException;
 import dto.HttpResponse;
 
 import java.io.FileNotFoundException;
@@ -30,9 +29,6 @@ public class ExceptionHandler {
         }
         if (exceptionClass == DuplicateUserIdException.class) {
             response.makeBody(CONFLICT, USER_CREATE_DUPLICATE_USERID_FAIL_FILE_PATH);
-        }
-        if (exceptionClass == LoginFailException.class) {
-            response.makeBody(REDIRECT, LOGIN_FAIL_FILE_PATH);
         }
         if (exceptionClass == FileNotFoundException.class) {
             response.makeBody(NOT_FOUND, NOT_FOUND_FILE_PATH);

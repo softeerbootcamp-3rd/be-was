@@ -1,15 +1,13 @@
 package controller;
 
-import common.InputValidator;
 import dto.HttpResponse;
 import dto.LoginRequest;
 import model.User;
 
 import static common.Binder.bindQueryStringToObject;
 import static common.InputValidator.*;
+import static common.WebServerConfig.*;
 import static session.SessionManager.*;
-import static common.WebServerConfig.INDEX_FILE_PATH;
-import static common.WebServerConfig.userService;
 
 public class UserController {
 
@@ -21,12 +19,16 @@ public class UserController {
     }
 
     public static HttpResponse login(String loginInfo) throws Exception {
-        validateForm(loginInfo);
-        LoginRequest loginRequest = bindQueryStringToObject(loginInfo, LoginRequest.class);
-        User user = userService.login(loginRequest);
+        if (validateForm(loginInfo)) {
+            LoginRequest loginRequest = bindQueryStringToObject(loginInfo, LoginRequest.class);
+            User user = userService.login(loginRequest);
 
-        HttpResponse response = new HttpResponse().makeRedirect(INDEX_FILE_PATH);
-        response.addHeader("Set-Cookie", "SID=" + createSessionId(user) + "; Path=/");
-        return response;
+            if (user != null) {
+                HttpResponse response = new HttpResponse().makeRedirect(INDEX_FILE_PATH);
+                response.addHeader("Set-Cookie", "SID=" + createSessionId(user) + "; Path=/");
+                return response;
+            }
+        }
+        return new HttpResponse().makeRedirect(LOGIN_FAIL_FILE_PATH);
     }
 }

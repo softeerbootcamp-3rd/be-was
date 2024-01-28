@@ -2,7 +2,6 @@ package service;
 
 import com.google.common.collect.Maps;
 import common.exception.DuplicateUserIdException;
-import common.exception.LoginFailException;
 import db.Database;
 import dto.LoginRequest;
 import model.User;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.util.NoSuchElementException;
 
 import static common.Binder.*;
 import static common.WebServerConfig.userService;
@@ -81,9 +79,11 @@ class UserServiceTest {
         //given
         LoginRequest loginRequest = bindQueryStringToObject("userId=javajigi&password=password", LoginRequest.class);
 
-        //when, then
-        assertThatThrownBy(() -> userService.login(loginRequest))
-                .isInstanceOf(NoSuchElementException.class);
+        //when
+        User result = userService.login(loginRequest);
+
+        //then
+        assertThat(result).isEqualTo(null);
     }
 
     @Test
@@ -95,8 +95,10 @@ class UserServiceTest {
         Database.addUser(user);
         LoginRequest loginRequest = bindQueryStringToObject("userId=javajigi&password=xxxxx", LoginRequest.class);
 
-        //when, then
-        assertThatThrownBy(() -> userService.login(loginRequest))
-                .isInstanceOf(LoginFailException.class);
+        //when
+        User result = userService.login(loginRequest);
+
+        //then
+        assertThat(result).isEqualTo(null);
     }
 }
