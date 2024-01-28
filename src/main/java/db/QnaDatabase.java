@@ -6,7 +6,7 @@ import model.Qna;
 import java.util.*;
 
 public class QnaDatabase {
-    private static Long lastId = 1L;
+    private static Long lastId = 0L;
     private static final Map<Long, Qna> qnas = Maps.newHashMap();
 
     public static void add(Qna qna) {

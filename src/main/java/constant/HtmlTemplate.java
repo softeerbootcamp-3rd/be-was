@@ -98,7 +98,7 @@ public enum HtmlTemplate {
                     "             <div class=\"qna-comment-slipp-articles\">\n" +
                     "\n" +
                     "              <!--comments-->\n" +
-                    "              <!--answer-form-->\n" +
+                    "              <!--comment-form-->\n" +
                     "             </div>\n" +
                     "         </div>\n" +
                     "     </div>" +
@@ -115,14 +115,14 @@ public enum HtmlTemplate {
             QnaHtml::qnaBtnGroup, HtmlBuilder::empty),
 
     QNA_COMMENTS("<!--comments-->\n",
-            "<article class=\"article\" id=\"answer-1405\">\n" +
+            "<article class=\"article\" id=\"comment-1405\">\n" +
                     "    <div class=\"article-header\">\n" +
                     "        <div class=\"article-header-thumb\">\n" +
                     "            <img src=\"https://graph.facebook.com/v2.3/1324855987/picture\" class=\"article-author-thumb\" alt=\"\">\n" +
                     "        </div>\n" +
                     "        <div class=\"article-header-text\">\n" +
                     "            <a href=\"/users/1/자바지기\" class=\"article-author-name\"><!--writer--></a>\n" +
-                    "            <a href=\"#answer-1434\" class=\"article-header-time\" title=\"퍼머링크\">\n" +
+                    "            <a href=\"#comment-1434\" class=\"article-header-time\" title=\"퍼머링크\">\n" +
                     "                <!--create-date-->\n" +
                     "            </a>\n" +
                     "        </div>\n" +
@@ -130,31 +130,28 @@ public enum HtmlTemplate {
                     "    <div class=\"article-doc comment-doc\">\n" +
                     "        <!--content-->\n" +
                     "    </div>\n" +
-                    "    <div class=\"article-utils\">\n" +
-                    "        <ul class=\"article-utils-list\">\n" +
-                    "            <li>\n" +
-                    "                <a class=\"link-modify-article\" href=\"/questions/413/answers/1405/form\">수정</a>\n" +
-                    "            </li>\n" +
-                    "            <li>\n" +
-                    "                <form class=\"delete-answer-form\" action=\"/questions/413/answers/1405\" method=\"POST\">\n" +
-                    "                    <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
-                    "                    <button type=\"submit\" class=\"delete-answer-button\">삭제</button>\n" +
-                    "                </form>\n" +
-                    "            </li>\n" +
-                    "        </ul>\n" +
-                    "    </div>\n" +
+                    "    <!--comment-btn-group-->\n" +
                     "</article>\n",
             QnaHtml::comments, QnaHtml::comments),
 
-    QNA_ANSWER_FORM("<!--answer-form-->",
-            "                 <form class=\"answer-form\" method=\"post\" action=\"/questions/<!--qna-id-->/answer\">\n" +
+    COMMENT_BTN_GROUP(null,
+            "         <div class=\"btn-group-horizontal\" style=\"margin-bottom:30px\">\n" +
+                    "                     <form class=\"form-delete\" action=\"/questions/<!--qna-id-->/comments/<!--comment-id-->/delete\" method=\"post\">\n" +
+                    "                         <button class=\"btn btn-danger pull-right\" type=\"submit\">삭제</button>\n" +
+                    "                     </form>\n" +
+                    "                     <a href=\"/questions/<!--qna-id-->/comments/<!--comment-id-->/form\" class=\"btn btn-warning pull-right\" role=\"button\">수정</a>" +
+                    "             </div>\n",
+            null, null),
+
+    QNA_COMMENT_FORM("<!--comment-form-->",
+            "                 <form class=\"comment-form\" method=\"post\" action=\"/questions/<!--qna-id-->/comment\">\n" +
                     "                     <div class=\"form-group\" style=\"padding:14px;\">\n" +
-                    "                         <textarea class=\"form-control\" name=\"content\" placeholder=\"Update your answer\"></textarea>\n" +
+                    "                         <textarea class=\"form-control\" name=\"content\" placeholder=\"Update your comment\"></textarea>\n" +
                     "                     </div>\n" +
                     "                     <button class=\"btn btn-success pull-right\" type=\"submit\">답변하기</button>\n" +
                     "                     <div class=\"clearfix\" />\n" +
                     "                 </form>\n",
-            QnaHtml::answerForm, HtmlBuilder::empty),
+            QnaHtml::commentForm, HtmlBuilder::empty),
     ;
 
     private final String originalValue;

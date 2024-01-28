@@ -1,5 +1,6 @@
 package util.html;
 
+import constant.HtmlTemplate;
 import db.CommentDatabase;
 import db.QnaDatabase;
 import db.UserDatabase;
@@ -103,12 +104,22 @@ public class QnaHtml {
             User writer = UserDatabase.findByIdOrEmpty(comment.getWriterId());
             sb.append(template.replace("<!--writer-->", writer.getName())
                     .replace("<!--create-date-->", dateFormat.format(comment.getCreateDatetime()))
-                    .replace("<!--content-->", comment.getContent().replace("\n", "</br>")));
+                    .replace("<!--content-->", comment.getContent().replace("\n", "</br>"))
+                    .replace("<!--comment-btn-group-->", commentBtnGroup(qnaId, comment)));
         }
         return sb.toString();
     }
 
-    public static String answerForm(String template) {
+    private static String commentBtnGroup(Long qnaId, Comment comment) {
+        User user = SharedData.requestUser.get();
+        if (user == null || !user.getUserId().equals(comment.getWriterId()))
+            return "";
+        return HtmlTemplate.COMMENT_BTN_GROUP.getTemplate()
+                .replace("<!--qna-id-->", Long.toString(qnaId))
+                .replace("<!--comment-id-->", Long.toString(comment.getId()));
+    }
+
+    public static String commentForm(String template) {
         if (template == null)
             return "";
         Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);

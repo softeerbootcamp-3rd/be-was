@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class CommentDatabase {
 
-    private static Long lastId = 1L;
+    private static Long lastId = 0L;
     private static final Map<Long, Comment> comments = Maps.newHashMap();
 
     public static void add(Comment comment) {

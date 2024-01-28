@@ -8,7 +8,7 @@ import constant.HttpHeader;
 import constant.HttpStatus;
 import db.CommentDatabase;
 import db.QnaDatabase;
-import dto.QnaAnswerDto;
+import dto.QnaCommentDto;
 import dto.QnaDto;
 import model.Comment;
 import model.Qna;
@@ -34,8 +34,8 @@ public class QnaController {
                 .build();
     }
 
-    @RequestMapping(method = "POST", path = "/questions/{qnaId}/answer")
-    public static HttpResponse postAnswer(@RequestBody QnaAnswerDto answer) {
+    @RequestMapping(method = "POST", path = "/questions/{qnaId}/comment")
+    public static HttpResponse postComment(@RequestBody QnaCommentDto comment) {
         User currentUser = SharedData.requestUser.get();
         if (currentUser == null)
             return HttpResponse.of(HttpStatus.FORBIDDEN);
@@ -45,7 +45,7 @@ public class QnaController {
             return HttpResponse.of(HttpStatus.BAD_REQUEST);
 
         Long qnaId = Long.valueOf(qnaIdString);
-        CommentDatabase.add(new Comment(qnaId, currentUser.getUserId(), answer.getContent(), new Date()));
+        CommentDatabase.add(new Comment(qnaId, currentUser.getUserId(), comment.getContent(), new Date()));
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
                 .addHeader(HttpHeader.LOCATION, "/qna/show.html?qnaId=" + qnaIdString)
