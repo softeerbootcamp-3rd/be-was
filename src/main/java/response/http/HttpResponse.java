@@ -21,6 +21,14 @@ public class HttpResponse {
         this.body = null;
     }
 
+    public HttpResponse(StatusCode statusCode, String filePath, StringBuilder builder) throws IOException {
+        this.statusLine = new StatusLine(statusCode);
+        this.contentType = getContentType(filePath);
+        this.sid = null;
+        this.redirectUri = null;
+        this.body = readFileInBytesAndReplace(filePath, builder);
+    }
+
     public HttpResponse(StatusCode statusCode, String filePath) throws IOException {
         this.statusLine = new StatusLine(statusCode);
         this.contentType = getContentType(filePath);
@@ -70,7 +78,21 @@ public class HttpResponse {
         return statusLine;
     }
 
-    private static byte[] readFileInBytes(String filePath) throws IOException { // 파일을 읽어서 byte[]로 반환
+    public static byte[] readFileInBytesAndReplace(String filePath, StringBuilder builder) throws IOException { // 파일을 읽어서 byte[]로 변환 후 {{userList}}를 builder로 치환
+        File file = new File(filePath);
+
+        FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        byte[] buffer = new byte[(int) file.length()];
+        bis.read(buffer);
+
+        String replacedBuffer = new String(buffer);
+        replacedBuffer = replacedBuffer.replace("{{userList}}", builder.toString());
+        return replacedBuffer.getBytes();
+    }
+
+    public static byte[] readFileInBytes(String filePath) throws IOException { // 파일을 읽어서 byte[]로 반환
         File file = new File(filePath);
 
         FileInputStream fis = new FileInputStream(file);
