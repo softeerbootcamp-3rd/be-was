@@ -1,6 +1,7 @@
-package dto;
+package dto.request;
 
 import config.Config;
+import dto.response.HTTPResponseDto;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -9,19 +10,19 @@ public enum GetRequestEnum {
     DEFAULT("/") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.showIndex(httpRequestDto);
+            return HTTPResponseDto.create302Dto("/index.html");
         }
     },
     SIGNUP("/user/create") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.signup(httpRequestDto);
+            return Config.httpGetService.signup(httpRequestDto);
         }
     },
     FILE("file") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return Config.getService.requestFile(httpRequestDto);
+            return Config.httpGetService.requestFile(httpRequestDto);
         }
     };
 
@@ -35,7 +36,7 @@ public enum GetRequestEnum {
     public static GetRequestEnum getRequest(String url) {
         return Arrays.stream(GetRequestEnum.values())
                 .filter(request -> request.url.equals(url))
-                .findFirst()
+                .findAny()
                 .orElse(FILE);
     }
 

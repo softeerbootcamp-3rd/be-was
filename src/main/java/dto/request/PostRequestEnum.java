@@ -1,6 +1,7 @@
-package dto;
+package dto.request;
 
 import config.Config;
+import dto.response.HTTPResponseDto;
 
 import java.util.Arrays;
 
@@ -8,19 +9,19 @@ public enum PostRequestEnum {
     SIGNUP("/user/create") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return Config.postService.signup(httpRequestDto);
+            return Config.httpPostService.signup(httpRequestDto);
         }
     },
     LOGIN("/user/login") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return Config.postService.login(httpRequestDto);
+            return Config.httpPostService.login(httpRequestDto);
         }
     },
     ERROR("wrong request") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return new HTTPResponseDto(404, "Bad Request".getBytes());
+            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
         }
     };
 
@@ -34,7 +35,7 @@ public enum PostRequestEnum {
     public static PostRequestEnum getRequest(String url) {
         return Arrays.stream(PostRequestEnum.values())
                 .filter(request -> request.url.equals(url))
-                .findFirst()
+                .findAny()
                 .orElse(ERROR);
     }
 

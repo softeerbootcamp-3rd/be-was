@@ -1,4 +1,4 @@
-package dto;
+package dto.request;
 
 import java.util.HashMap;
 
@@ -7,24 +7,21 @@ public class HTTPRequestDto {
     private String HTTPMethod;
     private String requestTarget;
     private String HTTPVersion;
-    private String host;
-    private String accept;
+    private HashMap<String, String> header;
     private HashMap<String, String> requestParams;
-    private Integer contentLength;   // http request body의 길이
     private String body;            // http request body
 
-    public HTTPRequestDto(String HTTPMethod, String requestTarget, String HTTPVersion, String host, String accept, Integer contentLength, String body) {
+    public HTTPRequestDto(String HTTPMethod, String requestTarget, String HTTPVersion, String body) {
         this.HTTPMethod = HTTPMethod;
         this.requestTarget = requestTarget;
         this.HTTPVersion = HTTPVersion;
-        this.host = host;
-        this.accept = accept;
+        this.header = new HashMap<>();
         this.requestParams = new HashMap<>();       // 쿼리 스트링이 들어왔을 경우 저장
-        this.contentLength = contentLength;
         this.body = body;
     }
     public HTTPRequestDto() {
         this.requestParams = new HashMap<>();
+        this.header = new HashMap<>();
     }
 
     public String getHTTPMethod() {
@@ -36,17 +33,21 @@ public class HTTPRequestDto {
     public String getHTTPVersion() {
         return this.HTTPVersion;
     }
-    public String getHost() {
-        return this.host;
+    public Integer getContentLength() {
+        String length = header.get("Content-Length");
+        if(length == null)
+            return null;
+        return Integer.parseInt(length);
     }
     public String getAccept() {
-        return this.accept;
+        return header.get("Accept");
     }
+    public HashMap<String, String> getHeader() {
+        return this.header;
+    }
+
     public HashMap<String, String> getRequestParams() {
         return this.requestParams;
-    }
-    public Integer getContentLength() {
-        return this.contentLength;
     }
     public String getBody() {
         return this.body;
@@ -61,23 +62,14 @@ public class HTTPRequestDto {
     public void setHTTPVersion(String HTTP_version) {
         this.HTTPVersion = HTTP_version;
     }
-    public void setHost(String host) {
-        this.host = host;
-    }
-    public void setAccept(String accept) {
-        this.accept = accept;
-    }
-    public void setRequestParams(HashMap<String, String> requestParams) {
-        this.requestParams = requestParams;
-    }
-    public void setContentLength(Integer contentLength) {
-        this.contentLength = contentLength;
-    }
     public void setBody(String body) {
         this.body = body;
     }
     public void addRequestParam(String key, String value) {
         this.requestParams.put(key, value);
+    }
+    public void addHeader(String key, String value) {
+        header.put(key, value);
     }
 
     public HashMap<String, String> bodyParsing() {
@@ -89,5 +81,20 @@ public class HTTPRequestDto {
             bodyMap.put(key, value);
         }
         return bodyMap;
+    }
+
+    // 요청에 쿠키 값으로 세션 아이디가 포함되어 있다면 해당 세션 아이디 반환, 없으면 null 반환
+    public String getSessionId() {
+        String cookieValue = header.get("Cookie");
+        if(cookieValue == null)
+            return null;
+        if(cookieValue.contains("sid")) {
+            // session id 추출
+            String sessionId = cookieValue.substring("sid=".length());
+            if (sessionId.contains(";"))
+                sessionId = sessionId.substring(0, cookieValue.indexOf(";"));
+            return sessionId;
+        }
+        return null;
     }
 }
