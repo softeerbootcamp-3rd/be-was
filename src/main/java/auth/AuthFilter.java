@@ -2,7 +2,6 @@ package auth;
 
 import controller.SessionManager;
 import http.HttpRequest;
-import model.User;
 
 public class AuthFilter {
 
@@ -13,10 +12,16 @@ public class AuthFilter {
     }
 
     public void doFilter(HttpRequest request) {
-        User user=null;
+        String userId;
+
         if (request.getSessionId() != null) {
-            user = sessionManager.getUserBySessionId(request.getSessionId());
-            request.setUserId(user.getUserId());
+            String sessionId = request.getSessionId();
+            int startIndex = sessionId.indexOf("sid=");
+            if (startIndex != -1) {
+                sessionId = sessionId.substring(startIndex + 4);
+            }
+            userId = SessionManager.getUserBySessionId(sessionId);
+            request.setUserId(userId);
         }
     }
 }
