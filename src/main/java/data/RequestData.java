@@ -11,7 +11,7 @@ public class RequestData {
     private final Map<String, String> headers;
     private final String body;
 
-    private final boolean loggedIn;
+    private boolean loggedIn;
 
     public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, boolean loggedIn) {
         this.method = method;
@@ -53,6 +53,7 @@ public class RequestData {
     public String getBody() { return body; }
 
     public boolean isLoggedIn() { return loggedIn; }
+    public void setLoggedOut() { loggedIn = false; }
 
     @Override
     public String toString() {

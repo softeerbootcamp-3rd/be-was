@@ -94,6 +94,7 @@ public class UserService {
                 String sid = tokens[1];
 
                 Session.removeSession(sid);
+                requestData.setLoggedOut();
                 logger.debug("[Database]");
                 for (User user: Database.findAll()) {
                     logger.debug(user.toString());
