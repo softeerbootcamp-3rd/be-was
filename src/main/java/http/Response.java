@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+
 
 public class Response {
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
@@ -14,6 +15,8 @@ public class Response {
     private String location;
     private HttpStatus status = HttpStatus.OK;
     private String contentType = "";
+
+    private ArrayList<Cookie> cookie = new ArrayList<>();
     //constructors
     public Response(DataOutputStream dos){
         this.dos = dos;
@@ -59,6 +62,7 @@ public class Response {
             dos.writeBytes("charset=utf-8\r\n");
             dos.writeBytes(new StringBuilder("Content-Length: ").append(lengthOfBodyContent).append("\r\n").toString());
             dos.writeBytes(new StringBuilder("Location : ").append(location).append("\r\n").toString());
+            dos.writeBytes("Set-Cookie: "+getCookieString()+"\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(String.valueOf(e.getCause()));
@@ -83,4 +87,25 @@ public class Response {
         }
         return "";
     }
+
+    private String getCookieString(){
+        StringBuilder cookieStringBuilder = new StringBuilder();
+
+        for (Cookie c : cookie) {
+            cookieStringBuilder.append(c.getKey())
+                    .append("=")
+                    .append(c.getValue())
+                    .append("; ");
+        }
+
+        if (cookieStringBuilder.length() > 0) {
+            cookieStringBuilder.setLength(cookieStringBuilder.length() - 2);
+        }
+
+        return cookieStringBuilder.toString();
+    }
+    public void addCookie(Cookie cookie){
+        this.cookie.add(cookie);
+    }
+
 }

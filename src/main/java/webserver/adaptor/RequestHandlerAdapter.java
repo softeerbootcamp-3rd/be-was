@@ -5,19 +5,24 @@ import controller.BasicController;
 import exception.GlobalExceptionHandler;
 import exception.InternalServerException;
 import exception.ResourceNotFoundException;
+import http.Cookie;
 import http.Request;
 import http.Response;
 import controller.RequestController;
+import http.SessionManager;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.ModelAndView;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +36,10 @@ public class RequestHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(Request req, Response res, BasicController handler) {
         RequestController controller = (RequestController) handler;
-
         Map<String, String> model = new HashMap<>();
         String viewName;
         try {
-            viewName = process(controller, req, model);
+            viewName = process(controller, req, res,model);
 
         } catch (Exception e) {
             viewName = GlobalExceptionHandler.handle(e, res);
@@ -46,7 +50,7 @@ public class RequestHandlerAdapter implements HandlerAdapter {
         return mv;
     }
 
-        private String process(RequestController controller, Request req, Map<String, String> model){
+        private String process(RequestController controller, Request req, Response res, Map<String, String> model){
             try {
                 Class<?> clazz = controller.getClass();
                 String prefix =clazz.getAnnotation(RequestMapping.class).value();
@@ -72,6 +76,12 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                 Object[] parameters = new Object[parameterTypes.length];
 
                 for (int i = 0; i < parameterTypes.length; i++) {
+                    if(parameterTypes[i] == Response.class){
+                        parameters[i] = res;
+                    }
+                    else if(parameterTypes[i] == Request.class){
+                        parameters[i] = req;
+                    }
                     Annotation[] annotations = target.getParameterAnnotations()[i];
                     for (Annotation annotation : annotations) {
                         if (annotation.annotationType() == RequestParam.class) {
