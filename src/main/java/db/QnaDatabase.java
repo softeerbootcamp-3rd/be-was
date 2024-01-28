@@ -20,6 +20,10 @@ public class QnaDatabase {
         return qnas.get(id);
     }
 
+    public static void deleteById(Long id) {
+        qnas.remove(id);
+    }
+
     public static Collection<Qna> findAll() {
         return qnas.values();
     }

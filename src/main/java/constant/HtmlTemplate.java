@@ -64,6 +64,10 @@ public enum HtmlTemplate {
             "<li class=\"<!--active-->\"><a href=\"/index.html?page=<!--link-->\"><!--page-number--></a></li>",
             QnaHtml::replacePagination, QnaHtml::replacePagination),
 
+    POST_QNA_BTN("<!--post-qna-btn-->",
+            "<a href=\"./qna/form.html\" class=\"btn btn-primary pull-right\" role=\"button\">질문하기</a>",
+            HtmlBuilder::getRaw, HtmlBuilder::empty),
+
     QNA_SHOW("<!--qna-->",
             "<header class=\"qna-header\">\n" +
                     "     <h2 class=\"qna-title\"><!--title--></h2>\n" +
@@ -91,8 +95,7 @@ public enum HtmlTemplate {
                     "                     <a class=\"link-modify-article\" href=\"/questions/<!--qna-id-->/form\">수정</a>\n" +
                     "                 </li>\n" +
                     "                 <li>\n" +
-                    "                     <form class=\"form-delete\" action=\"/questions/423/delete\" method=\"POST\">\n" +
-                    "                         <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
+                    "                     <form class=\"form-delete\" action=\"/questions/<!--qna-id-->/delete\" method=\"post\">\n" +
                     "                         <button class=\"link-delete-article\" type=\"submit\">삭제</button>\n" +
                     "                     </form>\n" +
                     "                 </li>\n" +

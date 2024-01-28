@@ -51,4 +51,23 @@ public class QnaController {
                 .addHeader(HttpHeader.LOCATION, "/qna/show.html?qnaId=" + qnaIdString)
                 .build();
     }
+
+    @RequestMapping(method = "POST", path = "/questions/{qnaId}/delete")
+    public static HttpResponse deleteQna() {
+        String qnaIdString = SharedData.pathParams.get().get("qnaId");
+        if (Strings.isNullOrEmpty(qnaIdString))
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
+        Long qnaId = Long.valueOf(qnaIdString);
+        Qna qna = QnaDatabase.findById(qnaId);
+
+        User currentUser = SharedData.requestUser.get();
+        if (currentUser == null || !currentUser.getUserId().equals(qna.getWriterId()))
+            return HttpResponse.of(HttpStatus.FORBIDDEN);
+
+        QnaDatabase.deleteById(qnaId);
+        return HttpResponse.builder()
+                .status(HttpStatus.FOUND)
+                .addHeader(HttpHeader.LOCATION, "/index.html")
+                .build();
+    }
 }

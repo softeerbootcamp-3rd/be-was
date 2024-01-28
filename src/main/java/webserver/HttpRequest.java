@@ -19,7 +19,7 @@ public class HttpRequest {
     public HttpRequest(BufferedReader reader) throws IOException {
         String requestLine = reader.readLine();
         String[] requestParts = requestLine.split(" ");
-        this.method = requestParts[0];
+        this.method = requestParts[0].toUpperCase();
         this.path = RequestParser.extractPath(requestParts[1]);
         this.paramMap = RequestParser.parseQueryString(RequestParser.extractQuery(requestParts[1]));
         this.header = new HashMap<>();
