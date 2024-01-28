@@ -59,6 +59,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void logout(UUID sessionId) {
+        Session.logout(sessionId);
+    }
+
     private void validateUserLoginDto(UserLoginDto userLoginDto) {
         validateNotBlank(userLoginDto.getId(), ID_EMPTY_MESSAGE);
         validateNotBlank(userLoginDto.getPassword(), PASSWORD_EMPTY_MESSAGE);

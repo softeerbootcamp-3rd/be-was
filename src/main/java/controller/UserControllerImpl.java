@@ -89,6 +89,13 @@ public class UserControllerImpl{
         redirectToPath(httpResponseDto, "/index.html");
     }
 
+    @GetMapping(value = "/logout")
+    public void handleUserLogoutRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+        String sessionId = httpRequest.getHeaders().getUserSessionId();
+        userService.logout(UUID.fromString(sessionId));
+        redirectToPath(httpResponseDto, "/index.html");
+    }
+
     private void redirectToPath(HttpResponseDto httpResponseDto, String path) {
         httpResponseDto.setStatus(Status.REDIRECT);
         httpResponseDto.addHeader("Location", path);

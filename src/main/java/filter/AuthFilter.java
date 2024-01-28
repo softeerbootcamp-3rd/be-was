@@ -2,9 +2,8 @@ package filter;
 
 import dto.HttpResponseDto;
 import handler.DynamicResponseHandler;
-import handler.DynamicResponseHandlerImpl;
 import handler.StaticResponseHandler;
-import handler.UrlControllerMapper;
+import util.UrlControllerMapper;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
@@ -13,8 +12,6 @@ import session.Session;
 import util.FileDetector;
 import util.HtmlParser;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 
 import static config.AppConfig.*;
@@ -81,7 +78,7 @@ public class AuthFilter implements Filter {
         stringBuilder.append("<ul class=\"nav navbar-nav navbar-right\">");
         if (isLogin) {
             stringBuilder.append("<li class=\"active\"><a href=\"../index.html\">Posts</a></li>")
-                    .append("<li><a href=\"#\" role=\"button\">로그아웃</a></li>")
+                    .append("<li><a href=\"../user/logout\" role=\"button\">로그아웃</a></li>")
                     .append("<li><a href=\"#\" role=\"button\">개인정보수정</a></li>");
         } else {
             stringBuilder.append("<li class=\"active\"><a href=\"../index.html\">Posts</a></li>")

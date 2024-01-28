@@ -3,6 +3,7 @@ package webApplicationServer.controller;
 import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import service.UserService;
+import session.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,11 @@ public class FakeUserService implements UserService {
     @Override
     public Optional<UUID> login(UserLoginDto userLoginDto) {
         return Optional.of(UUID.randomUUID());
+    }
+
+    @Override
+    public void logout(UUID sessionId) {
+        Session.logout(sessionId);
     }
 
     // 다른 UserService 메서드들에 대한 빈 메서드를 추가

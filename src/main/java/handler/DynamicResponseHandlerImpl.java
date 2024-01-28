@@ -2,8 +2,6 @@ package handler;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
-import annotation.RequestMapping;
-import config.AppConfig;
 import dto.HttpResponseDto;
 import exception.BadRequestException;
 import exception.InternalServerException;
@@ -13,13 +11,12 @@ import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.UrlControllerMapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 import static config.AppConfig.*;
-import static config.AppConfig.userController;
 
 public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     private static class DynamicResponseHandlerHolder {

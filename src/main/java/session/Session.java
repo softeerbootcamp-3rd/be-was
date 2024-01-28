@@ -30,6 +30,10 @@ public class Session {
         return loginUsers.containsKey(sessionId);
     }
 
+    public static void logout(UUID sessionId) {
+        loginUsers.remove(sessionId);
+    }
+
     public static class UserSession {
         private final String userId;
 

@@ -1,9 +1,8 @@
-package handler;
+package util;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
 import annotation.RequestMapping;
-import config.AppConfig;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

@@ -10,4 +10,6 @@ public interface UserService {
     void signUp(UserSignUpDto userSignUpDto);
 
     Optional<UUID> login(UserLoginDto userLoginDto);
+
+    void logout(UUID sessionId);
 }

@@ -13,6 +13,7 @@ import service.HttpResponseSendServiceImpl;
 import service.UserService;
 import service.UserServiceImpl;
 import util.FileDetector;
+import util.UrlControllerMapper;
 
 public class AppConfig {
     public static HttpResponseSendService httpResponseSendService() {
