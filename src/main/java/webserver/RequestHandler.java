@@ -2,17 +2,12 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.HashMap;
-
-import httpmessage.Request.HttpMesssageReader;
-import httpmessage.Request.HttpRequest;
-import httpmessage.Response.HttpResponse;
-import httpmessage.Request.RequestHeader;
+import httpmessage.request.HttpMesssageReader;
+import httpmessage.request.HttpRequest;
+import httpmessage.response.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.*;
+import controller.*;
 
 public class RequestHandler implements Runnable {
     private Socket connection;
@@ -26,21 +21,22 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpResponse httpResponse = new HttpResponse();
             HttpRequest httpRequest = new HttpRequest(new HttpMesssageReader(br));
 
-            logger.debug(">>  {} >> {}", httpRequest.getPath(), httpRequest.getHttpMethod());
+            logger.debug(">> {}:{}",httpRequest.getHttpMethod(),httpRequest.getPath());
 
-            FirstService firstService = new FirstService();
-            firstService.service(httpRequest,httpResponse);
+            FirstController firstController = new FirstController();
+            firstController.service(httpRequest,httpResponse);
 
             DataOutputStream dos = new DataOutputStream(out);
 
             if(httpResponse.getStatusCode()==302){
                 response302Header(dos,httpResponse);
             }
+
             else {
                 responseHeader(dos, httpResponse);
                 responseBody(dos, httpResponse);
@@ -50,7 +46,6 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
 
     private void responseHeader(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
 
@@ -62,7 +57,12 @@ public class RequestHandler implements Runnable {
 
     void response302Header(DataOutputStream dos, HttpResponse httpResponse) throws IOException {
         dos.writeBytes("HTTP/1.1 302 Found\r\n");
-        dos.writeBytes("Location: "+ httpResponse.getPath());
+        dos.writeBytes("Location: "+ httpResponse.getPath() + "\r\n");
+
+        if(!httpResponse.getSid().isEmpty()){
+            dos.writeBytes("Set-Cookie: sid=" + httpResponse.getSid()+ "; Expires=" + httpResponse.getExpireDate() + "; Path=/");
+        }
+
         dos.writeBytes("\r\n");
         dos.flush();
     }

@@ -1,15 +1,27 @@
-package httpmessage.Request;
+package httpmessage.request;
+
+import java.util.Map;
 
 public class HttpRequest {
 
     private RequestHeader requestHeader;
+    private Parameter parameter;
 
     public HttpRequest(HttpMesssageReader httpMesssageReader){
         this.requestHeader = httpMesssageReader.getRequestHeader();
+        this.parameter = httpMesssageReader.getParameter();
     }
 
     public void setPath(String path){
         this.requestHeader.setPath(path);
+    }
+
+    public String getCookie(){return requestHeader.getCookie(); }
+    public Map<String, String> getParmeter() {
+        return parameter.getValues();
+    }
+    public String getParmeter(String key) {
+        return parameter.getValue(key);
     }
 
     public String getPath(){

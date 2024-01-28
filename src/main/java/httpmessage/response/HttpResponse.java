@@ -1,14 +1,13 @@
-package httpmessage.Response;
-
-import java.util.Map;
+package httpmessage.response;
 
 public class HttpResponse {
     private byte[] body;
     Integer statusCode;
     String statusLine;
     String contentType;
-    String path;
-
+    String redirectionPath;
+    String sid = null;
+    String expireDate;
 
     public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
         this.body = body;
@@ -17,8 +16,16 @@ public class HttpResponse {
         this.contentType = contentType;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setExpireDate(String expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid;
+    }
+
+    public void setRedirectionPath(String path) {
+        this.redirectionPath = path;
     }
 
     public void setBody(byte[] body) {
@@ -31,6 +38,10 @@ public class HttpResponse {
 
     public void setStatusLine(String line) {
         this.statusLine = line;
+    }
+
+    public String getExpireDate() {
+        return expireDate;
     }
 
     public byte[] getBody() {
@@ -49,5 +60,9 @@ public class HttpResponse {
         return statusLine;
     }
 
-    public String getPath() { return this.path; }
+    public String getPath() { return this.redirectionPath; }
+
+    public String getSid() {
+        return this.sid;
+    }
 }

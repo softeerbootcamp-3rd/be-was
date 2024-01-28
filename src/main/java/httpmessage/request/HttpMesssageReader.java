@@ -1,16 +1,18 @@
-package httpmessage.Request;
+package httpmessage.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
-
 import java.io.*;
-
 import java.io.BufferedReader;
+import java.net.URLDecoder;
+import java.util.HashMap;
 
 public class HttpMesssageReader {
 
     private RequestHeader rh;
+    private Parameter parameter;
+
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     public HttpMesssageReader(BufferedReader br) throws IOException {
@@ -48,16 +50,15 @@ public class HttpMesssageReader {
                 case "Content-Length":
                     contentLength = Integer.parseInt(value);
                     break;
-
+                case "Cookie":
+                    this.rh.setCookie(value.split("=")[1]);
+                    break;
             }
         }
         if(postUrl) {
-            StringBuilder bodyJson = new StringBuilder();
-            char[] buffer = new char[contentLength];
-            br.read(buffer);
-            bodyJson.append(buffer);
-            rh.setBody(bodyJson);
+            parsingParameter(br,contentLength);
         }
+
     }
     public void separteFirstHeader(String firstHeader){
         String[] tokens = firstHeader.split(" ");
@@ -67,8 +68,40 @@ public class HttpMesssageReader {
         this.rh.setHttpMethod(httpMethod);
         this.rh.setPath(path);
     }
+
+    public void parsingParameter(BufferedReader br, int contentLength) throws IOException {
+        StringBuilder bodyJson = new StringBuilder();
+        char[] buffer = new char[contentLength];
+        HashMap<String,String> map = new HashMap<>();
+
+        br.read(buffer);
+        bodyJson.append(buffer);
+        String path = bodyJson.toString();
+
+        String[] userInformation = path.split("&");
+
+        for (String s : userInformation) {
+            String key = s.split("=")[0];
+
+            if (s.split("=").length == 1) {
+                map.put(key, null);
+                continue;
+            }
+
+            String value = s.split("=")[1];
+            String decodeValue = URLDecoder.decode(value, "UTF-8");
+            map.put(key, decodeValue);
+        }
+        this.parameter = new Parameter(map);
+        this.rh.setBody(bodyJson);
+
+    }
+
     public RequestHeader getRequestHeader() {
         return this.rh;
+    }
+    public Parameter getParameter() {
+        return this.parameter;
     }
 
 }
