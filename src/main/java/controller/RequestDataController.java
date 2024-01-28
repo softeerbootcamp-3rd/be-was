@@ -31,13 +31,7 @@ public class RequestDataController {
         String extension = getFileExtension(url);
 
         try {
-            Method method = null;
-
-            if (HttpMethod.GET == requestData.getMethod()) {
-                method = MethodMapper.getRouteMap.get(url);
-            } else if (HttpMethod.POST == requestData.getMethod()) {
-                method = MethodMapper.postRouteMap.get(url);
-            }
+            Method method = findMethod(requestData.getMethod(), url);
 
             if (method != null) {
                 return (Response) method.invoke(null, requestData);
@@ -48,6 +42,11 @@ public class RequestDataController {
             logger.error("Error invoking method: {}", e.getMessage());
             return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
         }
+    }
+
+    private static Method findMethod(HttpMethod httpMethod, String url) {
+        Map<String, Method> routeMap = (httpMethod == HttpMethod.GET) ? MethodMapper.getRouteMap : MethodMapper.postRouteMap;
+        return routeMap.get(url);
     }
 
     private static Response handleFileRequest(String url, String extension, RequestData requestData) {
