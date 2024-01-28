@@ -61,9 +61,10 @@ public class RequestParserUtil {
         String line = br.readLine();
 
         while (!line.equals("")) {
-            String[] headerTokens = line.split(": ");
+            // Trailing white space 고려하여 ":"으로 split() 후 trim() 호출
+            String[] headerTokens = line.split(":");
             if (headerTokens.length == 2) {
-                headers.put(headerTokens[0], headerTokens[1]);
+                headers.put(headerTokens[0].trim(), headerTokens[1].trim());
             }
             line = br.readLine();
         }
