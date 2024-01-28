@@ -51,7 +51,7 @@ public class RequestHandler implements Runnable {
             } else {
                 // 동적 자원 처리
                 RequestLine requestLine = httpRequest.getRequestLine();
-                ValidatorControllerMapper vc = ValidatorControllerMapper.getValidatorAndControllerByPath(requestLine.getPath());
+                ValidatorControllerMapper vc = ValidatorControllerMapper.getValidatorAndControllerByPath(requestLine.getMethodAndPath());
 
                 if (vc != null) {
                     Function<Map<String, String>, Boolean> validator = vc.getValidator();
@@ -59,7 +59,7 @@ public class RequestHandler implements Runnable {
                     if (validator != null && !validator.apply(httpRequest.getBody())) {
                         response = HttpResponse.of(HttpStatus.BAD_REQUEST);
                     } else {
-                        // validator가 없거나 유효성 검증에 통과할 경우 컨트롤러에게 HttpRequest
+                        // validator 없거나 유효성 검증에 통과할 경우 컨트롤러에게 HttpRequest 전달
                         Function<HttpRequest, HttpResponse> controller = vc.getController();
                         response = controller.apply(httpRequest);
                     }
