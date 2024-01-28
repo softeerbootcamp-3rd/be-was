@@ -10,8 +10,8 @@ import db.UserDatabase;
 import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
-import util.web.RequestParser;
 import util.session.SessionManager;
+import util.web.RequestParser;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
