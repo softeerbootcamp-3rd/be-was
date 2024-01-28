@@ -1,15 +1,19 @@
 package controller;
 
+import annotation.Controller;
+import annotation.GetMapping;
+import annotation.PostMapping;
+import annotation.RequestMapping;
 import db.Database;
 import dto.HttpResponseDto;
 import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import model.User;
 import model.http.Cookie;
-import model.http.HttpMethod;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import service.UserService;
+import service.UserServiceImpl;
 import util.FileDetector;
 import util.HtmlParser;
 
@@ -21,12 +25,14 @@ import java.util.UUID;
 import static config.AppConfig.fileDetector;
 import static config.AppConfig.userService;
 
-public class UserControllerImpl implements UserController {
+@Controller
+@RequestMapping(path = "/user")
+public class UserControllerImpl{
     private static class UserControllerHolder {
-        public static final UserController INSTANCE = new UserControllerImpl(userService(), fileDetector());
+        public static final UserControllerImpl INSTANCE = new UserControllerImpl(userService(), fileDetector());
     }
 
-    public static UserController getInstance() {
+    public static UserControllerImpl getInstance() {
         return UserControllerHolder.INSTANCE;
     }
 
@@ -38,22 +44,8 @@ public class UserControllerImpl implements UserController {
         this.fileDetector = fileDetector;
     }
 
-    @Override
-    public void doGet(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
-        String pathUrl = httpRequest.getStartLine().getPathUrl();
-
-        if (pathUrl.startsWith("/user/create") && httpRequest.getStartLine().getMethod() == HttpMethod.POST) {
-            handleUserCreateRequest(httpRequest, httpResponseDto);
-        }
-        if (pathUrl.startsWith("/user/login") && httpRequest.getStartLine().getMethod() == HttpMethod.POST) {
-            handleUserLoginRequest(httpRequest, httpResponseDto);
-        }
-        if (pathUrl.startsWith("/user/list")) {
-            handleUserListRequest(httpRequest, httpResponseDto);
-        }
-    }
-
-    private void handleUserListRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+    @GetMapping(value = "/list.html")
+    public void handleUserListRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         HtmlParser htmlParser = new HtmlParser(new String(fileDetector.getFile("/user/list.html")));
         int cnt = 0;
         Collection<User> all = Database.findAll();
@@ -73,7 +65,8 @@ public class UserControllerImpl implements UserController {
         httpResponseDto.setContent(htmlParser.getHtml().getBytes());
     }
 
-    private void handleUserLoginRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+    @PostMapping(value = "/login")
+    public void handleUserLoginRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
 
         Optional<UUID> sessionId = userService.login(UserLoginDto.fromRequestBody(httpRequest.getBody().getContent()));
 
@@ -90,7 +83,8 @@ public class UserControllerImpl implements UserController {
 
     }
 
-    private void handleUserCreateRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+    @PostMapping(value = "/create")
+    public void handleUserCreateRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         UserSignUpDto userSignUpDto = UserSignUpDto.fromRequestBody(httpRequest.getBody().getContent());
         userService.signUp(userSignUpDto);
         redirectToPath(httpResponseDto, "/index.html");
