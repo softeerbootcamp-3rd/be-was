@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static webserver.http.HttpMethod.converHttpMethodType;
+import static webserver.http.HttpMethod.convertHttpMethodType;
 import static webserver.http.Mime.convertMime;
 
 public class Request {
@@ -51,13 +51,11 @@ public class Request {
             requestBody = new HashMap<>();
             return;
         }
-
-        RequestBodyParser requestBodyParser = new RequestBodyParser(bodyContent);
-        requestBody = (HashMap<String, String>) requestBodyParser.contentTypeBodyParse(ContentType.convertContentType(requestHeader.get("Content-Type")));
+        requestBody = (HashMap<String, String>) RequestBodyParser.contentTypeBodyParse(ContentType.convertContentType(requestHeader.get("Content-Type")), bodyContent);
     }
     private void parseRequestStartLine(String startLine) {
         String[] requestStartLine = startLine.split(" ");
-        this.httpMethod = converHttpMethodType(requestStartLine[0]);
+        this.httpMethod = convertHttpMethodType(requestStartLine[0]);
         this.requestTarget = requestStartLine[1];
         this.httpVersion = requestStartLine[2];
         int lastDotIndex = requestTarget.lastIndexOf('.');

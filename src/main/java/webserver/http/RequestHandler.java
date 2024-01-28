@@ -1,5 +1,7 @@
 package webserver.http;
 
+import db.Database;
+import db.SessionManager;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +46,12 @@ public class RequestHandler {
     private void initializeRoutes() {
         routeHandlers.put(new Route(HttpMethod.GET,"/user/create"), (Request r)-> getUserCreate(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/user/create"), (Request r)-> postUserCreate(r));
+        routeHandlers.put(new Route(HttpMethod.POST,"/user/login"), (Request r)-> postUserLogin(r));
     }
+
     public void handleRequest(Request request) {
+        if (request.getHttpMethod() == HttpMethod.NULL)
+            throw new IllegalArgumentException("Method NULL");
         String requestTarget = request.getRequestTarget().split("\\?")[0];
         Route inputRoute = new Route(request.getHttpMethod() ,requestTarget);
         if (routeHandlers.containsKey(inputRoute)) {
@@ -60,18 +66,30 @@ public class RequestHandler {
         UserFormDataParser userFormDataParser = new UserFormDataParser(data);
         HashMap<String,String> formData = new HashMap<>(userFormDataParser.parseData());
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
-        System.out.println(user.toString());
-        //리다이렉션 헤더에 넣기
+        Database.addUser(user);
         request.addRequestHeader("Location","/user/form.html");
     }
 
     private void postUserCreate(Request request) {
         HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
-        System.out.println("PostResult + " + user.toString());
-        //리다이렉션 헤더에 넣기
+        Database.addUser(user);
         request.addRequestHeader("Location","/index.html");
     }
+
+    private void postUserLogin(Request request) {
+        HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
+        String id = formData.get("userId");
+        String pw = formData.get("password");
+        if(Database.isValidLogin(id, pw)){
+            request.addRequestHeader("Location","/index.html");
+            String session = SessionManager.addSession(Database.findUserById(id));
+            request.addRequestHeader("Set-Cookie", "sid=" + session + "; Path=/");
+        }else{
+            request.addRequestHeader("Location","/user/login_failed.html");
+        }
+    }
+
 
     private void handleNotFound() {
         logger.error("request : NOT FOUND");

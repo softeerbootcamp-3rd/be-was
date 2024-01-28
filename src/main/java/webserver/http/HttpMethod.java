@@ -18,7 +18,7 @@ public enum HttpMethod {
         return httpMethodType;
     }
 
-    public static HttpMethod converHttpMethodType(String ext) {
+    public static HttpMethod convertHttpMethodType(String ext) {
         for (HttpMethod httpMethodType : HttpMethod.values()) {
             if (httpMethodType.getHttpMethodType().equals(ext)) {
                 return httpMethodType;
