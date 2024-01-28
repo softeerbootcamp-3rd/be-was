@@ -1,9 +1,11 @@
-package webserver;
+package webserver.request;
 
 import constant.MimeType;
 import constant.StaticFile;
 import util.FileManager;
 import util.HtmlDynamicEditor;
+import webserver.response.HttpResponse;
+import webserver.ThreadLocalManager;
 
 import java.io.IOException;
 
@@ -40,7 +42,6 @@ public class FileContentHandler {
                 byte[] body = FileManager.getFileBytes(requestPath);
                 // 확장자를 통해 파일의 MIME 타입 가져오기
                 if (fileMimeType.equals(MimeType.HTML)) {
-                    System.out.println("aaaaaaaa");
                     body = HtmlDynamicEditor.edit(body, requestPath);
                 }
                 httpResponse.makeBody(body, fileMimeType.contentType);
