@@ -19,10 +19,22 @@ public enum GetRequestEnum {
             return Config.httpGetService.signup(httpRequestDto);
         }
     },
+    LOGOUT("/logout") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return Config.httpGetService.logout(httpRequestDto);
+        }
+    },
     USERLIST("/user/list.html") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
-            return Config.httpGetService.showUserList(httpRequestDto);
+            return Config.httpGetService.showWithLogin(httpRequestDto);
+        }
+    },
+    PROFILE("/user/profile.html") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return Config.httpGetService.showWithLogin(httpRequestDto);
         }
     },
     FILE("file") {

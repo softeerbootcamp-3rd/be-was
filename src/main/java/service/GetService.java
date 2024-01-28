@@ -50,6 +50,19 @@ public class GetService {
         return new HTTPResponseDto("/index.html");
     }
 
+    // /logout 요청
+    public HTTPResponseDto logout(HTTPRequestDto httpRequestDto) {
+        String sessionId = httpRequestDto.getSessionId();
+        if(sessionId != null) {
+            Session session = Database.findSessionById(sessionId);
+            if(session != null)
+                // 해당 세션 만료시키기
+                session.invalidate();
+        }
+        // login.html로 리다이렉트
+        return new HTTPResponseDto("/user/login.html");
+    }
+
     // 파일 불러오기 요청
     public HTTPResponseDto requestFile(HTTPRequestDto httpRequestDto) {
         if(httpRequestDto.getRequestTarget() == null) {
@@ -107,8 +120,24 @@ public class GetService {
         // list.html일 경우 전체 사용자 목록 동적 생성 후 반환
         if(path.contains("list.html"))
             byteFile = makeList(byteFile);
+        if(path.contains("profile.html"))
+            byteFile = makeProfile(httpRequestDto, byteFile);
         return byteFile;
     }
+
+    // 로그인 여부에 따른 파일 요청 처리
+    public HTTPResponseDto showWithLogin(HTTPRequestDto httpRequestDto) {
+        // 요청에 이미 세션이 있을 경우 기존 세션 아이디 가져오기
+        String sessionId = httpRequestDto.getSessionId();
+        // 로그인 상태가 아닐 경우
+        if(sessionId == null)
+            return new HTTPResponseDto("/user/login.html");
+        // 로그인 상태일 경우
+        return requestFile(httpRequestDto);
+    }
+
+
+    ///////////////////////////// 동적 화면 처리 ////////////////////////////////
 
     // index.html의 동적 화면 처리
     private byte[] makeIndex(HTTPRequestDto httpRequestDto, byte[] byteFile) {
@@ -121,17 +150,6 @@ public class GetService {
         if(user == null || user.getName() == null)
             return byteFile;
         return new String(byteFile).replace("로그인", user.getName()).getBytes();
-    }
-
-    // "/user/list.html" 요청 처리
-    public HTTPResponseDto showUserList(HTTPRequestDto httpRequestDto) {
-        // 요청에 이미 세션이 있을 경우 기존 세션 아이디 가져오기
-        String sessionId = httpRequestDto.getSessionId();
-        // 로그인 상태가 아닐 경우
-        if(sessionId == null)
-            return new HTTPResponseDto("/user/login.html");
-        // 로그인 상태일 경우
-        return requestFile(httpRequestDto);
     }
 
     // 전체 사용자 목록 추가하여 동적인 list.html 화면 반환
@@ -165,5 +183,18 @@ public class GetService {
                 + "</td><td>" + user.getName()
                 + "</td> <td>" + user.getEmail()
                 + "</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>";
+    }
+
+    // 현재 로그인한 유저 정보로 profile.html 수정 후 반환
+    private byte[] makeProfile(HTTPRequestDto httpRequestDto, byte[] byteFile) {
+        String sessionId = httpRequestDto.getSessionId();
+        User user = Database.findUserBySessionId(sessionId);
+        if(user == null)
+            return byteFile;
+
+        String stringFile = new String(byteFile);
+        stringFile = stringFile.replace("자바지기", user.getName());
+        stringFile = stringFile.replace("javajigi@slipp.net", user.getEmail());
+        return stringFile.getBytes();
     }
 }

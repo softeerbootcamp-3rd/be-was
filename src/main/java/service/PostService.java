@@ -51,6 +51,9 @@ public class PostService {
     private HTTPResponseDto checkSignupBadRequest(HTTPRequestDto httpRequestDto) {
         if(httpRequestDto == null || httpRequestDto.getBody() == null)
             return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        // 이미 로그인 되어있을 경우
+        if(httpRequestDto.getSessionId() != null)
+            return new HTTPResponseDto(400, "text/plain", "이미 로그인 되어있습니다.".getBytes());
         Map<String, String> body = httpRequestDto.getBody().getMap();
         if(!body.containsKey("userId") || !body.containsKey("password")
                 || !body.containsKey("name") || !body.containsKey("email"))
@@ -90,18 +93,21 @@ public class PostService {
 
     // 로그인 요청이 bad request인지 판단
     private HTTPResponseDto checkLoginBadRequest(HTTPRequestDto httpRequestDto) {
-        // 1. request body가 null 일 경우
+        // 1. 이미 로그인 되어있을 경우
+        if(httpRequestDto.getSessionId() != null)
+            return new HTTPResponseDto(400, "text/plain", "이미 로그인 되어있습니다.".getBytes());
+        // 2. request body가 null 일 경우
         if(httpRequestDto.getBody() == null)
             return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
 
         String userId = httpRequestDto.getBody().getValue("userId");
         String password = httpRequestDto.getBody().getValue("password");
 
-        // 2. body에 userId, password 필드 네임이 없는 경우
+        // 3. body에 userId, password 필드 네임이 없는 경우
         if(userId == null || password == null)
             return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
 
-        // 3. 하나라도 빈 문자열이면 안됨
+        // 4. 하나라도 빈 문자열이면 안됨
         if(userId.equals("") || password.equals(""))
             return new HTTPResponseDto(400, "text/plain", "모든 정보를 입력해주세요.".getBytes());
 
