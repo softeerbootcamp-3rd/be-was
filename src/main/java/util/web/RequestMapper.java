@@ -94,18 +94,13 @@ public class RequestMapper {
         throw new IllegalArgumentException("No parameter name found for group index: " + groupIndex);
     }
 
-    public static HttpResponse invoke(Method method) {
-        try {
-            Class<?> clazz = method.getDeclaringClass();
-            Object instance = clazz.getDeclaredConstructor().newInstance();
+    public static HttpResponse invoke(Method method)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Class<?> clazz = method.getDeclaringClass();
+        Object instance = clazz.getDeclaredConstructor().newInstance();
 
-            Object result = method.invoke(instance, mapParams(method));
-            if (result instanceof HttpResponse) return (HttpResponse) result;
-        } catch (RuntimeException | NoSuchMethodException
-                 | InvocationTargetException | InstantiationException
-                 | IllegalAccessException e) {
-            logger.error(e.getMessage());
-        }
+        Object result = method.invoke(instance, mapParams(method));
+        if (result instanceof HttpResponse) return (HttpResponse) result;
         return HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

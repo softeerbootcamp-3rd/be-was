@@ -13,6 +13,7 @@ import util.web.RequestMapper;
 import util.web.ResourceLoader;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 
@@ -57,7 +58,8 @@ public class RequestHandler implements Runnable {
 
             } catch (ResourceNotFoundException e) {
                 response = HttpResponse.of(HttpStatus.NOT_FOUND);
-            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+            } catch (IllegalArgumentException | IndexOutOfBoundsException | NoSuchMethodException
+                     | InvocationTargetException | InstantiationException | IllegalAccessException e) {
                 response = HttpResponse.of(HttpStatus.BAD_REQUEST);
             } catch (IllegalStateException | IOException e) {
                 logger.error("error processing request: {}", e.getMessage());

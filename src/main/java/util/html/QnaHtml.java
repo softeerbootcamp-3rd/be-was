@@ -77,7 +77,7 @@ public class QnaHtml {
         return template.replace("<!--title-->", qna.getTitle())
                 .replace("<!--writer-->", UserDatabase.findByIdOrEmpty(qna.getWriterId()).getName())
                 .replace("<!--create-date-->", dateFormat.format(qna.getCreateDatetime()))
-                .replace("<!--contents-->", qna.getContents().replace("\n", "</br>"))
+                .replace("<!--contents-->", "<p>" + qna.getContents().replace("\n", "</br>") + "</p>")
                 .replace("<!--qna-id-->", Long.toString(qna.getId()))
                 .replace("<!--comment-count-->", Long.toString(CommentDatabase.countByQnaId(qnaId)))
                 .replace("<!--comments-->", replaceComments(HtmlTemplate.QNA_COMMENTS.getTemplate()));

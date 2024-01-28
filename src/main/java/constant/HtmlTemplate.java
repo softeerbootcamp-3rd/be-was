@@ -89,19 +89,11 @@ public enum HtmlTemplate {
                     "         <div class=\"article-doc\">\n" +
                     "             <!--contents-->\n" +
                     "         </div>\n" +
-                    "         <div class=\"article-utils\">\n" +
-                    "             <ul class=\"article-utils-list\">\n" +
-                    "                 <li>\n" +
-                    "                     <a class=\"link-modify-article\" href=\"/questions/<!--qna-id-->/form\">수정</a>\n" +
-                    "                 </li>\n" +
-                    "                 <li>\n" +
+                    "         <div class=\"btn-group-horizontal\">\n" +
                     "                     <form class=\"form-delete\" action=\"/questions/<!--qna-id-->/delete\" method=\"post\">\n" +
-                    "                         <button class=\"link-delete-article\" type=\"submit\">삭제</button>\n" +
+                    "                         <button class=\"btn btn-danger pull-right\" type=\"submit\">삭제</button>\n" +
                     "                     </form>\n" +
-                    "                 </li>\n" +
-                    "                 <li>\n" +
-                    "                     <a class=\"link-modify-article\" href=\"/index.html\">목록</a>\n" +
-                    "                 </li>\n" +
+                    "                     <a href=\"/questions/<!--qna-id-->/form\" class=\"btn btn-warning pull-right\" role=\"button\">수정</a>" +
                     "             </ul>\n" +
                     "         </div>\n" +
                     "     </article>\n" +
