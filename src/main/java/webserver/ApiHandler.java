@@ -14,8 +14,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DynamicHandler {
-    private static final Logger logger = LoggerFactory.getLogger(DynamicHandler.class);
+public class ApiHandler {
+    /*
+    handle 안에서
+    DynamicHtmlController 를 하나 생성하고 여기다가 동적 html 관련 메소드....? 근데 생각해보면... 거의 모든 html은 동적이지만 css는 정적임 정적 그대로 두고..
+    html 가져오고 - 컨트롤러 내부에다가...? 공통적으로 nav 를 세팅하는 메소드를 둬야 하나...
+    그리고 여기 핸들러에
+    일단 동적 컨텐츠 처리 - .html 인 경우에 확인
+     */
+
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiHandler.class);
     private static final Map<String, Method> CONTROLLER_METHOD = new HashMap<>();
 
     static {
@@ -30,10 +39,10 @@ public class DynamicHandler {
      * @return
      */
     public static HttpResponse handle(HttpRequest httpRequest) {
-        HttpResponse httpResponse = new HttpResponse();
         Method method = CONTROLLER_METHOD.get(httpRequest.getMethod() + httpRequest.getPath());
 
         if (method != null) {
+            HttpResponse httpResponse = new HttpResponse();
             Class<?> controller = method.getDeclaringClass();
 
             try {
@@ -47,12 +56,9 @@ public class DynamicHandler {
                     httpResponse.makeError(ErrorCode.SERVER_ERROR);
                 }
             }
-        } else {
-            // 정적, 동적 모두 아닌 경우 - PAGE_NOT_FOUND 예외 전송
-            httpResponse.makeError(ErrorCode.PAGE_NOT_FOUND);
+            return httpResponse;
         }
-
-        return httpResponse;
+        return null;
     }
 
     /**
@@ -89,10 +95,10 @@ public class DynamicHandler {
 
                 if (method.isAnnotationPresent(GetMapping.class)) {
                     httpMethod = "GET";
-                    path = (method.getAnnotation(GetMapping.class)).path();
+                    path = (method.getAnnotation(GetMapping.class)).value();
                 } else if (method.isAnnotationPresent(PostMapping.class)) {
                     httpMethod = "POST";
-                    path = (method.getAnnotation(PostMapping.class)).path();
+                    path = (method.getAnnotation(PostMapping.class)).value();
                 }
                 // TODO : DELETE 등 다른 요청에 대한 처리 코드 추가
 
