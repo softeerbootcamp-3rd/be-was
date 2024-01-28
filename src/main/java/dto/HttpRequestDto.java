@@ -2,8 +2,6 @@ package dto;
 
 import model.User;
 
-import java.util.Map;
-
 public class HttpRequestDto {
     private final String method;
 
@@ -11,13 +9,13 @@ public class HttpRequestDto {
 
     private final String httpVersion;
 
-    private final Map<String, String> headers;
+    private final HttpHeaders headers;
 
     private final String body;
 
     private final User user;
 
-    public HttpRequestDto(String method, String uri, String httpVersion, Map<String, String> headers, String body, User user) {
+    public HttpRequestDto(String method, String uri, String httpVersion, HttpHeaders headers, String body, User user) {
         this.method = method;
         this.uri = uri;
         this.httpVersion = httpVersion;
@@ -38,7 +36,7 @@ public class HttpRequestDto {
         return this.httpVersion;
     }
 
-    public Map<String, String> getHeaders() {
+    public HttpHeaders getHeaders() {
         return this.headers;
     }
 

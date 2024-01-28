@@ -1,5 +1,6 @@
 package controller;
 
+import constant.HttpHeader;
 import dto.HttpRequestDto;
 import dto.HttpResponseDto;
 import dto.HttpResponseDtoBuilder;
@@ -18,9 +19,9 @@ public class DefaultController implements Controller {
         // root 인덱스로 접근 시 /index.html 반환
         if (request.getUri().equals("/")) {
             return responseDtoBuilder.response302Header()
-                    .setHeaders("Location", "/index.html").build();
+                    .setHeaders(HttpHeader.LOCATION, "/index.html").build();
         }
-        if (request.getUri().equals("/index.html")) {
+        if (request.getUri().equalsIgnoreCase("/index.html")) {
             return getIndexPage(request);
         }
 
@@ -32,8 +33,8 @@ public class DefaultController implements Controller {
         byte[] body = HtmlBuilder.buildIndexPage(request);
 
         return responseDtoBuilder.response200Header()
-                .setHeaders("Content-Type", WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
-                .setHeaders("Content-Length", Integer.toString(body.length))
+                .setHeaders(HttpHeader.CONTENT_TYPE, WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
                 .setBody(body)
                 .build();
     }

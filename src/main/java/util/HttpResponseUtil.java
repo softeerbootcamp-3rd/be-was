@@ -1,5 +1,6 @@
 package util;
 
+import constant.HttpHeader;
 import dto.HttpRequestDto;
 import dto.HttpResponseDto;
 import dto.HttpResponseDtoBuilder;
@@ -19,10 +20,7 @@ public class HttpResponseUtil {
                 .append(httpResponseDto.getStatus()).append(" ")
                 .append(httpResponseDto.getMessage()).append(" \r\n");
         // Response Headers
-        httpResponseDto.getHeaders().forEach((key, value) -> {
-            stringBuilder.append(key).append(": ")
-                    .append(value).append("\r\n");
-        });
+        stringBuilder.append(httpResponseDto.getHeaders().buildResponseHeader());
         stringBuilder.append("\r\n");
 
         return stringBuilder.toString();
@@ -51,8 +49,8 @@ public class HttpResponseUtil {
         }
 
         return responseDtoBuilder.response200Header()
-                .setHeaders("Content-Type", WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
-                .setHeaders("Content-Length", Integer.toString(body.length))
+                .setHeaders(HttpHeader.CONTENT_TYPE, WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
                 .setBody(body)
                 .build();
     }

@@ -1,5 +1,6 @@
 package util;
 
+import constant.HttpHeader;
 import db.SessionDatabase;
 import db.UserDatabase;
 import model.Session;
@@ -9,13 +10,15 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public class SessionUtil {
+    public static final String SESSION_ID = "sid";
+
     // HTTP Request의 쿠키 값을 통해 User 정보 반환
-    public static User getUserByCookie(Map<String, String> headers) {
+    public static User getUserByCookie(Map<HttpHeader, String> headers) {
         // 헤더가 존재하지 않는 경우 null 반환
         if (headers == null) return null;
         // 헤더의 쿠키 값 파싱
-        Map<String, String> cookies = WebUtil.parseCookie(headers.get("Cookie"));
-        String sessionId = cookies.get("sid");
+        Map<String, String> cookies = WebUtil.parseCookie(headers.get(HttpHeader.COOKIE));
+        String sessionId = cookies.get(SESSION_ID);
         // 세션 유효성 검사 후 User 정보 반환
         return getUserByValidSessionId(sessionId);
     }

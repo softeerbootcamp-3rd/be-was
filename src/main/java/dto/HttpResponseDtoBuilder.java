@@ -1,12 +1,14 @@
 package dto;
 
+import constant.HttpHeader;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponseDtoBuilder {
     private String status;
     private String message;
-    private final Map<String, String> headers;
+    private final Map<HttpHeader, String> headers;
     private byte[] body;
 
     public HttpResponseDtoBuilder() {
@@ -23,7 +25,7 @@ public class HttpResponseDtoBuilder {
         return this;
     }
 
-    public HttpResponseDtoBuilder setHeaders(String key, String value) {
+    public HttpResponseDtoBuilder setHeaders(HttpHeader key, String value) {
         headers.put(key, value);
         return this;
     }
@@ -34,7 +36,7 @@ public class HttpResponseDtoBuilder {
     }
 
     public HttpResponseDto build() {
-        return new HttpResponseDto(status, message, headers, body);
+        return new HttpResponseDto(status, message, new HttpHeaders(headers), body);
     }
 
     public HttpResponseDtoBuilder response200Header() {
@@ -62,7 +64,7 @@ public class HttpResponseDtoBuilder {
         for (String attribute : attributes) {
             cookies.append("; ").append(attribute);
         }
-        setHeaders("Set-Cookie", cookies.toString());
+        setHeaders(HttpHeader.SET_COOKIE, cookies.toString());
         return this;
     }
 }

@@ -2,8 +2,6 @@ package dto;
 
 import model.User;
 
-import java.util.Map;
-
 public class HttpRequestDtoBuilder {
     private final String method;
 
@@ -11,7 +9,7 @@ public class HttpRequestDtoBuilder {
 
     private final String httpVersion;
 
-    private Map<String, String> headers;
+    private HttpHeaders headers;
 
     private String body;
 
@@ -23,7 +21,7 @@ public class HttpRequestDtoBuilder {
         this.httpVersion = httpVersion;
     }
 
-    public HttpRequestDtoBuilder setHeaders(Map<String, String> headers) {
+    public HttpRequestDtoBuilder setHeaders(HttpHeaders headers) {
         this.headers = headers;
         return this;
     }

@@ -6,10 +6,10 @@ import java.util.Optional;
 public class HttpResponseDto {
     private final String status;
     private final String message;
-    private final Map<String, String> headers;
+    private final HttpHeaders headers;
     private final byte[] body;
 
-    public HttpResponseDto(String status, String message, Map<String, String> headers, byte[] body) {
+    public HttpResponseDto(String status, String message, HttpHeaders headers, byte[] body) {
         this.status = status;
         this.message = message;
         this.headers = headers;
@@ -28,7 +28,7 @@ public class HttpResponseDto {
         return message;
     }
 
-    public Map<String, String> getHeaders() {
+    public HttpHeaders getHeaders() {
         return headers;
     }
 

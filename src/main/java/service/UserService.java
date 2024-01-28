@@ -4,7 +4,6 @@ import db.SessionDatabase;
 import db.UserDatabase;
 import model.Session;
 import model.User;
-import util.SessionUtil;
 
 import java.util.Map;
 

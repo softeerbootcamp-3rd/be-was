@@ -1,5 +1,7 @@
 package util;
 
+import constant.HttpHeader;
+import dto.HttpHeaders;
 import dto.HttpRequestDtoBuilder;
 import model.User;
 import org.slf4j.Logger;
@@ -48,13 +50,16 @@ public class WebUtil {
             String[] requestLines = br.readLine().split(" ");
 
             // Parsing Request Headers
-            // TODO: Request Headers는 multiple value를 가질 수 있음
-            Map<String, String> requestHeaders = new HashMap<>();
+            Map<HttpHeader, String> requestHeaders = new HashMap<>();
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (line.isEmpty()) break;
                 String[] requestHeader = line.split(": ");
-                requestHeaders.put(requestHeader[0], requestHeader[1]);
+                try {
+                    requestHeaders.put(HttpHeader.fromHeaderName(requestHeader[0]), requestHeader[1]);
+                } catch (IllegalArgumentException e) {
+                    logger.error(e.getMessage());
+                }
             }
 
             // 헤더의 쿠키 값을 이용해 유저 로그인 여부 확인
@@ -62,7 +67,7 @@ public class WebUtil {
 
             // Parsing Request Body
             StringBuilder stringBuilder = new StringBuilder();
-            int contentLength = Integer.parseInt(requestHeaders.getOrDefault("Content-Length", DEFAULT_CONTENT_LENGTH));
+            int contentLength = Integer.parseInt(requestHeaders.getOrDefault(HttpHeader.CONTENT_LENGTH, DEFAULT_CONTENT_LENGTH));
             char[] charBuffer = new char[contentLength];
             br.read(charBuffer);
             stringBuilder.append(charBuffer, 0, contentLength);
@@ -70,7 +75,7 @@ public class WebUtil {
 
             // Create HttpRequestDto
             parsedRequest = new HttpRequestDtoBuilder(requestLines[0], requestLines[1], requestLines[2])
-                    .setHeaders(requestHeaders)
+                    .setHeaders(new HttpHeaders(requestHeaders))
                     .setBody(requestBody)
                     .setUser(user)
                     .build();

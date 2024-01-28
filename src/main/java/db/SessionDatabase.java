@@ -14,6 +14,7 @@ public class SessionDatabase {
     }
 
     public static Session findSessionById(String sessionId) {
+        if (sessionId == null) return null;
         return sessions.get(sessionId);
     }
 

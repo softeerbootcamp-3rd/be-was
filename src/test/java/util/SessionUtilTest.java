@@ -1,9 +1,8 @@
 package util;
 
+import constant.HttpHeader;
 import db.SessionDatabase;
 import db.UserDatabase;
-import dto.HttpRequestDto;
-import dto.HttpRequestDtoBuilder;
 import model.Session;
 import model.User;
 import org.assertj.core.api.Assertions;
@@ -24,12 +23,10 @@ public class SessionUtilTest {
 
         String testSessionId = SessionDatabase.addSession(new Session(testUser.getUserId()));
 
-        Map<String, String> cookieHeader = Map.of("Cookie", "sid=" + testSessionId);
-        HttpRequestDto request = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
-                .setHeaders(cookieHeader).build();
+        Map<HttpHeader, String> cookieHeader = Map.of(HttpHeader.COOKIE, "sid=" + testSessionId);
 
         // when
-        User loggedInUser = SessionUtil.getUserByCookie(request.getHeaders());
+        User loggedInUser = SessionUtil.getUserByCookie(cookieHeader);
 
         // then
         Assertions.assertThat(loggedInUser.getUserId()).isEqualTo(testUser.getUserId());
@@ -43,15 +40,18 @@ public class SessionUtilTest {
     public void getUserByCookieFailTest() throws NoSuchFieldException, IllegalAccessException {
         // given
         // 1. 쿠키 헤더가 없는 request
-        HttpRequestDto requestNoCookie = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1").build();
+//        HttpRequestDto requestNoCookie = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1").build();
+        Map<HttpHeader, String> requestNoCookie = null;
 
         // 2. 쿠키 헤더 값에 sid가 없는 request
-        HttpRequestDto requestNoSid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
-                .setHeaders(Map.of("Cookie", "cookie=hello")).build();
+//        HttpRequestDto requestNoSid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
+//                .setHeaders(new HttpHeaders(Map.of(HttpHeader.COOKIE, "cookie=hello"))).build();
+        Map<HttpHeader, String> requestNoSid = Map.of(HttpHeader.COOKIE, "cookie=hello");
 
         // 3. sid에 해당하는 세션이 없는 request
-        HttpRequestDto requestEmptySid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
-                .setHeaders(Map.of("Cookie", "sid=1234")).build();
+//        HttpRequestDto requestEmptySid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
+//                .setHeaders(new HttpHeaders(Map.of(HttpHeader.COOKIE, "sid=1234"))).build();
+        Map<HttpHeader, String> requestEmptySid = Map.of(HttpHeader.COOKIE, "sid=1234");
 
         // 4. sid에 해당하는 세션의 expireDate가 지나 유효하지 않은 request
         Session expiredSession = new Session("testUser");
@@ -61,19 +61,26 @@ public class SessionUtilTest {
         expireDate.set(expiredSession, LocalDateTime.now().minusDays(1));
         String expiredSessionId = SessionDatabase.addSession(expiredSession);
 
-        HttpRequestDto requestExpiredSid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
-                .setHeaders(Map.of("Cookie", "sid=" + expiredSessionId)).build();
+//        HttpRequestDto requestExpiredSid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
+//                .setHeaders(new HttpHeaders(Map.of(HttpHeader.COOKIE, "sid=" + expiredSessionId))).build();
+
+        Map<HttpHeader, String> requestExpiredSid = Map.of(HttpHeader.COOKIE, "sid=" + expiredSessionId);
 
         // 5. sid에 해당하는 세션에 매핑되는 user 정보가 없는 request
         String noUserSid = SessionDatabase.addSession(new Session("noUser"));
-        HttpRequestDto requestNoUserSid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
-                .setHeaders(Map.of("Cookie", "sid=" + noUserSid)).build();
+//        HttpRequestDto requestNoUserSid = new HttpRequestDtoBuilder("GET", "/index.html", "HTTP/1.1")
+//                .setHeaders(new HttpHeaders(Map.of(HttpHeader.COOKIE, "sid=" + noUserSid))).build();
+        Map<HttpHeader, String> requestNoUserSid = Map.of(HttpHeader.COOKIE, "sid=" + noUserSid);
 
         // when & then
-        Assertions.assertThat(SessionUtil.getUserByCookie(requestNoCookie.getHeaders())).isNull();
-        Assertions.assertThat(SessionUtil.getUserByCookie(requestNoSid.getHeaders())).isNull();
-        Assertions.assertThat(SessionUtil.getUserByCookie(requestEmptySid.getHeaders())).isNull();
-        Assertions.assertThat(SessionUtil.getUserByCookie(requestExpiredSid.getHeaders())).isNull();
-        Assertions.assertThat(SessionUtil.getUserByCookie(requestNoUserSid.getHeaders())).isNull();
+        Assertions.assertThat(SessionUtil.getUserByCookie(requestNoCookie)).isNull();
+        System.out.println(1);
+        Assertions.assertThat(SessionUtil.getUserByCookie(requestNoSid)).isNull();
+        System.out.println(2);
+        Assertions.assertThat(SessionUtil.getUserByCookie(requestEmptySid)).isNull();
+        System.out.println(3);
+        Assertions.assertThat(SessionUtil.getUserByCookie(requestExpiredSid)).isNull();
+        System.out.println(4);
+        Assertions.assertThat(SessionUtil.getUserByCookie(requestNoUserSid)).isNull();
     }
 }
