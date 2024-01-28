@@ -1,13 +1,14 @@
 package controller;
 
-import webserver.annotation.GetMapping;
-import webserver.annotation.RequestParam;
-import webserver.exception.GeneralException;
+import dto.UserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import webserver.annotation.GetMapping;
+import webserver.annotation.PostMapping;
+import webserver.annotation.RequestBody;
+import webserver.annotation.RequestParam;
 import webserver.response.Response;
-import webserver.type.ContentType;
 
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -22,6 +23,13 @@ public class UserController {
 
         userService.createUser(userId, password, name, email);
 
-        return Response.onSuccess(ContentType.HTML, "회원가입 완료".getBytes());
+        return Response.redirect("/index.html");
+    }
+
+    @PostMapping(path = "/user/create")
+    public Response createUserByPost(@RequestBody UserRequest.Register register){
+        userService.createUser(register);
+
+        return Response.redirect("/index.html");
     }
 }

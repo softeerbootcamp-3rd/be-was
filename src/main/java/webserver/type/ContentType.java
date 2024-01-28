@@ -20,7 +20,7 @@ public enum ContentType {
     }
 
     public String getValue() {
-        return value;
+        return value + ";charset=utf-8";
     }
 
     public static ContentType findContentType(String fileExtension){

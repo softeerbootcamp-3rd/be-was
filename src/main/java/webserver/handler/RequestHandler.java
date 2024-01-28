@@ -1,19 +1,30 @@
 package webserver.handler;
 
-import webserver.header.RequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.parser.GetRequestParser;
-import webserver.parser.RequestHeaderParser;
+import webserver.adapter.Adapter;
+import webserver.adapter.GetRequestAdapter;
+import webserver.adapter.PostRequestAdapter;
+import webserver.adapter.ResourceAdapter;
+import webserver.parser.RequestParser;
+import webserver.request.Request;
 import webserver.response.Response;
-import webserver.status.HttpStatus;
-import webserver.type.ContentType;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final List<Adapter> adapters = List.of(
+            ResourceAdapter.getInstance(),
+            GetRequestAdapter.getInstance(),
+            PostRequestAdapter.getInstance()
+    );
+
     private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -28,28 +39,24 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
 
-            RequestHeader requestHeader = RequestHeaderParser.parse(in);
+            Request request = RequestParser.parse(in);
 
-            Response response = handleRequest(requestHeader);
+            Response response = handleRequest(request);
             sendResponse(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private Response handleRequest(RequestHeader requestHeader) {
+    private Response handleRequest(Request request) {
         Response response = null;
 
         try{
-            if(requestHeader.getMethod().equals("GET")){
-                response = ResourceHandler.run(requestHeader);
+            for(Adapter adapter: adapters){
+                if(adapter.canRun(request)){
+                    response = adapter.run(request);
 
-                if(response == null){
-                    Object result = GetRequestHandler.run(GetRequestParser.parse(requestHeader.getPath()));
-
-                    if (result instanceof Response) {
-                        response = (Response) result;
-                    }
+                    break;
                 }
             }
 
@@ -68,16 +75,11 @@ public class RequestHandler implements Runnable {
                 throw new IllegalArgumentException("");
             }
 
-            HttpStatus httpStatus = response.getHttpStatus();
-            ContentType contentType = response.getContentType();
-            byte[] body = response.getBody();
+            dos.writeBytes(response.getHeaders());
 
-            dos.writeBytes(String.format("HTTP/1.1 %d %s \r\n", httpStatus.getCode(), httpStatus.getName()));
-            dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", contentType.getValue()));
-            dos.writeBytes(String.format("Content-Length: %d\r\n", body.length));
-            dos.writeBytes("\r\n");
-
-            dos.write(body, 0, body.length);
+            if(response.existsBody()) {
+                dos.write(response.getBody(), 0, response.getBody().length);
+            }
 
             dos.flush();
         } catch (IOException e) {
