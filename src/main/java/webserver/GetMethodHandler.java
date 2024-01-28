@@ -24,6 +24,9 @@ public class GetMethodHandler {
     }
 
     private Method findMethod(String url) {
+        if(url.contains(".")) {
+            url = "/resources";
+        }
         for (Class<?> c : controllers) {
             Method[] methods = c.getDeclaredMethods();
             for (Method method : methods) {

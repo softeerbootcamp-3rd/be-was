@@ -29,7 +29,7 @@ public class ResourceController extends CrudController {
         contentType.put("jpg", "image/jpg");
         contentType.put("ico", "image/x-icon");
     }
-    @GetMapping(url = "/index.html")
+    @GetMapping(url = "/resources")
     public void doGet(HttpRequest request, HttpResponse response) {
         String url;
         if (request.getUrl().endsWith(".html")) {
