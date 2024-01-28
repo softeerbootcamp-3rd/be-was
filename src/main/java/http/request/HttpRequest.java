@@ -58,6 +58,11 @@ public class HttpRequest {
         return sb.toString();
     }
 
+    public String getEtcHeaderValue(String key) {
+        return this.etcHeaders.getOrDefault(key, "");
+
+    }
+
     public GeneralHeader getGeneralHeader() {
         return generalHeader;
     }
