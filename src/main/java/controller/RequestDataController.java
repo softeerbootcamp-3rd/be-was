@@ -60,10 +60,8 @@ public class RequestDataController {
             File file = new File(ResourceLoader.url + directory + url);
             if (file.exists() && !file.isDirectory()) {
                 if (url.equals("/user/login.html")) {
-                    if (requestData.getHeaderValue("Cookie") != null) {
-                        if (UserService.isLoggedIn(requestData)) {
-                            return new Response(HttpStatusCode.FOUND, "/index.html");
-                        }
+                    if (requestData.isLoggedIn()) {
+                        return new Response(HttpStatusCode.FOUND, "/index.html");
                     }
                 }
                 return new Response(HttpStatusCode.OK, url);
@@ -113,7 +111,7 @@ public class RequestDataController {
 
     @Route(method = HttpMethod.GET, uri = "/user/list.html")
     private static Response handleFileList(RequestData requestData) {
-        if (requestData.getHeaderValue("Cookie") != null && UserService.isLoggedIn(requestData)) {
+        if (requestData.isLoggedIn()) {
             return new Response(HttpStatusCode.OK, requestData.getRequestContent());
         }
         return new Response(HttpStatusCode.FOUND, "/index.html");

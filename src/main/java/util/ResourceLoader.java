@@ -37,7 +37,7 @@ public class ResourceLoader {
                 bytesRead = inputStream.read(buffer);
             }
 
-            if (requestData.getHeaderValue("Cookie") != null && UserService.isLoggedIn(requestData) && extension.equals("html")) {
+            if (requestData.isLoggedIn() && extension.equals("html")) {
                 String modifiedContent = DynamicHtml.modifyHtml(new String(buffer), true, requestData);
                 return modifiedContent.getBytes();
             }

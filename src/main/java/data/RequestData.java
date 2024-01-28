@@ -11,20 +11,23 @@ public class RequestData {
     private final Map<String, String> headers;
     private final String body;
 
+    private final boolean loggedIn;
 
-    public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers) {
+    public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, boolean loggedIn) {
         this.method = method;
         this.requestContent = requestContent;
         this.httpVersion = httpVersion;
         this.headers = headers;
         this.body = null;
+        this.loggedIn = loggedIn;
     }
-    public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, String body) {
+    public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, String body, boolean loggedIn) {
         this.method = method;
         this.requestContent = requestContent;
         this.httpVersion = httpVersion;
         this.headers = headers;
         this.body = body;
+        this.loggedIn = loggedIn;
     }
 
     public HttpMethod getMethod() {
@@ -48,6 +51,8 @@ public class RequestData {
     }
 
     public String getBody() { return body; }
+
+    public boolean isLoggedIn() { return loggedIn; }
 
     @Override
     public String toString() {

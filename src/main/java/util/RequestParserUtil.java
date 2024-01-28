@@ -1,9 +1,12 @@
 package util;
 
 import controller.HttpMethod;
+import controller.HttpStatusCode;
 import data.RequestData;
+import data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +31,12 @@ public class RequestParserUtil {
 
         Map<String, String> headers = parseHeaders(br);
 
+        // 요청의 로그인 여부 판단
+        boolean isLoggedIn = false;
+        if (headers.get("Cookie") != null) {
+            isLoggedIn = UserService.isLoggedIn(headers.get("Cookie"));
+        }
+
         String requestBody = "";
 
         if(tokens[0].equals("POST")) {
@@ -39,11 +48,11 @@ public class RequestParserUtil {
 
                 logger.debug("requestBody: {}", requestBody);
 
-                return new RequestData(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, requestBody);
+                return new RequestData(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, requestBody, isLoggedIn);
             }
         }
 
-        return new RequestData(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers);
+        return new RequestData(HttpMethod.valueOf(tokens[0]), tokens[1], tokens[2], headers, isLoggedIn);
     }
 
     private static Map<String, String> parseHeaders(BufferedReader br) throws IOException {

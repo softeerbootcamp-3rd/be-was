@@ -57,10 +57,10 @@ public class UserService {
 
     }
 
-    public static boolean isLoggedIn(RequestData requestData) {
+    public static boolean isLoggedIn(String cookie) {
         logger.debug("isLoggedIn()");
 
-        String[] sid = requestData.getHeaderValue("Cookie").split("=");
+        String[] sid = cookie.split("=");
 
         logger.debug("Cookie");
         logger.debug("\t" + sid[0] + " : " + sid[1]);
