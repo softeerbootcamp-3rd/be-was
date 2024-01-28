@@ -86,10 +86,8 @@ public class UserControllerImpl implements UserController {
 
     private boolean checkLogin(HttpRequest httpRequest) {
         boolean isLogin = false;
-        if(httpRequest.getHeaders().getOptionHeaders().containsKey("Cookie")){
-            String cookieValue = httpRequest.getHeaders().getOptionHeaders().get("Cookie");
-            String[] cookieValues = cookieValue.split("=");
-            String sessionId = cookieValues[1];
+        if(httpRequest.getHeaders().hasCookie()){
+            String sessionId = httpRequest.getHeaders().getUserSessionId();
             isLogin = Session.loginCheck(UUID.fromString(sessionId));
         }
         return isLogin;

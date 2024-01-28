@@ -34,10 +34,7 @@ public class HttpRequestFactoryImpl implements HttpRequestFactory {
     }
 
     private Body parseRequestBody(BufferedReader bufferedReader, RequestHeaders requestHeaders) throws IOException {
-         int contentLength = 0;
-        if(requestHeaders.getOptionHeaders().containsKey("Content-Length")){
-            contentLength = Integer.parseInt(requestHeaders.getOptionHeaders().get("Content-Length"));
-        }
+        int contentLength = requestHeaders.getContentLength();
         char[] body = new char[contentLength];
         bufferedReader.read(body);
         String temp = new String(body);

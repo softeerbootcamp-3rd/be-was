@@ -1,10 +1,8 @@
 package handler;
 
-import config.AppConfig;
 import controller.UserController;
 import dto.HttpResponseDto;
 import exception.BadRequestException;
-import exception.InternalServerError;
 import exception.InvalidLogin;
 import model.http.ContentType;
 import model.http.Status;
@@ -36,8 +34,6 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
             handleInvalidLoginException(e, httpResponseDto);
         } catch (BadRequestException e) {
             handleBadRequestException(e, httpResponseDto);
-        } catch (InternalServerError e){
-            handleInternalServerError(e, httpResponseDto);
         }
     }
 
@@ -54,12 +50,6 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
         httpResponseDto.setContentType(ContentType.PLAIN);
         httpResponseDto.setContent(e.getMessage().getBytes());
         logger.error("Bad_Request 발생", e.getMessage());
-        e.getStackTrace();
-    }
-
-    private void handleInternalServerError(InternalServerError e, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
-        logger.error("InternalServerError 발생", e.getMessage());
         e.getStackTrace();
     }
 }

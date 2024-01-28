@@ -40,10 +40,9 @@ public class AuthFilter implements Filter {
 
     @Override
     public void doFilter(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
-        String cookieValue = httpRequest.getHeaders().getOptionHeaders().get("Cookie");
         boolean isLogin = false;
-        if (cookieValue != null) {
-            isLogin = checkLogin(cookieValue);
+        if (httpRequest.getHeaders().hasCookie()) {
+            isLogin = checkLogin(httpRequest);
         }
         if (httpRequest.getStartLine().getPathUrl().startsWith("/user/list") && !isLogin) {
             httpResponseDto.setStatus(Status.REDIRECT);
@@ -60,12 +59,9 @@ public class AuthFilter implements Filter {
         }
     }
 
-    private boolean checkLogin(String cookieValue) {
-        boolean isLogin;
-        String[] cookieValues = cookieValue.split("=");
-        String sessionId = cookieValues[1];
-        isLogin = Session.loginCheck(UUID.fromString(sessionId));
-        return isLogin;
+    private boolean checkLogin(HttpRequest httpRequest) {
+        String sessionId = httpRequest.getHeaders().getUserSessionId();
+        return Session.loginCheck(UUID.fromString(sessionId));
     }
     @Override
     public void destroy() {
