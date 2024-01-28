@@ -7,10 +7,10 @@ import java.util.UUID;
 public class SessionManager {
     private static Map<String, Session> sessions = new HashMap<>();
     private static Map<String, Long> lastAccessTime = new HashMap<>();
-    private static final long INVALIDATE_TIME = 10000; // 1시간
+    private static final long INVALIDATE_TIME = 60 * 60 * 1000; // 1시간
 
     public static String createSession() {
-        String sessionId = makeSessionId();
+        String sessionId = UUID.randomUUID().toString();
         sessions.put(sessionId, new Session());
         lastAccessTime.put(sessionId, System.currentTimeMillis());
         return sessionId;
@@ -35,9 +35,5 @@ public class SessionManager {
         if (lastAccessTime.containsKey(sessionId) &&
                 lastAccessTime.get(sessionId) + INVALIDATE_TIME < System.currentTimeMillis())
             removeSession(sessionId);
-    }
-
-    public static String makeSessionId() {
-        return UUID.randomUUID().toString();
     }
 }

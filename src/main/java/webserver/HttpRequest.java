@@ -1,22 +1,20 @@
-package dto;
+package webserver;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Request {
+public class HttpRequest {
     private String method;
     private String path;
-    private String methodAndPath;
     private Map<String, String> params;
     private Map<String, String> headers;
     private Map<String, String> body;
     private Map<String, String> cookies;
 
-    public Request(String methodAndPath) {
+    public HttpRequest(String methodAndPath) {
         String[] arr = methodAndPath.split(" ");
         this.method = arr[0];
         this.path = arr[1];
-        this.methodAndPath = methodAndPath;
         this.params = new HashMap<>();
         this.headers = new HashMap<>();
         this.cookies = new HashMap<>();
@@ -32,10 +30,6 @@ public class Request {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getMethodAndPath() {
-        return methodAndPath;
     }
 
     public Map<String, String> getParams() {

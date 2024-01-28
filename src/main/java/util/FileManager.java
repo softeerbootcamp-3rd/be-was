@@ -1,7 +1,6 @@
 package util;
 
 import constant.MimeType;
-import constant.StaticFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,8 +8,8 @@ import java.io.IOException;
 
 public class FileManager {
 
-    public static byte[] getFileByPath(StaticFile baseFile, String subPath) throws IOException {
-        File file = new File(baseFile.path + subPath);
+    public static byte[] getFileBytes(String basePath, String subPath) throws IOException {
+        File file = new File(basePath + subPath);
         if (file.exists()) {
             return fileToByte(file);
         }

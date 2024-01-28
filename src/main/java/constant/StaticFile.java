@@ -1,13 +1,9 @@
 package constant;
 
-public enum StaticFile {
-    HTML_BASE ("src/main/resources/templates"),
-    SUPPORT_FILE_BASE ("src/main/resources/static"),
-    MAIN_PAGE ("/index.html");
+public class StaticFile {
+    public static final String HTML_BASE_PATH = "src/main/resources/templates";
+    public static final String SUPPORT_FILE_BASE_PATH = "src/main/resources/static";
+    public static final String MAIN_PAGE_PATH = "/index.html";
+    public static final String LOGIN_FAILED_PATH = "/user/login_failed.html";
 
-    public final String path;
-
-    StaticFile(String path) {
-        this.path = path;
-    }
 }

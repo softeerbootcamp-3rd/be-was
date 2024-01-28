@@ -5,7 +5,8 @@ public enum ErrorCode {
     USER_ID_DUPLICATED (HttpStatus.BAD_REQUEST, "중복되는 유저 id 입니다."),
     USER_EMAIL_DUPLICATED (HttpStatus.BAD_REQUEST, "중복되는 유저 이메일 입니다."),
     USER_NOT_FOUND (HttpStatus.BAD_REQUEST, "유저가 존재하지 않습니다."),
-    USER_WRONG_PASSWORD (HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다.");
+    USER_WRONG_PASSWORD (HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
+    SERVER_ERROR (HttpStatus.INTERNAL_SERVER_ERROR, "서버에 문제 발생, 다음에 시도해주세요.");
 
     public final HttpStatus httpStatus;
     public final String errorMessage;

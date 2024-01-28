@@ -1,4 +1,4 @@
-package dto;
+package webserver;
 
 import constant.ErrorCode;
 import constant.MimeType;
@@ -7,12 +7,12 @@ import constant.HttpStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Response {
+public class HttpResponse {
     private HttpStatus status;
     private List<String> headers;
     private byte[] body;
 
-    public Response() {
+    public HttpResponse() {
         this.status = null;
         this.headers = new ArrayList<>();
         this.body = null;
@@ -24,7 +24,7 @@ public class Response {
         addContentType(MimeType.TXT.contentType);
     }
 
-    public Response makeRedirect(String redirectUrl) {
+    public HttpResponse makeRedirect(String redirectUrl) {
         this.status = HttpStatus.REDIRECT;
         addHeader("Location", redirectUrl);
         addContentType(MimeType.HTML.contentType);
