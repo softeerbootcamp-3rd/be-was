@@ -24,13 +24,13 @@ public class ViewMaker {
                 StringBuilder stringBuilder = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if (request.getUserId()!=null && line.startsWith("<!--ifLoggedIn-->")) {
-                        line = line.substring("<!--ifLoggedIn-->".length());
+                    if (request.getUserId()!=null && line.contains("<!--ifLoggedIn-->")) {
+                        line = line.strip().substring("<!--ifLoggedIn-->".length());
                         line = changeWord(line, "${username}", request.getUserId());
                         line = removeCommentSymbols(line);
                     }
-                    if (request.getUserId()==null && line.startsWith("<!--ifNotLoggedIn-->")) {
-                        line = line.substring("<!--ifNotLoggedIn-->".length());
+                    if (request.getUserId()==null && line.contains("<!--ifNotLoggedIn-->")) {
+                        line = line.strip().substring("<!--ifNotLoggedIn-->".length());
                         line = removeCommentSymbols(line);
                     }
                     stringBuilder.append(line).append("\n");
