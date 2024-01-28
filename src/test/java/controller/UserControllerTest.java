@@ -118,6 +118,18 @@ class UserControllerTest {
         assertThat(httpResponse.getStatusCode()).isEqualTo(FOUND.getStatus());
     }
 
+    @ParameterizedTest
+    @MethodSource("status_404_when_not_post_method_parameters")
+    @DisplayName("회원가입을 요청할 때, POST 메소드가 아니면 404 상태코드를 반환하는지 확인")
+    void return_status_404_when_user_create(HttpRequest httpRequest) throws Exception {
+
+        // when
+        HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
+
+        // then
+        assertThat(httpResponse.getStatusCode()).isEqualTo(NOT_FOUND.getStatus());
+    }
+
 
     private static Stream<Arguments> status_200_Parameters() throws IOException {
         return Stream.of(
@@ -207,6 +219,22 @@ class UserControllerTest {
                         + "\r\n"
                         + "\r\n"
                         + "userId=test1&password=test2")))) // 비밀번호가 틀린 경우
+        );
+    }
+
+    private static Stream<Arguments> status_404_when_not_post_method_parameters() throws IOException {
+        return Stream.of(
+                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/create HTTP/1.1"
+                        + "\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded"
+                        + "\r\n"
+                        + "\r\n"
+                )))),
+                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("PUT /user/login HTTP/1.1"
+                        + "\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded"
+                        + "\r\n"
+                        + "\r\n"))))
         );
     }
 }
