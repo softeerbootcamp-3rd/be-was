@@ -4,6 +4,7 @@ import db.Database;
 import db.SessionStorage;
 import model.Request;
 import model.Response;
+import model.StatusCode;
 import model.User;
 import utils.Util;
 
@@ -15,7 +16,7 @@ import java.util.HashMap;
 
 public class LastController {
 
-    public static void route(Request request, Response response, boolean login) {
+    public static void route(Request request, Response response, String verifiedSessionId) {
         String path = request.getPath();
         String filePath;
 
@@ -26,7 +27,7 @@ public class LastController {
         File file = new File(filePath);
 
         if(!file.exists()) {
-            response.setStatusCode("302");
+            response.setStatusCode(StatusCode.FOUND);
             response.addHeader("Location", "/error404.html");
             return;
         }
@@ -35,9 +36,9 @@ public class LastController {
             HashMap<String, String> replace = new HashMap<>();
             StringBuilder stringBuilder = new StringBuilder();
 
-            if(login) {
+            if(verifiedSessionId != null) {
                 replace.put("{{login}}",
-                        "<li>" + SessionStorage.findBySessionId(request.getSessionId()).getUserId() + "</li>" +
+                        "<li><a>" + SessionStorage.findBySessionId(verifiedSessionId).getUserId() + "</a></li>" +
                         "<li><a href=\"/user/logout\" role=\"button\">로그아웃</a></li>\n" +
                         "<li><a href=\"/user/modify\" role=\"button\">개인정보수정</a></li>");
             }
@@ -47,27 +48,13 @@ public class LastController {
                         "<li><a href=\"/user/form.html\" role=\"button\">회원가입</a></li>");
             }
             if(path.equals("/user/list.html")) {
-                Collection<User> collection = Database.findAll();
-                StringBuilder sb = new StringBuilder();
-                int idx = 0;
-                for(User user : collection) {
-                    sb.append("<tr><th scope=\"row\">");
-                    sb.append(String.valueOf(++idx));
-                    sb.append("</th> <td>");
-                    sb.append(user.getUserId());
-                    sb.append("</td> <td>");
-                    sb.append(user.getName());
-                    sb.append("</td> <td>");
-                    sb.append(user.getEmail());
-                    sb.append("</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
-                }
-                replace.put("{{list}}", sb.toString());
+                replace.put("{{list}}", makeUserList());
             }
 
             String html = Util.readFile(stringBuilder, filePath, replace);
             byte[] data = html.getBytes();
 
-            response.setStatusCode("200");
+            response.setStatusCode(StatusCode.OK);
             response.setBody(data);
             response.addHeader("Content-Type", "text/html;charset=utf-8");
             response.addHeader("Content-Length", String.valueOf(data.length));
@@ -84,10 +71,28 @@ public class LastController {
                 e.printStackTrace();
             }
 
-            response.setStatusCode("200");
+            response.setStatusCode(StatusCode.OK);
             response.setBody(data);
             response.addHeader("Content-Type", request.getMimeType() + ";charset=utf-8");
             response.addHeader("Content-Length", String.valueOf(data.length));
         }
+    }
+
+    private static String makeUserList() {
+        Collection<User> collection = Database.findAll();
+        StringBuilder sb = new StringBuilder();
+        int idx = 0;
+        for(User user : collection) {
+            sb.append("<tr><th scope=\"row\">");
+            sb.append(String.valueOf(++idx));
+            sb.append("</th> <td>");
+            sb.append(user.getUserId());
+            sb.append("</td> <td>");
+            sb.append(user.getName());
+            sb.append("</td> <td>");
+            sb.append(user.getEmail());
+            sb.append("</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>");
+        }
+        return sb.toString();
     }
 }

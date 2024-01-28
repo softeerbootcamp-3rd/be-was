@@ -11,14 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Response {
-    private static final HashMap<String, String> statusCodeMessage = new HashMap<>() {{
-        put("200", "OK"); put("302", "Found"); put("404", "Not Found"); }};
     private static final Logger logger = LoggerFactory.getLogger(Response.class);
-    private String statusCode;
+    private StatusCode statusCode;
     private byte[] body;
     private Map<String, String> headers = new HashMap<>();
 
-    public void setStatusCode(String statusCode) {this.statusCode = statusCode;}
+    public void setStatusCode(StatusCode statusCode) {this.statusCode = statusCode;}
     public void setBody(byte[] body) {this.body = body;}
     public void addHeader(String key, String value) {this.headers.put(key, value);}
 
@@ -31,7 +29,7 @@ public class Response {
     }
     private void handleResponseHeader(DataOutputStream dos) {
         try {
-            dos.writeBytes("HTTP/1.1 " + statusCode + " " + statusCodeMessage.get(statusCode) + " \r\n");
+            dos.writeBytes("HTTP/1.1 " + statusCode.getCode() + " " + statusCode.getMessage() + " \r\n");
             for(String key : headers.keySet()) {
                 dos.writeBytes(key + ": " + headers.get(key) + "\r\n");
             }
