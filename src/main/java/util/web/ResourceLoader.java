@@ -1,4 +1,4 @@
-package util;
+package util.web;
 
 import constant.MimeType;
 import exception.ResourceNotFoundException;

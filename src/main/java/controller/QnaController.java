@@ -9,7 +9,7 @@ import db.QnaDatabase;
 import dto.QnaDto;
 import model.Qna;
 import model.User;
-import util.SharedData;
+import util.web.SharedData;
 import webserver.HttpResponse;
 
 import java.util.Date;

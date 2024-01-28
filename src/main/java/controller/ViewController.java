@@ -2,16 +2,12 @@ package controller;
 
 import annotation.Controller;
 import annotation.RequestMapping;
-import annotation.RequestParam;
 import constant.HttpHeader;
 import constant.HttpStatus;
 import constant.MimeType;
-import db.QnaDatabase;
-import exception.ResourceNotFoundException;
-import model.Qna;
-import util.HtmlBuilder;
-import util.ResourceLoader;
-import util.SharedData;
+import util.html.HtmlBuilder;
+import util.web.ResourceLoader;
+import util.web.SharedData;
 import webserver.HttpResponse;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package util;
+package util.web;
 
 import model.User;
 import webserver.HttpRequest;

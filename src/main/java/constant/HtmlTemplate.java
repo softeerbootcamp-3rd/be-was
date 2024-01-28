@@ -1,6 +1,8 @@
 package constant;
 
-import util.HtmlBuilder;
+import util.html.HtmlBuilder;
+import util.html.QnaHtml;
+import util.html.UserHtml;
 
 import java.util.function.Function;
 
@@ -25,7 +27,7 @@ public enum HtmlTemplate {
 
     USER_NAME("<!--user-name-->",
             "<li><a id=\"userName\"><!--user-name--></a></li>",
-            HtmlBuilder::replaceUser, HtmlBuilder::empty),
+            UserHtml::replaceUser, HtmlBuilder::empty),
 
     USER_LIST("<!--user-list-->",
             "<tr>" +
@@ -35,7 +37,7 @@ public enum HtmlTemplate {
             "   <td><!--user-email--></td>" +
             "   <td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>" +
         "   </tr>",
-            HtmlBuilder::replaceUserList, HtmlBuilder::empty),
+            UserHtml::replaceUserList, HtmlBuilder::empty),
 
     QNA_LIST("<!--qna-list-->",
             "<li>\n" +
@@ -56,11 +58,11 @@ public enum HtmlTemplate {
             "                      </div>\n" +
             "                  </div>\n" +
             "              </li>",
-            HtmlBuilder::replaceQnaList, HtmlBuilder::replaceQnaList),
+            QnaHtml::replaceQnaList, QnaHtml::replaceQnaList),
 
     QNA_PAGINATION("<!--qna-pagination-->",
             "<li class=\"<!--active-->\"><a href=\"/index.html?page=<!--link-->\"><!--page-number--></a></li>",
-            HtmlBuilder::replacePagination, HtmlBuilder::replacePagination),
+            QnaHtml::replacePagination, QnaHtml::replacePagination),
 
     QNA_TITLE("<!--qna-->",
             "<header class=\"qna-header\">\n" +
@@ -103,7 +105,7 @@ public enum HtmlTemplate {
                     "\n" +
                     "              <!--comments-->\n" +
                     "          </div>",
-            HtmlBuilder::replaceQna, HtmlBuilder::replaceQna);
+            QnaHtml::replaceQna, QnaHtml::replaceQna);
     ;
 
     private final String originalValue;

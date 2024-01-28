@@ -6,8 +6,8 @@ import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
 import org.junit.jupiter.api.Test;
-import util.RequestParser;
-import util.SessionManager;
+import util.web.RequestParser;
+import util.session.SessionManager;
 import webserver.HttpResponse;
 
 import static controller.UserController.createUser;

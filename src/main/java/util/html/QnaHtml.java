@@ -1,79 +1,22 @@
-package util;
+package util.html;
 
 import com.google.common.base.Strings;
-import constant.HtmlTemplate;
 import db.CommentDatabase;
 import db.QnaDatabase;
 import db.UserDatabase;
 import exception.ResourceNotFoundException;
 import model.Qna;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import util.web.SharedData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HtmlBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(HtmlBuilder.class);
+public class QnaHtml {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static final int pageSize = 10;
     private static final int paginationSize = 5;
-
-    public static byte[] process(byte[] fileContent) {
-        String result = new String(fileContent);
-        User user = SharedData.requestUser.get();
-
-        if (user != null) {
-            for (HtmlTemplate template : HtmlTemplate.values()) {
-                if (template.getOriginalValue() == null
-                || !result.contains(template.getOriginalValue())) continue;
-                result = result.replace(template.getOriginalValue(),
-                        template.getLoggedInFunction().apply(template.getTemplate()));
-            }
-            return result.getBytes();
-        }
-
-        for (HtmlTemplate template : HtmlTemplate.values()) {
-            if (template.getOriginalValue() == null
-            || !result.contains(template.getOriginalValue())) continue;
-            result = result.replace(template.getOriginalValue(),
-                    template.getLoggedOutFunction().apply(template.getTemplate()));
-        }
-        return result.getBytes();
-    }
-
-    public static String empty(String unused) {
-        return "";
-    }
-
-    public static String getRaw(String template) {
-        if (template == null)
-            return "";
-        return template;
-    }
-
-    public static String replaceUser(String template) {
-        if (template == null)
-            return "";
-        return template.replace("<!--user-name-->", SharedData.requestUser.get().getName());
-    }
-
-    public static String replaceUserList(String template) {
-        if (template == null)
-            return "";
-        StringBuilder sb = new StringBuilder();
-        List<User> userList = new ArrayList<>(UserDatabase.findAll());
-        for (int i = 0; i < userList.size(); i++) {
-            User user = userList.get(i);
-            sb.append(template.replace("<!--order-->", String.valueOf(i + 1))
-                    .replace("<!--user-id-->", user.getUserId())
-                    .replace("<!--user-name-->", user.getName())
-                    .replace("<!--user-email-->", user.getEmail()));
-        }
-        return sb.toString();
-    }
 
     public static String replaceQnaList(String template) {
         if (template == null)
@@ -113,7 +56,7 @@ public class HtmlBuilder {
                     .replace("<!--page-number-->", "«"));
         for (int i = startPage; i <= Math.min(totalPages, endPage); i++) {
             String temp = template.replace("<!--link-->", Integer.toString(i))
-                            .replace("<!--page-number-->", Integer.toString(i));
+                    .replace("<!--page-number-->", Integer.toString(i));
             if (currentPage == i)
                 temp = temp.replace("<!--active-->", "active");
             sb.append(temp);
