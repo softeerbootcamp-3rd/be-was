@@ -1,15 +1,19 @@
 package webserver;
 
+import constant.MimeType;
 import constant.StaticFile;
 import util.FileManager;
 
 import java.io.IOException;
 
-public class StaticHandler {
+import static constant.StaticFile.*;
+
+public class FileContentHandler {
 
     /**
-     * <h3> 정적 컨텐츠 요청을 처리 </h3>
-     * <p> 요청이 정적 요청이고, 요청에 맞는 정적 파일이 존재하면 HttpResponse 생성 후 반환</p>
+     * <h3> 파일 컨텐츠 요청을 처리 </h3>
+     * <p> html 파일 요청이면, 동적으로 처리할 부분을 처리해 응답하고 </p>
+     * <p> 정적 파일 요청이라면, 파일을 bytecode 로 변환해 응답 </p>
      *
      * @param httpRequest
      * @return HttpResponse
@@ -17,28 +21,30 @@ public class StaticHandler {
      */
     public static HttpResponse handle(HttpRequest httpRequest) throws IOException {
 
-        // 정적 컨텐츠 요청 - GET 메소드인지 확인
+        // GET 메소드인지 확인
         if (httpRequest.getMethod().equals("GET")) {
-
             HttpResponse httpResponse = new HttpResponse();
-            String basePath = StaticFile.HTML_BASE_PATH;
             String requestPath = httpRequest.getPath();
-            byte[] body;
+            MimeType fileMimeType = FileManager.getMimeType(requestPath);
 
-            // 루트 페이지로 요청이 들어온 경우에도 메인 페이지로 이동할 수 있도록
-            if (requestPath.equals("/")) { httpRequest.setPath(StaticFile.MAIN_PAGE_PATH); }
+            // 로그인하지 않은 사용자가 로그인한 사용자만 사용할 수 있는 파일에 접근하면 로그인 페이지로 리다이렉트
+            if (ThreadLocalManager.getSession() == null &&
+                    fileMimeType.equals(MimeType.HTML) && !FILE_CAN_READ_WITHOUT_LOGIN.contains(requestPath)) {
+                httpResponse.makeRedirect(LOGIN_PAGE_PATH);
+            } else {
+                // 루트 페이지로 요청이 들어온 경우에도 메인 페이지로 이동할 수 있도록
+                if (requestPath.equals("/")) { httpRequest.setPath(StaticFile.MAIN_PAGE_PATH); }
 
-            // 요청한 파일의 확장자가 .html 이 아닌 경우, 파일의 기본 경로를 resources/static 으로 변경
-            if (!requestPath.endsWith(".html")) { basePath = StaticFile.SUPPORT_FILE_BASE_PATH; }
-
-            // 요청 경로에 있는 파일을 읽어 bytecode 로 받아오면 성공하면
-            if ((body = FileManager.getFileBytes(basePath, requestPath)) != null) {
+                // 요청 경로에 있는 파일을 읽어 bytecode 로 받아오기
+                byte[] body = FileManager.getFileBytes(requestPath);
                 // 확장자를 통해 파일의 MIME 타입 가져오기
-                String contentType = FileManager.getContentType(requestPath);
-                httpResponse.makeBody(body, contentType);
+                if (fileMimeType.equals(MimeType.HTML)) {
 
-                return httpResponse;
+                }
+                httpResponse.makeBody(body, fileMimeType.contentType);
             }
+
+            return httpResponse;
         }
         return null;
     }
