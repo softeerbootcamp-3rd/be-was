@@ -111,7 +111,7 @@ public class QnaHtml {
 
     private static String commentBtnGroup(Long qnaId, Comment comment) {
         User user = SharedData.requestUser.get();
-        if (user == null || !user.getUserId().equals(comment.getWriterId()))
+        if (user == null || !Objects.equals(user.getUserId(), comment.getWriterId()))
             return "";
         return HtmlTemplates.get("<!--comment-btn-group-->").getTemplate()
                 .replace("<!--qna-id-->", Long.toString(qnaId))

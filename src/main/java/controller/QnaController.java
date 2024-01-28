@@ -17,6 +17,7 @@ import util.web.SharedData;
 import webserver.HttpResponse;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Controller
 public class QnaController {
@@ -61,7 +62,7 @@ public class QnaController {
         Qna qna = QnaDatabase.findById(qnaId);
 
         User currentUser = SharedData.requestUser.get();
-        if (currentUser == null || !currentUser.getUserId().equals(qna.getWriterId()))
+        if (currentUser == null || !Objects.equals(currentUser.getUserId(), qna.getWriterId()))
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         QnaDatabase.deleteById(qnaId);

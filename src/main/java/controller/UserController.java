@@ -16,6 +16,7 @@ import webserver.HttpRequest;
 import webserver.HttpResponse;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class UserController {
@@ -41,7 +42,7 @@ public class UserController {
     @RequestMapping(method = "POST", path = "/user/login")
     public static HttpResponse login(@RequestBody LoginDto loginInfo) {
         User existUser = UserDatabase.findById(loginInfo.getUserId());
-        if (existUser == null || !existUser.getPassword().equals(loginInfo.getPassword()))
+        if (existUser == null || !Objects.equals(existUser.getPassword(), loginInfo.getPassword()))
             return HttpResponse.builder()
                     .status(HttpStatus.FOUND)
                     .addHeader(HttpHeader.LOCATION, "/user/login_failed.html")

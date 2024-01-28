@@ -11,6 +11,8 @@ import model.User;
 import util.web.SharedData;
 import webserver.HttpResponse;
 
+import java.util.Objects;
+
 @Controller
 public class CommentController {
 
@@ -23,7 +25,7 @@ public class CommentController {
         Comment comment = CommentDatabase.findById(commentId);
 
         User currentUser = SharedData.requestUser.get();
-        if (currentUser == null || !currentUser.getUserId().equals(comment.getWriterId()))
+        if (currentUser == null || !Objects.equals(currentUser.getUserId(), comment.getWriterId()))
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         CommentDatabase.deleteById(commentId);

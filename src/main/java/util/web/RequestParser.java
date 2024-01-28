@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RequestParser {
 
@@ -81,7 +82,7 @@ public class RequestParser {
         if (contentType != null)
             entries = contentType.split("; ");
 
-        if ("application/x-www-form-urlencoded".equals(entries[0])) {
+        if (Objects.equals(entries[0], "application/x-www-form-urlencoded")) {
             queryMap = parseQueryString(new String(request.getBody()));
             return ObjectMapper.mapToClass(queryMap, clazz);
         }

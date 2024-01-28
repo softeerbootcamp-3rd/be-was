@@ -16,6 +16,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.Objects;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -41,7 +42,7 @@ public class RequestHandler implements Runnable {
                 Method handler = RequestMapper.getMethod(request);
                 if (handler != null) {
                     response = RequestMapper.invoke(handler);
-                } else if (request.getMethod().equals("GET")) {
+                } else if (Objects.equals(request.getMethod(), "GET")) {
                     byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
 
                     // html 파일이면 동적으로 내용 변경
