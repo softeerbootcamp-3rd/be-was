@@ -11,6 +11,7 @@ import controller.Controller;
 import dto.request.HTTPRequestDto;
 import dto.request.HeaderEnum;
 import dto.response.HTTPResponseDto;
+import dto.response.ResponseEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class RequestHandler implements Runnable {
             HTTPResponseDto httpResponseDto = Controller.doRequest(httpRequestDto);
 
             // status code에 맞는 응답 반환
-            httpResponseDto.writeResponse(dos);
+            writeResponse(dos, httpResponseDto);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -115,8 +116,7 @@ public class RequestHandler implements Runnable {
             br.read(body);
 
             // 한글 파라미터 decoding 후 body 저장
-            Map<String, String> bodyMap = bodyParsing(URLDecoder.decode(new String(body), StandardCharsets.UTF_8));
-            httpRequestDto.setBody(bodyMap);
+            bodyMapParsing(URLDecoder.decode(new String(body), StandardCharsets.UTF_8));
             logger.debug("Request Body: {}", httpRequestDto.getBody());
         }
     }
@@ -143,7 +143,7 @@ public class RequestHandler implements Runnable {
     }
 
     // body 파싱
-    private HashMap<String, String> bodyParsing(String body) {
+    private void bodyMapParsing(String body) {
         HashMap<String, String> bodyMap = new HashMap<>();
         String[] tokens = body.split("&");
         for(int i = 0; i < tokens.length; i++) {
@@ -151,7 +151,34 @@ public class RequestHandler implements Runnable {
             String value = tokens[i].substring(tokens[i].indexOf("=") + 1);
             bodyMap.put(key, value);
         }
-        return bodyMap;
+        httpRequestDto.setBody(bodyMap);
+    }
+
+    // response 응답
+    private void writeResponse(DataOutputStream dos, HTTPResponseDto httpResponseDto) throws IOException {
+        // status code에 맞는 enum 상수 가져오기
+        ResponseEnum responseEnum = ResponseEnum.getResponse(httpResponseDto.getStatusCode());
+
+        // 1. status line 작성
+        dos.writeBytes(responseEnum.getStatusLine());
+        // header에 Date 추가
+        httpResponseDto.setDate();
+        // header에 Connection 추가
+        httpResponseDto.setConnection(responseEnum);
+        // 2. header 작성
+        for(Map.Entry<String, String> entry: httpResponseDto.getHeader().entrySet()) {
+            if(entry.getKey().equals("Set-Cookie")) {               // 쿠키는 여러 개일 수 있으므로 value에 전체 헤더를 저장
+                dos.writeBytes(entry.getValue());
+                continue;
+            }
+            dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+        }
+        // 3. body 작성
+        if(httpResponseDto.getBody() != null) {
+            dos.writeBytes("\r\n");
+            dos.write(httpResponseDto.getBody());
+        }
+        dos.flush();
     }
 
 }

@@ -7,55 +7,50 @@ public enum ResponseEnum {
 
     OK(200) {
         @Override
-        public String getStatusline() {
-            return STATUSLINE200;
+        public String getStatusLine() {
+            return "HTTP/1.1 200 OK\r\n";
         }
+
         @Override
-        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
-            header.put("Connection", "keep-alive");
-            return header;
+        public String getConnection() {
+            return "keep-alive";
         }
     },
     REDIRECTION(302) {
         @Override
-        public String getStatusline() {
-            return STATUSLINE302;
+        public String getStatusLine() {
+            return "HTTP/1.1 302 Found\r\n";
         }
+
         @Override
-        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
-            header.put("Connection", "close");
-            return header;
+        public String getConnection() {
+            return "close";
         }
     },
     BAD_REQUEST(400) {
         @Override
-        public String getStatusline() {
-            return STATUSLINE400;
+        public String getStatusLine() {
+            return "HTTP/1.1 400 Bad Request\r\n";
         }
+
         @Override
-        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
-            header.put("Connection", "keep-alive");
-            return header;
+        public String getConnection() {
+            return "keep-alive";
         }
     },
     SERVER_ERROR(500) {
         @Override
-        public String getStatusline() {
-            return STATUSLINE500;
+        public String getStatusLine() {
+            return "HTTP/1.1 500 Server Error\r\n";
         }
+
         @Override
-        public HashMap<String, String> addConnection2Header(HashMap<String, String> header) {
-            header.put("Connection", "close");
-            return header;
+        public String getConnection() {
+            return "close";
         }
     };
 
     private int statusCode;
-
-    private static final String STATUSLINE200 = "HTTP/1.1 200 OK\r\n";
-    private static final String STATUSLINE302 = "HTTP/1.1 302 Found\r\n";
-    private static final String STATUSLINE400 = "HTTP/1.1 400 Bad Request\r\n";
-    private static final String STATUSLINE500 = "HTTP/1.1 500 Server Error\r\n";
 
     ResponseEnum(int statusCode) {
         this.statusCode = statusCode;
@@ -70,9 +65,8 @@ public enum ResponseEnum {
     }
 
     // 상수별 status line 반환
-    public abstract String getStatusline();
-
-    // 상수별 header에 connection 추가
-    public abstract HashMap<String, String> addConnection2Header(HashMap<String, String> header);
+    public abstract String getStatusLine();
+    // 상수별 connection 반환
+    public abstract String getConnection();
 
 }

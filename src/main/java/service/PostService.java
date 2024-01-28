@@ -2,6 +2,7 @@ package service;
 
 import config.Config;
 import db.Database;
+import dto.request.FirstClassCollection;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
 import dto.session.Session;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PostService {
     ///////////////////////////// POST 요청 처리 ///////////////////////////////////
@@ -23,15 +25,13 @@ public class PostService {
 
         if(httpResponseDto != null)      // 400 Bad Request일 경우
             return httpResponseDto;
-        // 회원가입 정보 파싱
-        HashMap<String, String> userInfo = httpRequestDto.bodyParsing();
 
         // User 객체 생성
         User user = new User(
-                userInfo.get("userId"),
-                userInfo.get("password"),
-                userInfo.get("name"),
-                userInfo.get("email"));
+                httpRequestDto.getBody().getValue("userId"),
+                httpRequestDto.getBody().getValue("password"),
+                httpRequestDto.getBody().getValue("name"),
+                httpRequestDto.getBody().getValue("email"));
 
         // 유저 객체를 이용해서 회원가입 요청이 적잘한지 판단
         httpResponseDto = checkSignupWithUser(user);
@@ -44,17 +44,17 @@ public class PostService {
         logger.debug("새로운 유저: {}", user.toString());
         logger.debug("전체 DB: {}", Database.findAllUser());
         // /index.html로 리다이렉트
-        return HTTPResponseDto.create302Dto("/index.html");
+        return new HTTPResponseDto("/index.html");
     }
 
     // 회원가입 요청이 bad request인지 판단
     private HTTPResponseDto checkSignupBadRequest(HTTPRequestDto httpRequestDto) {
-        if(httpRequestDto == null || httpRequestDto.getRequestParams() == null || httpRequestDto.getBody() == null)
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
-        String body = httpRequestDto.getBody();
-        if(!body.contains("userId") || !body.contains("password")
-                || !body.contains("name") || !body.contains("email"))
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+        if(httpRequestDto == null || httpRequestDto.getBody() == null)
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        Map<String, String> body = httpRequestDto.getBody().getMap();
+        if(!body.containsKey("userId") || !body.containsKey("password")
+                || !body.containsKey("name") || !body.containsKey("email"))
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
         return null;
     }
 
@@ -63,11 +63,11 @@ public class PostService {
         // 필요한 정보가 제대로 들어오지 않았을 경우
         // 네가지 정보 모두 기입해야 회원가입 가능
         if(user.getUserId().equals("") || user.getPassword().equals("") || user.getName().equals("") || user.getEmail().equals(""))
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
+            return new HTTPResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
 
         // 중복 아이디 처리
         if(Database.findUserById(user.getUserId()) != null)
-            return HTTPResponseDto.createResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
+            return new HTTPResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
         return null;
     }
 
@@ -77,15 +77,13 @@ public class PostService {
         if(httpResponseDto != null)
             return httpResponseDto;
 
-        // body 파싱
-        HashMap<String, String> bodyMap = httpRequestDto.bodyParsing();
-        String userId = bodyMap.get("userId");
-        String password = bodyMap.get("password");
+        String userId = httpRequestDto.getBody().getValue("userId");
+        String password = httpRequestDto.getBody().getValue("password");
 
         User user = Database.findUserById(userId);
         // 로그인 실패 1 : 아이디에 해당하는 유저가 없을 경우 or 비밀번호가 틀렸을 경우
         if(user == null || !user.getPassword().equals(password))
-            return HTTPResponseDto.create302Dto("/user/login_failed.html");
+            return new HTTPResponseDto("/user/login_failed.html");
         // 로그인 성공 -> 응답에 Set-Cookie 헤더 추가, index.html로 리다이렉트
         return loginSuccess(httpRequestDto, userId);
     }
@@ -94,20 +92,18 @@ public class PostService {
     private HTTPResponseDto checkLoginBadRequest(HTTPRequestDto httpRequestDto) {
         // 1. request body가 null 일 경우
         if(httpRequestDto.getBody() == null)
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
 
-        // body 파싱
-        HashMap<String, String> bodyMap = httpRequestDto.bodyParsing();
-        String userId = bodyMap.get("userId");
-        String password = bodyMap.get("password");
+        String userId = httpRequestDto.getBody().getValue("userId");
+        String password = httpRequestDto.getBody().getValue("password");
 
         // 2. body에 userId, password 필드 네임이 없는 경우
         if(userId == null || password == null)
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
 
         // 3. 하나라도 빈 문자열이면 안됨
         if(userId.equals("") || password.equals(""))
-            return HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
+            return new HTTPResponseDto(400, "text/plain", "모든 정보를 입력해주세요.".getBytes());
 
         return null;        // 적절한 요청
     }
@@ -118,11 +114,11 @@ public class PostService {
         Session session = sessionReturn(httpRequestDto.getSessionId(), userId);
 
         // http response 생성
-        HTTPResponseDto httpResponseDto = HTTPResponseDto.create302Dto("/index.html");
+        HTTPResponseDto httpResponseDto = new HTTPResponseDto("/index.html");
 
         // 쿠키는 여러 개일 수 있으므로 value에 전체 헤더를 저장
         String setCookie = "sid=" + session.getId() + "; expires=" + session.getExpires() + "; Path=/; secure; HttpOnly\r\n";
-        httpResponseDto.addHeader("Set-Cookie", "Set-Cookie: " + setCookie);
+        httpResponseDto.setHeader("Set-Cookie", "Set-Cookie: " + setCookie);
         return httpResponseDto;
     }
 

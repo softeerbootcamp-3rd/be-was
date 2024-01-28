@@ -22,6 +22,12 @@ public class Database {
     public static User findUserById(String userId) {
         return users.get(userId);
     }
+    public static User findUserBySessionId(String sessionId) {
+        Session session = Database.findSessionById(sessionId);
+        if(session == null || session.getUserId() == null)
+            return null;
+        return Database.findUserById(session.getUserId());
+    }
     public static Collection<User> findAllUser() {
         return users.values();
     }

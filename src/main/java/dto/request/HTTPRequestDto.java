@@ -30,15 +30,15 @@ public class HTTPRequestDto {
     public String getAccept() {
         return header.getValue("Accept");
     }
-    public Map<String, String> getHeader() {
-        return this.header.getMap();
+    public FirstClassCollection getHeader() {
+        return this.header;
     }
 
-    public Map<String, String> getRequestParams() {
-        return this.requestParams.getMap();
+    public FirstClassCollection getRequestParams() {
+        return this.requestParams;
     }
-    public Map<String, String> getBody() {
-        return this.body.getMap();
+    public FirstClassCollection getBody() {
+        return this.body;
     }
 
     public void setHTTPMethod(String HTTP_Method) {
@@ -67,7 +67,7 @@ public class HTTPRequestDto {
             return null;
         if(cookieValue.contains("sid")) {
             // session id 추출
-            String sessionId = cookieValue.substring("sid=".length());
+            String sessionId = cookieValue.substring(cookieValue.indexOf("sid=")+"sid=".length());
             if (sessionId.contains(";"))
                 sessionId = sessionId.substring(0, cookieValue.indexOf(";"));
             return sessionId;

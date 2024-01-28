@@ -9,25 +9,25 @@ import java.util.Arrays;
 public enum GetRequestEnum {
     DEFAULT("/") {
         @Override
-        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-            return HTTPResponseDto.create302Dto("/index.html");
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return new HTTPResponseDto("/index.html");
         }
     },
     SIGNUP("/user/create") {
         @Override
-        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.signup(httpRequestDto);
         }
     },
-    USERLIST("/user/list") {
+    USERLIST("/user/list.html") {
         @Override
-        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.showUserList(httpRequestDto);
         }
     },
     FILE("file") {
         @Override
-        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.requestFile(httpRequestDto);
         }
     };
@@ -47,6 +47,6 @@ public enum GetRequestEnum {
     }
 
     // 상수별로 상속받을 함수
-    public abstract HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException;
+    public abstract HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto);
 
 }
