@@ -63,7 +63,7 @@ public class RequestDataController {
             validateExtension(extension);
 
             String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
-            File file = new File(ResourceLoader.url + directory + url);
+            File file = new File(ResourceLoader.RESOURCE_URL + directory + url);
 
             if (isValidFile(file)) {
                 return new Response(HttpStatusCode.OK, url);

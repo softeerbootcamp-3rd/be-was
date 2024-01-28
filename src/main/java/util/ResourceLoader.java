@@ -16,7 +16,7 @@ public class ResourceLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
 
-    public static final String url = "/Users/admin/Softeer/be-was/src/main/resources";
+    public static final String RESOURCE_URL = "/Users/admin/Softeer/be-was/src/main/resources";
 
     public static byte[] loadResource(String resourcePath, RequestData requestData) throws IOException {
         logger.debug("resourcePath: " + resourcePath);
@@ -24,7 +24,7 @@ public class ResourceLoader {
         String extension = getFileExtension(resourcePath);
         String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
 
-        File file = new File(url + directory + resourcePath);
+        File file = new File(RESOURCE_URL + directory + resourcePath);
 
         // 바이트 단위로 읽는 코드
         try (InputStream inputStream = new FileInputStream(file)) {
@@ -44,22 +44,5 @@ public class ResourceLoader {
 
             return buffer;
         }
-    }
-
-    public static String getResourceType(String targetUrl) {
-        String fileOrApi;
-
-        try {
-            URI uri = new URI(targetUrl);
-            targetUrl = uri.getPath();
-
-            if (!getFileExtension(targetUrl).isEmpty()) fileOrApi = "FILE";
-            else fileOrApi = "API";
-        } catch (URISyntaxException e) {
-            fileOrApi = "UNKNOWN";
-        }
-
-
-        return fileOrApi;
     }
 }
