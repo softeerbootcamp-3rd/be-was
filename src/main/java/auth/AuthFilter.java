@@ -1,6 +1,5 @@
 package auth;
 
-import controller.SessionManager;
 import http.HttpRequest;
 
 public class AuthFilter {

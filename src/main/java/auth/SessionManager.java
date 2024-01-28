@@ -1,4 +1,4 @@
-package controller;
+package auth;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

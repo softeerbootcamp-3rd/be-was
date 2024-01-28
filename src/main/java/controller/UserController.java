@@ -1,6 +1,7 @@
 package controller;
 
 import annotation.RequestMapping;
+import auth.SessionManager;
 import db.UserRepository;
 import http.HttpRequest;
 import http.HttpResponse;
