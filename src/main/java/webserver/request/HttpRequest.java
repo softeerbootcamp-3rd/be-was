@@ -44,6 +44,10 @@ public class HttpRequest {
         return cookies;
     }
 
+    public String getSessionId() {
+        return cookies.get("sessionId");
+    }
+
     public void setParams(Map<String, String> params) {
         this.params = params;
     }
