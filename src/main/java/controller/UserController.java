@@ -35,6 +35,9 @@ public class UserController implements Controller {
         if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/user/list")) {
             return printUserList(request);
         }
+        if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/user/logout")) {
+            return logoutUser(request);
+        }
 
         return HttpResponseUtil.loadResource(request, logger);
     }
@@ -72,6 +75,16 @@ public class UserController implements Controller {
             return responseDtoBuilder.response302Header()
                     .setHeaders(HttpHeader.LOCATION, "/user/login_failed.html").build();
         }
+    }
+
+    public HttpResponseDto logoutUser(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        // 쿠키 값 삭제 후 메인 페이지로 리다이렉트
+        if (request.getUser() != null) {
+            userService.logoutUser(request.getUser());
+        }
+        return responseDtoBuilder.response302Header()
+                .setHeaders(HttpHeader.LOCATION, "/index.html").build();
     }
 
     public HttpResponseDto printUserList(HttpRequestDto request) {

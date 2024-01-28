@@ -21,4 +21,8 @@ public class SessionDatabase {
     public static void deleteSessionById(String sessionId) {
         sessions.remove(sessionId);
     }
+
+    public static void deleteAllSessionByUserId(String userId) {
+        sessions.values().removeIf(session -> session.getUserId().equals(userId));
+    }
 }

@@ -85,25 +85,6 @@ public class UserServiceTest {
         Assertions.assertThat(session.getUserId()).isEqualTo(testUser.getUserId());
     }
 
-//    @Test
-//    @DisplayName("loginUser(): 유효한 기존 세션 정보가 있는 유저가 로그인에 성공한 경우 기존에 존재하는 sessionId를 리턴한다")
-//    public void loginUserTest() {
-//        // given
-//        User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
-//        UserDatabase.addUser(testUser);
-//        String existedSessionId = SessionDatabase.addSession(new Session(testUser.getUserId()));
-//
-//        Map<String, String> loginUserParams = new HashMap<>();
-//        loginUserParams.put("userId", testUser.getUserId());
-//        loginUserParams.put("password", testUser.getPassword());
-//
-//        // when
-//        String sessionId = userService.loginUser(loginUserParams);
-//
-//        // then
-//        Assertions.assertThat(sessionId).isEqualTo(existedSessionId);
-//    }
-
     @Test
     @DisplayName("loginUser(): 필요한 파라미터를 모두 전달하지 않은 경우 IllegalArgumentException이 발생한다")
     public void loginUserFailInvalidParamsTest() {
@@ -133,5 +114,21 @@ public class UserServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Invalid userId and password");
 
+    }
+
+    @Test
+    @DisplayName("logoutUser(): 인자로 전달한 유저Id에 매핑된 세션 정보를 삭제한다")
+    public void logoutUserTest() {
+        // given
+        User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
+        UserDatabase.addUser(testUser);
+        String sessionId = SessionDatabase.addSession(new Session(testUser.getUserId()));
+
+        // when
+        userService.logoutUser(testUser);
+
+        // then
+        Session session = SessionDatabase.findSessionById(sessionId);
+        Assertions.assertThat(session).isNull();
     }
 }

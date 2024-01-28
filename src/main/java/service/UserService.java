@@ -47,6 +47,10 @@ public class UserService {
         }
     }
 
+    public void logoutUser(User user) {
+        SessionDatabase.deleteAllSessionByUserId(user.getUserId());
+    }
+
     // 사용자가 입력한 로그인 정보가 유효한지 확인
     private boolean validateLogin(String userId, String password) {
         User user = UserDatabase.findUserById(userId);
