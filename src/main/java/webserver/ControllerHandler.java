@@ -15,6 +15,14 @@ public enum ControllerHandler {
             response = UserController.createAccount(request);
             return response;
         }
+    },
+    LOGIN("/user/login"){
+        @Override
+        public HTTPResponse toController(HTTPRequest request){
+            HTTPResponse response;
+            response = UserController.login(request);
+            return response;
+        }
     }
 
     ;

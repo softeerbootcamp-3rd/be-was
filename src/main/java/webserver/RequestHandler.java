@@ -2,10 +2,12 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 
 import config.HTTPRequest;
 import config.HTTPResponse;
 import config.ResponseCode;
+import config.Session;
 import controller.PageController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,8 @@ import org.slf4j.LoggerFactory;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
+    //세션 관리를 위해 로컬 스레드를 선언
+    public static final ThreadLocal<UUID> threadUuid = new ThreadLocal<>();
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -35,6 +39,8 @@ public class RequestHandler implements Runnable {
 
 
 
+            //로그인 상태를 우선적으로 확인 후 로컬 스레드에 부여, 로그인이 안되어 있으면 null로 세팅한다
+            loginCheck(request);
 
             ControllerHandler controllerHandler = null;
             String urlFrontPart = url.split("\\?")[0];
@@ -69,6 +75,29 @@ public class RequestHandler implements Runnable {
 
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private void loginCheck(HTTPRequest request){
+        String cookie = request.getHead().get("Cookie");
+        UUID uuid = null;
+        //쿠키에서 session id를 파싱한 후 Session에 존재하는지 확인
+        try {
+            if (cookie != null) {
+                String[] cookieContents = cookie.split("; ");
+                for (String content : cookieContents) {
+                    if (content.startsWith("sid=")) {
+                        UUID sid = UUID.fromString(content.substring("sid=".length()));
+                        if (Session.getUserId(sid) != null) {
+                            uuid = sid;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch(IllegalArgumentException ignored){
+        } finally{
+            threadUuid.set(uuid);
         }
     }
 
