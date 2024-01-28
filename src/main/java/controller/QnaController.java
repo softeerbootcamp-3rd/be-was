@@ -3,10 +3,14 @@ package controller;
 import annotation.Controller;
 import annotation.RequestBody;
 import annotation.RequestMapping;
+import com.google.common.base.Strings;
 import constant.HttpHeader;
 import constant.HttpStatus;
+import db.CommentDatabase;
 import db.QnaDatabase;
+import dto.QnaAnswerDto;
 import dto.QnaDto;
+import model.Comment;
 import model.Qna;
 import model.User;
 import util.web.SharedData;
@@ -27,6 +31,24 @@ public class QnaController {
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
                 .addHeader(HttpHeader.LOCATION, "/index.html")
+                .build();
+    }
+
+    @RequestMapping(method = "POST", path = "/questions/{qnaId}/answer")
+    public static HttpResponse postAnswer(@RequestBody QnaAnswerDto answer) {
+        User currentUser = SharedData.requestUser.get();
+        if (currentUser == null)
+            return HttpResponse.of(HttpStatus.FORBIDDEN);
+
+        String qnaIdString = SharedData.pathParams.get().get("qnaId");
+        if (Strings.isNullOrEmpty(qnaIdString))
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
+
+        Long qnaId = Long.valueOf(qnaIdString);
+        CommentDatabase.add(new Comment(qnaId, currentUser.getUserId(), answer.getContent(), new Date()));
+        return HttpResponse.builder()
+                .status(HttpStatus.FOUND)
+                .addHeader(HttpHeader.LOCATION, "/qna/show.html?qnaId=" + qnaIdString)
                 .build();
     }
 }

@@ -19,6 +19,13 @@ public class Comment {
         this.createDatetime = createDatetime;
     }
 
+    public Comment(Long qnaId, String writerId, String content, Date createDatetime) {
+        this.qnaId = qnaId;
+        this.writerId = writerId;
+        this.content = content;
+        this.createDatetime = createDatetime;
+    }
+
     public Long getId() {
         return id;
     }

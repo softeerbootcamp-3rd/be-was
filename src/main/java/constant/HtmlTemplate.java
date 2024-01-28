@@ -31,81 +31,129 @@ public enum HtmlTemplate {
 
     USER_LIST("<!--user-list-->",
             "<tr>" +
-            "   <th scope=\"row\"><!--order--></th>" +
-            "   <td><!--user-id--></td>" +
-            "   <td><!--user-name--></td>" +
-            "   <td><!--user-email--></td>" +
-            "   <td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>" +
-        "   </tr>",
+            "<th scope=\"row\"><!--order--></th>" +
+            "<td><!--user-id--></td>" +
+            "<td><!--user-name--></td>" +
+            "<td><!--user-email--></td>" +
+            "<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>" +
+        "</tr>",
             UserHtml::replaceUserList, HtmlBuilder::empty),
 
     QNA_LIST("<!--qna-list-->",
             "<li>\n" +
-            "                  <div class=\"wrap\">\n" +
-            "                      <div class=\"main\">\n" +
-            "                          <strong class=\"subject\">\n" +
-            "                              <a href=\"./qna/show.html?qnaId=<!--qna-id-->\"><!--title--></a>\n" +
-            "                          </strong>\n" +
-            "                          <div class=\"auth-info\">\n" +
-            "                              <i class=\"icon-add-comment\"></i>\n" +
-            "                              <span class=\"time\"><!--create-date--></span>\n" +
-            "                              <a href=\"./user/profile.html\" class=\"author\"><!--user-name--></a>\n" +
-            "                          </div>\n" +
-            "                          <div class=\"reply\" title=\"댓글\">\n" +
-            "                              <i class=\"icon-reply\"></i>\n" +
-            "                              <span class=\"point\"><!--comments--></span>\n" +
-            "                          </div>\n" +
-            "                      </div>\n" +
-            "                  </div>\n" +
-            "              </li>",
+            "         <div class=\"wrap\">\n" +
+            "             <div class=\"main\">\n" +
+            "                 <strong class=\"subject\">\n" +
+            "                     <a href=\"/qna/show.html?qnaId=<!--qna-id-->\"><!--title--></a>\n" +
+            "                 </strong>\n" +
+            "                 <div class=\"auth-info\">\n" +
+            "                     <i class=\"icon-add-comment\"></i>\n" +
+            "                     <span class=\"time\"><!--create-date--></span>\n" +
+            "                     <a href=\"./user/profile.html\" class=\"author\"><!--user-name--></a>\n" +
+            "                 </div>\n" +
+            "                 <div class=\"reply\" title=\"댓글\">\n" +
+            "                     <i class=\"icon-reply\"></i>\n" +
+            "                     <span class=\"point\"><!--comments--></span>\n" +
+            "                 </div>\n" +
+            "             </div>\n" +
+            "         </div>\n" +
+            "     </li>",
             QnaHtml::replaceQnaList, QnaHtml::replaceQnaList),
 
     QNA_PAGINATION("<!--qna-pagination-->",
             "<li class=\"<!--active-->\"><a href=\"/index.html?page=<!--link-->\"><!--page-number--></a></li>",
             QnaHtml::replacePagination, QnaHtml::replacePagination),
 
-    QNA_TITLE("<!--qna-->",
+    QNA_SHOW("<!--qna-->",
             "<header class=\"qna-header\">\n" +
-                    "              <h2 class=\"qna-title\"><!--title--></h2>\n" +
-                    "          </header>\n" +
-                    "          <div class=\"content-main\">\n" +
-                    "              <article class=\"article\">\n" +
-                    "                  <div class=\"article-header\">\n" +
-                    "                      <div class=\"article-header-thumb\">\n" +
-                    "                          <img src=\"https://graph.facebook.com/v2.3/100000059371774/picture\" class=\"article-author-thumb\" alt=\"\">\n" +
-                    "                      </div>\n" +
-                    "                      <div class=\"article-header-text\">\n" +
-                    "                          <a href=\"/users/92/kimmunsu\" class=\"article-author-name\"><!--writer--></a>\n" +
-                    "                          <a href=\"/questions/413\" class=\"article-header-time\" title=\"퍼머링크\">\n" +
-                    "                              <!--create-date-->\n" +
-                    "                              <i class=\"icon-link\"></i>\n" +
-                    "                          </a>\n" +
-                    "                      </div>\n" +
-                    "                  </div>\n" +
-                    "                  <div class=\"article-doc\">\n" +
-                    "                      <!--contents-->\n" +
-                    "                  </div>\n" +
-                    "                  <div class=\"article-utils\">\n" +
-                    "                      <ul class=\"article-utils-list\">\n" +
-                    "                          <li>\n" +
-                    "                              <a class=\"link-modify-article\" href=\"/questions/<!--qna-id-->/form\">수정</a>\n" +
-                    "                          </li>\n" +
-                    "                          <li>\n" +
-                    "                              <form class=\"form-delete\" action=\"/questions/423\" method=\"POST\">\n" +
-                    "                                  <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
-                    "                                  <button class=\"link-delete-article\" type=\"submit\">삭제</button>\n" +
-                    "                              </form>\n" +
-                    "                          </li>\n" +
-                    "                          <li>\n" +
-                    "                              <a class=\"link-modify-article\" href=\"/index.html\">목록</a>\n" +
-                    "                          </li>\n" +
-                    "                      </ul>\n" +
-                    "                  </div>\n" +
-                    "              </article>\n" +
+                    "     <h2 class=\"qna-title\"><!--title--></h2>\n" +
+                    " </header>\n" +
+                    " <div class=\"content-main\">\n" +
+                    "     <article class=\"article\">\n" +
+                    "         <div class=\"article-header\">\n" +
+                    "             <div class=\"article-header-thumb\">\n" +
+                    "                 <img src=\"https://graph.facebook.com/v2.3/100000059371774/picture\" class=\"article-author-thumb\" alt=\"\">\n" +
+                    "             </div>\n" +
+                    "             <div class=\"article-header-text\">\n" +
+                    "                 <a href=\"/users/92/kimmunsu\" class=\"article-author-name\"><!--writer--></a>\n" +
+                    "                 <a href=\"#\" class=\"article-header-time\">\n" +
+                    "                     <!--create-date-->\n" +
+                    "                     <i class=\"icon-link\"></i>\n" +
+                    "                 </a>\n" +
+                    "             </div>\n" +
+                    "         </div>\n" +
+                    "         <div class=\"article-doc\">\n" +
+                    "             <!--contents-->\n" +
+                    "         </div>\n" +
+                    "         <div class=\"article-utils\">\n" +
+                    "             <ul class=\"article-utils-list\">\n" +
+                    "                 <li>\n" +
+                    "                     <a class=\"link-modify-article\" href=\"/questions/<!--qna-id-->/form\">수정</a>\n" +
+                    "                 </li>\n" +
+                    "                 <li>\n" +
+                    "                     <form class=\"form-delete\" action=\"/questions/423/delete\" method=\"POST\">\n" +
+                    "                         <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
+                    "                         <button class=\"link-delete-article\" type=\"submit\">삭제</button>\n" +
+                    "                     </form>\n" +
+                    "                 </li>\n" +
+                    "                 <li>\n" +
+                    "                     <a class=\"link-modify-article\" href=\"/index.html\">목록</a>\n" +
+                    "                 </li>\n" +
+                    "             </ul>\n" +
+                    "         </div>\n" +
+                    "     </article>\n" +
                     "\n" +
-                    "              <!--comments-->\n" +
-                    "          </div>",
-            QnaHtml::replaceQna, QnaHtml::replaceQna);
+                    "     <div class=\"qna-comment\">\n" +
+                    "         <div class=\"qna-comment-slipp\">\n" +
+                    "             <p class=\"qna-comment-count\"><strong><!--comment-count--></strong>개의 의견</p>\n" +
+                    "             <div class=\"qna-comment-slipp-articles\">\n" +
+                    "\n" +
+                    "              <!--comments-->" +
+                    "                 <form class=\"answer-form\" method=\"post\" action=\"/questions/<!--qna-id-->/answer\">\n" +
+                    "                     <div class=\"form-group\" style=\"padding:14px;\">\n" +
+                    "                         <textarea class=\"form-control\" name=\"content\" placeholder=\"Update your answer\"></textarea>\n" +
+                    "                     </div>\n" +
+                    "                     <button class=\"btn btn-success pull-right\" type=\"submit\">답변하기</button>\n" +
+                    "                     <div class=\"clearfix\" />\n" +
+                    "                 </form>\n" +
+                    "             </div>\n" +
+                    "         </div>\n" +
+                    "     </div>" +
+                    " </div>",
+            QnaHtml::replaceQna, QnaHtml::replaceQna),
+
+    QNA_COMMENTS("<!--comments-->\n",
+            "<article class=\"article\" id=\"answer-1405\">\n" +
+                    "    <div class=\"article-header\">\n" +
+                    "        <div class=\"article-header-thumb\">\n" +
+                    "            <img src=\"https://graph.facebook.com/v2.3/1324855987/picture\" class=\"article-author-thumb\" alt=\"\">\n" +
+                    "        </div>\n" +
+                    "        <div class=\"article-header-text\">\n" +
+                    "            <a href=\"/users/1/자바지기\" class=\"article-author-name\"><!--writer--></a>\n" +
+                    "            <a href=\"#answer-1434\" class=\"article-header-time\" title=\"퍼머링크\">\n" +
+                    "                <!--create-date-->\n" +
+                    "            </a>\n" +
+                    "        </div>\n" +
+                    "    </div>\n" +
+                    "    <div class=\"article-doc comment-doc\">\n" +
+                    "        <!--content-->\n" +
+                    "    </div>\n" +
+                    "    <div class=\"article-utils\">\n" +
+                    "        <ul class=\"article-utils-list\">\n" +
+                    "            <li>\n" +
+                    "                <a class=\"link-modify-article\" href=\"/questions/413/answers/1405/form\">수정</a>\n" +
+                    "            </li>\n" +
+                    "            <li>\n" +
+                    "                <form class=\"delete-answer-form\" action=\"/questions/413/answers/1405\" method=\"POST\">\n" +
+                    "                    <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
+                    "                    <button type=\"submit\" class=\"delete-answer-button\">삭제</button>\n" +
+                    "                </form>\n" +
+                    "            </li>\n" +
+                    "        </ul>\n" +
+                    "    </div>\n" +
+                    "</article>\n",
+            QnaHtml::replaceComments, QnaHtml::replaceComments
+            )
     ;
 
     private final String originalValue;

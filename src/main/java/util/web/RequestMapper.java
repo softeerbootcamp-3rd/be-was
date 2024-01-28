@@ -53,7 +53,7 @@ public class RequestMapper {
 
             Map<String, String> pathParams = getPathParams(mappedPath, requestPath);
             if (pathParams != null) {
-                SharedData.pathParam.set(Map.copyOf(pathParams));
+                SharedData.pathParams.set(Map.copyOf(pathParams));
                 return entry.getValue();
             }
         }
@@ -62,28 +62,36 @@ public class RequestMapper {
 
     private static Map<String, String> getPathParams(String mappedPath, String requestPath) {
         // "GET /test/{id}" -> "GET /test/\\d+"
-        String regexPath = mappedPath.replaceAll("\\{[^/]+}", "\\\\d+");
+        String regexPath = mappedPath.replaceAll("\\{[^/]+}", "(\\\\d+)");
 
         Pattern pattern = Pattern.compile(regexPath);
         Matcher matcher = pattern.matcher(requestPath);
 
-        if (matcher.matches())
-            return extractPathParams(mappedPath, matcher);
+        Map<String, String> pathParams = new HashMap<>();
+        if (matcher.matches()) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                String paramName = extractParamName(mappedPath, i);
+                String paramValue = matcher.group(i);
+                pathParams.put(paramName, paramValue);
+            }
+            return pathParams;
+        }
         return null;
     }
-    private static Map<String, String> extractPathParams(String mappedPath, Matcher matcher) {
-        Map<String, String> pathParams = new HashMap<>();
 
-        Pattern pathParamPattern = Pattern.compile("\\{(\\w+)}");
-        Matcher pathParamMatcher = pathParamPattern.matcher(mappedPath);
+    private static String extractParamName(String mappedPath, int groupIndex) {
+        Pattern paramNamePattern = Pattern.compile("\\{([^/]+)}");
+        Matcher paramNameMatcher = paramNamePattern.matcher(mappedPath);
+        int count = 0;
 
-        while (pathParamMatcher.find()) {
-            String paramName = pathParamMatcher.group(1);
-            String paramValue = matcher.group(paramName);
-            pathParams.put(paramName, paramValue);
+        while (paramNameMatcher.find()) {
+            count++;
+            if (count == groupIndex) {
+                return paramNameMatcher.group(1);
+            }
         }
 
-        return pathParams;
+        throw new IllegalArgumentException("No parameter name found for group index: " + groupIndex);
     }
 
     public static HttpResponse invoke(Method method) {
