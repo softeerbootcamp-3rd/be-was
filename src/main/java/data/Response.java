@@ -27,7 +27,15 @@ public class Response {
     public CookieData getCookie() { return cookie; }
     @Override
     public String toString() {
-        return "Response : " + status + "\n" +
-                "Cookie : " + cookie + "\n";
+        StringBuilder result = new StringBuilder();
+        result.append("HTTP Version: ").append(httpVer).append("\n");
+        result.append("Status: ").append(status).append("\n");
+        result.append("Path: ").append(path).append("\n");
+
+        if (cookie != null) {
+            result.append("Cookie: ").append(cookie).append("\n");
+        }
+
+        return result.toString();
     }
 }
