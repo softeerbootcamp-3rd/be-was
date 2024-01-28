@@ -27,4 +27,13 @@ public class Database {
         return users.get(userId).getName();
     }
 
+    public static boolean isUserIdExist(String userId) {
+        return users.containsKey(userId);
+    }
+
+    public static boolean isEmailExist(String email) {
+        return users.values().stream()
+                .anyMatch(user -> user.getEmail().equals(email));
+    }
+
 }

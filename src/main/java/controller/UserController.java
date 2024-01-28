@@ -24,7 +24,18 @@ public class UserController {
                                   @RequestParam(name = "email") String email) {
 
         Map<String, List<String>> headerMap = new HashMap<>();
+
+        // input data 하나라도 없을 때
         if (!validateInput(userId, password, name, email)) {
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
+            return new ResponseEntity<>(
+                    HttpStatus.FOUND,
+                    headerMap
+            );
+        }
+
+        // user id 나 email이 db에 이미 존재할 때
+        if (Database.isUserIdExist(userId) || Database.isEmailExist(email)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,

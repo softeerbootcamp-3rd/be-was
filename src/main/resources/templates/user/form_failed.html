@@ -79,7 +79,15 @@
 <div class="container" id="main">
     <div class="col-md-6 col-md-offset-3">
         <div class="panel panel-default content-main">
-            <div class="alert alert-danger" role="alert">모든 값을 입력해주세요.</div>
+            <div class="alert alert-danger" role="alert">
+                <p>회원가입에 실패하였습니다.</p>
+                <p>다음 중 원인이 있을 수 있습니다.</p>
+                <ul>
+                    <li>모든 값을 채우지 않음</li>
+                    <li>사용자 아이디가 이미 존재하는 경우</li>
+                    <li>이메일이 이미 존재하는 경우</li>
+                </ul>
+            </div>
             <form name="question" method="post" action="/user/create">
                 <div class="form-group">
                     <label for="userId">사용자 아이디</label>
