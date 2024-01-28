@@ -6,6 +6,7 @@ import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -19,8 +20,8 @@ public class FakeUserService implements UserService {
     }
 
     @Override
-    public UUID login(UserLoginDto userLoginDto) {
-        return UUID.randomUUID();
+    public Optional<UUID> login(UserLoginDto userLoginDto) {
+        return Optional.of(UUID.randomUUID());
     }
 
     // 다른 UserService 메서드들에 대한 빈 메서드를 추가

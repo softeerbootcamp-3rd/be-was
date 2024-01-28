@@ -3,7 +3,6 @@ package handler;
 import controller.UserController;
 import dto.HttpResponseDto;
 import exception.BadRequestException;
-import exception.InvalidLogin;
 import model.http.ContentType;
 import model.http.Status;
 import model.http.request.HttpRequest;
@@ -16,10 +15,13 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     private static class DynamicResponseHandlerHolder {
         private static final DynamicResponseHandler INSTANCE = new DynamicResponseHandlerImpl(userController());
     }
+
     private static final Logger logger = LoggerFactory.getLogger(DynamicResponseHandler.class);
-    public static DynamicResponseHandler getInstance(){
+
+    public static DynamicResponseHandler getInstance() {
         return DynamicResponseHandlerHolder.INSTANCE;
     }
+
     private final UserController userController;
 
     public DynamicResponseHandlerImpl(UserController userController) {
@@ -30,19 +32,9 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try {
             userController.doGet(httpRequest, httpResponseDto);
-        }catch (InvalidLogin e){
-            handleInvalidLoginException(e, httpResponseDto);
         } catch (BadRequestException e) {
             handleBadRequestException(e, httpResponseDto);
         }
-    }
-
-    private void handleInvalidLoginException(InvalidLogin e, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setStatus(Status.OK);
-        httpResponseDto.setContentType(ContentType.PLAIN);
-        httpResponseDto.setContent(e.getMessage().getBytes());
-        logger.error("Invalid 로그인 발생", e.getMessage());
-        e.getStackTrace();
     }
 
     private void handleBadRequestException(BadRequestException e, HttpResponseDto httpResponseDto) {

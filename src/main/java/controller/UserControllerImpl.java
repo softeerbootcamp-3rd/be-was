@@ -4,7 +4,6 @@ import db.Database;
 import dto.HttpResponseDto;
 import dto.UserLoginDto;
 import dto.UserSignUpDto;
-import exception.InvalidLogin;
 import model.User;
 import model.http.Cookie;
 import model.http.HttpMethod;
@@ -16,6 +15,7 @@ import util.HtmlParser;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import static config.AppConfig.fileDetector;
@@ -29,6 +29,7 @@ public class UserControllerImpl implements UserController {
     public static UserController getInstance() {
         return UserControllerHolder.INSTANCE;
     }
+
     private final UserService userService;
     private final FileDetector fileDetector;
 
@@ -51,6 +52,7 @@ public class UserControllerImpl implements UserController {
             handleUserListRequest(httpRequest, httpResponseDto);
         }
     }
+
     private void handleUserListRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         HtmlParser htmlParser = new HtmlParser(new String(fileDetector.getFile("/user/list.html")));
         int cnt = 0;
@@ -72,18 +74,20 @@ public class UserControllerImpl implements UserController {
     }
 
     private void handleUserLoginRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
-        try {
-            UUID sessionId = userService.login(UserLoginDto.fromRequestBody(httpRequest.getBody().getContent()));
 
-            HashMap<String, String> map = new HashMap<>();
-            map.put("Path", "/");
+        Optional<UUID> sessionId = userService.login(UserLoginDto.fromRequestBody(httpRequest.getBody().getContent()));
 
-            Cookie cookie = new Cookie("sid", sessionId.toString(), map);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Path", "/");
+        if (sessionId.isPresent()) {
+            Cookie cookie = new Cookie("sid", sessionId.get().toString(), map);
             httpResponseDto.addHeader("Set-Cookie", cookie.getCookieList());
             redirectToPath(httpResponseDto, "/index.html");
-        } catch (InvalidLogin e) {
+        }
+        if (sessionId.isEmpty()) {
             redirectToPath(httpResponseDto, "/user/login_failed.html");
         }
+
     }
 
     private void handleUserCreateRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
