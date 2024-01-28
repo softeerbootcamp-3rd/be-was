@@ -46,7 +46,7 @@ public class RequestDataController {
             }
 
             // 매핑된 메서드가 없으면 파일 요청
-            return handleFileRequest(url, extension, requestData);
+            return handleFileRequest(url, extension);
         } catch (IllegalAccessException | InvocationTargetException e) {
             logger.error("Error invoking method: {}", e.getMessage());
             return new Response(HttpStatusCode.NOT_FOUND, ERROR_NOT_FOUND_HTML);
@@ -58,7 +58,7 @@ public class RequestDataController {
         return routeMap.get(url);
     }
 
-    private static Response handleFileRequest(String url, String extension, RequestData requestData) {
+    private static Response handleFileRequest(String url, String extension) {
         try {
             validateExtension(extension);
 
