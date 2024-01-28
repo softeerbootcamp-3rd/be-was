@@ -19,7 +19,7 @@ import static config.AppConfig.*;
 
 public class AuthFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
-    private static final List<String> dynamicElements = List.of("/user/create", "/user/login", "/user/list.html", "/index.html", "/user/form.html", "/user/list.html", "/user/login_failed.html", "/user/profile.html", "/qna/form.html", "/qna/show.html", "/user/login.html");
+    private static final List<String> dynamicElements = List.of("/user/create", "/user/login", "/user/list");
     private final StaticResponseHandler staticResponseHandler;
     private final DynamicResponseHandler dynamicResponseHandler;
     private final FileDetector fileDetector;

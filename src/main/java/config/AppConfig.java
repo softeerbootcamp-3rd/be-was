@@ -2,7 +2,6 @@ package config;
 
 import filter.AuthFilter;
 import filter.Filter;
-import controller.UserController;
 import controller.UserControllerImpl;
 import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
@@ -35,7 +34,7 @@ public class AppConfig {
         return StaticResponseHandlerImpl.getInstance();
     }
 
-    public static UserController userController() {
+    public static UserControllerImpl userController() {
         return UserControllerImpl.getInstance();
     }
 
