@@ -18,7 +18,7 @@ import java.util.Set;
 public class FrontController {
 
     private static final Set<Class<?>> CONTROLLERS = new HashSet<>();
-    private static final HashMap<String, Method> CONTROLLER_METHODS = new HashMap<>();
+    private static final Map<String, Method> CONTROLLER_METHODS = new HashMap<>();
 
     private FrontController() {
     }
@@ -46,7 +46,7 @@ public class FrontController {
                     String path = requestMapping.path();
                     HttpMethod httpMethod = requestMapping.method();
 
-                    String key = path + ":" + httpMethod;
+                    String key = httpMethod + ":" + path;
                     CONTROLLER_METHODS.put(key, method);
                 }
             }
@@ -54,7 +54,7 @@ public class FrontController {
     }
 
     public Method findControllerMethod(HttpMethod method, String path) {
-        String key = path + ":" + method;
+        String key = method + ":" + path;
         if (CONTROLLER_METHODS.containsKey(key)) {
             return CONTROLLER_METHODS.get(key);
         }
@@ -79,7 +79,7 @@ public class FrontController {
                     Parameter param = parameters[i];
                     String paramName = param.getName();
                     parameterValues[i] = params.get(paramName);
-                } else {
+                } else { // TODO: 핸들링 제대로 하기
                     String paramName = parameter.getName();
                     parameterValues[i] = params.get(paramName);
                 }

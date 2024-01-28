@@ -2,7 +2,7 @@ package webserver.container;
 
 import common.http.response.HttpResponse;
 import common.http.response.HttpStatusCode;
-import java.util.HashMap;
+import java.util.Map;
 
 public class ResponseThreadLocal {
     private static final ThreadLocal<HttpResponse> httpResponseThreadLocal = new ThreadLocal<>();
@@ -15,14 +15,14 @@ public class ResponseThreadLocal {
         return httpResponseThreadLocal.get();
     }
 
-    public static void onSuccess(HttpStatusCode httpStatusCode, HashMap<String, String> header, byte[] body) {
+    public static void onSuccess(HttpStatusCode httpStatusCode, Map<String, String> header, byte[] body) {
         HttpResponse httpResponse = httpResponseThreadLocal.get();
         httpResponse.setStartLine(httpStatusCode);
         httpResponse.setHeader(header);
         httpResponse.setBody(body);
     }
 
-    public static void onFailure(HttpStatusCode httpStatusCode, HashMap<String, String> header, byte[] body) {
+    public static void onFailure(HttpStatusCode httpStatusCode, Map<String, String> header, byte[] body) {
         HttpResponse httpResponse = httpResponseThreadLocal.get();
         httpResponse.setStartLine(httpStatusCode);
         httpResponse.setHeader(header);

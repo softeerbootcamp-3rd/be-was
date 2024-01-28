@@ -1,13 +1,12 @@
 package common.http.request;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Header {
 
     private Map<String, String> headers;
 
-    public Header(HashMap<String, String> headers) {
+    public Header(Map<String, String> headers) {
         this.headers = headers;
     }
 
