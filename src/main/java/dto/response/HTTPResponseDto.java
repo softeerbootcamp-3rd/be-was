@@ -1,5 +1,7 @@
 package dto.response;
 
+import dto.request.FirstClassCollection;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -10,13 +12,11 @@ import java.util.Map;
 
 public class HTTPResponseDto {
     private int statusCode;
-    private HashMap<String, String> header;
+    private FirstClassCollection header;
     private byte[] body;
 
     public HTTPResponseDto() {
         this.statusCode = 500;
-        this.header = new HashMap<>();
-        this.body = null;
     }
     public HTTPResponseDto(int statusCode) {
         this.statusCode = statusCode;

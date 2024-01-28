@@ -1,28 +1,16 @@
 package dto.request;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class HTTPRequestDto {
 
     private String HTTPMethod;
     private String requestTarget;
     private String HTTPVersion;
-    private HashMap<String, String> header;
-    private HashMap<String, String> requestParams;
-    private String body;            // http request body
-
-    public HTTPRequestDto(String HTTPMethod, String requestTarget, String HTTPVersion, String body) {
-        this.HTTPMethod = HTTPMethod;
-        this.requestTarget = requestTarget;
-        this.HTTPVersion = HTTPVersion;
-        this.header = new HashMap<>();
-        this.requestParams = new HashMap<>();       // 쿼리 스트링이 들어왔을 경우 저장
-        this.body = body;
-    }
-    public HTTPRequestDto() {
-        this.requestParams = new HashMap<>();
-        this.header = new HashMap<>();
-    }
+    private FirstClassCollection header;
+    private FirstClassCollection requestParams;
+    private FirstClassCollection body;            // http request body
 
     public String getHTTPMethod() {
         return this.HTTPMethod;
@@ -34,23 +22,23 @@ public class HTTPRequestDto {
         return this.HTTPVersion;
     }
     public Integer getContentLength() {
-        String length = header.get("Content-Length");
+        String length = header.getValue("Content-Length");
         if(length == null)
             return null;
         return Integer.parseInt(length);
     }
     public String getAccept() {
-        return header.get("Accept");
+        return header.getValue("Accept");
     }
-    public HashMap<String, String> getHeader() {
-        return this.header;
+    public Map<String, String> getHeader() {
+        return this.header.getMap();
     }
 
-    public HashMap<String, String> getRequestParams() {
-        return this.requestParams;
+    public Map<String, String> getRequestParams() {
+        return this.requestParams.getMap();
     }
-    public String getBody() {
-        return this.body;
+    public Map<String, String> getBody() {
+        return this.body.getMap();
     }
 
     public void setHTTPMethod(String HTTP_Method) {
@@ -62,30 +50,19 @@ public class HTTPRequestDto {
     public void setHTTPVersion(String HTTP_version) {
         this.HTTPVersion = HTTP_version;
     }
-    public void setBody(String body) {
-        this.body = body;
+    public void setBody(Map<String, String> body) {
+        this.body = new FirstClassCollection(body);
     }
-    public void addRequestParam(String key, String value) {
-        this.requestParams.put(key, value);
+    public void setRequestParam(Map<String, String> requestParam) {
+        this.requestParams = new FirstClassCollection(requestParam);
     }
-    public void addHeader(String key, String value) {
-        header.put(key, value);
-    }
-
-    public HashMap<String, String> bodyParsing() {
-        HashMap<String, String> bodyMap = new HashMap<>();
-        String[] tokens = body.split("&");
-        for(int i = 0; i < tokens.length; i++) {
-            String key = tokens[i].substring(0, tokens[i].indexOf("="));
-            String value = tokens[i].substring(tokens[i].indexOf("=") + 1);
-            bodyMap.put(key, value);
-        }
-        return bodyMap;
+    public void setHeader(Map<String, String> header) {
+        this.header = new FirstClassCollection(header);
     }
 
     // 요청에 쿠키 값으로 세션 아이디가 포함되어 있다면 해당 세션 아이디 반환, 없으면 null 반환
     public String getSessionId() {
-        String cookieValue = header.get("Cookie");
+        String cookieValue = header.getValue("Cookie");
         if(cookieValue == null)
             return null;
         if(cookieValue.contains("sid")) {
