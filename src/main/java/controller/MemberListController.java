@@ -1,5 +1,6 @@
 package controller;
 
+import annotation.GetMapping;
 import db.Database;
 import model.User;
 import request.HttpRequest;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
 public class MemberListController extends CrudController {
     SessionManager sessionManager = new SessionManager();
 
-    @Override
+    @GetMapping(url = "/user/list.html")
     public void doGet(HttpRequest request, HttpResponse response) {
         User loginUser = sessionManager.getUserBySessionId(request);
         if (loginUser == null) {

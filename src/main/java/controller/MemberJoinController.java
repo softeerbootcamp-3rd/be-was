@@ -1,5 +1,6 @@
 package controller;
 
+import annotation.PostMapping;
 import db.Database;
 import request.HttpRequest;
 import response.HttpResponse;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public class MemberJoinController extends CrudController {
     MemberJoinService memberJoinService = new MemberJoinService();
-    @Override
+    @PostMapping(url = "/user/create")
     public void doPost(HttpRequest request, HttpResponse response) {
         Map<String, String> params = request.getParams();
 

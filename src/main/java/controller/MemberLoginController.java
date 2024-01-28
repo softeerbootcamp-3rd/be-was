@@ -1,5 +1,6 @@
 package controller;
 
+import annotation.PostMapping;
 import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
@@ -15,7 +16,7 @@ public class MemberLoginController extends CrudController{
     MemberLoginService memberLoginService = new MemberLoginService();
     SessionManager sessionManager = new SessionManager();
 
-    @Override
+    @PostMapping(url = "/user/login")
     public void doPost(HttpRequest request, HttpResponse response) {
         String userId = request.getParams().get("userId");
         String password = request.getParams().get("password");

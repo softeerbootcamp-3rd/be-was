@@ -3,10 +3,7 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.util.Map;
 
-import controller.Controller;
-import controller.ControllerMappingMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import request.HttpRequest;
@@ -32,14 +29,8 @@ public class RequestHandler implements Runnable {
             HttpRequest request = HttpRequestUtils.makeHttpRequest(in);
             HttpResponse response = new HttpResponse();
 
-
-            if (request.getMethod().equals("GET")) {
-                GetMethodHandler getMethodHandler = new GetMethodHandler();
-                getMethodHandler.process(request, response);
-            }
-
-//            Controller controller = ControllerMappingMap.getController(request.getMethod(), request.getUrl());
-//            controller.process(request, response);
+            MethodHandler methodHandler = new MethodHandler();
+            methodHandler.process(request, response);
 
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponseUtils.renderResponse(dos, response);
