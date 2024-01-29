@@ -29,6 +29,12 @@ public class User {
         return email;
     }
 
+    public void update(String password, String name, String email) {
+        this.password = password;
+        this.name = name;
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";

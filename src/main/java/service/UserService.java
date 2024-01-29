@@ -80,8 +80,8 @@ public class UserService {
 
         updateValidate(userId, email);
 
-        User user = new User(userId, password, name, email);
-        UserDatabase.addUser(user);
+        User user = UserDatabase.findUserById(userId);
+        user.update(password, name, email);
         logger.debug("Updated: " + user.toString());
         return user.getUserId();
     }

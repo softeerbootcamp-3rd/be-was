@@ -29,4 +29,8 @@ public class BoardService {
         logger.debug(post.toString());
     }
 
+    public Post getPostById(Long postId) {
+        return BoardDatabase.findPostById(postId);
+    }
+
 }

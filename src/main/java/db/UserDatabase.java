@@ -17,7 +17,6 @@ public class UserDatabase {
         return users.get(userId);
     }
 
-
     public static Collection<User> findAll() {
         return users.values();
     }

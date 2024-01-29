@@ -5,7 +5,9 @@ import model.User;
 import service.BoardService;
 import util.ResourceUtils;
 import util.SessionManager;
+import util.StringUtils;
 import util.http.*;
+import util.template.ShowTemplate;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +24,7 @@ public class BoardController {
 
     public ResponseEntity<?> run() throws IOException {
         try {
+            String path = httpRequest.getPath();
             String lastPath = ResourceUtils.getLastPath(httpRequest.getPath());
 
             ResponseEntity<?> responseEntity = null;
@@ -33,6 +36,11 @@ public class BoardController {
                     responseEntity = write();
                 else
                     throw new MethodNotAllowedException();
+            }
+            if (StringUtils.isMatched(path, "/board/show/\\d+")) {
+                String[] tokens = path.split("/");
+                Long postId = Long.parseLong(tokens[tokens.length - 1]);
+                responseEntity = show(postId);
             }
             return responseEntity;
         } catch (MethodNotAllowedException e) {
@@ -82,5 +90,24 @@ public class BoardController {
         } catch (PostException e) {
             return PostExceptionHandler.handle(e);
         }
+    }
+
+    private ResponseEntity<?> show(Long postId) throws IOException {
+        boolean isLoggedIn = SessionManager.isLoggedIn(httpRequest);
+
+        if (!isLoggedIn) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("/user/login.html"))
+                    .build();
+        }
+
+        User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
+
+        byte[] body = ShowTemplate.render(loggedInUser, boardService.getPostById(postId));
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.getContentType(httpRequest))
+                .contentLength(body.length)
+                .body(body);
     }
 }

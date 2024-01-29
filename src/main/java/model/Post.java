@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Post {
+    private static Long sequence = 0L;
+    private Long postId;
     private User writer;
     private String title;
     private String contents;
@@ -12,11 +14,16 @@ public class Post {
     private LocalDateTime created;
 
     public Post(User writer, String title, String contents) {
+        this.postId = ++sequence;
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.comments = new ArrayList<>();
         this.created = LocalDateTime.now();
+    }
+
+    public Long getPostId() {
+        return postId;
     }
 
     public User getWriter() {

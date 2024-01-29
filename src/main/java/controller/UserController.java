@@ -3,7 +3,7 @@ package controller;
 import exception.*;
 import model.User;
 import service.UserService;
-import util.HtmlTemplate;
+import util.template.IndexTemplate;
 import util.ResourceUtils;
 import util.SessionManager;
 import util.http.*;
@@ -64,7 +64,6 @@ public class UserController {
     }
 
     private ResponseEntity<?> create() throws IOException {
-//        Map<String, String> query = httpRequest.getQueryMap();
         Map<String, String> query = httpRequest.getBodyParams();
 
         String userId = query.get("userId");
@@ -124,7 +123,7 @@ public class UserController {
 
         String html = new String(ResourceUtils.getStaticResource("/user/list.html"));
         byte[] body =  html.replace("<tr id=\"users\"></tr>", sb.toString())
-                .replace("<li>userId</li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
+                .replace("<li>userId</li>", IndexTemplate.USERNAME.replace("{}", loggedInUser.getName()))
                 .getBytes();
 
         return ResponseEntity.ok()
@@ -151,7 +150,7 @@ public class UserController {
         email = email.replace("{{email}}", loggedInUser.getEmail());
 
         String html = new String(ResourceUtils.getStaticResource("/user/profile.html"));
-        byte[] body =  html.replace("<li>userId</li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
+        byte[] body =  html.replace("<li>userId</li>", IndexTemplate.USERNAME.replace("{}", loggedInUser.getName()))
                 .replace("<h4 id=\"username\" class=\"media-heading\">자바지기</h4>", name)
                 .replace("<a id=\"email\" href=\"#\" class=\"btn btn-xs btn-default\"><span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;javajigi@slipp.net</a>", email)
                 .getBytes();
@@ -191,7 +190,7 @@ public class UserController {
 
         String html = new String(ResourceUtils.getStaticResource("/user/update.html"));
         byte[] body = html.replace("<input class=\"form-control\" id=\"userId\" name=\"userId\" placeholder=\"User ID\">", input)
-                .replace("<li>userId</li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
+                .replace("<li>userId</li>", IndexTemplate.USERNAME.replace("{}", loggedInUser.getName()))
                 .getBytes();
 
         return ResponseEntity.ok()
