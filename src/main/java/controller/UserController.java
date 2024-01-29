@@ -48,6 +48,7 @@ public class UserController implements BasicController{
             return "user/login_failed";
         }
 
+
         sessionManager.createSession(loginMember.get(), response, "SID");
         return "redirect:/";
     }
@@ -73,5 +74,6 @@ public class UserController implements BasicController{
     @GetMapping(url = "/profile")
     public String userProfile(Model model){
         return "user/profile";
+
     }
 }

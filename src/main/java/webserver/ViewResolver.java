@@ -34,6 +34,7 @@ public class ViewResolver {
         return url.endsWith(".html");
     }
     public static Boolean isStatic(String url){
+
         return url.matches(".*/(?:css|fonts|images|js)/.*|.*\\.(?:ico|png|jpg)");
     }
 
