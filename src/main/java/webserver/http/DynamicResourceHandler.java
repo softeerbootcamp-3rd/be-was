@@ -37,7 +37,7 @@ public class DynamicResourceHandler {
             responseContent = new String(responseBody);
         }
         String originLink = "<a href=\"./qna/form.html\" class=\"btn btn-primary pull-right\" role=\"button\">질문하기</a>";
-        String newLink = "<a href=\"./board/write.html\" class=\"btn btn-secondary pull-right\" role=\"button\">글쓰기</a>";
+        String newLink = "<a href=\"./post/form.html\" class=\"btn btn-secondary pull-right\" role=\"button\">글쓰기</a>";
         responseContent = responseContent.replace(originLink,originLink + newLink);
 
         if(!LoginChecker.loginCheck(request)){

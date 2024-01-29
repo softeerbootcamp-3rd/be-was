@@ -1,8 +1,10 @@
 package webserver.http;
 
 import db.H2Database;
+import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
+import model.Post;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +54,8 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.POST,"/user/login"), (Request r)-> postUserLogin(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/user/list"), (Request r)-> getUserList(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/user/list.html"), (Request r)-> getUserList(r));
-        routeHandlers.put(new Route(HttpMethod.GET,"/board/write.html"), (Request r)-> getBoardWrite(r));
+        routeHandlers.put(new Route(HttpMethod.GET,"/post/form.html"), (Request r)-> getBoardWrite(r));
+        routeHandlers.put(new Route(HttpMethod.POST,"/post/create"), (Request r)-> postPostCreate(r));
     }
 
     public void handleRequest(Request request) {
@@ -111,6 +114,17 @@ public class RequestHandler {
         if(!LoginChecker.loginCheck(request)){
             request.addRequestHeader("Location","/user/login.html");
         }
+    }
+
+    private void postPostCreate(Request request) {
+        if(!LoginChecker.loginCheck(request)){
+            request.addRequestHeader("Location","/user/login.html");
+        }
+
+        HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
+        Post post = new Post(formData.get("writer"), formData.get("title"), formData.get("contents"));
+        PostRepository.addPost(post);
+        request.addRequestHeader("Location","/index.html");
     }
 
     private void handleNotFound() {
