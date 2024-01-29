@@ -47,6 +47,6 @@ public class UserService {
     }
 
     public static Collection<User> findAll() {
-        return Database.findAll();
+        return Database.findAllUsers();
     }
 }
