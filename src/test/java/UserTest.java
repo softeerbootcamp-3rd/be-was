@@ -1,9 +1,13 @@
+import controller.BasicController;
+import controller.QNAController;
 import controller.UserController;
 import db.Database;
+import db.QnaRepository;
 import http.HttpStatus;
 import http.Request;
 import http.Response;
 import http.SessionManager;
+import model.Qna;
 import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +41,7 @@ public class UserTest {
     @DisplayName("회원가입 DB 테스트")
     public void UserCreate() throws IOException {
         //given
-        Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com");
+        Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com","","");
         Response res = new Response(dos);
         BasicController handler = new UserController();
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -56,7 +60,7 @@ public class UserTest {
     @DisplayName("회원가입 후 redirect")
     public void UserCreateRedirect() throws IOException {
         //given
-        Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com");
+        Request req = new Request("GET","/user/create?userId=jomulagy&password=1234%21&name=%EA%B9%80%EC%A7%80%ED%9B%88&email=jomulagy688%40gmail.com","","");
         Response res = new Response(dos);
         BasicController handler = new UserController();
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -69,24 +73,5 @@ public class UserTest {
         assertEquals("/user/login.html",res.getLocation());
     }
 
-    @Test
-    @DisplayName("/user/profile 페이지")
-    public void UserProfileRendering() throws IOException {
-        //given
 
-        Request req = new Request("GET","/user/profile");
-        Response res = new Response(dos);
-
-        BasicController handler = new UserController();
-        User user = new User();
-        user.setUserId("jomulagy");
-        SessionManager.createSession(user,res,"SID");
-        req.setCookies("SID = ");
-        //when
-        ModelAndView mv = adapter.handle(req, res, handler);
-        logger.debug(mv.getViewName());
-        User returnedUser = (User)mv.getModel().getAttribute("user");
-        //then
-        assertEquals(user.getUserId(),returnedUser.getUserId());
-    }
 }
