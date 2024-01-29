@@ -2,6 +2,7 @@ package controller;
 
 import dto.ResourceDto;
 import model.Model;
+import model.User;
 import util.ParseParams;
 import service.UserService;
 
@@ -22,25 +23,36 @@ public class UserController {
         methodMap.put("/user/login_failed.html", this::process);
     }
 
-//    public ResourceDto generateUserListResource(String session, Object headData) {
-//        if ()
-//    }
+    public ResourceDto generateUserListResource(String session, Object data) {
+        if (session == null) {
+            return ResourceDto.of("/user/login.html", 302, false);
+        }
+        User user = userService.findUserWithSession(session);
+        Model.addAttribute("username", user.getName());
+        return ResourceDto.of("/index.html", 302);
+    }
 
     public ResourceDto loginUserResource(String session, Object bodyData) {
         String sessionId = userService.loginUser((ParseParams) bodyData);
         if (sessionId == null) {
-            return ResourceDto.of("/user/login_failed.html", 302);
+            return ResourceDto.of("/user/login_failed.html", 302, false);
         }
+
+        User user = userService.findUserWithSession(sessionId);
         Model.addAttribute("sessionId", sessionId);
+        Model.addAttribute("username", user.getName());
         return ResourceDto.of("/index.html", 302);
     }
 
     public ResourceDto generateUserResource(String session, Object queryParams) {
         userService.createUser((ParseParams) queryParams);
-        return ResourceDto.of("/index.html", 302);
+        return ResourceDto.of("/index.html", 302, false);
     }
 
     public ResourceDto process(String session, Object path) {
+        if (session == null) {
+            return ResourceDto.of((String) path, false);
+        }
         return ResourceDto.of((String) path);
     }
 
