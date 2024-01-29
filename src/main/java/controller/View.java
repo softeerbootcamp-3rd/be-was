@@ -1,5 +1,6 @@
 package controller;
 
+import config.AppConfig;
 import exception.UserNotFoundException;
 import model.Qna;
 import model.Request;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class View {
     private static final Logger logger = LoggerFactory.getLogger(View.class);
+    private final UserService userService = AppConfig.userService();
     private String viewPath;
 
     public View(String viewPath) {
@@ -64,7 +66,7 @@ public class View {
             User findUser = null;
             try {
                 String userId = request.getCookie("sid");
-                findUser = new UserService().findUserById(userId);
+                findUser = userService.findUserById(userId);
             } catch (IllegalArgumentException | UserNotFoundException e) {
                 fileString = fileString.replace("{{welcome}}", "");
                 body = fileString.getBytes();
@@ -107,7 +109,7 @@ public class View {
             User findUser = null;
             try {
                 String userId = request.getCookie("sid");
-                findUser = new UserService().findUserById(userId);
+                findUser = userService.findUserById(userId);
             } catch (IllegalArgumentException | UserNotFoundException e) {
                 fileString = fileString.replace("{{welcome}}", "");
                 body = fileString.getBytes();

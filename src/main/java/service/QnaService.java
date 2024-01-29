@@ -1,6 +1,6 @@
 package service;
 
-import db.Database;
+import repository.QnaRepository;
 import model.Qna;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ public class QnaService {
     public void addQna(String writer, String title, String contents) {
         Qna qna = new Qna(writer, title, contents,
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        Database.addQna(qna);
+        QnaRepository.addQna(qna);
 
         logger.debug("qna가 추가되었습니다. qna-writer = {}", qna.getWriter());
     }

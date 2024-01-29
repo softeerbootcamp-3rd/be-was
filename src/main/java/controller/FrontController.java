@@ -5,7 +5,7 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
-import db.Database;
+import repository.QnaRepository;
 import model.Qna;
 import model.Request;
 import model.Response;
@@ -59,7 +59,7 @@ public class FrontController {
 
         if (request.getURI().contains("index.html")) {
             HashMap<String, Object> model = new HashMap<>();
-            Collection<Qna> allQnas = Database.findAllQnas();
+            Collection<Qna> allQnas = QnaRepository.findAllQnas();
             model.put("{{qna-list}}", allQnas);
             mv.setModel(model);
         }

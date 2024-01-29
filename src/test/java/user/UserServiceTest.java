@@ -1,6 +1,6 @@
 package user;
 
-import db.Database;
+import config.AppConfig;
 import exception.AlreadyExistUserException;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +12,11 @@ import static org.assertj.core.api.Assertions.*;
 
 public class UserServiceTest {
 
-    private final UserService userService = new UserService();
+    private final UserService userService = AppConfig.userService();
 
     @BeforeEach
     void clearDB(){
-        Database.clearUsers();
+        userService.clear();
     }
 
     @Test
