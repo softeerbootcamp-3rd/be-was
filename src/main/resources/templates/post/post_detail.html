@@ -11,15 +11,70 @@
     <![endif]-->
     <link href="../css/styles.css" rel="stylesheet">
     <script defer src="../js/logout.js"></script>
+
+    <style>
+
+        body {
+            color: #495057;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0px auto;
+        }
+
+        .post-details {
+            margin-top: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .card-header {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .post-title {
+            font-size: 28px;
+        }
+
+        .post-author {
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .card-body {
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        h2 {
+            margin-block-start: 0.2em;
+            margin-block-end: 0.4em;
+        }
+
+
+    </style>
+
 </head>
+
 <body>
 <nav class="navbar navbar-fixed-top header">
     <div class="col-md-12">
         <div class="navbar-header">
+
             <a href="../index.html" class="navbar-brand">SLiPP</a>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse1">
                 <i class="glyphicon glyphicon-search"></i>
             </button>
+
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse1">
             <form class="navbar-form pull-left">
@@ -55,6 +110,7 @@
                 <li class="nav-divider"></li>
                 <li><a href="#"><i class="glyphicon glyphicon-cog" style="color:#dd1111;"></i> Settings</a></li>
             </ul>
+
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse2">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -75,32 +131,80 @@
 </div>
 
 <div class="container" id="main">
-    <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
-        <div class="panel panel-default content-main">
-            <form name="post" method="post" action="post/upload" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="title">제목</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="제목"/>
-                </div>
-                <div class="form-group">
-                    <label for="contents">본문</label>
-                    <textarea name="contents" id="contents" rows="5" class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="file">파일 첨부</label>
-                    <input type="file" id="file" name="file"/>
-                </div>
-                <button type="submit" class="btn btn-success clearfix pull-right">업로드</button>
-                <div class="clearfix"></div>
-            </form>
+    <div class="post-details">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="post-title" id="postTitle"></h2>
+                <div class="post-author" id="postAuthorInfo"></div>
+            </div>
+            <div class="card-body" id="postContent"></div>
         </div>
     </div>
 </div>
 
+
+
 <!-- script references -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 페이지 로딩이 완료되면 글 세부 내용을 가져와서 표시합니다.
+        fetchPostDetails();
+    });
+
+    function fetchPostDetails() {
+        // 현재 페이지 URL에서 글의 ID를 가져옵니다.
+        var postId = getPostIdFromUrl();
+
+        // 서버에서 글 세부 내용을 가져오는 API 엔드포인트의 URL
+        var apiUrl = "/post/detail?postId=" + postId; // 적절한 URL로 변경
+
+        // fetch API를 사용하여 서버에서 JSON 데이터를 가져옵니다.
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // 글 세부 내용을 가져왔으면 화면에 표시합니다.
+                displayPostDetails(data);
+            })
+            .catch(error => {
+                console.error('Error fetching post details:', error);
+            });
+    }
+
+    function getPostIdFromUrl() {
+        // 현재 페이지 URL에서 글의 ID를 추출합니다.
+        var urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
+
+    function displayPostDetails(post) {
+        // 글 세부 내용을 화면에 표시합니다.
+        var postTitleElement = document.getElementById("postTitle");
+        var postAuthorInfoElement = document.getElementById("postAuthorInfo");
+        var postContentElement = document.getElementById("postContent");
+
+        var formattedDate = formatDate(post.date); // 날짜 포맷 변경
+
+        postTitleElement.textContent = post.title;
+        postAuthorInfoElement.innerHTML = `
+                <i class="icon-add-comment"></i>
+                <span class="time">${formattedDate}</span>
+                <a href="./user/profile.html" class="author">${post.userId}</a>
+            `;
+        postContentElement.textContent = post.content;
+    }
+
+    function formatDate(dateString) {
+        // 날짜 포맷 변경 함수
+        var date = new Date(dateString);
+        var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        return new Intl.DateTimeFormat('kr-KR', options).format(date);
+    }
+
+</script>
 <script src="../js/jquery-2.2.0.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script src="../js/scripts.js"></script>
-<script defer src="js/logout.js"></script>
 </body>
 </html>
+

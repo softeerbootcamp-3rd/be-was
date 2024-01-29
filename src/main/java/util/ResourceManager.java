@@ -21,6 +21,7 @@ public class ResourceManager {
 
     public static ResponseEntity handleStaticResource(HttpRequest request) throws IOException {
         String path = request.getPath().equals("/") ? "/index.html" : request.getPath();
+        path = StringParser.parsePurePath(path);
         MimeType mimeType = MimeType.getMimeTypeByExtension(StringParser.extractFileExtension(path));
 
         StringBuilder pathBuilder = new StringBuilder(DEFAULT_PATH);

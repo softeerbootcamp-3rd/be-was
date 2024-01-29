@@ -35,29 +35,6 @@ public class PostDao {
         return 0;
     }
 
-    public static Post findPostByPostId(long postId) {
-        String query = "SELECT * FROM posts WHERE POST_ID = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setLong(1, postId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    Post post = new Post(
-                            resultSet.getString("title"),
-                            resultSet.getString("content"),
-                            resultSet.getString("author_id")
-                    );
-                    return post;
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public static List<PostDto> findAll() {
         String query = "SELECT * FROM posts";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -77,6 +54,30 @@ public class PostDao {
             }
 
             return postList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static PostDto findPostByPostId(long postId) {
+        String query = "SELECT * FROM posts WHERE post_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1, postId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    PostDto post = new PostDto(
+                            resultSet.getLong("post_id"),
+                            resultSet.getString("title"),
+                            resultSet.getString("content"),
+                            resultSet.getString("author_id"),
+                            resultSet.getString("created_at")
+                    );
+                    return post;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

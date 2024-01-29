@@ -10,8 +10,15 @@ import java.util.regex.Pattern;
 
 public class StringParser {
 
+    public static String parsePurePath(String path) {
+        if (!path.contains("?"))
+            return path;
+
+        return path.split("\\?")[0];
+    }
+
     public static Map<String, String> parseQueryString(String query) throws UnsupportedEncodingException {
-        if (!query.contains("\\?"))
+        if (!query.contains("?"))
             return null;
 
         String[] uri = query.split("\\?");

@@ -3,10 +3,7 @@ package webserver;
 import annotation.*;
 import db.Database;
 import org.checkerframework.checker.units.qual.C;
-import util.ControllerMapper;
-import util.JsonConverter;
-import util.ResourceManager;
-import util.SessionManager;
+import util.*;
 import webserver.http.*;
 
 import java.io.IOException;
@@ -14,27 +11,25 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMappingHandler {
 
     // RequestHandler에서 컨트롤러 전송
     public static ResponseEntity handleRequest(HttpRequest request) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, IOException {
-        if (request.getPath().contains(".") || request.getPath().equals("/")) {
+        String path = StringParser.parsePurePath(request.getPath());
+        if (path.contains(".") || path.equals("/")) {
             return ResourceManager.handleStaticResource(request);
         }
 
-        Class<?> controllerClass = ControllerMapper.getController(request.getPath());
+        Class<?> controllerClass = ControllerMapper.getController(path);
         Method method = null;
 
         if (request.getHttpMethod().equals("GET")) {
-            method = findGETMethod(controllerClass, request.getPath());
+            method = findGETMethod(controllerClass, path);
         } else if (request.getHttpMethod().equals("POST")) {
-            method = findPOSTMethod(controllerClass, request.getPath());
+            method = findPOSTMethod(controllerClass, path);
         }
 
         if (method == null) {
@@ -42,8 +37,8 @@ public class RequestMappingHandler {
         }
 
         ResponseEntity response = null;
-        if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")
-            || request.getPath().equals("/post/upload")) {
+        if (path.equals("/user/logout") || path.equals("/user/name")
+            || path.equals("/post/upload")) {
             response = invokeMethod(method, request);
         } else {
             response = invokeMethod(method, createParams(method, request.getParams()));
@@ -53,17 +48,6 @@ public class RequestMappingHandler {
 
         return response;
     }
-
-//    private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
-//        // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
-//        if (method.isAnnotationPresent(ResponseBody.class)) {
-//            String body = JsonConverter.convertObjectToJson(response.getBody());
-//            response.getHeaders().setContentType("application/json");
-//            response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
-//            response.setBody(body);
-//        }
-//        return response;
-//    }
 
     private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
         // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
@@ -125,7 +109,6 @@ public class RequestMappingHandler {
     private static ResponseEntity invokeMethod(Method method, Object... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> c = method.getDeclaringClass();
         Object instance = c.getDeclaredConstructor().newInstance();
-
         return (ResponseEntity) method.invoke(instance, params);
     }
 

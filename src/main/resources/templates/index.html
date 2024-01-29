@@ -136,7 +136,7 @@
               </div>
               <div class="col-md-3 qna-write">
                   <a href="./qna/form.html" class="btn btn-primary pull-left" role="button">질문하기</a>
-                  <a href="./write.html" class="btn btn-primary pull-right" role="button">글쓰기</a>
+                  <a href="./post/write.html" class="btn btn-primary pull-right" role="button">글쓰기</a>
               </div>
           </div>
         </div>
@@ -183,12 +183,12 @@
                     <div class="wrap">
                         <div class="main">
                             <strong class="subject">
-                                <a href="./qna/show.html">${post.title}</a>
+                                <a href="/post/post_detail.html?id=${post.postId}">${post.title}</a>
                             </strong>
                             <div class="auth-info">
                                 <i class="icon-add-comment"></i>
                                 <span class="time">${formattedDate}</span>
-                                <a href="./user/profile.html" class="author">${post.userId}</a>
+                                <a href="/user/profile.html" class="author">${post.userId}</a>
                             </div>
                             <div class="reply" title="댓글">
                                 <i class="icon-reply"></i>

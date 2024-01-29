@@ -67,5 +67,19 @@ public class PostController {
 
     }
 
+    @GetMapping(path = "/detail")
+    @ResponseBody
+    public static ResponseEntity getPostDetail(@RequestParam(name = "postId") long postId) {
+
+        PostDto postDto = PostDao.findPostByPostId(postId);
+
+        Map<String, List<String>> headerMap = new HashMap<>();
+        return new ResponseEntity<>(
+                HttpStatus.OK,
+                headerMap,
+                postDto
+        );
+    }
+
 
 }

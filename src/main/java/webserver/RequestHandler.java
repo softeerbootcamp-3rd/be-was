@@ -16,7 +16,9 @@ import webserver.http.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final List<String> AUTHORIZED_URI = List.of(new String[]{"/user/list.html", "/write.html"});
+    private static final List<String> AUTHORIZED_URI = Arrays.asList(
+            "/user/list.html", "/write.html", "/post/post_detail.html"
+    );
 
     private Socket connection;
 
@@ -65,7 +67,7 @@ public class RequestHandler implements Runnable {
 
             // 2. 권한이 없는 페이지에 접근을 하면
             // 로그인 페이지로 redirect
-            if (AUTHORIZED_URI.contains(httpRequest.getPath())) {
+            if (AUTHORIZED_URI.contains(StringParser.parsePurePath(httpRequest.getPath()))) {
                 if (SID == null || !SessionManager.isSessionExist(SID)) {
                     Map<String, List<String>> headerMap = new HashMap<>();
                     headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login.html"));
