@@ -33,7 +33,36 @@ public class PostController implements Controller {
                 return;
             }
         }
+        if (request.getUrl().endsWith("show.html")) {
+            showPost(request, response);
+            return;
+        }
         getPage(request, response);
+    }
+
+    /**
+     * 글의 세부 내용을 불러오는 요청을 수행하고 응답 메시지를 설정합니다.
+     *
+     * <p> 정상적으로 불러온다면 200 응답으로, 불러오지 못한 경우 404 응답으로 설정합니다.
+     *
+     * @param request 요청 정보
+     * @param response 응답 메시지
+     */
+    private void showPost(Request request, Response response) {
+        String filePath = "src/main/resources/templates/post/show.html";
+
+        try {
+            byte[] body = PageReader.getPage(filePath);
+            body = HtmlBuilder.build(request, body).getBytes();
+
+            response.setCode(200);
+            response.setBody(body);
+            response.addHeader("Content-Type", ContentType.findContentType(filePath));
+            response.addHeader("Content-Length: ", String.valueOf(body.length));
+        } catch (IOException e) {
+            response.setCode(404);
+            response.setBody(e.getMessage());
+        }
     }
 
     /**
