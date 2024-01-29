@@ -34,11 +34,11 @@ public class UserService {
         Map<String, String> data = bodyData.getParamMap();
         User user = Database.findUserById(data.get("userId"));
         if (user == null) {
-            throw new SourceException(ErrorCode.NOT_EXIST_USER);
+            return null;
         }
 
-        if (!user.getPassword().equals(Database.findUserById(data.get("password")))) {
-            throw new SourceException(ErrorCode.NOT_VALID_PASSWORD);
+        if (!user.getPassword().equals(data.get("password"))) {
+            return null;
         }
         Session session = new Session(user.getUserId());
         Database.addSession(session);

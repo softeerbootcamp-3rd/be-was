@@ -7,6 +7,7 @@ import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class UserController {
@@ -23,6 +24,9 @@ public class UserController {
 
     public ResourceDto loginUserResource(Object bodyData) {
         String sessionId = userService.loginUser((QueryParams) bodyData);
+        if (sessionId == null) {
+            return ResourceDto.of("/user/login_failed.html", 302);
+        }
         Model.addAttribute("sessionId", sessionId);
         return ResourceDto.of("/index.html", 302);
     }
