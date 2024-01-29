@@ -1,6 +1,7 @@
 package model;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,8 +55,8 @@ public class HttpResponse {
         }
     }
     public void setBody(String target, String bodyInfo) throws UnsupportedEncodingException {
-        String currentBody = new String(this.body, "UTF-8");
-        byte[] replaceBody = currentBody.replace(target, bodyInfo).getBytes("UTF-8");
+        String currentBody = new String(this.body);
+        byte[] replaceBody = currentBody.replace(target, URLDecoder.decode(bodyInfo, "UTF-8")).getBytes();
         header.put(CONTENT_LENGTH, replaceBody.length + CRLF);//새로운 바디의 content_length로 바꾸기
         this.body = replaceBody;
     }
