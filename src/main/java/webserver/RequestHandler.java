@@ -29,7 +29,6 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-//        public static final Map<String, Function<P, R>> REQUEST_MAP = new HashMap<>();
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
@@ -42,7 +41,6 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = HttpRequest.of(requestHeader, body);
 
             CommonResponse response = FrontController.service(httpRequest);
-
             ResponseBuilder.sendResponse(dos, response.getBody(), response.getPath(), response.getHttpStatus(), response.getExtension());
         } catch (ClassNotFoundException | IOException e) {
             logger.error(e.getMessage());
