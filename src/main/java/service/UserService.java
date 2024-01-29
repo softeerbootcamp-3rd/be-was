@@ -2,7 +2,6 @@ package service;
 
 import db.Database;
 import dto.request.UserSignUpDto;
-import model.HttpRequest;
 import model.User;
 
 import java.util.Collection;

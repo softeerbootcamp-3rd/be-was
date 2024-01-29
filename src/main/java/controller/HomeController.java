@@ -3,6 +3,7 @@ package controller;
 import model.HttpRequest;
 import model.HttpResponse;
 import model.User;
+import service.HomeService;
 import service.SessionManager;
 
 import java.io.IOException;
@@ -20,6 +21,23 @@ public class HomeController {
             }
 
             httpResponse.setBody("{{login}}", "<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>");
+            return httpResponse;
+        } catch (IOException e){
+            return HttpResponse.errorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    public static HttpResponse profile(HttpRequest httpRequest){
+        try {
+            if(httpRequest.getSessionId() == null){//로그이 되지 않은 경우
+                return HttpResponse.redirect("/user/login.html");//로그인 창으로 리다이렉트
+            }
+
+            HttpResponse httpResponse = HttpResponse.response200(httpRequest.getExtension(), httpRequest.getPath());
+            User user = SessionManager.findUserBySessionId(httpRequest.getSessionId());
+            String userProfile = HomeService.getUserProfile(user);
+            httpResponse.setBody("{{profile}}", userProfile);
+
             return httpResponse;
         } catch (IOException e){
             return HttpResponse.errorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
