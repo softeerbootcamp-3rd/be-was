@@ -36,7 +36,7 @@ public class Dispatcher implements Runnable {
                 HttpResponse httpResponse;
                 // API 호출 요청인지 확인
                 httpResponse = ApiHandler.handle(httpRequest);
-                // 파인 컨텐츠 요청인지 확인 후 처리
+                // 파일 컨텐츠 요청인지 확인 후 처리
                 if (httpResponse == null) {
                     httpResponse = FileContentHandler.handle(httpRequest);
                 }
