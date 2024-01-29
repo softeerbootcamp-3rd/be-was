@@ -37,6 +37,10 @@ public class HttpResponse {
         return statusLine;
     }
 
+    public void setStatusLine(String statusLine) {
+        this.statusLine = statusLine;
+    }
+
     @Override
     public String toString() {
         return "HttpResponse{" +

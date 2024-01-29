@@ -4,6 +4,7 @@ import annotation.GetMapping;
 import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponseBuilder;
 import response.HttpResponseStatus;
 import session.SessionManager;
 
@@ -35,7 +36,6 @@ public class ResourceController {
     }
     @GetMapping(url = "/resources")
     public HttpResponse getResources(HttpRequest request) {
-        HttpResponse response = new HttpResponse();
         String url;
         if (request.getUrl().endsWith(".html")) {
             url = "src/main/resources/templates" + request.getUrl();
@@ -56,15 +56,19 @@ public class ResourceController {
 
                 responseHeaders.put(CONTENT_TYPE, getContentType(url));
                 responseHeaders.put(CONTENT_LENGTH, String.valueOf(body.length));
-                response.setResponse(HttpResponseStatus.OK, body, responseHeaders);
+                return new HttpResponseBuilder().status(HttpResponseStatus.OK)
+                        .headers(responseHeaders)
+                        .body(body)
+                        .build();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             responseHeaders.put(CONTENT_TYPE, "text/html;charset=utf-8");
-            response.setResponse(HttpResponseStatus.NOT_FOUND, "404 NOT FOUND".getBytes(), responseHeaders);
+            return new HttpResponseBuilder().status(HttpResponseStatus.NOT_FOUND)
+                    .headers(responseHeaders)
+                    .build();
         }
-        return response;
     }
 
     private String getContentType(String url) {

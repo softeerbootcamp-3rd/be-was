@@ -3,11 +3,14 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponseStatus;
 import utils.HttpRequestUtils;
 import utils.HttpResponseUtils;
 
@@ -29,8 +32,14 @@ public class RequestHandler implements Runnable {
             HttpRequest request = HttpRequestUtils.makeHttpRequest(in);
 
             MethodHandler methodHandler = new MethodHandler();
-            HttpResponse response = (HttpResponse) methodHandler.process(request);
+            Object result = methodHandler.process(request);
+            HttpResponse response;
 
+            if(result instanceof String) {
+                response = HttpResponseUtils.makeResponse(result);
+            } else {
+                response = (HttpResponse) result;
+            }
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponseUtils.renderResponse(dos, response);
 

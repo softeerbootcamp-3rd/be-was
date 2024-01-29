@@ -7,6 +7,7 @@ import db.Database;
 import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponseBuilder;
 import response.HttpResponseStatus;
 import service.UserJoinService;
 import service.UserLoginService;
@@ -31,59 +32,49 @@ public class UserController {
     SessionManager sessionManager = new SessionManager();
 
     @PostMapping(url = "/user/create")
-    public HttpResponse userJoin(@RequestParam(name = "userId") String userId,
+    public String userJoin(@RequestParam(name = "userId") String userId,
                                  @RequestParam(name = "password") String password,
                                  @RequestParam(name = "name") String name,
                                  @RequestParam(name = "email") String email) {
-        HttpResponse response = new HttpResponse();
         UserJoinService userJoinService = new UserJoinService();
 
         if (userJoinService.createUser(userId, password, name, email)) { // 회원 가입 성공 시 홈으로
-            responseHeaders.put(LOCATION, "/index.html");
-            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+            return "/index.html";
         } else { // 회원 가입 실패 시 다시 회원 가입 창으로
-            responseHeaders.put(LOCATION, "/user/form.html");
-            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+            return "/user/form.html";
         }
-        return response;
     }
 
     @PostMapping(url = "/user/login")
     public HttpResponse userLogin(@RequestParam(name = "userId") String userId,
                                   @RequestParam(name = "password") String password) {
-        HttpResponse response = new HttpResponse();
         UserLoginService userLoginService = new UserLoginService();
 
         User loginUser = userLoginService.login(userId, password);
         if (loginUser == null) { // 로그인 실패 시 로그인 실패 창으로
             responseHeaders.put(LOCATION, "/user/login_failed.html");
-            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         } else { // 로그인 성공 시 홈으로
             String sessionId = sessionManager.createSession(loginUser);
-
             responseHeaders.put(LOCATION, "/index.html");
             responseHeaders.put(SET_COOKIE, "sid="+sessionId+"; Max-Age=300; Path=/");
-            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         }
-        return response;
+        return new HttpResponseBuilder().status(HttpResponseStatus.FOUND)
+                .headers(responseHeaders).build();
     }
 
     @PostMapping(url = "/user/logout")
-    public HttpResponse userLogout(HttpRequest request) {
-        HttpResponse response = new HttpResponse();
+    public String userLogout(HttpRequest request) {
         sessionManager.deleteSession(request);
-        responseHeaders.put(LOCATION, "/index.html");
-        response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
-        return response;
+        return "index.html";
     }
 
     @GetMapping(url = "/user/list.html")
     public HttpResponse getList(HttpRequest request) {
-        HttpResponse response = new HttpResponse();
         User loginUser = sessionManager.getUserBySessionId(request);
         if (loginUser == null) {
             responseHeaders.put(LOCATION, "/user/login.html");
-            response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+            return new HttpResponseBuilder().status(HttpResponseStatus.FOUND)
+                    .headers(responseHeaders).build();
         } else {
             Collection<User> users = Database.findAll();
 
@@ -97,12 +88,15 @@ public class UserController {
 
                 responseHeaders.put(CONTENT_TYPE, "text/html; charset=utf-8");
                 responseHeaders.put(CONTENT_LENGTH, String.valueOf(body.length));
-                response.setResponse(HttpResponseStatus.OK, body, responseHeaders);
+                return new HttpResponseBuilder().status(HttpResponseStatus.OK)
+                        .headers(responseHeaders)
+                        .body(body)
+                        .build();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return response;
+
     }
 
     private String makeListHtml(Collection<User> users) {
