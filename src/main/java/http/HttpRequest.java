@@ -34,10 +34,6 @@ public class HttpRequest {
     public String getSessionId() {
         if(sessionId==null)
             return null;
-        int startIndex = sessionId.indexOf("sid=");
-        if (startIndex != -1) {
-            sessionId = sessionId.substring(startIndex + 4);
-        }
         return sessionId;
     }
     public void setUserId(String userId) { this.userId = userId; }
@@ -84,7 +80,12 @@ public class HttpRequest {
             } else if (line.startsWith("Content-Length: ")) {
                 contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
             } else if (line.startsWith("Cookie:")) {
-                sessionId = line.substring("Cookie: ".length());
+                line = line.substring("Cookie: ".length());
+                int startIndex = line.indexOf("sid=");
+                if (startIndex != -1) {
+                    line = line.substring(startIndex + 4);
+                }
+                sessionId = line;
             }
             line = br.readLine();
         }
