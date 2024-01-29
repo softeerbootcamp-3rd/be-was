@@ -1,5 +1,6 @@
 package util.web;
 
+import annotation.NotEmpty;
 import annotation.RequestBody;
 import annotation.RequestMapping;
 import annotation.RequestParam;
@@ -11,8 +12,10 @@ import util.ClassScanner;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -128,13 +131,29 @@ public class RequestMapper {
                     } else if (parameter.isAnnotationPresent(RequestBody.class)) {
                         try {
                             params[i] = RequestParser.parseBody(request, parameter.getType());
-                        } catch (UnsupportedEncodingException | InvocationTargetException | IllegalAccessException
-                                | NoSuchMethodException | InstantiationException e) {
+                            checkNotEmpty(params[i], parameter.getType());
+                        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException |
+                                 InstantiationException | IOException e) {
                             throw new RuntimeException(e);
                         }
                     }
                 });
-
         return params;
+    }
+
+    private static void checkNotEmpty(Object instance, Class<?> clazz) {
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(NotEmpty.class)) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(instance);
+                    if (value == null || value.toString().isEmpty()) {
+                        throw new RuntimeException("Field '" + field.getName() + "' is annotated with @NotEmpty, but its value is empty.");
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Error accessing field '" + field.getName() + "'.", e);
+                }
+            }
+        }
     }
 }

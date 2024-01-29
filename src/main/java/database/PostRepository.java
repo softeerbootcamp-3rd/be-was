@@ -10,7 +10,7 @@ import java.util.*;
 
 public class PostRepository {
 
-    public static void add(Post post) {
+    public static Long add(Post post) {
         String query = "INSERT INTO posts (writerId, title, contents, createDatetime) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
             statement.setString(1, post.getWriterId());
@@ -18,6 +18,15 @@ public class PostRepository {
             statement.setString(3, post.getContents());
             statement.setTimestamp(4, new Timestamp(post.getCreateDatetime().getTime()));
             statement.executeUpdate();
+
+            // 생성된 ID 값 얻기
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                } else {
+                    throw new SQLException("Failed to get generated key, no ID obtained.");
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

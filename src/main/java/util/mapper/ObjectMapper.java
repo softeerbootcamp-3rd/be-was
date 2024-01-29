@@ -1,4 +1,4 @@
-package util;
+package util.mapper;
 
 import annotation.NotEmpty;
 import constant.ParamType;
@@ -21,9 +21,6 @@ public class ObjectMapper {
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             String fieldValue = mapInfo.get(field.getName());
-            NotEmpty notEmptyAnnotation = field.getDeclaredAnnotation(NotEmpty.class);
-            if (notEmptyAnnotation != null && (fieldValue == null || fieldValue.isEmpty()))
-                throw new IllegalArgumentException("Field '" + field.getName() + "' cannot be null");
             if (fieldValue != null) {
                 ParamType paramType = ParamType.getByClass(field.getType());
                 field.set(result, paramType.map(fieldValue));

@@ -3,9 +3,11 @@ package util.web;
 import constant.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ObjectMapper;
+import util.mapper.MultipartMapper;
+import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -71,7 +73,7 @@ public class RequestParser {
     }
 
     public static <T> T parseBody(HttpRequest request, Class<T> clazz)
-            throws UnsupportedEncodingException, InvocationTargetException,
+            throws IOException, InvocationTargetException,
             IllegalAccessException, NoSuchMethodException, InstantiationException {
 
         Map<String, String> queryMap;
@@ -85,6 +87,8 @@ public class RequestParser {
         if (Objects.equals(entries[0], "application/x-www-form-urlencoded")) {
             queryMap = parseQueryString(new String(request.getBody()));
             return ObjectMapper.mapToClass(queryMap, clazz);
+        } else if (Objects.equals(entries[0], "multipart/form-data")) {
+            return MultipartMapper.mapMultipartFile(entries, clazz);
         }
         return ObjectMapper.jsonToClass(new String(request.getBody()), clazz);
     }

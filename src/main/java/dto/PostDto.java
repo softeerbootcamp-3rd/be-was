@@ -1,12 +1,15 @@
 package dto;
 
 import annotation.NotEmpty;
+import util.mapper.MultipartFile;
 
 public class PostDto {
     @NotEmpty
     private String title;
     @NotEmpty
     private String contents;
+
+    private MultipartFile image;
 
     public PostDto() {}
 
@@ -24,5 +27,13 @@ public class PostDto {
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
     }
 }

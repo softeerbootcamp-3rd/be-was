@@ -32,11 +32,17 @@ public class H2Database {
              PreparedStatement commentStatement = connection.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS comments " +
                              "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
-                             "writerId VARCHAR(255), contents VARCHAR(255), createDatetime TIMESTAMP)")
+                             "writerId VARCHAR(255), contents VARCHAR(255), createDatetime TIMESTAMP)");
+             PreparedStatement imageStatement = connection.prepareStatement(
+                     "CREATE TABLE IF NOT EXISTS images " +
+                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
+                             "extension VARCHAR(20), data BLOB)"
+             )
         ) {
             usersStatement.executeUpdate();
             postStatement.executeUpdate();
             commentStatement.executeUpdate();
+            imageStatement.executeUpdate();
         }
     }
 
