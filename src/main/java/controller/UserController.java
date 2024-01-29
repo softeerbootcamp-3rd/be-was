@@ -2,13 +2,13 @@ package controller;
 
 import annotation.RequestMapping;
 import auth.SessionManager;
+import controller.dto.ListMapData;
 import controller.dto.InputData;
 import controller.dto.OutputData;
 import db.UserRepository;
 import model.User;
-import view.View;
 
-import java.util.UUID;
+import java.util.*;
 
 public class UserController implements Controller{
 
@@ -51,8 +51,15 @@ public class UserController implements Controller{
         if (sessionId == null)
             return "redirect:/user/login";
 
-        View view = outputData.getView();
-        view.set("users", UserRepository.findAll());
+        ListMapData users = new ListMapData();
+        for (User user : UserRepository.findAll()) {
+            Map<String, String> u = new HashMap<>();
+            u.put("userId", user.getUserId());
+            u.put("name", user.getName());
+            u.put("email", user.getEmail());
+            users.putMap(u);
+        }
+        outputData.getView().set("users", users);
         return "/user/list";
     }
 
