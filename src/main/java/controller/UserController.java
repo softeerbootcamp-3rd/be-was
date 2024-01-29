@@ -20,6 +20,8 @@ public class UserController {
         methodMap.put("/user/form.html", this::process);
         methodMap.put("/user/login.html", this::process);
         methodMap.put("/user/login", this::loginUserResource);
+        methodMap.put("/user/login_failed.html", this::process);
+
     }
 
     public ResourceDto loginUserResource(Object bodyData) {
