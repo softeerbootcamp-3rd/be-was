@@ -2,12 +2,33 @@ package utils;
 
 import constants.HtmlContent;
 import db.Database;
+import db.PostDatabase;
 import java.util.Collection;
+import model.Post;
 import model.Request;
 import model.User;
 import webserver.Session;
 
 public class HtmlBuilder {
+
+    private static final String postContentHtml = "<li>"
+            + "<div class=\"wrap\">"
+            + "<div class=\"main\">"
+            + "<strong class=\"subject\">"
+            + "<a href=\"post/show.html\">{{title}}</a>"
+            + "</strong>"
+            + "<div class=\"auth-info\">"
+            + "<i class=\"icon-add-comment\"></i>"
+            + "<span class=\"time\">{{post-time}}</span>"
+            + "<a href=\"./user/profile.html\" class=\"author\">{{writer}}</a>"
+            + "</div>"
+            + "<div class=\"reply\" title=\"댓글\">"
+            + "<i class=\"icon-reply\"></i>"
+            + "<span class=\"point\">12</span>"
+            + "</div>"
+            + "</div>"
+            + "</div>"
+            + "</li>\n";
 
     /**
      * 페이지 내용을 동적으로 변경합니다.
@@ -26,7 +47,32 @@ public class HtmlBuilder {
         if (url.startsWith("/user/list")) {
             bodyString = buildUserList(bodyString);
         }
+        if (url.equals("/index.html")) {
+            bodyString = buildPostList(bodyString);
+        }
         return bodyString;
+    }
+
+    /**
+     * 포스팅 목록을 생성합니다.
+     *
+     * <p> 모든 작성글을 가져와 제목, 작성자, 작성시간을 각각 알맞는 키워드에 대체하고, 본문에 추가합니다.
+     *
+     * @param bodyString 본문 페이지
+     * @return 수정된 페이지
+     */
+    private static String buildPostList(String bodyString) {
+        Collection<Post> allPost = PostDatabase.findAll();
+        StringBuilder sb = new StringBuilder();
+
+        for (Post post : allPost) {
+            String postContent = postContentHtml.replace("{{title}}", post.getTitle())
+                    .replace("{{writer}}", post.getWriter())
+                    .replace("{{post-time}}", post.getPostTime());
+            sb.append(postContent);
+        }
+
+        return bodyString.replace("{{post-list}}", sb);
     }
 
     /**
