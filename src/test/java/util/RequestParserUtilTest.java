@@ -1,5 +1,6 @@
 package util;
 
+import controller.HttpMethod;
 import controller.HttpStatusCode;
 import data.RequestData;
 import data.Response;
@@ -40,7 +41,7 @@ public class RequestParserUtilTest {
         RequestData requestData = RequestParserUtil.parseRequest(br);
 
         // Then
-        assertEquals("GET", requestData.getMethod());
+        assertEquals(HttpMethod.GET, requestData.getMethod());
         assertEquals("/example/path", requestData.getRequestContent());
         assertEquals("HTTP/1.1", requestData.getHttpVersion());
     }
@@ -70,5 +71,29 @@ public class RequestParserUtilTest {
                 .containsEntry("key1", "value1")
                 .containsEntry("key2", "value2")
                 .containsEntry("key3", "value3");
+    }
+
+    @Test
+    @DisplayName("HTTP 헤더 파싱 시 trailing white space 처리")
+    void testParseHeadersWithTrailingWhiteSpace() throws IOException {
+        // Given
+        String requestString = "GET /example/path HTTP/1.1\r\n" +
+                "Host : localhost:8080\r\n" + // 헤더에 trailing white space 추가
+                "Connection: keep-alive  \r\n" + // 헤더 값에 trailing white space 추가
+                "Accept: */*\r\n\r\n";
+        BufferedReader br = new BufferedReader(new StringReader(requestString));
+
+        // When
+        RequestData requestData = RequestParserUtil.parseRequest(br);
+
+        // Then
+        assertEquals(HttpMethod.GET, requestData.getMethod());
+        assertEquals("/example/path", requestData.getRequestContent());
+        assertEquals("HTTP/1.1", requestData.getHttpVersion());
+        // 헤더의 trailing white space가 제거되어야 함
+        assertThat(requestData.getHeaders())
+                .containsEntry("Host", "localhost:8080")
+                .containsEntry("Connection", "keep-alive")
+                .containsEntry("Accept", "*/*");
     }
 }
