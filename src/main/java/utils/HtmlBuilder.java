@@ -22,10 +22,6 @@ public class HtmlBuilder {
             + "<span class=\"time\">{{post-time}} </span>"
             + "<a href=\"./user/profile.html\" class=\"author\">{{writer}}</a>"
             + "</div>"
-            + "<div class=\"reply\" title=\"댓글\">"
-            + "<i class=\"icon-reply\"></i>"
-            + "<span class=\"point\">{{reply}}</span>"
-            + "</div>"
             + "</div>"
             + "</div>"
             + "</li>\n";
@@ -69,8 +65,7 @@ public class HtmlBuilder {
             String postContent = postContentHtml.replace("{{title}}", post.getTitle())
                     .replace("{{post-id}}", String.valueOf(post.getPostId()))
                     .replace("{{writer}}", post.getWriter())
-                    .replace("{{post-time}}", post.getPostTime())
-                    .replace("{{reply}}", String.valueOf(post.getReply()));
+                    .replace("{{post-time}}", post.getPostTime());
             sb.append(postContent);
         }
 
