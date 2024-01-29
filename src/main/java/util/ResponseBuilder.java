@@ -47,7 +47,7 @@ public class ResponseBuilder {
         dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + body.length + "\r\n");
 
-        // Cache-Control 헤더 추가z
+        // Cache-Control 헤더 추가
         if (ResourceMapping.HTML != ResourceMapping.valueOf(extension.toUpperCase())) {
             dos.writeBytes("Cache-Control: public, max-age=" + 1 * 60 + "\r\n");
         }
