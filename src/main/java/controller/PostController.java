@@ -29,4 +29,12 @@ public class PostController implements Controller {
 
         return "/qna/show.html";
     }
+
+    @RequestMapping(value = "/post/form", method = "GET")
+    public String getPostForm(InputData inputData, OutputData outputData) {
+        String sessionId = inputData.getSessionId();
+        if(sessionId==null)
+            return "/user/login.html";
+        return "/qna/form.html";
+    }
 }
