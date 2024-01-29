@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import util.ErrorCode;
 import util.Session;
 
+import java.util.List;
 import java.util.Map;
 
 public class UserService {
@@ -42,5 +43,15 @@ public class UserService {
         Session session = new Session(user.getUserId());
         Database.addSession(session);
         return session.getSessionId();
+    }
+
+    public User findUserWithSession(String session) {
+        Session findSession = Database.getSession(session);
+        String userId = findSession.getUserId();
+        return Database.findUserById(userId);
+    }
+
+    public List<User> findAllUser() {
+        return Database.findAll().stream().toList();
     }
 }

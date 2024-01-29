@@ -5,11 +5,13 @@ import content.FileContent;
 import dto.ResourceDto;
 import exception.SourceException;
 import model.Model;
+import model.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 public class ResourceHandler {
 
@@ -22,17 +24,37 @@ public class ResourceHandler {
             return bodyData;
         }
 
-        // 로그인시의 뷰
+        // 로그인시의 뷰 수정
+        String bodyString = changeMenuHtmlFile(resource, bodyData);
+        bodyString = changeUserListHtmlFile(resource, bodyString);
+
+        return bodyString.getBytes();
+    }
+
+    private static String changeUserListHtmlFile(ResourceDto resource, String bodyString) {
+        if (resource.getPath().contains("/user/list")) {
+            List<User> userList = (List<User>) Model.getAttribute("userList").get();
+
+            for (int i = 3; i < userList.size() + 3; i++) {
+                User user = userList.get(i - 3);
+                bodyString = bodyString.replace("{{data}}",
+                        FileContent.USER_LIST.getText(i, user.getUserId(), user.getName(), user.getEmail()));
+                System.out.println("ttt");
+            }
+        }
+        return bodyString;
+    }
+
+    private static String changeMenuHtmlFile(ResourceDto resource, byte[] bodyData) {
         String bodyString = new String(bodyData);
         if (resource.isIsloggined()) {
             bodyString = bodyString.replace("{{menu}}",
-                    FileContent.LOGIN.getText(String.valueOf(Model.getAttribute("username"))));
+                    FileContent.LOGIN.getText(String.valueOf(Model.getAttribute("username").get())));
         } else {
             bodyString = bodyString.replace("{{menu}}",
                     FileContent.NON_LOGIN.getText());
         }
-
-        return bodyString.getBytes();
+        return bodyString;
     }
 
     private static byte[] changeFileToByte(FileInputStream fis, ByteArrayOutputStream bos) throws IOException {

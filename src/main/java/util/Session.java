@@ -23,4 +23,8 @@ public class Session {
     public LocalDateTime getExpires() {
         return expires;
     }
+
+    public String getUserId() {
+        return userId;
+    }
 }

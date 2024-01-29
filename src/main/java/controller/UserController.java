@@ -7,6 +7,7 @@ import util.ParseParams;
 import service.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -16,6 +17,7 @@ public class UserController {
 
     {
         methodMap.put("/user/create", this::generateUserResource);
+        methodMap.put("/user/list.html", this::generateUserListResource);
         methodMap.put("/index.html", this::process);
         methodMap.put("/user/form.html", this::process);
         methodMap.put("/user/login.html", this::process);
@@ -23,13 +25,13 @@ public class UserController {
         methodMap.put("/user/login_failed.html", this::process);
     }
 
-    public ResourceDto generateUserListResource(String session, Object data) {
+    public ResourceDto generateUserListResource(String session, Object path) {
         if (session == null) {
             return ResourceDto.of("/user/login.html", 302, false);
         }
-        User user = userService.findUserWithSession(session);
-        Model.addAttribute("username", user.getName());
-        return ResourceDto.of("/index.html", 302);
+        List<User> userList = userService.findAllUser();
+        Model.addAttribute("userList", userList);
+        return ResourceDto.of((String) path);
     }
 
     public ResourceDto loginUserResource(String session, Object bodyData) {
