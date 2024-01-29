@@ -21,6 +21,7 @@ public class URLMapper {
         URL_MAPPING.put("GET /user/list.html", UserController::userList);
         URL_MAPPING.put("GET /index.html", HomeController::home);
         URL_MAPPING.put("GET /user/profile.html", HomeController::profile);
+        URL_MAPPING.put("GET /user/logout", UserController::logout);
     }
 
     //찾으면 찾은 컨트롤러 반환, 못 찾으면 ResourceController 반환

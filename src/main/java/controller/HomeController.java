@@ -14,22 +14,26 @@ public class HomeController {
     public static HttpResponse home(HttpRequest httpRequest){
         try {
             HttpResponse httpResponse = HttpResponse.response200(httpRequest.getExtension(), httpRequest.getPath());
+            String loginBody = "<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>";
+            String logoutBody = "<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>";
 
-            if(httpRequest.getSessionId() != null){//로그인 된 경우
+            if (httpRequest.getSessionId() != null) {//로그인 된 경우
                 User user = SessionManager.findUserBySessionId(httpRequest.getSessionId());
-                httpResponse.setBody("{{login}}", "<li><a>" + user.getName() + "님</a></li>");
+                loginBody = "<li><a>" + user.getName() + "님</a></li>";
+                logoutBody = "<li><a href=\"user/logout\" role=\"button\">로그아웃</a></li>";
             }
 
-            httpResponse.setBody("{{login}}", "<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>");
+            httpResponse.setBody("{{login}}", loginBody);
+            httpResponse.setBody("{{logout}}", logoutBody);
             return httpResponse;
-        } catch (IOException e){
+        } catch (IOException e) {
             return HttpResponse.errorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     public static HttpResponse profile(HttpRequest httpRequest){
         try {
-            if(httpRequest.getSessionId() == null){//로그이 되지 않은 경우
+            if(httpRequest.getSessionId() == null){//로그인 되지 않은 경우
                 return HttpResponse.redirect("/user/login.html");//로그인 창으로 리다이렉트
             }
 

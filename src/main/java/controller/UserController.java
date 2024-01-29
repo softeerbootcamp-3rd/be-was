@@ -4,6 +4,7 @@ import dto.request.UserLoginDto;
 import dto.request.UserSignUpDto;
 import model.HttpRequest;
 import model.HttpResponse;
+import service.SessionManager;
 import service.UserService;
 
 import java.io.IOException;
@@ -57,5 +58,16 @@ public class UserController {
         }catch (IOException e){
             return HttpResponse.errorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
+
+    public static HttpResponse logout(HttpRequest httpRequest) {
+        if(httpRequest.getSessionId() == null){
+            return HttpResponse.redirect("/user/login.html");
+        }
+
+        HttpResponse httpResponse = HttpResponse.redirect("/index.html");
+        SessionManager.expireSession(httpRequest.getSessionId(), httpResponse);
+
+        return httpResponse;
     }
 }
