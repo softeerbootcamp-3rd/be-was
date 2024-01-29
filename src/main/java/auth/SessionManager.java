@@ -24,4 +24,8 @@ public class SessionManager {
         return sessionStore.get(sessionId);
     }
 
+    public static void deleteSession(String sessionId) {
+        sessionStore.remove(sessionId);
+    }
+
 }

@@ -26,7 +26,7 @@ public class FrontController {
     public void process(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
         String url = request.getUrl();
         String path = null;
-        OutputData outputData= new OutputData();;
+        OutputData outputData= new OutputData();
 
         if (url.contains(".")) {
             if (url.endsWith(".html")) {
@@ -66,9 +66,9 @@ public class FrontController {
 
     private InputData setInputData(HttpRequest request) {
         if (request.getMethod().equals("POST")) {
-            return new InputData(request.getFormData());
+            return new InputData(request.getFormData(),request.getSessionId());
         } else if (request.getMethod().equals("GET")) {
-            return new InputData(request.getRequestParam());
+            return new InputData(request.getRequestParam(), request.getSessionId());
         } else {
             return null;
         }

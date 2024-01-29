@@ -31,7 +31,15 @@ public class HttpRequest {
     public String getUrl() {
         return url;
     }
-    public String getSessionId() { return sessionId; }
+    public String getSessionId() {
+        if(sessionId==null)
+            return null;
+        int startIndex = sessionId.indexOf("sid=");
+        if (startIndex != -1) {
+            sessionId = sessionId.substring(startIndex + 4);
+        }
+        return sessionId;
+    }
     public void setUserId(String userId) { this.userId = userId; }
     public String getUserId() { return userId; }
     public Map<String, String> getRequestParam() { return requestParam; }

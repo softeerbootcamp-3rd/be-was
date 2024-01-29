@@ -38,6 +38,15 @@ public class UserController implements Controller{
         }
     }
 
+    @RequestMapping(value = "/user/logout", method = "GET")
+    public String logout(InputData data, OutputData outputData) {
+        String userId = SessionManager.getUserBySessionId(data.getSessionId());
+        SessionManager.deleteSession(userId);
+        outputData.setHeader("Set-Cookie","sid="+data.getSessionId()+"; Max-Age=0; Path=/");
+
+        return "redirect:/index";
+    }
+
     private String generateSessionId() {
         return UUID.randomUUID().toString();
     }

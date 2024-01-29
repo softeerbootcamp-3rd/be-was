@@ -10,7 +10,6 @@ import http.HttpRequest;
 import http.HttpResponse;
 import http.ResponseHeaderMaker;
 
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,6 @@ public class RequestHandler implements Runnable {
             request.print(); //http request 정보 출력
 
             authFilter.doFilter(request);
-
             HttpResponse response = new HttpResponse(dos);
 
             frontController.process(request, response);
