@@ -40,7 +40,7 @@ public class HomeController {
     private ResponseEntity<?> home() throws IOException {
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        byte[] body = IndexTemplate.render(loggedInUser, BoardDatabase.findAll());
+        byte[] body = IndexTemplate.render(loggedInUser, BoardDatabase.findAll(), httpRequest.getQueryMap());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.getContentType(httpRequest))

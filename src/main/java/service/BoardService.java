@@ -2,7 +2,6 @@ package service;
 
 import db.BoardDatabase;
 import exception.PostException;
-import exception.UserException;
 import model.Post;
 import model.User;
 import org.slf4j.Logger;

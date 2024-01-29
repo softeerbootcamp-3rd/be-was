@@ -83,6 +83,8 @@ public class HttpRequest {
         Map<String, String> queryMap = new HashMap<>();
 
         String query = this.request.getUrl().getQuery();
+        if (query == null)
+            return queryMap;
         String[] params = query.split("&");
 
         for (String s : params) {

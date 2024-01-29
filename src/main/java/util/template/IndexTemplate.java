@@ -3,11 +3,12 @@ package util.template;
 import model.Post;
 import model.User;
 import util.ResourceUtils;
+import util.StringUtils;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 public class IndexTemplate {
     public static final String USERNAME = "<li><a role=\"button\">{}</a></li>";
@@ -31,11 +32,17 @@ public class IndexTemplate {
             "                  </div>\n" +
             "              </li>";
 
-    public static byte[] render(User loggedInUser, Collection<Post> posts) throws IOException {
+    public static byte[] render(User loggedInUser, Collection<Post> posts, Map<String, String> queryMap) throws IOException {
         StringBuilder sb = new StringBuilder();
+        String srchTerm = queryMap.get("srch-term");
+        if (StringUtils.hasLength(srchTerm)) {
+            srchTerm = StringUtils.decode(srchTerm);
+        }
 
         String html = new String(ResourceUtils.getStaticResource("/index.html"));
         for (Post p : posts) {
+            if (StringUtils.hasLength(srchTerm) && !p.getTitle().contains(srchTerm))
+                continue;
             sb.append(POST.replace("{postId}", p.getPostId().toString())
                     .replace("{title}", p.getTitle())
                     .replace("{created}", p.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
