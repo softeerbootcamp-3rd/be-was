@@ -17,7 +17,8 @@ public class QnaRepository {
     }
 
     public static void addQna(Qna qna) {
-        qnas.put(++seq, qna);
+        qna.setId(++seq);
+        qnas.put(seq, qna);
     }
 
     public static Qna findQnaById(Long Id) {

@@ -5,6 +5,10 @@ import dto.QnaDto;
 import java.time.LocalDateTime;
 
 public class Qna {
+    Long Id;
+
+
+
     User writer;
     String title;
     String contents;
@@ -20,6 +24,13 @@ public class Qna {
     }
 
 
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
     public String getTitle() {
         return title;
     }

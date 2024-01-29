@@ -3,9 +3,9 @@ package service;
 import db.Database;
 import db.QnaRepository;
 import model.Qna;
-import model.User;
 
-import java.util.Optional;
+import java.util.Collection;
+import java.util.List;
 
 public class QnaService {
     private final Database database = Database.getInstance();
@@ -19,8 +19,9 @@ public class QnaService {
         QnaRepository.addQna(qna);
     }
 
-//    public Optional<Qna> login(String userId, String password) {
-//        return Optional.ofNullable(database.findUserById(userId))
-//                .filter(user -> user.getPassword().equals(password));
-//    }
+    public Collection<Qna> getPostList(){
+        return QnaRepository.findAll();
+
+    }
+
 }
