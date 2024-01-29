@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,14 +56,17 @@ public class GetService {
     // /logout 요청
     public HTTPResponseDto logout(HTTPRequestDto httpRequestDto) {
         String sessionId = httpRequestDto.getSessionId();
-        if(sessionId != null) {
-            Session session = Database.findSessionById(sessionId);
-            if(session != null)
-                // 해당 세션 만료시키기
-                session.invalidate();
-        }
-        // login.html로 리다이렉트
-        return new HTTPResponseDto("/user/login.html");
+        HTTPResponseDto httpResponseDto = new HTTPResponseDto("/user/login.html");
+        if(sessionId == null)
+            return httpResponseDto;
+        Session session = Database.findSessionById(sessionId);
+        if(session == null)
+            session = new Session("test");
+        // 해당 세션 만료시키기
+        session.invalidate();
+        String setCookie = "sid=" + sessionId + "; expires=" + session.getExpiresWithFormat() + "; Path=/; secure; HttpOnly\r\n";
+        httpResponseDto.setHeader("Set-Cookie", "Set-Cookie: " + setCookie);
+        return httpResponseDto;
     }
 
     // 파일 불러오기 요청

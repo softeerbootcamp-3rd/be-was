@@ -51,7 +51,7 @@ public class Session {
     }
     // 세션 종료
     public void invalidate() {
-        this.expires = LocalDateTime.now();
+        this.expires = LocalDateTime.now().minusDays(1);
     }
 
 
