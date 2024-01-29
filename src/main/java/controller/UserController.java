@@ -1,7 +1,6 @@
 package controller;
 
 import annotation.*;
-import com.sun.jdi.InternalException;
 import dto.LoginDto;
 import dto.UserDto;
 import http.Request;
@@ -18,7 +17,7 @@ import java.util.Optional;
 import java.util.List;
 @Controller
 @RequestMapping("/user")
-public class UserController implements RequestController {
+public class UserController implements BasicController{
     private final UserService userService = UserService.getInstance();
     private final SessionManager sessionManager = SessionManager.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -28,10 +27,10 @@ public class UserController implements RequestController {
 
     @GetMapping(url = "/create")
     public String createUser(){
-        return "/user/login";
+        return "user/form";
     }
 
-       @PostMapping(url = "/create")
+    @PostMapping(url = "/create")
     public String createUserPost(@RequestBody UserDto userDto){
         User user = new User(userDto);
         userService.signUp(user);
@@ -49,21 +48,18 @@ public class UserController implements RequestController {
             return "user/login_failed";
         }
 
-        sessionManager.createSession(loginMember.get(), response);
+        sessionManager.createSession(loginMember.get(), response, "SID");
         return "redirect:/";
     }
 
     @GetMapping(url = "/logout")
     public String logout(Request req){
-        sessionManager.expire(req);
+        sessionManager.expire(req,"SID");
         return "redirect:/";
     }
 
     @GetMapping(url = "/list")
-    public String userList(Request req,Model model){
-        if(SessionManager.getSession(req,"SID") == null){
-            return "redirect:/user/login";
-        }
+    public String userList(Model model){
         List<User> users = SessionManager.getLoginedUsers();
         List<String> userjson = new ArrayList<>();
         for(User user : users){
@@ -72,5 +68,10 @@ public class UserController implements RequestController {
         }
         model.addAttribute("users",userjson);
         return "user/list";
+    }
+
+    @GetMapping(url = "/profile")
+    public String userProfile(Model model){
+        return "user/profile";
     }
 }

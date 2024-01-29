@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionManager {
     private static final Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
-    public static final String SESSION_COOKIE_NAME = "SID";
     private static final SessionManager instance = new SessionManager();
 
     public static SessionManager getInstance(){
@@ -19,10 +18,10 @@ public class SessionManager {
 
     private static Map<String, Object> sessionStore = new ConcurrentHashMap<>();
 
-    public void createSession(Object value, Response response) {
+    public static void createSession(Object value, Response response, String cookieName) {
         String sessionId = UUID.randomUUID().toString();
         sessionStore.put(sessionId, value);
-        Cookie mySessionCookie = new Cookie(SESSION_COOKIE_NAME, sessionId);
+        Cookie mySessionCookie = new Cookie(cookieName, sessionId);
         response.addCookie(mySessionCookie);
         response.addCookie(new Cookie("Path","/"));
     }
@@ -48,9 +47,9 @@ public class SessionManager {
         return sessionStore.get(sessionCookie.getValue());
     }
 
-    public void expire(Request request) {
+    public void expire(Request request,String cookieName) {
 
-        Cookie sessionCookie = findCookie(request, SESSION_COOKIE_NAME);
+        Cookie sessionCookie = findCookie(request, cookieName);
         if (sessionCookie != null) {
             sessionStore.remove(sessionCookie.getValue());
         }
