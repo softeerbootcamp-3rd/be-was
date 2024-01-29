@@ -16,6 +16,7 @@ public class Article {
     String createdate = "2024.1.29";
     String filePath;
 
+    public Article(){};
     public Article(HttpRequest httpRequest){
         Map<String,String> article = httpRequest.getParmeter();
 
@@ -33,6 +34,22 @@ public class Article {
 
         System.out.println(title+contents+createdate+userId);
         */
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public void setCreatedate(String createdate) {
+        this.createdate = createdate;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContents() {

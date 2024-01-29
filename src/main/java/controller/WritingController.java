@@ -24,9 +24,6 @@ public class WritingController implements Controller {
 
             Article article = new Article(httpRequest);
             insertArticle(connection, article);
-
-            // Fetch members
-            fetchMembers(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -55,20 +52,6 @@ public class WritingController implements Controller {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
-        }
-    }
-
-    private static void fetchMembers(Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Article")) {
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                System.out.println("title: " + resultSet.getString("title"));
-                System.out.println("userid: " + resultSet.getString("userid"));
-                System.out.println("content: " + resultSet.getString("content"));
-                System.out.println("content: " + resultSet.getString("createdate"));
-                System.out.println("------------------");
-            }
         }
     }
 }
