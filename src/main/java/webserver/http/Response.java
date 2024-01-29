@@ -10,14 +10,17 @@ public class Response {
     private String httpVersion;
     private int statusCode;
     private String statusText;
+    private String requestTarget;
     private final HashMap<String, String> responseHeader= new HashMap<>();
     private final ResponseHandler responseHandler = new ResponseHandler();
     private byte[] responseBody;
     private final String locString = "Location";
     private final String cookieString = "Set-Cookie";
+    private final DynamicResourceHandler dynamicResourceHandler = new DynamicResourceHandler();
 
     public Response(Request request) {
         this.httpVersion = request.getHttpVersion();
+        this.requestTarget = request.getRequestTarget();
         setStatusCode(request);
         setBody(request);
         setHeader(request);
@@ -61,9 +64,18 @@ public class Response {
 
     void setBody(Request request){
         responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget());
+        dynamicResourceHandler.handle(this);
     }
 
     public byte[] getResponseBody() {
         return responseBody;
+    }
+
+    public void setResponseBody(byte[] responseBody) {
+        this.responseBody = responseBody;
+    }
+
+    public String getRequestTarget() {
+        return requestTarget;
     }
 }

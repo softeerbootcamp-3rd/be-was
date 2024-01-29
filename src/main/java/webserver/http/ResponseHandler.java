@@ -35,9 +35,6 @@ public class ResponseHandler {
             logger.error(e.getMessage());
         }
 
-        DynamicResourceHandler dynamicResourceHandler = new DynamicResourceHandler();
-        responseBody = dynamicResourceHandler.handle(requestTarget, responseBody);
-
         return responseBody;
     }
 }
