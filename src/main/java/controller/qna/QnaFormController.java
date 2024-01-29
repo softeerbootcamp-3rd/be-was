@@ -2,10 +2,9 @@ package controller.qna;
 
 import controller.ModelView;
 import exception.UserNotFoundException;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 import model.User;
-import service.QnaService;
 import service.UserService;
 
 public class QnaFormController implements QnaController{
@@ -15,11 +14,11 @@ public class QnaFormController implements QnaController{
         this.userService = userService;
     }
     @Override
-    public ModelView process(Request request, Response response) {
+    public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
-            response.set200Ok();
+            httpResponse.set200Ok();
 
-            String userId = request.getCookie("sid");
+            String userId = httpRequest.getCookie("sid");
             User findUser = userService.findUserById(userId);
         } catch (IllegalArgumentException | UserNotFoundException e) {
             e.printStackTrace();

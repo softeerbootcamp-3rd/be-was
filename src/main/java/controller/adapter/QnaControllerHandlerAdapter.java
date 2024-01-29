@@ -2,9 +2,8 @@ package controller.adapter;
 
 import controller.ModelView;
 import controller.qna.QnaController;
-import controller.user.UserController;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 
 import java.io.IOException;
 
@@ -15,10 +14,10 @@ public class QnaControllerHandlerAdapter implements HandlerAdapter{
     }
 
     @Override
-    public ModelView handle(Request request, Response response, Object handler) throws IOException {
+    public ModelView handle(HttpRequest httpRequest, HttpResponse httpResponse, Object handler) throws IOException {
         QnaController controller = (QnaController) handler;
 
-        ModelView mv = controller.process(request, response);
+        ModelView mv = controller.process(httpRequest, httpResponse);
 
         return mv;
     }

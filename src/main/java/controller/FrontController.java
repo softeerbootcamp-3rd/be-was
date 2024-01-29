@@ -7,8 +7,8 @@ import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
 import repository.QnaRepository;
 import model.Qna;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 import util.ResponseSender;
 
 import java.io.IOException;
@@ -49,17 +49,17 @@ public class FrontController {
         handlerAdapters.add(new QnaControllerHandlerAdapter());
     }
 
-    public void service(Request request, OutputStream out) throws IOException {
-        Object handler = getHandler(request);
-        Response response = new Response();
+    public void service(HttpRequest httpRequest, OutputStream out) throws IOException {
+        Object handler = getHandler(httpRequest);
+        HttpResponse httpResponse = new HttpResponse();
 
         HandlerAdapter adapter = getHandlerAdapter(handler);
-        ModelView mv = adapter.handle(request, response, handler);
+        ModelView mv = adapter.handle(httpRequest, httpResponse, handler);
 
         String viewName = mv.getViewName();
         View view = viewResolver(viewName);
 
-        if (request.getURI().contains("index.html")) {
+        if (httpRequest.getURI().contains("index.html")) {
             HashMap<String, Object> model = new HashMap<>();
             Collection<Qna> allQnas = qnaRepository.findAllQnas();
             model.put("{{qna-list}}", allQnas);
@@ -68,13 +68,13 @@ public class FrontController {
 
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
-            view.render(request, response, mv, resourceController.getType());
-            ResponseSender.send(response, out);
+            view.render(httpRequest, httpResponse, mv, resourceController.getType());
+            ResponseSender.send(httpResponse, out);
             return;
         }
 
-        view.render(request, response, mv);
-        ResponseSender.send(response, out);
+        view.render(httpRequest, httpResponse, mv);
+        ResponseSender.send(httpResponse, out);
     }
 
     private View viewResolver(String viewName) {
@@ -90,8 +90,8 @@ public class FrontController {
         throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
     }
 
-    private Object getHandler(Request request) {
-        String requestURI = request.getURI();
+    private Object getHandler(HttpRequest httpRequest) {
+        String requestURI = httpRequest.getURI();
         if (isResourceURI(requestURI)) {
             return handlerMappingMap.get(extractResourceType(requestURI));
         }

@@ -1,12 +1,9 @@
 package controller.user;
 
 import controller.ModelView;
-import model.Request;
-import model.Response;
-import service.UserService;
-
-import java.util.Map;
+import model.HttpRequest;
+import model.HttpResponse;
 
 public interface UserController {
-    ModelView process(Request request, Response response);
+    ModelView process(HttpRequest httpRequest, HttpResponse httpResponse);
 }

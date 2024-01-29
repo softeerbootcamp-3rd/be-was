@@ -2,11 +2,10 @@ package controller.adapter;
 
 import controller.ModelView;
 import controller.user.UserController;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class UserControllerHandlerAdapter implements HandlerAdapter{
     @Override
@@ -15,10 +14,10 @@ public class UserControllerHandlerAdapter implements HandlerAdapter{
     }
 
     @Override
-    public ModelView handle(Request request, Response response, Object handler) throws IOException {
+    public ModelView handle(HttpRequest httpRequest, HttpResponse httpResponse, Object handler) throws IOException {
         UserController controller = (UserController) handler;
 
-        ModelView mv = controller.process(request, response);
+        ModelView mv = controller.process(httpRequest, httpResponse);
 
         return mv;
     }

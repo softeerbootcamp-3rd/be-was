@@ -3,8 +3,8 @@ package controller;
 import config.AppConfig;
 import exception.UserNotFoundException;
 import model.Qna;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class View {
         this.viewPath = viewPath;
     }
 
-    public void render(Request request, Response response, ModelView mv) {
+    public void render(HttpRequest httpRequest, HttpResponse httpResponse, ModelView mv) {
         File file = new File(viewPath);
         byte[] body = new byte[(int) file.length()];
 
@@ -65,12 +65,12 @@ public class View {
 
             User findUser = null;
             try {
-                String userId = request.getCookie("sid");
+                String userId = httpRequest.getCookie("sid");
                 findUser = userService.findUserById(userId);
             } catch (IllegalArgumentException | UserNotFoundException e) {
                 fileString = fileString.replace("{{welcome}}", "");
                 body = fileString.getBytes();
-                response.setBody(body);
+                httpResponse.setBody(body);
                 return;
             }
             String renderedHtml = HtmlBuilder.replace("{{welcome}}", findUser.getName());
@@ -78,10 +78,10 @@ public class View {
             body = fileString.getBytes();
         }
 
-        response.setBody(body);
+        httpResponse.setBody(body);
     }
 
-    public void render(Request request, Response response, ModelView mv, String type) {
+    public void render(HttpRequest httpRequest, HttpResponse httpResponse, ModelView mv, String type) {
         File file = new File(viewPath);
         byte[] body = new byte[(int) file.length()];
 
@@ -91,8 +91,8 @@ public class View {
             e.printStackTrace();
         }
 
-        response.set200Ok();
-        response.putToHeaderMap("Content-Type", "text/" + type + ";charset=utf-8");
+        httpResponse.set200Ok();
+        httpResponse.putToHeaderMap("Content-Type", "text/" + type + ";charset=utf-8");
 
 //        // todo
         if (mv.getViewName().contains("index.html")) {
@@ -108,20 +108,20 @@ public class View {
 
             User findUser = null;
             try {
-                String userId = request.getCookie("sid");
+                String userId = httpRequest.getCookie("sid");
                 findUser = userService.findUserById(userId);
             } catch (IllegalArgumentException | UserNotFoundException e) {
                 fileString = fileString.replace("{{welcome}}", "");
                 body = fileString.getBytes();
-                response.setBody(body);
+                httpResponse.setBody(body);
                 return;
             }
             String renderedHtml = HtmlBuilder.replace("{{welcome}}", findUser.getName());
             fileString = fileString.replace("{{welcome}}", renderedHtml);
             body = fileString.getBytes();
         }
-        response.putToHeaderMap("Content-Length", String.valueOf(body.length));
-        response.setBody(body);
+        httpResponse.putToHeaderMap("Content-Length", String.valueOf(body.length));
+        httpResponse.setBody(body);
 
     }
 }

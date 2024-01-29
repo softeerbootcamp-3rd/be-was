@@ -1,10 +1,10 @@
 package controller.qna;
 
 import controller.ModelView;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 
 public interface QnaController {
-    ModelView process(Request request, Response response);
+    ModelView process(HttpRequest httpRequest, HttpResponse httpResponse);
 
 }

@@ -2,12 +2,9 @@ package controller.user;
 
 import controller.ModelView;
 import exception.AlreadyExistUserException;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 import service.UserService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class UserCreateController implements UserController {
     private final UserService userService;
@@ -17,27 +14,27 @@ public class UserCreateController implements UserController {
     }
 
     @Override
-    public ModelView process(Request request, Response response) {
-        String userId = request.getParameter("userId");
-        String password = request.getParameter("password");
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
+    public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
+        String userId = httpRequest.getParameter("userId");
+        String password = httpRequest.getParameter("password");
+        String name = httpRequest.getParameter("name");
+        String email = httpRequest.getParameter("email");
 
-        response.set302Redirect();
+        httpResponse.set302Redirect();
         String path = "";
 
         try {
             userService.addUser(userId, password, name, email);
         } catch (AlreadyExistUserException e) {
             path = "/user/form_failed.html";
-            response.putToHeaderMap("Location", path);
+            httpResponse.putToHeaderMap("Location", path);
 
             return new ModelView(path);
         }
 
         // 회원가입 성공
         path = "/index.html";
-        response.putToHeaderMap("Location", path);
+        httpResponse.putToHeaderMap("Location", path);
 
         return new ModelView(path);
     }

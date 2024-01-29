@@ -3,7 +3,7 @@ package model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Request {
+public class HttpRequest {
     private HttpMethod method;
     private String URI;
     private String httpVer;
@@ -12,7 +12,7 @@ public class Request {
     private Map<String, String> cookieMap;
     private String body;
 
-    public Request() {
+    public HttpRequest() {
     }
 
 

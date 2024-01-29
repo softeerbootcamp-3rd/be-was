@@ -1,8 +1,8 @@
 package controller.qna;
 
 import controller.ModelView;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
 import service.QnaService;
 
 public class QnaCreateController implements QnaController {
@@ -13,14 +13,14 @@ public class QnaCreateController implements QnaController {
     }
 
     @Override
-    public ModelView process(Request request, Response response) {
-        String writer = request.getParameter("writer");
-        String title = request.getParameter("title");
-        String contents = request.getParameter("contents");
+    public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
+        String writer = httpRequest.getParameter("writer");
+        String title = httpRequest.getParameter("title");
+        String contents = httpRequest.getParameter("contents");
 
         qnaService.addQna(writer, title, contents);
-        response.set302Redirect();
-        response.putToHeaderMap("Location", "/index.html");
+        httpResponse.set302Redirect();
+        httpResponse.putToHeaderMap("Location", "/index.html");
 
         return new ModelView("/templates/index.html");
     }

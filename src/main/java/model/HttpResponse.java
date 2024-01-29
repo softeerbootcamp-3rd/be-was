@@ -1,12 +1,9 @@
 package model;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Response {
+public class HttpResponse {
     static final private String DEFAULT_HTTP_VER = "HTTP/1.1";
 
     private String httpVer;

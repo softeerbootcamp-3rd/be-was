@@ -8,7 +8,7 @@ import java.util.Map;
 
 import controller.FrontController;
 import model.HttpMethod;
-import model.Request;
+import model.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,40 +29,40 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            Request request = convertToRequest(in);
-            logger.debug("request = {}", request);
+            HttpRequest httpRequest = convertToRequest(in);
+            logger.debug("request = {}", httpRequest);
 
-            frontController.service(request, out);
+            frontController.service(httpRequest, out);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private Request convertToRequest(InputStream in) throws IOException {
+    private HttpRequest convertToRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        Request request = new Request();
+        HttpRequest httpRequest = new HttpRequest();
 
         // Request Line (method, path(query 포함), http version)
-        setRequestLine(request, br.readLine());
+        setRequestLine(httpRequest, br.readLine());
 
         // Request Header
-        setRequestHeaderMap(request, br);
+        setRequestHeaderMap(httpRequest, br);
 
         // Request Body (POST의 경우)
-        if (request.getMethod() == HttpMethod.POST) {
-            setRequestBody(request, br);
+        if (httpRequest.getMethod() == HttpMethod.POST) {
+            setRequestBody(httpRequest, br);
         }
 
-        return request;
+        return httpRequest;
     }
 
-    private void setRequestParamFromQuery(Request request, String query) throws UnsupportedEncodingException {
+    private void setRequestParamFromQuery(HttpRequest httpRequest, String query) throws UnsupportedEncodingException {
         HashMap<String, String> paramMap = getParamMap(query);
-        request.setParamMap(paramMap);
+        httpRequest.setParamMap(paramMap);
     }
 
-    private void setRequestBody(Request request, BufferedReader br) throws IOException {
-        Map<String, String> headerMap = request.getHeaderMap();
+    private void setRequestBody(HttpRequest httpRequest, BufferedReader br) throws IOException {
+        Map<String, String> headerMap = httpRequest.getHeaderMap();
         StringBuilder sb = new StringBuilder();
 
         int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
@@ -74,13 +74,13 @@ public class RequestHandler implements Runnable {
         }
 
         if (headerMap.get("Content-Type").startsWith("application/x-www-form-urlencoded")) {
-            setRequestParamFromQuery(request, sb.toString());
+            setRequestParamFromQuery(httpRequest, sb.toString());
         }
 
-        request.setBody(sb.toString());
+        httpRequest.setBody(sb.toString());
     }
 
-    private void setRequestHeaderMap(Request request, BufferedReader br) throws IOException {
+    private void setRequestHeaderMap(HttpRequest httpRequest, BufferedReader br) throws IOException {
         Map<String, String> headerMap = new HashMap<>();
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
@@ -89,29 +89,29 @@ public class RequestHandler implements Runnable {
             headerMap.put(line.substring(0, idx), line.substring(idx + 2)); // +2 -> ':' 다음에 나오는 공백을 제거해주기 위함
         }
 
-        request.setHeaderMap(headerMap);
+        httpRequest.setHeaderMap(headerMap);
     }
 
-    private void setRequestLine(Request request, String status) throws UnsupportedEncodingException {
+    private void setRequestLine(HttpRequest httpRequest, String status) throws UnsupportedEncodingException {
         String[] tokens = status.split(" ");
 
         if (tokens[0].equals(HttpMethod.GET.name())) {
-            request.setMethod(HttpMethod.GET);
+            httpRequest.setMethod(HttpMethod.GET);
         }
         if (tokens[0].equals(HttpMethod.POST.name())) {
-            request.setMethod(HttpMethod.POST);
+            httpRequest.setMethod(HttpMethod.POST);
         }
 
         String uri = tokens[1];
         if (uri.contains("?")) {
             String[] uriWithQuery = uri.split("\\?");
-            request.setURI(uriWithQuery[0]);
-            setRequestParamFromQuery(request, uriWithQuery[1]);
+            httpRequest.setURI(uriWithQuery[0]);
+            setRequestParamFromQuery(httpRequest, uriWithQuery[1]);
         } else {
-            request.setURI(uri);
+            httpRequest.setURI(uri);
         }
 
-        request.setHttpVer(tokens[2]);
+        httpRequest.setHttpVer(tokens[2]);
     }
 
     private HashMap<String, String> getParamMap(String query) throws UnsupportedEncodingException {

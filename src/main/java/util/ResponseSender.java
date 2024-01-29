@@ -1,18 +1,18 @@
 package util;
 
-import model.Response;
+import model.HttpResponse;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class ResponseSender {
-    public static void send(Response response, OutputStream out) {
+    public static void send(HttpResponse httpResponse, OutputStream out) {
         try (DataOutputStream dos = new DataOutputStream(out)) {
-            dos.writeBytes(response.extractLine());
-            dos.writeBytes(response.extractHeader());
+            dos.writeBytes(httpResponse.extractLine());
+            dos.writeBytes(httpResponse.extractHeader());
 
-            byte[] body = response.getBody();
+            byte[] body = httpResponse.getBody();
             if (body != null) {
                 dos.write(body);
             }
