@@ -5,8 +5,8 @@ import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import service.UserService;
 
-import static constant.StaticFile.LOGIN_FAILED_PAGE_PATH;
-import static constant.StaticFile.MAIN_PAGE_PATH;
+import static constant.FileConstant.LOGIN_FAILED_PAGE_PATH;
+import static constant.FileConstant.MAIN_PAGE_PATH;
 
 
 public class UserController {

@@ -1,6 +1,6 @@
 package util;
 
-import webserver.HttpRequest;
+import webserver.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

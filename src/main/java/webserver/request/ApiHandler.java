@@ -1,4 +1,4 @@
-package webserver;
+package webserver.request;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
@@ -6,6 +6,8 @@ import constant.ErrorCode;
 import exception.WebServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.response.HttpResponse;
+import webserver.ThreadLocalManager;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -14,8 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static constant.StaticFile.API_CAN_EXECUTE_WITHOUT_LOGIN;
-import static constant.StaticFile.LOGIN_PAGE_PATH;
+import static constant.FileConstant.API_CAN_EXECUTE_WITHOUT_LOGIN;
+import static constant.FileConstant.LOGIN_PAGE_PATH;
 
 public class ApiHandler {
     private static final Logger logger = LoggerFactory.getLogger(ApiHandler.class);

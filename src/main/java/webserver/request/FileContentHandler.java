@@ -1,7 +1,7 @@
 package webserver.request;
 
 import constant.MimeType;
-import constant.StaticFile;
+import constant.FileConstant;
 import util.FileManager;
 import util.HtmlDynamicEditor;
 import webserver.response.HttpResponse;
@@ -9,7 +9,7 @@ import webserver.ThreadLocalManager;
 
 import java.io.IOException;
 
-import static constant.StaticFile.*;
+import static constant.FileConstant.*;
 
 public class FileContentHandler {
 
@@ -36,7 +36,7 @@ public class FileContentHandler {
                 httpResponse.makeRedirect(LOGIN_PAGE_PATH);
             } else {
                 // 루트 페이지로 요청이 들어온 경우에도 메인 페이지로 이동할 수 있도록
-                if (requestPath.equals("/")) { httpRequest.setPath(StaticFile.MAIN_PAGE_PATH); }
+                if (requestPath.equals("/")) { httpRequest.setPath(FileConstant.MAIN_PAGE_PATH); }
 
                 // 요청 경로에 있는 파일을 읽어 bytecode 로 받아오기
                 byte[] body = FileManager.getFileBytes(requestPath);

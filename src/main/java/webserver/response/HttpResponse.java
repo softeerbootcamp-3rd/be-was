@@ -1,4 +1,4 @@
-package webserver;
+package webserver.response;
 
 import constant.ErrorCode;
 import constant.MimeType;
