@@ -17,19 +17,19 @@ public class ViewMaker {
         this.view = view;
     }
     //파일 동적으로 읽어오기
-    public String readFile(HttpRequest request) throws IOException {
+    public String readFile(View view) throws IOException {
         File file = new File(path);
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 StringBuilder stringBuilder = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if (request.getUserId()!=null && line.contains("<!--ifLoggedIn-->")) {
+                    if (view.get("userId",String.class)!=null && line.contains("<!--ifLoggedIn-->")) {
                         line = line.strip().substring("<!--ifLoggedIn-->".length());
-                        line = changeWord(line, "${username}", request.getUserId());
+                        line = changeWord(line, "${username}", view.get("userId",String.class));
                         line = removeCommentSymbols(line);
                     }
-                    if (request.getUserId()==null && line.contains("<!--ifNotLoggedIn-->")) {
+                    if (view.get("userId",String.class)==null && line.contains("<!--ifNotLoggedIn-->")) {
                         line = line.strip().substring("<!--ifNotLoggedIn-->".length());
                         line = removeCommentSymbols(line);
                     }

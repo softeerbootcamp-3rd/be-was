@@ -65,7 +65,8 @@ public class FrontController {
         if(!path.startsWith("redirect:")) {
             View view = new View();
             viewMaker = new ViewMaker(path, view);
-            String bodyString = viewMaker.readFile(request);
+            view.set("userId", request.getUserId());
+            String bodyString = viewMaker.readFile(view);
             response.readString(bodyString);
         }
     }

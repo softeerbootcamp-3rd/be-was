@@ -11,7 +11,16 @@ public class View {
         attribute = new HashMap<>();
     }
 
-    public Object get(String objectName) {
-        return attribute.get(objectName);
+    public <T> T get(String key, Class<T> type) {
+        Object value = attribute.get(key);
+
+        if (value != null && type.isInstance(value)) {
+            return type.cast(value);
+        }
+        return null;
+    }
+
+    public void set(String key, Object value) {
+        attribute.put(key, value);
     }
 }
