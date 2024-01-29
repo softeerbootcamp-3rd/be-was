@@ -14,9 +14,8 @@ import service.UserLoginService;
 import session.SessionManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,13 +77,13 @@ public class UserController {
         } else {
             Collection<User> users = Database.findAll();
 
-            String url = "src/main/resources/templates/user/list.html";
-            try {
-                byte[] body = Files.readAllBytes(new File(url).toPath());
+            File file = new File("src/main/resources/templates/user/list.html");
+            try(FileInputStream fis = new FileInputStream(file)) {
+                byte[] body = fis.readAllBytes();
 
-                String content = new String(body, StandardCharsets.UTF_8);
+                String content = new String(body, "UTF-8");
                 String replacedBody = replaceWord(content, "<tbody></tbody>", makeListHtml(users));
-                body = replacedBody.getBytes(StandardCharsets.UTF_8);
+                body = replacedBody.getBytes("UTF-8");
 
                 responseHeaders.put(CONTENT_TYPE, "text/html; charset=utf-8");
                 responseHeaders.put(CONTENT_LENGTH, String.valueOf(body.length));

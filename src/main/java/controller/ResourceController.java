@@ -8,11 +8,9 @@ import response.HttpResponseBuilder;
 import response.HttpResponseStatus;
 import session.SessionManager;
 
-import javax.naming.ldap.Control;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -44,14 +42,14 @@ public class ResourceController {
         }
         File file = new File(url);
         if (file.isFile()) {
-            try{
-                byte[] body = Files.readAllBytes(new File(url).toPath());
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] body = fis.readAllBytes();
 
                 User loginUser = sessionManager.getUserBySessionId(request);
                 if (loginUser != null && url.endsWith(".html")) {
-                    String content = new String(body, StandardCharsets.UTF_8);
+                    String content = new String(body, "UTF-8");
                     String replacedBody = replaceWord(content, "로그인", loginUser.getName());
-                    body = replacedBody.getBytes(StandardCharsets.UTF_8);
+                    body = replacedBody.getBytes("UTF-8");
                 }
 
                 responseHeaders.put(CONTENT_TYPE, getContentType(url));
