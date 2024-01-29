@@ -47,7 +47,7 @@ public class ResponseBuilder {
     }
 
     private static String formattingDate(LocalDateTime date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zz", Locale.ENGLISH);
-        return formatter.format(date);
+        DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zz", Locale.ENGLISH);
+        return date.atZone(ZoneId.of("Asia/Seoul")).format(dataFormat);
     }
 }
