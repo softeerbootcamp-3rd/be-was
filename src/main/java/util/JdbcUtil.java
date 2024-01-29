@@ -23,7 +23,7 @@ public class JdbcUtil {
 //        }
 //    }
 
-    private JdbcUtil() {}
+    public JdbcUtil() {}
 
     private static class LazyHolder {
         private static final Connection INSTANCE;

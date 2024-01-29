@@ -1,6 +1,7 @@
 package controller;
 
 import annotation.*;
+import dao.UserDao;
 import db.Database;
 import model.User;
 import util.SessionManager;
@@ -35,7 +36,7 @@ public class UserController {
         }
 
         // user id 나 email이 db에 이미 존재할 때
-        if (Database.isUserIdExist(userId) || Database.isEmailExist(email)) {
+        if (UserDao.isUserIdExist(userId) || UserDao.isEmailExist(email)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -43,8 +44,8 @@ public class UserController {
             );
         }
 
-        User user = new User(userId, password, name, email);
-        Database.addUser(user);
+        User user = new User(userId, name, password, email);
+        UserDao.insertUser(user);
 
         headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
 
