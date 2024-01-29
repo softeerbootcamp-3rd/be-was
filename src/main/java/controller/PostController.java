@@ -2,13 +2,16 @@ package controller;
 
 import constants.ContentType;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Map;
 import model.Request;
 import model.Response;
 import utils.HtmlBuilder;
 import utils.PageReader;
+import utils.ParamBuilder;
 import webserver.Session;
 
-public class QnaController implements Controller {
+public class PostController implements Controller {
 
     public void route(Request request, Response response) {
         String cookie = request.getHeader("Cookie");
@@ -16,7 +19,21 @@ public class QnaController implements Controller {
             response.addHeader("Set-Cookie", cookie + "; Path=/; Max-Age=600");
         }
 
+        if (request.getUrl().startsWith("/post/form") && request.getMethod().equals("POST")) {
+            post(request, response);
+            return;
+        }
         getPage(request, response);
+    }
+
+    private void post(Request request, Response response) {
+        Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
+
+        for (String key : params.keySet()) {
+            System.out.println(key + " : " + params.get(key));
+        }
+        LocalDateTime time = LocalDateTime.now();
+        System.out.println(time);
     }
 
     /**
