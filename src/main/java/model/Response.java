@@ -55,20 +55,4 @@ public class Response {
     public byte[] getBody() {
         return body;
     }
-
-    public void send(OutputStream os) {
-        try (DataOutputStream dos = new DataOutputStream(os)) {
-            dos.writeBytes(extractLine());
-            dos.writeBytes(extractHeader());
-
-            byte[] body = getBody();
-            if (body != null) {
-                dos.write(body);
-            }
-
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

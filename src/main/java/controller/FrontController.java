@@ -9,6 +9,7 @@ import repository.QnaRepository;
 import model.Qna;
 import model.Request;
 import model.Response;
+import util.ResponseSender;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -68,12 +69,12 @@ public class FrontController {
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
             view.render(request, response, mv, resourceController.getType());
-            response.send(out);
+            ResponseSender.send(response, out);
             return;
         }
 
         view.render(request, response, mv);
-        response.send(out);
+        ResponseSender.send(response, out);
     }
 
     private View viewResolver(String viewName) {
