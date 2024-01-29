@@ -53,7 +53,7 @@ public class PostController {
                 .build();
     }
 
-    @RequestMapping(method = "POST", path = "/questions/{postId}/delete")
+    @RequestMapping(method = "POST", path = "/post/{postId}/delete")
     public static HttpResponse deletePost() {
         String postIdString = SharedData.pathParams.get().get("postId");
         if (Strings.isNullOrEmpty(postIdString))
