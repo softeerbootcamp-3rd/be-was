@@ -35,4 +35,9 @@ public class ModelView {
     public void addAttribute(String key, Object value) {
         model.put(key, value);
     }
+
+    public Object getAttribute(String key) {
+        return model.get(key);
+    }
+
 }
