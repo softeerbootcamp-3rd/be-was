@@ -29,40 +29,16 @@ public class JdbcUtil {
         return connectionHolder.get();
     }
 
-    public static void close() {
+    public static void closeJdbcConnection() {
+        Connection connection = connectionHolder.get();
         try {
-            if (jdbcConnection != null) {
-                jdbcConnection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 추가: try-with-resources 적용
-    public static void closeWithResources(Connection connection, Statement statement, ResultSet resultSet) {
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (statement != null) {
-                statement.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (connection != null) {
+            if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("JDBC 커넥션 닫기 오류", e);
+        } finally {
+            connectionHolder.remove(); // ThreadLocal에서 현재 스레드에 연결된 Connection 제거
         }
     }
 

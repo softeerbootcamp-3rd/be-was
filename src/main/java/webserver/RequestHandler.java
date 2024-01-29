@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.JdbcUtil;
 import util.SessionManager;
 import util.StringParser;
 import webserver.http.*;
@@ -31,6 +32,8 @@ public class RequestHandler implements Runnable {
 
             execute(in, dos);
             out.close();
+            // DB Connection 종료
+            JdbcUtil.closeJdbcConnection();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
