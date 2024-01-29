@@ -21,14 +21,13 @@ public class PostController implements Controller {
         String cookie = request.getHeader("Cookie");
         if (cookie != null && Session.getUserBySessionId(cookie) != null) {
             response.addHeader("Set-Cookie", cookie + "; Path=/; Max-Age=600");
+        } else {
+            response.setCode(302);
+            response.addHeader("Location", "/user/login.html");
+            return;
         }
 
         if (request.getUrl().startsWith("/post/write")) {
-            if (cookie == null || Session.getUserBySessionId(cookie) == null) {
-                response.setCode(302);
-                response.addHeader("Location", "/user/login.html");
-                return;
-            }
             if (request.getMethod().equals("POST")) {
                 post(request, response);
                 return;
