@@ -135,4 +135,12 @@ public class RequestDataController {
         }
         return new Response(HttpStatusCode.OK, USER_LOGIN_HTML);
     }
+
+    @Route(method = HttpMethod.GET, uri = "/qna/form.html")
+    private static Response handleFileWrite(RequestData requestData) {
+        if (!requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+        }
+        return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+    }
 }
