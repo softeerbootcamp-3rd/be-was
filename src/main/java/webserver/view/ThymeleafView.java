@@ -82,7 +82,6 @@ public class ThymeleafView implements View {
 
             }
             expressionMatcher.appendTail(scriptResult);
-
             String replacement = scriptResult.length() > 0 ? "<script>" + scriptResult.toString() : matcher.group(0);
             matcher.appendReplacement(result, Matcher.quoteReplacement(replacement + "</script>"));
         }
