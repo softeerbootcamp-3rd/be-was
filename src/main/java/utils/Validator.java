@@ -7,24 +7,25 @@ import java.util.Map;
 
 public class Validator {
     private static final Logger logger = LoggerFactory.getLogger(Validator.class);
-    public static Boolean validateSignUpInfo(Map<String, String> body) {
+    public static Boolean validateSignUpInfo(String body) {
+        Map<String, String> bodyMap = Parser.extractParams(body);
         // userId, password, name, email 값이 잘 들어왔는지 확인
-        if (!body.containsKey("userId") || !body.containsKey("password")
-                || !body.containsKey("name") || !body.containsKey("email")) {
+        if (!bodyMap.containsKey("userId") || !bodyMap.containsKey("password")
+                || !bodyMap.containsKey("name") || !bodyMap.containsKey("email")) {
             logger.error("파라미터 정보 불충분");
             return false;
         }
 
         // userId, password, name, email null 값 검사
-        if (body.get("userId") == null || body.get("password") == null ||
-                body.get("name") == null || body.get("email") == null) {
+        if (bodyMap.get("userId") == null || bodyMap.get("password") == null ||
+                bodyMap.get("name") == null || bodyMap.get("email") == null) {
             logger.info("null 값이 들어옴");
             return false;
         }
 
         // userId, password, name, email 빈 값 검사
-        if (body.get("userId").isEmpty() || body.get("password").isEmpty() ||
-                body.get("name").isEmpty() || body.get("email").isEmpty()) {
+        if (bodyMap.get("userId").isEmpty() || bodyMap.get("password").isEmpty() ||
+                bodyMap.get("name").isEmpty() || bodyMap.get("email").isEmpty()) {
             logger.error("빈 값이 들어옴");
             return false;
         }
@@ -32,13 +33,27 @@ public class Validator {
         return true;
     }
 
-    public static Boolean validateLoginInfo(Map<String, String> body) {
+    public static Boolean validateLoginInfo(String body) {
+        Map<String, String> bodyMap = Parser.extractParams(body);
         // userId, password 값이 잘 들어왔는지 확인
-        if (!body.containsKey("userId") || !body.containsKey("password")) {
+        if (!bodyMap.containsKey("userId") || !bodyMap.containsKey("password")) {
             return false;
         }
 
-        if (body.get("userId").isEmpty() || body.get("password").isEmpty()) {
+        if (bodyMap.get("userId").isEmpty() || bodyMap.get("password").isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static Boolean validatePostInfo(String body) {
+        Map<String, String> bodyMap = Parser.extractParams(body);
+        if (!bodyMap.containsKey("writer") || !bodyMap.containsKey("title") || !bodyMap.containsKey("contents")) {
+            return false;
+        }
+
+        if (bodyMap.get("writer").isEmpty() || bodyMap.get("title").isEmpty() || bodyMap.get("contents").isEmpty()) {
             return false;
         }
 
