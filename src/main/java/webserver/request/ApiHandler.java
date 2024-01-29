@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.response.HttpResponse;
 import webserver.ThreadLocalManager;
+import webserver.response.ResponseHandler;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -42,7 +43,7 @@ public class ApiHandler {
 
             // 로그인하지 않은 사용자가 로그인한 사용자만 사용할 수 있는 기능에 접근하면 로그인 페이지로 리다이렉트
             if (ThreadLocalManager.getSession() == null && !API_CAN_EXECUTE_WITHOUT_LOGIN.contains(httpRequest.getPath())) {
-                httpResponse.makeRedirect(LOGIN_PAGE_PATH);
+                ResponseHandler.makeRedirect(httpResponse, LOGIN_PAGE_PATH);
             } else {
                 try {
                     Class<?> controller = method.getDeclaringClass();
@@ -50,10 +51,10 @@ public class ApiHandler {
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     if (e.getCause().getClass().equals(WebServerException.class)) {
                         WebServerException wasE = (WebServerException) e.getCause();
-                        httpResponse.makeError(wasE.getErrorCode());
+                        ResponseHandler.makeError(httpResponse, wasE.getErrorCode());
                     } else {
                         logger.error(e.getCause().getMessage());
-                        httpResponse.makeError(ErrorCode.SERVER_ERROR);
+                        ResponseHandler.makeError(httpResponse, ErrorCode.SERVER_ERROR);
                     }
                 }
             }

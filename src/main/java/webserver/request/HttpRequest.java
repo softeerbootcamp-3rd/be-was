@@ -40,10 +40,6 @@ public class HttpRequest {
         return body;
     }
 
-    public Map<String, String> getCookies() {
-        return cookies;
-    }
-
     public String getSessionId() {
         return cookies.get("sessionId");
     }
@@ -68,13 +64,8 @@ public class HttpRequest {
         return this.headers.get("Cookie");
     }
 
-    // todo static으로 빼기, model.. 안에는 게터랑 세터만..
-    public Integer getContentLength() {
-        String len;
-        if ((len = this.headers.get("Content-Length")) != null) {
-            return Integer.parseInt(len);
-        }
-        return  null;
+    public String getContentLengthHeader() {
+        return  this.headers.get("Content-Length");
     }
 
     public String headersToString() {

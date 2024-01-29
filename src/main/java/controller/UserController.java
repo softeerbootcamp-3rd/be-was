@@ -7,6 +7,7 @@ import webserver.ThreadLocalManager;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import service.UserService;
+import webserver.response.ResponseHandler;
 
 import static constant.FileConstant.LOGIN_FAILED_PAGE_PATH;
 import static constant.FileConstant.MAIN_PAGE_PATH;
@@ -16,9 +17,11 @@ public class UserController {
 
     @PostMapping("/user/create")
     public static HttpResponse create(HttpRequest httpRequest) {
+        HttpResponse httpResponse = new HttpResponse();
         UserService.signUp(httpRequest.getBody());
 
-        return new HttpResponse().makeRedirect(MAIN_PAGE_PATH);
+        ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
+        return httpResponse;
     }
 
     @PostMapping("/user/login")
@@ -32,9 +35,9 @@ public class UserController {
         // todo max-age 설정
         if ((sessionId = UserService.login(userId, password)) != null ) {
             httpResponse.addHeader("Set-Cookie", ("sessionId=" + sessionId + "; Path=/"));
-            httpResponse.makeRedirect(MAIN_PAGE_PATH);
+            ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
         } else {
-            httpResponse.makeRedirect(LOGIN_FAILED_PAGE_PATH);
+            ResponseHandler.makeRedirect(httpResponse, LOGIN_FAILED_PAGE_PATH);
         }
 
         return httpResponse;
@@ -47,7 +50,7 @@ public class UserController {
         String sessionId = ThreadLocalManager.getSessionId();
         SessionManager.removeSession(sessionId);
 
-        httpResponse.makeRedirect(MAIN_PAGE_PATH);
+        ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
         return httpResponse;
     }
 }

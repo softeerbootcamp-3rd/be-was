@@ -6,6 +6,7 @@ import util.FileManager;
 import util.HtmlDynamicEditor;
 import webserver.response.HttpResponse;
 import webserver.ThreadLocalManager;
+import webserver.response.ResponseHandler;
 
 import java.io.IOException;
 
@@ -33,7 +34,7 @@ public class FileContentHandler {
             // 로그인하지 않은 사용자가 로그인한 사용자만 사용할 수 있는 파일에 접근하면 로그인 페이지로 리다이렉트
             if (ThreadLocalManager.getSession() == null &&
                     fileMimeType.equals(MimeType.HTML) && !FILE_CAN_READ_WITHOUT_LOGIN.contains(requestPath)) {
-                httpResponse.makeRedirect(LOGIN_PAGE_PATH);
+                ResponseHandler.makeRedirect(httpResponse, LOGIN_PAGE_PATH);
             } else {
                 // 루트 페이지로 요청이 들어온 경우에도 메인 페이지로 이동할 수 있도록
                 if (requestPath.equals("/")) { httpRequest.setPath(FileConstant.MAIN_PAGE_PATH); }
@@ -44,7 +45,7 @@ public class FileContentHandler {
                 if (fileMimeType.equals(MimeType.HTML)) {
                     body = HtmlDynamicEditor.edit(body, requestPath);
                 }
-                httpResponse.makeBody(body, fileMimeType.contentType);
+                ResponseHandler.makeBody(httpResponse, body, fileMimeType.contentType);
             }
 
             return httpResponse;

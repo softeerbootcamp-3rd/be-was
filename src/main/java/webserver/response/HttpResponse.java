@@ -1,7 +1,5 @@
 package webserver.response;
 
-import constant.ErrorCode;
-import constant.MimeType;
 import constant.HttpStatus;
 
 import java.util.ArrayList;
@@ -18,43 +16,27 @@ public class HttpResponse {
         this.body = null;
     }
 
-    public void makeError(ErrorCode errorCode) {
-        this.status = errorCode.httpStatus;
-        this.body = errorCode.errorMessage.getBytes();
-        addContentType(MimeType.TXT.contentType);
-    }
-
-    public HttpResponse makeRedirect(String redirectUrl) {
-        this.status = HttpStatus.REDIRECT;
-        addHeader("Location", redirectUrl);
-        addContentType(MimeType.HTML.contentType);
-        return this;
-    }
-
-    public void makeBody(byte[] body, String contentType) {
-        this.status = HttpStatus.OK;
-        this.body = body;
-        addHeader("Content-Length", String.valueOf(body.length));
-        addContentType(contentType);
-    }
-
-    public void addContentType(String fileContentType) {
-        addHeader("Content-Type", (fileContentType + ";charset=utf-8"));
-    }
-
-    public void addHeader(String key, String value) {
-        this.headers.add(key + ": " + value + "\r\n");
-    }
-
     public HttpStatus getStatus() {
         return status;
+    }
+
+    public List<String> getHeaders() {
+        return headers;
     }
 
     public byte[] getBody() {
         return body;
     }
 
-    public List<String> getHeaders() {
-        return headers;
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
+
+    public void addHeader(String key, String value) {
+        this.headers.add(key + ": " + value + "\r\n");
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 }

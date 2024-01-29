@@ -1,5 +1,8 @@
 package webserver.response;
 
+import constant.ErrorCode;
+import constant.HttpStatus;
+import constant.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +26,31 @@ public class ResponseHandler {
             // 바디가 있는 경우 바디 전송
             if (httpResponse.getBody() != null) {
                 dos.write(httpResponse.getBody(), 0, httpResponse.getBody().length);
-                dos.flush();
             }
+
+            dos.flush();
+            dos.close();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    public static void makeError(HttpResponse httpResponse, ErrorCode errorCode) {
+        httpResponse.setStatus(errorCode.httpStatus);
+        httpResponse.setBody(errorCode.errorMessage.getBytes());
+        httpResponse.addHeader("Content-Type", (MimeType.TXT.contentType + ";charset=utf-8"));
+    }
+
+    public static void makeRedirect(HttpResponse httpResponse, String redirectUrl) {
+        httpResponse.setStatus(HttpStatus.REDIRECT);
+        httpResponse.addHeader("Location", redirectUrl);
+        httpResponse.addHeader("Content-Type", (MimeType.HTML.contentType + ";charset=utf-8"));
+    }
+
+    public static void makeBody(HttpResponse httpResponse, byte[] body, String contentType) {
+        httpResponse.setStatus(HttpStatus.OK);
+        httpResponse.setBody(body);
+        httpResponse.addHeader("Content-Length", String.valueOf(body.length));
+        httpResponse.addHeader("Content-Type", (contentType + ";charset=utf-8"));
     }
 }

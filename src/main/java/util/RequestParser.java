@@ -57,13 +57,14 @@ public class RequestParser {
     }
 
     private static void readBody(HttpRequest httpRequest, BufferedReader br) throws IOException {
-        Integer length = httpRequest.getContentLength();
-
+        // request 헤더에서 바디의 길이인 Content-Length 헤더 값 가져오기
+        String contentLengthHeader = httpRequest.getContentLengthHeader();
         // request 에 body 가 없는 경우
-        if (length == null) {
+        if (contentLengthHeader == null) {
             return;
         }
 
+        int length = Integer.parseInt(contentLengthHeader);
         char[] body = new char[length];
         br.read(body, 0, length);
 
