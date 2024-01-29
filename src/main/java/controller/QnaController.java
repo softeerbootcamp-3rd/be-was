@@ -22,6 +22,7 @@ public class QnaController {
 
 
 
+
         return PageController.RedirectStaticPage("/index.html");
 
     }
