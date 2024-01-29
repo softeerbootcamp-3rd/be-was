@@ -11,7 +11,7 @@ list.innerHTML = posts.map((post, index) =>
             <div class="auth-info">
                 <i class="icon-add-comment"></i>
                 <span class="time">${post.createdAt}</span>
-                <a href="./user/profile.html" class="author">${post.author}</a>
+                <a href="./user/profile?postId=${post.id}" class="author">${post.author}</a>
             </div>
             <div class="reply" title="댓글">
                 <i class="icon-reply"></i>

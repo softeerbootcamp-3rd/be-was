@@ -1,6 +1,7 @@
 import controller.BasicController;
 import controller.MainController;
 import controller.QNAController;
+import controller.UserController;
 import db.Database;
 import db.QnaRepository;
 import http.Request;
@@ -53,6 +54,7 @@ public class QnaTest {
         user = new User();
         user.setUserId("jomulagy");
         user.setName("김지훈");
+        user.setEmail("jomulagy@gmail.com");
         SessionManager.createSession(user,res,"SID");
 
         cookieString = res.getCookieString();
@@ -126,5 +128,27 @@ public class QnaTest {
         assertNotNull(post);
         logger.debug(post);
 
+    }
+
+    @Test
+    @DisplayName("작성자 정보 확인하기")
+    public void QnaAuthor() throws IOException {
+
+        Request req = new Request("GET","/user/profile?postId=1",cookieString,"");
+        BasicController handler = new UserController();
+        Qna qna1 = new Qna();
+        qna1.setWriter(user);
+        qna1.setTitle("dd");
+        qna1.setContent("cc\ncc");
+        qnaRepository.addQna(qna1);
+
+        //when
+
+        ModelAndView mv = adapter.handle(req, res, handler);
+        String author = (String) mv.getModel().getAttribute("author");
+
+        //then
+        assertNotNull(author);
+        logger.debug(author);
     }
 }

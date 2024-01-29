@@ -71,7 +71,11 @@ public class UserController implements BasicController{
     }
 
     @GetMapping(url = "/profile")
-    public String userProfile(Model model){
+    public String userProfile(@RequestParam(name = "postId") String postId, Model model){
+        if(postId!=null){
+            String author = userService.userInfo(Long.parseLong(postId));
+            model.addAttribute("author",author);
+        }
         return "user/profile";
     }
 }
