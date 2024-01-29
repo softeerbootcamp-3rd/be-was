@@ -27,14 +27,14 @@ public class UserCreateController implements UserController {
             userService.addUser(userId, password, name, email);
         } catch (AlreadyExistUserException e) {
             path = "/user/form_failed.html";
-            httpResponse.putToHeaderMap("Location", path);
+            httpResponse.addHeader("Location", path);
 
             return new ModelView(path);
         }
 
         // 회원가입 성공
         path = "/index.html";
-        httpResponse.putToHeaderMap("Location", path);
+        httpResponse.addHeader("Location", path);
 
         return new ModelView(path);
     }

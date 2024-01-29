@@ -92,7 +92,7 @@ public class View {
         }
 
         httpResponse.set200Ok();
-        httpResponse.putToHeaderMap("Content-Type", "text/" + type + ";charset=utf-8");
+        httpResponse.addHeader("Content-Type", "text/" + type + ";charset=utf-8");
 
 //        // todo
         if (mv.getViewName().contains("index.html")) {
@@ -120,7 +120,7 @@ public class View {
             fileString = fileString.replace("{{welcome}}", renderedHtml);
             body = fileString.getBytes();
         }
-        httpResponse.putToHeaderMap("Content-Length", String.valueOf(body.length));
+        httpResponse.addHeader("Content-Length", String.valueOf(body.length));
         httpResponse.setBody(body);
 
     }

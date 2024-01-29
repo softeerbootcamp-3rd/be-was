@@ -25,7 +25,7 @@ public class UserLoginController implements UserController{
             userService.login(userId, password);
         } catch (LoginFailedException e) {
             path = "/user/login_failed.html";
-            httpResponse.putToHeaderMap("Location", path);
+            httpResponse.addHeader("Location", path);
 
             e.printStackTrace();
 
@@ -34,8 +34,8 @@ public class UserLoginController implements UserController{
 
         // 로그인 성공
         path = "/index.html";
-        httpResponse.putToHeaderMap("Location", path);
-        httpResponse.putToHeaderMap("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=1800");
+        httpResponse.addHeader("Location", path);
+        httpResponse.addHeader("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=1800");
 
         return new ModelView(path);
     }

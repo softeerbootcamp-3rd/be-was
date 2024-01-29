@@ -20,7 +20,7 @@ public class QnaCreateController implements QnaController {
 
         qnaService.addQna(writer, title, contents);
         httpResponse.set302Redirect();
-        httpResponse.putToHeaderMap("Location", "/index.html");
+        httpResponse.addHeader("Location", "/index.html");
 
         return new ModelView("/templates/index.html");
     }

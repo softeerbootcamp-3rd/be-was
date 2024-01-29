@@ -1,6 +1,7 @@
 package model;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 public class HttpResponse {
@@ -9,10 +10,10 @@ public class HttpResponse {
     private String httpVer;
     private String httpStatus;
     private String statusMsg;
-    private Map<String, String> headerMap = new HashMap<>();
+    private Map<String, String> headerMap = Maps.newHashMap();
     private byte[] body;
 
-    public void putToHeaderMap(String key, String value) {
+    public void addHeader(String key, String value) {
         headerMap.put(key, value);
     }
 
