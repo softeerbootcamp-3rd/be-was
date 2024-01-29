@@ -2,9 +2,10 @@ package util;
 
 import db.Database;
 import model.User;
+import session.Session;
 import webserver.ThreadLocalManager;
 
-import static constant.StaticFile.*;
+import static constant.FileConstant.*;
 
 public class HtmlDynamicEditor {
 
@@ -21,10 +22,13 @@ public class HtmlDynamicEditor {
 
     public static String setNav(String htmlStr) {
         String nav = BEFORE_LOGIN_NAV;
-        if (ThreadLocalManager.getSession() != null) {
-            nav = AFTER_LOGIN_NAV;
+        Session session = ThreadLocalManager.getSession();
+        String loginUserName = "";
+        if (session != null) {
+            nav = NICKNAME_NAV + AFTER_LOGIN_NAV;
+            loginUserName = (String) session.getAttribute("userName");
         }
-        return htmlStr.replace("{nav}", nav);
+        return htmlStr.replace("{nav}", nav).replace("{userName}", loginUserName);
     }
 
     public static String setUserList(String htmlStr) {

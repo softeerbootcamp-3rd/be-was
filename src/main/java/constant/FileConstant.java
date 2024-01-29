@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StaticFile {
+public class FileConstant {
     public static final String HTML_BASE_FOLDER = "src/main/resources/templates";
     public static final String SUPPORT_FILE_BASE_FOLDER = "src/main/resources/static";
     public static final String MAIN_PAGE_PATH = "/index.html";
     public static final String LOGIN_PAGE_PATH = "/user/login.html";
     public static final String LOGIN_FAILED_PAGE_PATH = "/user/login_failed.html";
+
+    public static final String NICKNAME_NAV = "<li class=\"nickname\">{userName}님 환영합니다.</li>\n";
 
     public static final String BEFORE_LOGIN_NAV = "<li class=\"active\"><a href=\"../index.html\">Posts</a></li>\n" +
                                                 "<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>\n" +
