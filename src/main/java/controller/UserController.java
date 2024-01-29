@@ -2,7 +2,6 @@ package controller;
 
 import annotation.GetMapping;
 import annotation.PostMapping;
-import session.Session;
 import session.SessionManager;
 import webserver.ThreadLocalManager;
 import webserver.request.HttpRequest;

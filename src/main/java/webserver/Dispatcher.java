@@ -5,8 +5,6 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import session.Session;
-import session.SessionManager;
 import util.RequestParser;
 import webserver.request.ApiHandler;
 import webserver.request.FileContentHandler;
@@ -48,6 +46,8 @@ public class Dispatcher implements Runnable {
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
+        } finally {
+            ThreadLocalManager.clear();
         }
     }
 

@@ -20,11 +20,8 @@ public class ThreadLocalManager {
         return sessionThreadLocal.get();
     }
 
-    public static Object getSessionAttribute(String attributeName) {
-        return sessionThreadLocal.get().getAttribute(attributeName);
-    }
-
     public static void clear() {
+        sessionIdThreadLocal.remove();
         sessionThreadLocal.remove();
     }
 }
