@@ -28,7 +28,7 @@ public class HttpResponseUtils {
     public static HttpResponse makeResponse(Object result) {
         HttpResponse response = new HttpResponse();
         Map<String, String> responseHeaders = new HashMap<>();
-        responseHeaders.put("location", "/index.html");
+        responseHeaders.put("location", result.toString());
         response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
         return response;
     }

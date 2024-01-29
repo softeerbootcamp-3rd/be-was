@@ -20,6 +20,7 @@ public class MethodHandler {
     static {
         controllers.add(UserController.class);
         controllers.add(ResourceController.class);
+        controllers.add(PostController.class);
     }
 
     public Object process(HttpRequest request) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -27,6 +28,7 @@ public class MethodHandler {
         Object instance = method.getDeclaringClass().getConstructor().newInstance();
 
         Object response;
+
 
         Map<String, String> params = request.getParams();
         if(params.size() == 0) {

@@ -64,7 +64,7 @@ public class UserController {
     @PostMapping(url = "/user/logout")
     public String userLogout(HttpRequest request) {
         sessionManager.deleteSession(request);
-        return "index.html";
+        return "/index.html";
     }
 
     @GetMapping(url = "/user/list.html")
