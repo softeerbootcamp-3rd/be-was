@@ -7,23 +7,25 @@ import model.Qna;
 import model.User;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Deque;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Database {
     private static Long qnaId = 0L;
 
     //Maps는 생성할 때 편하게 해주는것, 기능상 차이는 없음
-    private static Map<String, User> users = Maps.newHashMap();
-    private static Map<Long, Qna> qnas = Maps.newHashMap();
+    private static Map<String, User> users = new ConcurrentHashMap<>();
+    private static Map<Long, Qna> qnas = new ConcurrentHashMap<>();
 
-    private static List<Qna> recentQnas = Lists.newLinkedList();
+    private static Deque<Qna> recentQnas = new ConcurrentLinkedDeque<>();
     public static void addQna(Qna qna){
         qnas.put(qnaId++, qna);
-        recentQnas.add(0,qna);
+        recentQnas.addFirst(qna);
 
-        if(recentQnas.size() > 100)
-            recentQnas.subList(100,recentQnas.size()).clear();
+        while(recentQnas.size() > 100)
+            recentQnas.removeLast();
 
 
     }
