@@ -1,12 +1,12 @@
 package controller;
 
 import http.HttpStatus;
-import http.request.HttpRequest;
 import http.response.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
+import utils.Parser;
 
 import java.util.Map;
 
@@ -18,9 +18,9 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private static final UserService userService = new UserService();
 
-    public static HttpResponse signup(HttpRequest request) {
-        Map<String, String> body = request.getBody();
-        User user = new User(body.get("userId"), body.get("password"), body.get("name"), body.get("email"));
+    public static HttpResponse signup(String body) {
+        Map<String, String> bodyMap = Parser.extractParams(body);
+        User user = new User(bodyMap.get("userId"), bodyMap.get("password"), bodyMap.get("name"), bodyMap.get("email"));
 
         try {
             userService.createUser(user);
@@ -34,10 +34,10 @@ public class UserController {
         }
     }
 
-    public static HttpResponse login(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+    public static HttpResponse login(String body) {
+        Map<String, String> bodyMap = Parser.extractParams(body);
         try {
-            String sid = userService.join(body.get("userId"), body.get("password"));
+            String sid = userService.join(bodyMap.get("userId"), bodyMap.get("password"));
             // 로그인에 성공할 경우 index.html로 리다이렉션 되며 쿠키 값에 sid값 추가
             Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=" + sid + "; Max-Age=3600; HttpOnly; Path=/");
             return HttpResponse.of(HttpStatus.REDIRECT, header);
