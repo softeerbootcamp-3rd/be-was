@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class QnaRepository {
-    private static Map<String, Qna> qnas = Maps.newHashMap();
+    private static final Map<String, Qna> qnas = Maps.newHashMap();
 
     public void addQna(Qna qna) {
         qnas.put(qna.getWriter(), qna);

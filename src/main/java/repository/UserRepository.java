@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class UserRepository {
-    private static Map<String, User> users = Maps.newHashMap();
+    private static final Map<String, User> users = Maps.newHashMap();
     static {
         AppConfig.userRepository().
                 addUser(new User("test", "test", "test", "test@test"));
