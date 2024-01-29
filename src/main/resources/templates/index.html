@@ -83,7 +83,7 @@
 <div class="container" id="main">
    <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
       <div class="panel panel-default qna-list">
-          <ul class="list">
+          <ul class="list" id="postList">
               <li>
                   <div class="wrap">
                       <div class="main">
@@ -95,9 +95,9 @@
                               <span class="time">2016-01-15 18:47</span>
                               <a href="./user/profile.html" class="author">자바지기</a>
                           </div>
-                          <div class="reply" title="댓글">
+                          <div class="reply" title="글 번호">
                               <i class="icon-reply"></i>
-                              <span class="point">8</span>
+                              <span class="point">1</span>
                           </div>
                       </div>
                   </div>
@@ -113,7 +113,7 @@
                               <span class="time">2016-01-05 18:47</span>
                               <a href="./user/profile.html" class="author">김문수</a>
                           </div>
-                          <div class="reply" title="댓글">
+                          <div class="reply" title="글 번호">
                               <i class="icon-reply"></i>
                               <span class="point">12</span>
                           </div>
@@ -148,5 +148,67 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/scripts.js"></script>
 <script defer src="js/logout.js"></script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 페이지 로딩이 완료되면 글 목록을 가져와서 표시합니다.
+        fetchPostList();
+    });
+
+    function fetchPostList() {
+        // 서버에서 글 목록을 가져오는 API 엔드포인트의 URL
+        var apiUrl = "/post/list"; // 적절한 URL로 변경
+
+        // fetch API를 사용하여 서버에서 JSON 데이터를 가져옵니다.
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // 글 목록을 가져왔으면 화면에 표시합니다.
+                displayPostList(data);
+            })
+            .catch(error => {
+                console.error('Error fetching post list:', error);
+            });
+    }
+
+    function displayPostList(posts) {
+        // 가져온 글 목록을 돌면서 화면에 표시합니다.
+        var postListContainer = document.getElementById("postList");
+
+        posts.forEach(post => {
+            var listItem = document.createElement("li");
+            var formattedDate = formatDate(post.date); // 날짜 포맷 변경
+            listItem.innerHTML = `
+                    <div class="wrap">
+                        <div class="main">
+                            <strong class="subject">
+                                <a href="./qna/show.html">${post.title}</a>
+                            </strong>
+                            <div class="auth-info">
+                                <i class="icon-add-comment"></i>
+                                <span class="time">${formattedDate}</span>
+                                <a href="./user/profile.html" class="author">${post.userId}</a>
+                            </div>
+                            <div class="reply" title="댓글">
+                                <i class="icon-reply"></i>
+                                <span class="point">${post.postId}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            postListContainer.appendChild(listItem);
+        });
+    }
+
+    function formatDate(dateString) {
+        // 날짜 포맷 변경 함수
+        var date = new Date(dateString);
+        var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        return new Intl.DateTimeFormat('kr-KR', options).format(date);
+    }
+</script>
+
+
 	</body>
 </html>

@@ -42,7 +42,8 @@ public class RequestMappingHandler {
         }
 
         ResponseEntity response = null;
-        if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")) {
+        if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")
+            || request.getPath().equals("/post/upload")) {
             response = invokeMethod(method, request);
         } else {
             response = invokeMethod(method, createParams(method, request.getParams()));
@@ -53,15 +54,43 @@ public class RequestMappingHandler {
         return response;
     }
 
+//    private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
+//        // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
+//        if (method.isAnnotationPresent(ResponseBody.class)) {
+//            String body = JsonConverter.convertObjectToJson(response.getBody());
+//            response.getHeaders().setContentType("application/json");
+//            response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
+//            response.setBody(body);
+//        }
+//        return response;
+//    }
+
     private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
         // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
         if (method.isAnnotationPresent(ResponseBody.class)) {
-            String body = JsonConverter.convertObjectToJson(response.getBody());
-            response.getHeaders().setContentType("application/json");
-            response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
-            response.setBody(body);
+            Object responseBody = response.getBody();
+
+            // T 타입인 경우
+            if (responseBody != null && !isListType(responseBody.getClass())) {
+                String body = JsonConverter.convertObjectToJson(responseBody);
+                response.getHeaders().setContentType("application/json");
+                response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
+                response.setBody(body);
+            }
+
+            // List<T> 타입인 경우
+            if (responseBody != null && isListType(responseBody.getClass())) {
+                String body = JsonConverter.convertListToJson((List<?>) responseBody);
+                response.getHeaders().setContentType("application/json");
+                response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
+                response.setBody(body);
+            }
         }
         return response;
+    }
+
+    private static boolean isListType(Class<?> type) {
+        return List.class.isAssignableFrom(type);
     }
 
     private static Method findMethod(Class<?> controllerClass, String path, Class<? extends Annotation> annotationType) {

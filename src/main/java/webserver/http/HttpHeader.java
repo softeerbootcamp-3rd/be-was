@@ -15,6 +15,7 @@ public class HttpHeader {
     public static final String CONNECTION = "Connection";
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String COOKIE = "Cookie";
     public static final String HOST = "Host";
     public static final String LOCATION = "Location";
@@ -44,7 +45,7 @@ public class HttpHeader {
     }
 
     public String getContentType() {
-        return headers.get(CONTENT_TYPE).get(0);
+        return headers.containsKey(CONTENT_TYPE) ? headers.get(CONTENT_TYPE).get(0) : null;
     }
 
     public String getContentLength() {
@@ -71,6 +72,33 @@ public class HttpHeader {
 
     public String getAccept() {
         return headers.containsKey(ACCEPT) ? headers.get(ACCEPT).get(0) : null;
+    }
+
+    public String getContentDisposition()  {
+        return headers.containsKey(CONTENT_DISPOSITION) ? headers.get(CONTENT_DISPOSITION).get(0) : null;
+    }
+
+    public String getBoundary() {
+        List<String> contentTypeValues = headers.get(HttpHeader.CONTENT_TYPE);
+        if (contentTypeValues != null) {
+            for (String contentType : contentTypeValues) {
+                if (contentType.startsWith("multipart/form-data")) {
+                    // boundary를 Content-Type 헤더에서 추출합니다.
+                    String[] parts = contentType.split(";");
+                    for (String part : parts) {
+                        if (part.trim().startsWith("boundary=")) {
+                            return part.trim().substring("boundary=".length());
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isMultipart() {
+        String contentType = getContentType();
+        return contentType != null && contentType.startsWith("multipart/form-data");
     }
 
     public void setContentType(String contentType) {
