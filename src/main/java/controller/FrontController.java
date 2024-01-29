@@ -1,15 +1,16 @@
 package controller;
 
 import controller.adapter.HandlerAdapter;
+import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
+import controller.qna.QnaFormController;
 import controller.user.UserCreateController;
 import controller.user.UserListController;
 import controller.user.UserLoginController;
 import model.Request;
 import model.Response;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -39,14 +40,13 @@ public class FrontController {
         handlerMappingMap.put("/user/login", new UserLoginController());
         handlerMappingMap.put("/user/list", new UserListController());
 
-        // qna 추가
+        handlerMappingMap.put("/qna/form", new QnaFormController());
     }
 
     private void initHandlerAdapters() {
         handlerAdapters.add(new ResourceHandlerAdapter());
         handlerAdapters.add(new UserControllerHandlerAdapter());
-
-        //qna 추가
+        handlerAdapters.add(new QnaControllerHandlerAdapter());
     }
 
     public void service(Request request, OutputStream out) throws IOException {
