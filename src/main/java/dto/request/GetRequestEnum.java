@@ -71,6 +71,7 @@ public enum GetRequestEnum {
                 .findAny()
                 .orElse(FILE);
     }
+    
 
     // 상수별로 상속받을 함수
     public abstract HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto);
