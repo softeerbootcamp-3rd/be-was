@@ -26,27 +26,17 @@ public class UserController {
         User existUser = UserDatabase.findById(user.getUserId());
 
         if (existUser != null)
-            return HttpResponse.builder()
-                    .status(HttpStatus.CONFLICT)
-                    .addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.getMimeType())
-                    .body("The requested username is already in use.")
-                    .build();
+            return HttpResponse.of(HttpStatus.CONFLICT);
 
         UserDatabase.add(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
-        return HttpResponse.builder()
-                .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/index.html")
-                .build();
+        return HttpResponse.redirect("/index.html");
     }
 
     @RequestMapping(method = "POST", path = "/user/login")
     public static HttpResponse login(@RequestBody LoginDto loginInfo) {
         User existUser = UserDatabase.findById(loginInfo.getUserId());
         if (existUser == null || !Objects.equals(existUser.getPassword(), loginInfo.getPassword()))
-            return HttpResponse.builder()
-                    .status(HttpStatus.FOUND)
-                    .addHeader(HttpHeader.LOCATION, "/user/login_failed.html")
-                    .build();
+            return HttpResponse.redirect("/user/login_failed.html");
 
         String sessionId = SessionManager.generateSessionId();
         SessionManager.addSession(sessionId, existUser);
@@ -63,10 +53,6 @@ public class UserController {
         Map<String, String> cookies = RequestParser.parseCookie(request.getHeader().get(HttpHeader.COOKIE));
         String sessionId = cookies.get("SID");
         SessionManager.removeSession(sessionId);
-
-        return HttpResponse.builder()
-                .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/index.html")
-                .build();
+        return HttpResponse.redirect("/index.html");
     }
 }

@@ -4,6 +4,7 @@ import constant.HttpHeader;
 import constant.HttpStatus;
 import constant.MimeType;
 import org.slf4j.Logger;
+import util.web.ResourceLoader;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -80,11 +81,14 @@ public class HttpResponse {
         }
     }
 
-    public static HttpResponse of(HttpStatus status) {
-        return builder().status(status)
-                .addHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT.getMimeType())
-                .body(status.getFullMessage())
+    public static HttpResponse redirect(String path) {
+        return builder().status(HttpStatus.FOUND)
+                .addHeader(HttpHeader.LOCATION, path)
                 .build();
+    }
+
+    public static HttpResponse of(HttpStatus status) {
+        return redirect("/error/" + status.getCode() + ".html");
     }
 
     public void send(OutputStream out, Logger logger) {

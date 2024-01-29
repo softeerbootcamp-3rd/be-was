@@ -29,9 +29,6 @@ public class CommentController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         CommentDatabase.deleteById(commentId);
-        return HttpResponse.builder()
-                .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/post/show.html?postId=" + comment.getPostId())
-                .build();
+        return HttpResponse.redirect("/post/show.html?postId=" + comment.getPostId());
     }
 }

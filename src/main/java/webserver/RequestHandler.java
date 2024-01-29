@@ -43,10 +43,7 @@ public class RequestHandler implements Runnable {
 
                 String redirectPath = SecureChecker.checkRedirect(request);
                 if (!Strings.isNullOrEmpty(redirectPath))
-                    response = HttpResponse.builder()
-                            .status(HttpStatus.FOUND)
-                            .addHeader(HttpHeader.LOCATION, redirectPath)
-                            .build();
+                    response = HttpResponse.redirect(redirectPath);
                 else
                     response = serveResource(request);
             } catch (ResourceNotFoundException e) {

@@ -30,7 +30,7 @@ public class SharedData {
     public static <T> T getParamDataNotEmpty(String key, Class<T> type) {
         T result = getParamData(key, type);
         if (result == null)
-            throw new InvalidParameterException();
+            throw new InvalidParameterException("Parameter " + key + " is empty");
         return result;
     }
 

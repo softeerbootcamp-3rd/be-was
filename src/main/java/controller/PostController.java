@@ -29,10 +29,7 @@ public class PostController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         PostDatabase.add(new Post(currentUser.getUserId(), post.getTitle(), post.getContents(), new Date()));
-        return HttpResponse.builder()
-                .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/index.html")
-                .build();
+        return HttpResponse.redirect("/index.html");
     }
 
     @RequestMapping(method = "POST", path = "/post/{postId}/comment")
@@ -47,10 +44,7 @@ public class PostController {
 
         Long postId = Long.valueOf(postIdString);
         CommentDatabase.add(new Comment(postId, currentUser.getUserId(), comment.getContent(), new Date()));
-        return HttpResponse.builder()
-                .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/post/show.html?postId=" + postIdString)
-                .build();
+        return HttpResponse.redirect("/post/show.html?postId=" + postIdString);
     }
 
     @RequestMapping(method = "POST", path = "/post/{postId}/delete")
@@ -67,10 +61,7 @@ public class PostController {
 
         PostDatabase.deleteById(postId);
         CommentDatabase.deleteByPostId(postId);
-        return HttpResponse.builder()
-                .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/index.html")
-                .build();
+        return HttpResponse.redirect("/index.html");
     }
 
 }

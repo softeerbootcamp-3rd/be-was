@@ -18,16 +18,9 @@ public class ViewController {
     @RequestMapping(method = "GET", path = "/user/list")
     public static HttpResponse userList() throws IOException {
         if (SharedData.requestUser.get() == null)
-            return HttpResponse.builder()
-                    .status(HttpStatus.FOUND)
-                    .addHeader(HttpHeader.LOCATION, "/index.html")
-                    .build();
+            return HttpResponse.redirect("/index.html");
 
         byte[] fileContent = ResourceLoader.getFileContent("/user/list.html");
-        return HttpResponse.builder()
-                .status(HttpStatus.OK)
-                .addHeader(HttpHeader.CONTENT_TYPE, MimeType.HTML.getMimeType())
-                .body(HtmlBuilder.process(fileContent))
-                .build();
+        return HttpResponse.redirect("/user/list.html");
     }
 }
