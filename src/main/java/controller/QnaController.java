@@ -76,6 +76,11 @@ public class QnaController implements Controller {
 
     public HttpResponseDto printWriteDetailPage(HttpRequestDto request) {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        if (request.getUser() == null) {
+            // 로그인하지 않은 경우
+            return responseDtoBuilder.response302Header()
+                    .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
+        }
         Map<String, String> queryString = WebUtil.parseQueryString(request.getUri());
         try {
             byte[] body = qnaService.printWriteDetailPage(queryString, request.getUser());
