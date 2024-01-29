@@ -50,6 +50,7 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.POST,"/user/create"), (Request r)-> postUserCreate(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/user/login"), (Request r)-> postUserLogin(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/user/list"), (Request r)-> getUserList(r));
+        routeHandlers.put(new Route(HttpMethod.GET,"/user/list.html"), (Request r)-> getUserList(r));
     }
 
     public void handleRequest(Request request) {

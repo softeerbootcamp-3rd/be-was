@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class H2Database {
     private static final Logger logger = LoggerFactory.getLogger(H2Database.class);
@@ -93,7 +95,33 @@ public class H2Database {
     }
 
     public static Collection<User> findAll() {
-        return null;
+        List<User> users = new ArrayList<>();
+        try {
+            conn = DriverManager.getConnection(url, username, password);
+            String sql = "SELECT * FROM User";
+            preparedStatement = conn.prepareStatement(sql);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String userId = resultSet.getString("userId");
+                String password = resultSet.getString("password");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                users.add(new User(userId, password, name, email));
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        }
+        return users;
     }
 
     public static boolean isValidLogin(String id, String pw){
