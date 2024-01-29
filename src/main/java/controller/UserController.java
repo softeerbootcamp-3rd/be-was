@@ -5,11 +5,9 @@ import auth.SessionManager;
 import controller.dto.InputData;
 import controller.dto.OutputData;
 import db.UserRepository;
-import http.HttpRequest;
-import http.HttpResponse;
 import model.User;
+import view.View;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class UserController implements Controller{
@@ -28,7 +26,7 @@ public class UserController implements Controller{
     public String login(InputData data, OutputData outputData) {
         User user = userRepository.findUserById(data.get("userId"));
 
-        if (data.get("password").equals(user.getPassword())) {
+        if (user!=null && data.get("password").equals(user.getPassword())) {
             String sid = generateSessionId();
             outputData.setHeader("Set-Cookie","sid="+sid+"; Max-Age=300; Path=/");
             SessionManager.addSession(sid, user.getUserId());
@@ -45,6 +43,17 @@ public class UserController implements Controller{
         outputData.setHeader("Set-Cookie","sid="+data.getSessionId()+"; Max-Age=0; Path=/");
 
         return "redirect:/index";
+    }
+
+    @RequestMapping(value = "/user/list", method = "GET")
+    public String getUserList(InputData data, OutputData outputData) {
+        String sessionId = data.getSessionId();
+        if (sessionId == null)
+            return "redirect:/user/login";
+
+        View view = outputData.getView();
+        view.set("users", UserRepository.findAll());
+        return "/user/list";
     }
 
     private String generateSessionId() {

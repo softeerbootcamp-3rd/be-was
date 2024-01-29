@@ -52,6 +52,10 @@ public class FrontController {
                     response.setHeader(key, headerMap.get(key));
                 }
             }
+
+            if (!path.startsWith("redirect:")) {
+                path = RESOURCES_TEMPLATES_URL + path;
+            }
         }
         response.setPath(path);
 
