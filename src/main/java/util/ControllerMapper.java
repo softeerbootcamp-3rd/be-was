@@ -2,6 +2,7 @@ package util;
 
 import controller.Controller;
 import controller.DefaultController;
+import controller.QnaController;
 import controller.UserController;
 import dto.HttpRequestDto;
 import service.UserService;
@@ -15,6 +16,7 @@ public class ControllerMapper {
     static {
         CONTROLLER_MAP.put("user", new UserController(new UserService()));
         CONTROLLER_MAP.put("default", new DefaultController());
+        CONTROLLER_MAP.put("qna", new QnaController());
     }
 
     public static Controller mappingController(HttpRequestDto request) {
@@ -22,6 +24,9 @@ public class ControllerMapper {
         Controller controller;
         if (uri.startsWith("/user")) {
             return CONTROLLER_MAP.get("user");
+        }
+        if (uri.startsWith("/qna")) {
+            return CONTROLLER_MAP.get("qna");
         }
         return CONTROLLER_MAP.get("default");
     }

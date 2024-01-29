@@ -39,6 +39,15 @@ public class HtmlBuilder {
         return replaceHtml(html, replacements);
     }
 
+    public static byte[] buildWriteFormPage(HttpRequestDto request) {
+        String html = readHtmlInString(WebUtil.getPath(request.getUri()));
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{{user-navbar}}", buildNavBar(request.getUser()));
+        replacements.put("{{writer-name}}", request.getUser().getName());
+
+        return replaceHtml(html, replacements);
+    }
+
     // 로그인 여부에 따라 /index.html의 navBar 코드 리턴
     private static String buildIndexNavBar(User user) {
         StringBuilder navBar = new StringBuilder();
