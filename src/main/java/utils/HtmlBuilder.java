@@ -46,7 +46,29 @@ public class HtmlBuilder {
         if (url.equals("/index.html")) {
             bodyString = buildPostList(bodyString);
         }
+        if (url.endsWith("show.html")) {
+            bodyString = buildPostContent(request, bodyString);
+        }
         return bodyString;
+    }
+
+    /**
+     * 글의 세부내용을 수정합니다.
+     *
+     * <p> url을 통해 얻은 글의 id를 조회하고 해당 글의 세부내용으로 html 파일을 수정합니다.
+     *
+     * @param request 요청 정보
+     * @param bodyString 본문 페이지
+     * @return 수정된 페이지
+     */
+    private static String buildPostContent(Request request, String bodyString) {
+        long postId = Long.parseLong(request.getUrl().split("/")[2]);
+        Post post = PostDatabase.findPostById(postId);
+
+        return bodyString.replace("{{title}}", post.getTitle())
+                .replace("{{writer}}", post.getWriter())
+                .replace("{{post-time}}", post.getPostTime())
+                .replace("{{contents}}", post.getContents());
     }
 
     /**
@@ -78,7 +100,7 @@ public class HtmlBuilder {
      * <p> 로그인 여부를 확인하고 로그인이 되어있다면 로그아웃, 개인정보수정 버튼을 보여주며, 사용자 이름을 표시합니다.
      * 로그인이 안되어있다면 로그인, 회원가입 버튼을 보여줍니다.
      *
-     * @param request 요청 정보
+     * @param request    요청 정보
      * @param bodyString 본문 페이지
      * @return 수정된 페이지
      */
