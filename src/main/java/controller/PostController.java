@@ -9,7 +9,7 @@ import session.SessionManager;
 public class PostController {
     SessionManager sessionManager = new SessionManager();
 
-    @GetMapping(url = "/write")
+    @GetMapping(url = "/post")
     public String getWriteForm(HttpRequest request) {
         if (sessionManager.getUserBySessionId(request) == null) {
             return "/user/login.html";
@@ -17,4 +17,5 @@ public class PostController {
             return "write_form.html";
         }
     }
+
 }
