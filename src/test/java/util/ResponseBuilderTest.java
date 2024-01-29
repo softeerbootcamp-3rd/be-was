@@ -1,13 +1,17 @@
 package util;
 
+import controller.HttpMethod;
 import controller.HttpStatusCode;
 import data.CookieData;
+import data.RequestData;
 import data.Response;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -175,10 +179,14 @@ public class ResponseBuilderTest {
         String path = "/index.html";
         CookieData cookieData = new CookieData("userId", 123);
 
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Cookie", "sid=userId");
+        RequestData requestData = new RequestData(HttpMethod.GET, "/index.html", "HTTP/1.1", headers, true);
+
         Response response = new Response(statusCode, path, cookieData);
 
         // When
-        DataOutputStream actualDos = ResponseBuilder.buildResponse(byteArrayOutputStream, response);
+        DataOutputStream actualDos = ResponseBuilder.buildResponse(byteArrayOutputStream, response, requestData);
 
         // Then
         assertThat(actualDos).isNotNull();
