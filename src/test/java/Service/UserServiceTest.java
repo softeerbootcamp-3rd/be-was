@@ -1,5 +1,6 @@
 package Service;
 
+import controller.HttpMethod;
 import data.CookieData;
 import data.RequestData;
 import db.Database;
@@ -36,13 +37,14 @@ public class UserServiceTest {
         // Given
         Map<String, String> map = new HashMap<>();
         String query = "userId=" + userId + "&password=" + password + "&name=" + name + "&email=" + email;
-        RequestData requestData = new RequestData("GET", "/user/create?" + query, "HTTP/1.1", map);
+        RequestData requestData = new RequestData(HttpMethod.POST, "/user/create", "HTTP/1.1", map, query, false);
 
         // When
         UserService.registerUser(requestData);
 
         // Then
         User addedUser = Database.findUserById(userId);
+        assertThat(addedUser).isNotNull();
         assertThat(addedUser.getUserId()).isEqualTo(userId);
         assertThat(addedUser.getPassword()).isEqualTo(password);
         assertThat(addedUser.getName()).isEqualTo(name);
@@ -63,7 +65,7 @@ public class UserServiceTest {
         // Given
         Map<String, String> map = new HashMap<>();
         String query = "userId=" + userId + "&password=" + password + "&name=" + name + "&email=" + email;
-        RequestData requestData = new RequestData("GET", "/user/create?" + query, "HTTP/1.1", map);
+        RequestData requestData = new RequestData(HttpMethod.GET, "/user/create", "HTTP/1.1", map, query, false);
 
         // When, Then
         assertThrows(Exception.class, () -> UserService.registerUser(requestData));
@@ -77,7 +79,7 @@ public class UserServiceTest {
         User testUser = new User("test", "test", "Test User", "test@example.com");
         Database.addUser(testUser);
         // 로그인 요청 생성
-        RequestData requestData = new RequestData("POST", "/user/login", "HTTP/1.1", new HashMap<>(), "userId=test&password=test");
+        RequestData requestData = new RequestData(HttpMethod.POST, "/user/login", "HTTP/1.1", new HashMap<>(), "userId=test&password=test", false);
 
         // When
         CookieData actual = UserService.login(requestData);
@@ -93,7 +95,7 @@ public class UserServiceTest {
         // Given
         User testUser = new User("test", "test", "Test User", "test@example.com");
         Database.addUser(testUser);
-        RequestData requestData = new RequestData("POST", "/user/login", "HTTP/1.1", new HashMap<>(), "userId=test&password=wrongpassword");
+        RequestData requestData = new RequestData(HttpMethod.POST, "/user/login", "HTTP/1.1", new HashMap<>(), "userId=test&password=wrongpassword", false);
 
         // When
         CookieData actual = UserService.login(requestData);
@@ -109,7 +111,7 @@ public class UserServiceTest {
         User testUser = new User("test", "test", "Test User", "test@example.com");
         Database.addUser(testUser);
         String sessionId = Session.createSession(testUser.getUserId());
-        RequestData requestData = new RequestData("GET", "/logout", "HTTP/1.1", new HashMap<>());
+        RequestData requestData = new RequestData(HttpMethod.GET, "/logout", "HTTP/1.1", new HashMap<>(), true);
         requestData.getHeaders().put("Cookie", "sid=" + sessionId);
 
         // When
@@ -124,7 +126,7 @@ public class UserServiceTest {
     @DisplayName("로그아웃 시 세션이 존재하지 않는 경우")
     public void logout_NoSession_ReturnsNull() {
         // Given
-        RequestData requestData = new RequestData("GET", "/logout", "HTTP/1.1", new HashMap<>());
+        RequestData requestData = new RequestData(HttpMethod.GET, "/logout", "HTTP/1.1", new HashMap<>(), true);
 
         // When
         CookieData actual = UserService.logout(requestData);
