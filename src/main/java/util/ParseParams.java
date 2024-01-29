@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class QueryParams {
+public class ParseParams {
     private Map<String, String> paramMap;
 
-    public QueryParams(Map<String, String> paramMap) {
+    public ParseParams(Map<String, String> paramMap) {
         this.paramMap = paramMap;
     }
 
@@ -15,10 +15,10 @@ public class QueryParams {
         return paramMap;
     }
 
-    public static QueryParams from(String query) {
-        return new QueryParams(
+    public static ParseParams from(String query) {
+        return new ParseParams(
                 Arrays.stream(query.split("&"))
-                        .map(QueryParam::from)
-                        .collect(Collectors.toMap(QueryParam::getKey, QueryParam::getValue)));
+                        .map(Param::from)
+                        .collect(Collectors.toMap(Param::getKey, Param::getValue)));
     }
 }

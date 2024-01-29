@@ -2,7 +2,7 @@ package service;
 
 import db.Database;
 import exception.SourceException;
-import util.QueryParams;
+import util.ParseParams;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +10,13 @@ import util.ErrorCode;
 import util.Session;
 
 import java.util.Map;
-import java.util.UUID;
 
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public User createUser(QueryParams queryParams) {
+    public User createUser(ParseParams parseParams) {
         User user = new User();
-        Map<String, String> paramMap = queryParams.getParamMap();
+        Map<String, String> paramMap = parseParams.getParamMap();
         for (String key: paramMap.keySet()) {
             User.setUser(user, key, paramMap.get(key));
         }
@@ -30,7 +29,7 @@ public class UserService {
         return user;
     }
 
-    public String loginUser(QueryParams bodyData) {
+    public String loginUser(ParseParams bodyData) {
         Map<String, String> data = bodyData.getParamMap();
         User user = Database.findUserById(data.get("userId"));
         if (user == null) {

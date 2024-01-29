@@ -2,12 +2,11 @@ package controller;
 
 import dto.ResourceDto;
 import model.Model;
-import util.QueryParams;
+import util.ParseParams;
 import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class UserController {
@@ -25,7 +24,7 @@ public class UserController {
     }
 
     public ResourceDto loginUserResource(Object bodyData) {
-        String sessionId = userService.loginUser((QueryParams) bodyData);
+        String sessionId = userService.loginUser((ParseParams) bodyData);
         if (sessionId == null) {
             return ResourceDto.of("/user/login_failed.html", 302);
         }
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     public ResourceDto generateUserResource(Object queryParams) {
-        userService.createUser((QueryParams) queryParams);
+        userService.createUser((ParseParams) queryParams);
         return ResourceDto.of("/index.html", 302);
     }
 
