@@ -33,8 +33,7 @@ public class Dispatcher implements Runnable {
             if (isValidConnection(in, out)) {
 
                 HttpRequest httpRequest = RequestParser.getHttpRequest(in);
-                Session session = SessionManager.getSession(httpRequest.getSessionId());
-                ThreadLocalManager.setSession(session);
+                ThreadLocalManager.setSession(httpRequest.getSessionId());
 
                 HttpResponse httpResponse;
                 // API 호출 요청인지 확인

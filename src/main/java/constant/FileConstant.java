@@ -18,7 +18,7 @@ public class FileConstant {
                                                 "<li><a href=\"../user/form.html\" role=\"button\">회원가입</a></li>\n";
 
     public static final String AFTER_LOGIN_NAV = "<li class=\"active\"><a href=\"../index.html\">Posts</a></li>\n" +
-                                                "<li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
+                                                "<li><a href=\"/user/logout\" role=\"button\">로그아웃</a></li>\n" +
                                                 "<li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n";
 
     public static final String USER_INFO = "<tr>\n" +

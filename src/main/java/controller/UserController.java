@@ -1,6 +1,10 @@
 package controller;
 
+import annotation.GetMapping;
 import annotation.PostMapping;
+import session.Session;
+import session.SessionManager;
+import webserver.ThreadLocalManager;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import service.UserService;
@@ -34,6 +38,17 @@ public class UserController {
             httpResponse.makeRedirect(LOGIN_FAILED_PAGE_PATH);
         }
 
+        return httpResponse;
+    }
+
+    @GetMapping("/user/logout")
+    public static HttpResponse logout(HttpRequest httpRequest) {
+        HttpResponse httpResponse = new HttpResponse();
+
+        String sessionId = ThreadLocalManager.getSessionId();
+        SessionManager.removeSession(sessionId);
+
+        httpResponse.makeRedirect(MAIN_PAGE_PATH);
         return httpResponse;
     }
 }

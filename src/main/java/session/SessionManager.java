@@ -26,7 +26,7 @@ public class SessionManager {
         return session;
     }
 
-    private static void removeSession(String sessionId) {
+    public static void removeSession(String sessionId) {
         sessions.remove(sessionId);
         lastAccessTime.remove(sessionId);
     }
