@@ -61,12 +61,6 @@ public class PostHtml {
         return sb.toString();
     }
 
-    public static String postBtn(String template) {
-        if (SharedData.requestUser.get() == null)
-            return template.replace("<!--link-->", "/user/login.html");
-        return template.replace("<!--link-->", "/post/write.html");
-    }
-
     public static String postContent(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         Post post = PostDatabase.findById(postId);

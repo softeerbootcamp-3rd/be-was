@@ -1,5 +1,6 @@
 package webserver;
 
+import com.google.common.base.Strings;
 import constant.HttpHeader;
 import constant.HttpStatus;
 import constant.MimeType;
@@ -10,6 +11,7 @@ import util.html.HtmlBuilder;
 import util.session.SessionManager;
 import util.web.RequestMapper;
 import util.web.ResourceLoader;
+import util.web.SecureChecker;
 import util.web.SharedData;
 
 import java.io.*;
@@ -39,24 +41,14 @@ public class RequestHandler implements Runnable {
                 logger.debug("Connection IP : {}, Port : {}, request: {}",
                         connection.getInetAddress(), connection.getPort(), request.getPath());
 
-                Method handler = RequestMapper.getMethod(request);
-                if (handler != null) {
-                    response = RequestMapper.invoke(handler);
-                } else if (Objects.equals(request.getMethod(), "GET")) {
-                    byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
-
-                    // html 파일이면 동적으로 내용 변경
-                    if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(request.getPath())))
-                        fileContent = HtmlBuilder.process(fileContent);
-
+                String redirectPath = SecureChecker.checkRedirect(request);
+                if (!Strings.isNullOrEmpty(redirectPath))
                     response = HttpResponse.builder()
-                            .status(HttpStatus.OK)
-                            .addHeader(HttpHeader.CONTENT_TYPE, ResourceLoader.getMimeType(request.getPath()))
-                            .body(fileContent)
+                            .status(HttpStatus.FOUND)
+                            .addHeader(HttpHeader.LOCATION, redirectPath)
                             .build();
-                } else
-                    throw new ResourceNotFoundException(request.getPath());
-
+                else
+                    response = serveResource(request);
             } catch (ResourceNotFoundException e) {
                 response = HttpResponse.of(HttpStatus.NOT_FOUND);
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NoSuchMethodException
@@ -73,5 +65,28 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private HttpResponse serveResource(HttpRequest request)
+            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
+            IOException {
+
+        Method handler = RequestMapper.getMethod(request);
+        if (handler != null) {
+            return RequestMapper.invoke(handler);
+        } else if (Objects.equals(request.getMethod(), "GET")) {
+            byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
+
+            // html 파일이면 동적으로 내용 변경
+            if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(request.getPath())))
+                fileContent = HtmlBuilder.process(fileContent);
+
+            return HttpResponse.builder()
+                    .status(HttpStatus.OK)
+                    .addHeader(HttpHeader.CONTENT_TYPE, ResourceLoader.getMimeType(request.getPath()))
+                    .body(fileContent)
+                    .build();
+        } else
+            throw new ResourceNotFoundException(request.getPath());
     }
 }

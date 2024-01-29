@@ -35,7 +35,7 @@ public class HtmlTemplates {
         builder.put("<!--post-pagination-->",
                 new HtmlTemplate("post/pagination.html", PostHtml::pagination, PostHtml::pagination));
         builder.put("<!--post-btn-->",
-                new HtmlTemplate("post/post_btn.html", PostHtml::postBtn, PostHtml::postBtn));
+                new HtmlTemplate("post/post_btn.html", HtmlBuilder::getRaw, HtmlBuilder::getRaw));
         builder.put("<!--post-->",
                 new HtmlTemplate("post/post.html", PostHtml::postContent, PostHtml::postContent));
         builder.put("<!--post-btn-group-->",
