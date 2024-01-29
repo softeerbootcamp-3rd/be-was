@@ -74,6 +74,16 @@ public class HtmlBuilder {
         return replaceHtml(html, replacements);
     }
 
+    public static  byte[] buildErrorPage(String statusCode, String statusMessage, String message) {
+        String html = readHtmlInString(WebUtil.getPath("/404.html"));
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{{status-code}}", statusCode);
+        replacements.put("{{status-message}}", statusMessage);
+        replacements.put("{{error-message}}", message);
+
+        return replaceHtml(html, replacements);
+    }
+
     // 로그인 여부에 따라 /index.html의 navBar 코드 리턴
     private static String buildIndexNavBar(User user) {
         StringBuilder navBar = new StringBuilder();

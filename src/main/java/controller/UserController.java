@@ -57,7 +57,7 @@ public class UserController implements Controller {
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
 
-            return responseDtoBuilder.response400Header().build();
+            return HttpResponseUtil.buildErrorResponse("400", "Bad Request", e.getMessage());
         }
     }
 
@@ -123,7 +123,8 @@ public class UserController implements Controller {
                     .build();
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
-            return responseDtoBuilder.response400Header().build();
+
+            return HttpResponseUtil.buildErrorResponse("400", "Bad Request", e.getMessage());
         }
     }
 }
