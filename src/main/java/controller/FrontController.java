@@ -26,6 +26,7 @@ public class FrontController {
     public void process(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
         String url = request.getUrl();
         String path = null;
+        OutputData outputData= new OutputData();;
 
         if (url.contains(".")) {
             if (url.endsWith(".html")) {
@@ -40,16 +41,8 @@ public class FrontController {
             Controller controller = container.get("/"+urlToken[1]); //적합한 controller 찾기
             Method method = findMethod(controller, url,request.getMethod()); //찾은 컨트롤러에서 메서드 찾기
 
-            InputData inputData;
-            if (request.getMethod().equals("POST")) {
-                inputData = new InputData(request.getFormData());
-            } else if (request.getMethod().equals("GET")) {
-                inputData = new InputData(request.getRequestParam());
-            } else {
-                inputData = null;
-            }
+            InputData inputData = setInputData(request); //inputdata 세팅
 
-            OutputData outputData = new OutputData();
             path = (String)method.invoke(controller, inputData, outputData); //메서드 실행
             path += ".html";
 
@@ -63,11 +56,21 @@ public class FrontController {
         response.setPath(path);
 
         if(!path.startsWith("redirect:")) {
-            View view = new View();
+            View view = outputData.getView();
             viewMaker = new ViewMaker(path, view);
             view.set("userId", request.getUserId());
             String bodyString = viewMaker.readFile(view);
             response.readString(bodyString);
+        }
+    }
+
+    private InputData setInputData(HttpRequest request) {
+        if (request.getMethod().equals("POST")) {
+            return new InputData(request.getFormData());
+        } else if (request.getMethod().equals("GET")) {
+            return new InputData(request.getRequestParam());
+        } else {
+            return null;
         }
     }
 

@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OutputData {
-    private View view;
-    private Map<String, String> headerMap;
+    private final View view;
+    private final Map<String, String> headerMap;
 
     public OutputData() {
         this.view = new View();
@@ -24,5 +24,9 @@ public class OutputData {
 
     public Map<String, String> getHeaderMap() {
         return headerMap;
+    }
+
+    public View getView() {
+        return view;
     }
 }
