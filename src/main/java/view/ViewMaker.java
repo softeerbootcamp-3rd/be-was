@@ -46,6 +46,19 @@ public class ViewMaker {
                     }
                 }
 
+                if (line.contains("<!--change-->")) {
+                    line = line.strip().substring("<!--change-->".length());
+                    String[] from = line.split("\\$");
+                    for (String f : from) {
+                        int startIndex = f.indexOf("{");
+                        int endIndex = f.indexOf("}");
+                        if(startIndex!=-1 && endIndex!=-1) {
+                            String token = f.substring(startIndex+1, endIndex);
+                            line = changeWord(line, "${"+token+"}", view.get(token, String.class));
+                        }
+                    }
+                }
+
                 if (line.contains("<!--forStart-->")) {
                     line = line.strip().substring("<!--forStart-->".length());
                     line = removeCommentSymbols(line);
