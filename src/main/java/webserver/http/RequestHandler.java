@@ -5,6 +5,7 @@ import db.SessionManager;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.LoginChecker;
 import utils.UserFormDataParser;
 
 import java.util.HashMap;
@@ -47,6 +48,7 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.GET,"/user/create"), (Request r)-> getUserCreate(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/user/create"), (Request r)-> postUserCreate(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/user/login"), (Request r)-> postUserLogin(r));
+        routeHandlers.put(new Route(HttpMethod.GET,"/user/list"), (Request r)-> getUserList(r));
     }
 
     public void handleRequest(Request request) {
@@ -92,6 +94,12 @@ public class RequestHandler {
             request.addRequestHeader("Set-Cookie", "sid=" + session + "; Path=/");
         }else{
             request.addRequestHeader("Location","/user/login_failed.html");
+        }
+    }
+
+    private void getUserList(Request request) {
+        if(!LoginChecker.loginCheck(request)){
+            request.addRequestHeader("Location","/user/login.html");
         }
     }
 

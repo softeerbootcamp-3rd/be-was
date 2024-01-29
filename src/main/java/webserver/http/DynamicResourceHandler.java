@@ -4,6 +4,7 @@ import db.SessionManager;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.LoginChecker;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -21,20 +22,12 @@ public class DynamicResourceHandler {
     private void indexFunction(Request request, Response response) {
         byte[] responseBody = response.getResponseBody();
 
-        //Cookie값이 존재하지 않을때
-        if(request.getRequestHeader().get("Cookie")==null){
+        if(!LoginChecker.loginCheck(request)){
             response.setResponseBody(responseBody);
-            logger.debug("NO Cookie");
-            return;
-        }
-        String sessionVal = request.getRequestHeader().get("Cookie").split("=")[1];
-        //Session값이 존재하지 않을때
-        if(SessionManager.findUserById(sessionVal)==null){
-            response.setResponseBody(responseBody);
-            logger.debug("NO Session");
             return;
         }
 
+        String sessionVal = request.getRequestHeader().get("Cookie").split("=")[1];
         User curUser = SessionManager.findUserById(sessionVal);
         String responseContent;
         try {
