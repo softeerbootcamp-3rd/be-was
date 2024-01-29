@@ -143,6 +143,46 @@ public class GetService {
         return requestFile(httpRequestDto);
     }
 
+    // 게시글 삭제 요청 처리
+    public HTTPResponseDto deletePost(HTTPRequestDto httpRequestDto) {
+        Long postId = 0L;
+        // 게시글 아이디 가져오기
+        try {
+            String url = httpRequestDto.getRequestTarget();
+            String postIdString = url.substring(url.indexOf("/qna/")+"/qna/".length(), url.lastIndexOf("/"));
+            postId = Long.parseLong(postIdString);
+        }
+        catch (NumberFormatException e) {
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        }
+        // 작성자 여부 판단
+        HTTPResponseDto httpResponseDto = isWriter(postId, httpRequestDto);
+        if(httpResponseDto != null)
+            return httpResponseDto;
+        // 게시글 삭제
+        Database.deletePost(postId);
+        // index.html로 리다이렉트
+        return new HTTPResponseDto("/");
+    }
+
+    private HTTPResponseDto isWriter(Long postId, HTTPRequestDto httpRequestDto) {
+        // 해당 게시글 가져오기
+        Post post = Database.findPostById(postId);
+        if(post == null)
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        // 유저 정보 가져오기
+        String sessionId = httpRequestDto.getSessionId();
+        if(sessionId == null)
+            return new HTTPResponseDto(200, "text/plain", "로그인 후 이용해주세요.".getBytes());
+        User user = Database.findUserBySessionId(sessionId);
+        if(user == null)
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        // 작성자 여부 판단
+        if(!post.getUserId().equals(user.getUserId()))
+            return new HTTPResponseDto(200, "text/plain", "글 작성자만 삭제 가능합니다.".getBytes());
+        return null;
+    }
+
 
     ///////////////////////////// 동적 화면 처리 ////////////////////////////////
 

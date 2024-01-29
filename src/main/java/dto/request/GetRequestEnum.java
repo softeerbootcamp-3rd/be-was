@@ -39,7 +39,7 @@ public enum GetRequestEnum {
             return Config.httpGetService.showWithLogin(httpRequestDto);
         }
     },
-    WRITEFORM("/qna/form\\.html") {
+    WRITEPOST("/qna/form\\.html") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.showWithLogin(httpRequestDto);
@@ -49,6 +49,12 @@ public enum GetRequestEnum {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.showWithLogin(httpRequestDto);
+        }
+    },
+    DELETEPOST("/qna/(\\d+)/delete") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return Config.httpGetService.deletePost(httpRequestDto);
         }
     },
     FILE("file") {
