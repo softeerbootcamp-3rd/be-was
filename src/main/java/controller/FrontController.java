@@ -4,19 +4,19 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
+import controller.qna.QnaCreateController;
 import controller.qna.QnaFormController;
 import controller.user.UserCreateController;
 import controller.user.UserListController;
 import controller.user.UserLoginController;
+import db.Database;
+import model.Qna;
 import model.Request;
 import model.Response;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FrontController {
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
@@ -41,6 +41,7 @@ public class FrontController {
         handlerMappingMap.put("/user/list", new UserListController());
 
         handlerMappingMap.put("/qna/form", new QnaFormController());
+        handlerMappingMap.put("/qna/create", new QnaCreateController());
     }
 
     private void initHandlerAdapters() {
@@ -59,6 +60,13 @@ public class FrontController {
         String viewName = mv.getViewName();
         View view = viewResolver(viewName);
 
+        if (request.getURI().contains("index.html")) {
+            HashMap<String, Object> model = new HashMap<>();
+            Collection<Qna> allQnas = Database.findAllQnas();
+            model.put("{{qna-list}}", allQnas);
+            mv.setModel(model);
+        }
+
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
             view.render(request, response, mv, resourceController.getType());
@@ -67,7 +75,6 @@ public class FrontController {
         }
 
         view.render(request, response, mv);
-
         response.send(out);
     }
 

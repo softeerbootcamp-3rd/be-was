@@ -1,6 +1,7 @@
 package controller;
 
 import exception.UserNotFoundException;
+import model.Qna;
 import model.Request;
 import model.Response;
 import model.User;
@@ -10,6 +11,8 @@ import service.UserService;
 import util.HtmlBuilder;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 public class View {
@@ -45,6 +48,19 @@ public class View {
         // todo
         if (mv.getViewName().contains("index.html")) {
             String fileString = new String(body);
+
+            Object attribute = mv.getAttribute("{{qna-list}}");
+            if (attribute != null) {
+                Collection<Qna> qnaCollection = (Collection<Qna>) attribute;
+                ArrayList<Qna> qnas = new ArrayList<>(qnaCollection);
+                if (qnas.size() == 0) {
+                    fileString = fileString.replace("{{qna-list}}", "");
+                } else {
+                    String rendered = HtmlBuilder.replace("{{qna-list}}", qnas);
+                    fileString = fileString.replace("{{qna-list}}", rendered);
+                }
+            }
+
             User findUser = null;
             try {
                 String userId = request.getCookie("sid");
@@ -75,9 +91,19 @@ public class View {
 
         response.set200Ok();
         response.putToHeaderMap("Content-Type", "text/" + type + ";charset=utf-8");
-        response.putToHeaderMap("Content-Length", String.valueOf(body.length));
+
+//        // todo
         if (mv.getViewName().contains("index.html")) {
             String fileString = new String(body);
+
+            Collection<Qna> attribute = (Collection<Qna>) mv.getAttribute("{{qna-list}}");
+            ArrayList<Qna> qnas = new ArrayList<>(attribute);
+            if (qnas.size() == 0) {
+                fileString = fileString.replace("{{qna-list}}", "");
+            }
+            String rendered = HtmlBuilder.replace("{{qna-list}}", qnas);
+            fileString = fileString.replace("{{qna-list}}", rendered);
+
             User findUser = null;
             try {
                 String userId = request.getCookie("sid");
@@ -92,6 +118,7 @@ public class View {
             fileString = fileString.replace("{{welcome}}", renderedHtml);
             body = fileString.getBytes();
         }
+        response.putToHeaderMap("Content-Length", String.valueOf(body.length));
         response.setBody(body);
 
     }

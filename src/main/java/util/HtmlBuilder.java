@@ -1,5 +1,6 @@
 package util;
 
+import model.Qna;
 import model.User;
 
 import java.util.ArrayList;
@@ -34,7 +35,38 @@ public class HtmlBuilder {
             sb.append("님.</li>");
             return sb.toString();
         }
-        throw new IllegalArgumentException("해당하는 html template이 존재하지 않습니다.");
+
+        if (key.equals("{{qna-list}}")) {
+            List<Qna> qnas = new ArrayList<>((Collection<Qna>) value);
+
+            for (Qna qna : qnas) {
+                String createdAt = qna.getCreatedAt().toString();
+                String title = qna.getTitle();
+                String writer = qna.getWriter();
+
+                sb.append("<li>\n")
+                        .append("  <div class=\"wrap\">\n")
+                        .append("      <div class=\"main\">\n")
+                        .append("          <strong class=\"subject\">\n")
+                        .append("              <a href=\"./qna/show.html\">").append(title).append("</a>\n") // title 변수 적용
+                        .append("          </strong>\n")
+                        .append("          <div class=\"auth-info\">\n")
+                        .append("              <i class=\"icon-add-comment\"></i>\n")
+                        .append("              <span class=\"time\">").append(createdAt).append("</span>\n") // date 변수 적용
+                        .append("              <a href=\"./user/profile.html\" class=\"author\">").append(writer).append("</a>\n") // writer 변수 적용
+                        .append("          </div>\n")
+                        .append("          <div class=\"reply\" title=\"댓글\">\n")
+                        .append("              <i class=\"icon-reply\"></i>\n")
+                        .append("              <span class=\"point\">0</span>\n")
+                        .append("          </div>\n")
+                        .append("      </div>\n")
+                        .append("  </div>\n")
+                        .append("</li>");
+            }
+            return sb.toString();
+        }
+
+        throw new IllegalArgumentException(key + "에 해당하는 html template이 존재하지 않습니다.");
     }
 
     public static String empty() {
