@@ -44,6 +44,8 @@ public class RequestHandler implements Runnable {
         }
         catch (IOException e) {
             logger.error(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

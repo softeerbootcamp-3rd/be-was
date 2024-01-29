@@ -1,13 +1,13 @@
 package httpmessage;
 
 import model.User;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 public class HttpSession {
     private String id;
@@ -19,7 +19,7 @@ public class HttpSession {
         id = UUID.randomUUID().toString();
         values.put(id,user);
         LocalDateTime createDate = LocalDateTime.now();
-        expireDate = createDate.plusMinutes(1).minusHours(9);;
+        expireDate = createDate.plusMinutes(10).minusHours(9);;
     }
 
     public String getExpireDate() {

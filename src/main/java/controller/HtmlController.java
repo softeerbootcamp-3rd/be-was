@@ -29,22 +29,5 @@ public class HtmlController implements Controller{
         byte[] modifiedBody = modifiedContent.getBytes();
         httpResponse.setBody(modifiedBody);
     }
-
-    private byte[] getLoginHtml(HttpRequest httpRequest, HttpResponse httpResponse) {
-        HttpSession httpSession = new HttpSession();
-
-        String sid = httpRequest.getCookie();
-        String userId = httpSession.getUser(sid).getUserId();
-
-        String body = new String(httpResponse.getBody());
-        String modifiedContent = body.replace("{{login}}",
-                "<li>" + userId + "</li>\n" +
-                        "<li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
-                        "<li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n");
-
-        byte[] modifiedBody = modifiedContent.getBytes();
-        return modifiedBody;
-    }
-
 }
 

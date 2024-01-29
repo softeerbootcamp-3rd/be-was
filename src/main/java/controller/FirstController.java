@@ -1,15 +1,8 @@
 package controller;
 
-import db.Database;
-import httpmessage.HttpSession;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
-import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +12,7 @@ public class FirstController {
         initControllerMapping();
     }
 
-    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException, ClassNotFoundException {
         final String requestPath =  httpRequest.getPath();
         Controller controller = controllerMap.get(requestPath);
 
