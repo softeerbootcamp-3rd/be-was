@@ -41,6 +41,7 @@ public class FirstController {
         controllerMap.put("/user/create", new UserCreateController());
         controllerMap.put("/user/login", new UserLoginController());
         controllerMap.put("/user/list", new UserListController());
+        controllerMap.put("/qna/write", new WritingController());
     }
 
 }
