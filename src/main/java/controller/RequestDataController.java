@@ -125,7 +125,7 @@ public class RequestDataController {
         if (requestData.isLoggedIn()) {
             return new Response(HttpStatusCode.OK, requestData.getRequestContent());
         }
-        return new Response(HttpStatusCode.FOUND, INDEX_HTML);
+        return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
     }
 
     @Route(method = HttpMethod.GET, uri = "/user/login.html")
