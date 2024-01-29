@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +72,8 @@ public class HttpRequestUtils {
                 totalBytesRead += bytesRead;
             }
         }
-        request.setBody(bodyBuilder.toString());
+        String result = URLDecoder.decode(bodyBuilder.toString());
+        request.setBody(result);
     }
 
 
