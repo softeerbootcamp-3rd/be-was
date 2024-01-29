@@ -1,7 +1,7 @@
 package service;
 
-import db.Database;
-import exception.CreateUserException;
+import db.UserDatabase;
+import exception.UserException;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        Database.clearAll();
+        UserDatabase.clearAll();
     }
 
     @Test
@@ -29,7 +29,7 @@ public class UserServiceTest {
         String id = userService.create(userId, password, name, email);
 
         //Then
-        User user = Database.findUserById(id);
+        User user = UserDatabase.findUserById(id);
 
         assertEquals(userId, user.getUserId());
         assertEquals(password, user.getPassword());
@@ -46,12 +46,12 @@ public class UserServiceTest {
         String email = null;
 
         //When
-        CreateUserException e = assertThrows(CreateUserException.class,
+        UserException e = assertThrows(UserException.class,
                 () -> userService.create(userId, password, name, email));
 
 
         //Then
-        assertEquals(CreateUserException.NULL_EMAIL, e.getMessage());
+        assertEquals(UserException.NULL_EMAIL, e.getMessage());
     }
 
     @Test
@@ -64,12 +64,12 @@ public class UserServiceTest {
         userService.create(userId, password, name, email);
 
         //When
-        CreateUserException e = assertThrows(CreateUserException.class,
+        UserException e = assertThrows(UserException.class,
                 () -> userService.create(userId, "5678", "호날두", "ronaldo@hyundai.com"));
 
 
         //Then
-        assertEquals(CreateUserException.DUPLICATE_ID, e.getMessage());
+        assertEquals(UserException.DUPLICATE_ID, e.getMessage());
     }
 
     @Test
@@ -82,12 +82,12 @@ public class UserServiceTest {
         userService.create(userId, password, name, email);
 
         //When
-        CreateUserException e = assertThrows(CreateUserException.class,
+        UserException e = assertThrows(UserException.class,
                 () -> userService.create("ronaldo", "5678", "호날두", "gyeongsu@hyundai.com"));
 
 
         //Then
-        assertEquals(CreateUserException.DUPLICATE_EMAIL, e.getMessage());
+        assertEquals(UserException.DUPLICATE_EMAIL, e.getMessage());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class UserServiceTest {
         userService.update(userId, newPassword, newName, newEmail);
 
         //Then
-        User user = Database.findUserById(userId);
+        User user = UserDatabase.findUserById(userId);
 
         assertEquals(userId, user.getUserId());
         assertEquals(newPassword, user.getPassword());
@@ -173,12 +173,12 @@ public class UserServiceTest {
         userService.create(userId, password, name, email);
 
         //When
-        CreateUserException e = assertThrows(CreateUserException.class,
+        UserException e = assertThrows(UserException.class,
                 () -> userService.update(userId, "5678", null, email));
 
 
         //Then
-        assertEquals(CreateUserException.NULL_NAME, e.getMessage());
+        assertEquals(UserException.NULL_NAME, e.getMessage());
     }
 
     @Test
@@ -193,11 +193,11 @@ public class UserServiceTest {
         userService.create(userId, password, name, email);
 
         //When
-        CreateUserException e = assertThrows(CreateUserException.class,
+        UserException e = assertThrows(UserException.class,
                 () -> userService.update(userId, password, "gyeongsu", "gyeongsu@hyundai.com"));
 
 
         //Then
-        assertEquals(CreateUserException.DUPLICATE_EMAIL, e.getMessage());
+        assertEquals(UserException.DUPLICATE_EMAIL, e.getMessage());
     }
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import db.BoardDatabase;
 import exception.FileNotFoundExceptionHandler;
 import model.User;
 import util.HtmlTemplate;
@@ -36,23 +37,25 @@ public class HomeController {
     }
 
     private ResponseEntity<?> home() throws IOException {
-        boolean isLoggedIn = SessionManager.isLoggedIn(httpRequest);
-
-        if (!isLoggedIn) {
-            byte[] body = ResourceUtils.getStaticResource(httpRequest.getPath());
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.getContentType(httpRequest))
-                    .contentLength(body.length)
-                    .body(body);
-        }
+//        boolean isLoggedIn = SessionManager.isLoggedIn(httpRequest);
+//
+//        if (!isLoggedIn) {
+//            byte[] body = ResourceUtils.getStaticResource(httpRequest.getPath());
+//
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.getContentType(httpRequest))
+//                    .contentLength(body.length)
+//                    .body(body);
+//        }
 
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
-        String html = new String(ResourceUtils.getStaticResource(httpRequest.getPath()));
-        byte[] body =  html.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
-                .replace("<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>", HtmlTemplate.LOGOUT)
-                .getBytes();
+//        String html = new String(ResourceUtils.getStaticResource(httpRequest.getPath()));
+//        byte[] body =  html.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", HtmlTemplate.USER_ID.replace("{}", loggedInUser.getUserId()))
+//                .replace("<li><a href=\"user/write.html\" role=\"button\">회원가입</a></li>", HtmlTemplate.LOGOUT)
+//                .getBytes();
+
+        byte[] body = HtmlTemplate.index(loggedInUser, BoardDatabase.findAll());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.getContentType(httpRequest))

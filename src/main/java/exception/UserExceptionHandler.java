@@ -8,8 +8,8 @@ import util.http.*;
 import java.io.IOException;
 
 
-public class CreateUserExceptionHandler {
-    public static ResponseEntity<?> handle(CreateUserException e) throws IOException {
+public class UserExceptionHandler {
+    public static ResponseEntity<?> handle(UserException e) throws IOException {
         String line = "<div class=\"alert alert-danger\" role=\"alert\">{{message}}</div>";
         line = line.replace("{{message}}", e.getMessage());
 
@@ -22,7 +22,7 @@ public class CreateUserExceptionHandler {
                 .body(body);
     }
 
-    public static ResponseEntity<?> handle(CreateUserException e, HttpRequest httpRequest) throws IOException {
+    public static ResponseEntity<?> handle(UserException e, HttpRequest httpRequest) throws IOException {
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
         String input = "<input class=\"form-control\" id=\"userId\" name=\"userId\" placeholder=\"{{userId}}\" disabled>";

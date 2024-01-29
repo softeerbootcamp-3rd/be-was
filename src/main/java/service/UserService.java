@@ -1,7 +1,7 @@
 package service;
 
-import db.Database;
-import exception.CreateUserException;
+import db.UserDatabase;
+import exception.UserException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +15,13 @@ public class UserService {
 
     public String create(String userId, String password, String name, String email) {
         if (userId == null)
-            throw new CreateUserException(CreateUserException.NULL_ID);
+            throw new UserException(UserException.NULL_ID);
         if (password == null)
-            throw new CreateUserException(CreateUserException.NULL_PASSWORD);
+            throw new UserException(UserException.NULL_PASSWORD);
         if (name == null)
-            throw new CreateUserException(CreateUserException.NULL_NAME);
+            throw new UserException(UserException.NULL_NAME);
         if (email == null)
-            throw new CreateUserException(CreateUserException.NULL_EMAIL);
+            throw new UserException(UserException.NULL_EMAIL);
 
         userId = decode(userId);
         password = decode(password);
@@ -31,25 +31,27 @@ public class UserService {
         createValidate(userId, email);
 
         User user = new User(userId, password, name, email);
-        Database.addUser(user);
+        UserDatabase.addUser(user);
         logger.debug("Created: " + user.toString());
         return user.getUserId();
     }
 
     private void createValidate(String userId, String email) {
-        Collection<User> users = Database.findAll();
+        Collection<User> users = UserDatabase.findAll();
         for (User user : users) {
             if (user.getUserId().equals(userId)) {
-                throw new CreateUserException(CreateUserException.DUPLICATE_ID);
+                throw new UserException(UserException.DUPLICATE_ID);
             }
             if (user.getEmail().equals(email)) {
-                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
+                throw new UserException(UserException.DUPLICATE_EMAIL);
             }
         }
     }
 
     public String login(String userId, String password) {
-        User user = Database.findUserById(userId);
+        if (userId == null)
+            return null;
+        User user = UserDatabase.findUserById(userId);
         if (user == null || !user.getPassword().equals(password))
             return null;
         String sessionId = SessionManager.generateSessionId();
@@ -58,18 +60,18 @@ public class UserService {
     }
 
     public Collection<User> list() {
-        return Database.findAll();
+        return UserDatabase.findAll();
     }
 
     public String update(String userId, String password, String name, String email) {
         if (userId == null)
-            throw new CreateUserException(CreateUserException.NULL_ID);
+            throw new UserException(UserException.NULL_ID);
         if (password == null)
-            throw new CreateUserException(CreateUserException.NULL_PASSWORD);
+            throw new UserException(UserException.NULL_PASSWORD);
         if (name == null)
-            throw new CreateUserException(CreateUserException.NULL_NAME);
+            throw new UserException(UserException.NULL_NAME);
         if (email == null)
-            throw new CreateUserException(CreateUserException.NULL_EMAIL);
+            throw new UserException(UserException.NULL_EMAIL);
 
         userId = decode(userId);
         password = decode(password);
@@ -79,18 +81,18 @@ public class UserService {
         updateValidate(userId, email);
 
         User user = new User(userId, password, name, email);
-        Database.addUser(user);
+        UserDatabase.addUser(user);
         logger.debug("Updated: " + user.toString());
         return user.getUserId();
     }
 
     private void updateValidate(String userId, String email) {
-        Collection<User> users = Database.findAll();
+        Collection<User> users = UserDatabase.findAll();
         for (User user : users) {
             if (user.getUserId().equals(userId))
                 continue;
             if (user.getEmail().equals(email)) {
-                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
+                throw new UserException(UserException.DUPLICATE_EMAIL);
             }
         }
     }

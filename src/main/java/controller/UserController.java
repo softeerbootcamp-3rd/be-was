@@ -77,8 +77,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create("/index.html"))
                     .build();
-        } catch (CreateUserException e) {
-            return CreateUserExceptionHandler.handle(e);
+        } catch (UserException e) {
+            return UserExceptionHandler.handle(e);
         }
     }
 
@@ -215,8 +215,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create("/index.html"))
                     .build();
-        } catch (CreateUserException e) {
-            return CreateUserExceptionHandler.handle(e, httpRequest);
+        } catch (UserException e) {
+            return UserExceptionHandler.handle(e, httpRequest);
         }
     }
 }
