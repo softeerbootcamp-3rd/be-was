@@ -5,7 +5,14 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import session.Session;
+import session.SessionManager;
 import util.RequestParser;
+import webserver.request.ApiHandler;
+import webserver.request.FileContentHandler;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
+import webserver.response.ResponseHandler;
 
 
 public class Dispatcher implements Runnable {
@@ -26,17 +33,18 @@ public class Dispatcher implements Runnable {
             if (isValidConnection(in, out)) {
 
                 HttpRequest httpRequest = RequestParser.getHttpRequest(in);
-                // TODO 분석한 요청의 경로를 이용해, 로그인한 사용자만 사용 가능한 건지 확인 후 처리
-                DataOutputStream dos = new DataOutputStream(out);
-                HttpResponse httpResponse;
+                Session session = SessionManager.getSession(httpRequest.getSessionId());
+                ThreadLocalManager.setSession(session);
 
-                // 정적 요청 처리
-                httpResponse = StaticHandler.handle(httpRequest);
-                // 동적 요청 처리
+                HttpResponse httpResponse;
+                // API 호출 요청인지 확인
+                httpResponse = ApiHandler.handle(httpRequest);
+                // 파인 컨텐츠 요청인지 확인 후 처리
                 if (httpResponse == null) {
-                    httpResponse = DynamicHandler.handle(httpRequest);
+                    httpResponse = FileContentHandler.handle(httpRequest);
                 }
 
+                DataOutputStream dos = new DataOutputStream(out);
                 ResponseHandler.send(dos, httpResponse);
             }
         } catch (IOException e) {
