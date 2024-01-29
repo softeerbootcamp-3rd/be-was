@@ -39,7 +39,6 @@ public class HttpRequest {
             }
         }
         if (header.get(HttpHeader.CONTENT_LENGTH) != null) {
-            System.out.println(header.get(HttpHeader.CONTENT_LENGTH));
             body = new byte[Integer.parseInt(header.get(HttpHeader.CONTENT_LENGTH))];
             reader.read(body);
         }else

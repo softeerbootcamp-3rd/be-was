@@ -31,7 +31,6 @@ public class AttachmentController {
         if (attachment == null)
             return HttpResponse.of(HttpStatus.NOT_FOUND);
 
-        System.out.println("content-type: " + attachment.getMimeType());
         return HttpResponse.builder()
                 .status(HttpStatus.OK)
                 .addHeader(HttpHeader.CONTENT_TYPE, attachment.getMimeType())
