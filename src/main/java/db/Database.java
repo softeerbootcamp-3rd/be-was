@@ -2,16 +2,23 @@ package db;
 
 import com.google.common.collect.Maps;
 
+import model.Post;
 import model.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
     private static Map<String, User> users = Maps.newHashMap();
+    private static Map<Long, Post> postList = Maps.newHashMap();
 
     public static void addUser(User user) {
-        users.put(user.getUserId(), user);
+        users.put(user.getUserId(), user)   ;
+    }
+    public static void addPost(Post post) {
+        postList.put(post.getId(), post);
     }
 
     public static User findUserById(String userId) {
