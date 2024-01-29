@@ -36,6 +36,12 @@ public class SessionManager {
         return sessionStore.get(sessionId);
     }
 
+    public static void expireSession(String sessionId, HttpResponse httpResponse) {
+        sessionStore.remove(sessionId);
+        String expireCookieHeader = String.format("%s=; Path=/; Max-Age=0", COOKIE_NAME);
+        httpResponse.addCookie(expireCookieHeader);
+    }
+
     private static String createCookieHeader(String sessionId) {
         return String.format("%s=%s; Path=/", COOKIE_NAME, sessionId);
     }
