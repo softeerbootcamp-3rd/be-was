@@ -58,10 +58,10 @@ public class UserController {
     @PostMapping(path = "/login")
     public static ResponseEntity login(@RequestParam(name = "userId") String userId,
                                  @RequestParam(name = "password") String password) {
-        User user = Database.findUserById(userId);
-        Map<String, List<String>> headerMap = new HashMap<>();
 
-        if (!validateInput(userId, password) || !user.getPassword().equals(password)) {
+        User user = UserDao.findUserByUserId(userId);
+        Map<String, List<String>> headerMap = new HashMap<>();
+        if (!validateInput(userId, password) || user == null || !user.getPassword().equals(password)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -73,7 +73,6 @@ public class UserController {
         SessionManager.setAttribute(SID, "user", userId);
         List<String> cookies = new ArrayList<>();
         cookies.add("SID=" + SID);
-//        cookies.add("Max-Age=" + SessionManager.getSessionTimeoutSeconds());
         cookies.add("Path=" + "/");
         headerMap.put(HttpHeader.SET_COOKIE, cookies);
         headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));

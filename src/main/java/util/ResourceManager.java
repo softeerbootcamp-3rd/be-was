@@ -1,5 +1,6 @@
 package util;
 
+import dao.UserDao;
 import db.Database;
 import model.User;
 import type.MimeType;
@@ -46,7 +47,7 @@ public class ResourceManager {
                 // 사용자 이름 표시
                 html = changeHTMLButtonStatus(html, SIGNUP_BUTTON, true);
                 html = changeHTMLButtonStatus(html, LOGIN_BUTTON, true);
-                html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
+                html = changeHTMLIncludeUserName(html, UserDao.findUserNameByUserId(userId));
 
                 if (path.equals("/user/list.html")) {
                     html = changeHTMLGetUserList(html);

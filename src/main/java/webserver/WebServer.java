@@ -37,6 +37,7 @@ public class WebServer {
                 CompletableFuture.runAsync(new RequestHandler(connection), executorService);
             }
 
+            //JdbcUtil.close();
             // 스레드풀 종료
             executorService.shutdown();
         }
