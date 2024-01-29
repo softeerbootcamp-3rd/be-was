@@ -4,11 +4,17 @@ import controller.ModelView;
 import exception.AlreadyExistUserException;
 import model.Request;
 import model.Response;
+import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserCreateController implements UserController {
+    private final UserService userService;
+
+    public UserCreateController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public ModelView process(Request request, Response response) {

@@ -6,7 +6,11 @@ import model.Response;
 import service.QnaService;
 
 public class QnaCreateController implements QnaController {
-    private final QnaService qnaService = new QnaService();
+    private final QnaService qnaService;
+
+    public QnaCreateController(QnaService qnaService) {
+        this.qnaService = qnaService;
+    }
 
     @Override
     public ModelView process(Request request, Response response) {

@@ -5,10 +5,15 @@ import exception.UserNotFoundException;
 import model.Request;
 import model.Response;
 import model.User;
+import service.QnaService;
 import service.UserService;
 
 public class QnaFormController implements QnaController{
-    private final UserService userService = new UserService();
+    private final UserService userService;
+
+    public QnaFormController(UserService userService) {
+        this.userService = userService;
+    }
     @Override
     public ModelView process(Request request, Response response) {
         try {

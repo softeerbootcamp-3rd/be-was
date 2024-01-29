@@ -4,8 +4,15 @@ import controller.ModelView;
 import exception.LoginFailedException;
 import model.Request;
 import model.Response;
+import service.UserService;
 
 public class UserLoginController implements UserController{
+    private final UserService userService;
+
+    public UserLoginController(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     public ModelView process(Request request, Response response) {
         String userId = request.getParameter("userId");

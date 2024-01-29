@@ -1,14 +1,10 @@
 package controller;
 
+import config.AppConfig;
 import controller.adapter.HandlerAdapter;
 import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
-import controller.qna.QnaCreateController;
-import controller.qna.QnaFormController;
-import controller.user.UserCreateController;
-import controller.user.UserListController;
-import controller.user.UserLoginController;
 import db.Database;
 import model.Qna;
 import model.Request;
@@ -29,6 +25,7 @@ public class FrontController {
     }
 
     private void initHandlerMappingMap() {
+        // todo 제네릭으로 만들까?
         handlerMappingMap.put("css", new ResourceController("css"));
         handlerMappingMap.put("fonts", new ResourceController("fonts"));
         handlerMappingMap.put("images", new ResourceController("images"));
@@ -36,12 +33,12 @@ public class FrontController {
         handlerMappingMap.put("ico", new ResourceController("ico"));
         handlerMappingMap.put("html", new ResourceController("html"));
 
-        handlerMappingMap.put("/user/create", new UserCreateController());
-        handlerMappingMap.put("/user/login", new UserLoginController());
-        handlerMappingMap.put("/user/list", new UserListController());
+        handlerMappingMap.put("/user/create", AppConfig.userCreateController());
+        handlerMappingMap.put("/user/login", AppConfig.userLoginController());
+        handlerMappingMap.put("/user/list", AppConfig.userListController());
 
-        handlerMappingMap.put("/qna/form", new QnaFormController());
-        handlerMappingMap.put("/qna/create", new QnaCreateController());
+        handlerMappingMap.put("/qna/form", AppConfig.qnaFormController());
+        handlerMappingMap.put("/qna/create", AppConfig.qnaCreateController());
     }
 
     private void initHandlerAdapters() {
