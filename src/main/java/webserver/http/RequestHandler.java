@@ -78,7 +78,7 @@ public class RequestHandler {
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
 
         //같은 아이디 회원 가입 방지
-        if(Database.findUserById(user.getUserId()) != null)
+        if(H2Database.findUserById(user.getUserId()) != null)
             return;
 
         H2Database.adduser(user);
@@ -89,9 +89,9 @@ public class RequestHandler {
         HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
         String id = formData.get("userId");
         String pw = formData.get("password");
-        if(Database.isValidLogin(id, pw)){
+        if(H2Database.isValidLogin(id, pw)){
             request.addRequestHeader("Location","/index.html");
-            String session = SessionManager.addSession(Database.findUserById(id));
+            String session = SessionManager.addSession(H2Database.findUserById(id));
             request.addRequestHeader("Set-Cookie", "sid=" + session + "; Path=/");
         }else{
             request.addRequestHeader("Location","/user/login_failed.html");

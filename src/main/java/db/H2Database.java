@@ -14,7 +14,8 @@ public class H2Database {
     private static final String password = "";
 
     private static Connection conn = null;
-    private static PreparedStatement preparedStatemnt = null;
+    private static PreparedStatement preparedStatement = null;
+    private static ResultSet resultSet = null;
 
     H2Database() {
         createUserTable();
@@ -34,28 +35,25 @@ public class H2Database {
             logger.error(e.getMessage());
         }
     }
-
-
     public static void adduser(User user) {
         try {
             conn = DriverManager.getConnection(url, username, password);
 
             String sql = "INSERT INTO User (userId, password, name, email) VALUES (?, ?, ?, ?)";
-            preparedStatemnt = conn.prepareStatement(sql);
+            preparedStatement = conn.prepareStatement(sql);
 
-            preparedStatemnt.setString(1, user.getUserId());
-            preparedStatemnt.setString(2, user.getPassword());
-            preparedStatemnt.setString(3, user.getName());
-            preparedStatemnt.setString(4, user.getEmail());
+            preparedStatement.setString(1, user.getUserId());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(3, user.getName());
+            preparedStatement.setString(4, user.getEmail());
 
-            int affectedRows = preparedStatemnt.executeUpdate();
-            logger.debug(affectedRows + "실행 완료");
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage());
         } finally {
             try {
-                if (preparedStatemnt != null)
-                    preparedStatemnt.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
                 if (conn != null)
                     conn.close();
             } catch (SQLException e) {
@@ -64,16 +62,42 @@ public class H2Database {
         }
     }
 
-   /* public static User findUserById(String userId) {
+    public static User findUserById(String userId) {
+       try {
+           conn = DriverManager.getConnection(url, username, password);
+           String sql = "SELECT * FROM User WHERE userId = ?";
+           preparedStatement = conn.prepareStatement(sql);
+           preparedStatement.setString(1, userId);
 
+           resultSet = preparedStatement.executeQuery();
+           if (resultSet.next()) {
+               return new User(
+                       resultSet.getString("userId"),
+                       resultSet.getString("password"),
+                       resultSet.getString("name"),
+                       resultSet.getString("email")
+               );
+           }
+       } catch (SQLException e) {
+           logger.error(e.getMessage());
+       } finally {
+           try {
+               if (resultSet != null) resultSet.close();
+               if (preparedStatement != null) preparedStatement.close();
+               if (conn != null) conn.close();
+           } catch (SQLException e) {
+               logger.error(e.getMessage());
+           }
+       }
+       return null;
     }
 
     public static Collection<User> findAll() {
-        return users.values();
+        return null;
     }
 
     public static boolean isValidLogin(String id, String pw){
         User user = findUserById(id);
         return user != null && user.getPassword().equals(pw);
-    }*/
+    }
 }
