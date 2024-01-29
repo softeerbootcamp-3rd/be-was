@@ -8,21 +8,21 @@ public class Comment {
     private Long id;
     private Long postId;
     private String writerId;
-    private String content;
+    private String contents;
     private Date createDatetime;
 
-    public Comment(Long id, Long postId, String writerId, String content, Date createDatetime) {
+    public Comment(Long id, Long postId, String writerId, String contents, Date createDatetime) {
         this.id = id;
         this.postId = postId;
         this.writerId = writerId;
-        this.content = content;
+        this.contents = contents;
         this.createDatetime = createDatetime;
     }
 
-    public Comment(Long postId, String writerId, String content, Date createDatetime) {
+    public Comment(Long postId, String writerId, String contents, Date createDatetime) {
         this.postId = postId;
         this.writerId = writerId;
-        this.content = content;
+        this.contents = contents;
         this.createDatetime = createDatetime;
     }
 
@@ -50,12 +50,12 @@ public class Comment {
         this.writerId = writerId;
     }
 
-    public String getContent() {
-        return content;
+    public String getContents() {
+        return contents;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 
     public Date getCreateDatetime() {
@@ -71,12 +71,12 @@ public class Comment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id) && Objects.equals(postId, comment.postId) && Objects.equals(writerId, comment.writerId) && Objects.equals(content, comment.content) && Objects.equals(createDatetime, comment.createDatetime);
+        return Objects.equals(id, comment.id) && Objects.equals(postId, comment.postId) && Objects.equals(writerId, comment.writerId) && Objects.equals(contents, comment.contents) && Objects.equals(createDatetime, comment.createDatetime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, postId, writerId, content, createDatetime);
+        return Objects.hash(id, postId, writerId, contents, createDatetime);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Comment {
                 "id=" + id +
                 ", postId='" + postId + '\'' +
                 ", writerId='" + writerId + '\'' +
-                ", content='" + content + '\'' +
+                ", contents='" + contents + '\'' +
                 ", createDatetime=" + createDatetime +
                 '}';
     }

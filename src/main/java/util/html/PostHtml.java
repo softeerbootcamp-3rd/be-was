@@ -92,7 +92,7 @@ public class PostHtml {
             User writer = UserDatabase.findByIdOrEmpty(comment.getWriterId());
             sb.append(template.replace("<!--writer-->", writer.getName())
                     .replace("<!--create-date-->", dateFormat.format(comment.getCreateDatetime()))
-                    .replace("<!--content-->", comment.getContent().replace("\n", "</br>"))
+                    .replace("<!--content-->", comment.getContents().replace("\n", "</br>"))
                     .replace("<!--comment-btn-group-->", commentBtnGroup(postId, comment)));
         }
         return sb.toString();
