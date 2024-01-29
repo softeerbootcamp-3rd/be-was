@@ -6,7 +6,7 @@ list.innerHTML = posts.map((post, index) =>
     <div class="wrap">
         <div class="main">
             <strong class="subject">
-                <a href="./qna/show.html">${post.title}</a>
+                <a href="/qna/detail?id=${post.id}">${post.title}</a>
             </strong>
             <div class="auth-info">
                 <i class="icon-add-comment"></i>

@@ -16,16 +16,16 @@ public class QnaRepository {
         return instance;
     }
 
-    public static void addQna(Qna qna) {
+    public void addQna(Qna qna) {
         qna.setId(++seq);
         qnas.put(seq, qna);
     }
 
-    public static Qna findQnaById(Long Id) {
+    public Qna findQnaById(Long Id) {
         return qnas.get(Id);
     }
 
-    public static Collection<Qna> findAll() {
+    public Collection<Qna> findAll() {
         return qnas.values();
     }
 }

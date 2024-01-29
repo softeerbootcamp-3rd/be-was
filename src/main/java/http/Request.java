@@ -32,7 +32,6 @@ public class Request {
             String[] data = field.split("=");
             String key = field.split("=")[0];
             String value = (data.length == 2) ? decodeValue(data[1]) : "";
-
             this.body.put(key, value);
         }
     }

@@ -1,8 +1,12 @@
 package model;
 
 import dto.QnaDto;
+import org.checkerframework.checker.units.qual.A;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Qna {
     Long Id;
@@ -11,7 +15,7 @@ public class Qna {
 
     User writer;
     String title;
-    String contents;
+    List<String> contents = new ArrayList<>();
     LocalDateTime createAt = LocalDateTime.now();;
 
     public Qna() {
@@ -19,7 +23,7 @@ public class Qna {
 
     public Qna(QnaDto qnaDto){
         this.title = qnaDto.getTitle();
-        this.contents = qnaDto.getContents();
+        this.contents = Arrays.asList(qnaDto.getContents().split("\\r?\\n"));
 
     }
 
@@ -42,12 +46,12 @@ public class Qna {
         this.title = title;
     }
 
-    public String getContent() {
+    public List<String> getContent() {
         return contents;
     }
 
     public void setContent(String content) {
-        this.contents = content;
+        this.contents = Arrays.asList(content.split("\\r?\\n"));;
     }
 
     public User getWriter() {

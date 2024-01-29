@@ -25,8 +25,16 @@ public class QNAController implements BasicController{
     public String qnaCreate(@RequestBody QnaDto qnaDto, Model model){
         Qna qna = new Qna(qnaDto);
         qna.setWriter((User) model.getAttribute("user"));
+        logger.debug("contens = {}",qna.getContent());
         qnaService.create(qna);
         return "redirect:/";
+    }
+
+    @GetMapping(url = "/detail")
+    public String qnaDetail(@RequestParam(name = "id") String id, Model model){
+        String qna = qnaService.getPost(Long.parseLong(id));
+        model.addAttribute("post",qna);
+        return "qna/show";
     }
 
 }

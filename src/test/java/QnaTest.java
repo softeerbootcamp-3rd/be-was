@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class QnaTest {
-    private static final Logger logger = LoggerFactory.getLogger(UserTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(QnaTest.class);
     Request req;
     Response res;
     String cookieString;
@@ -64,7 +64,8 @@ public class QnaTest {
     public void QnaCreate() throws IOException {
         //given
 
-        Request req = new Request("POST","/qna/form",cookieString,"title=dd&contents=cc");
+        Request req = new Request("POST","/qna/form",cookieString,"title=dd&contents=dddd%0D%0Adddd");
+        logger.debug("req.getBody() = {}",req.getBody().get("contents"));
         BasicController handler = new QNAController();
 
         //when
@@ -84,14 +85,14 @@ public class QnaTest {
         Qna qna1 = new Qna();
         qna1.setWriter(user);
         qna1.setTitle("dd");
-        qna1.setContent("cc");
-        QnaRepository.addQna(qna1);
+        qna1.setContent("dddd\ndddd");
+        qnaRepository.addQna(qna1);
 
         Qna qna2 = new Qna();
         qna2.setWriter(user);
         qna2.setTitle("dd");
         qna2.setContent("cc");
-        QnaRepository.addQna(qna2);
+        qnaRepository.addQna(qna2);
         //when
 
         ModelAndView mv = adapter.handle(req, res, handler);
@@ -104,5 +105,26 @@ public class QnaTest {
 
     }
 
+    @Test
+    @DisplayName("글 상세 데이터")
+    public void QnaDetail() throws IOException {
 
+        Request req = new Request("GET","/qna/detail?id=1",cookieString,"");
+        BasicController handler = new QNAController();
+        Qna qna1 = new Qna();
+        qna1.setWriter(user);
+        qna1.setTitle("dd");
+        qna1.setContent("cc\ncc");
+        qnaRepository.addQna(qna1);
+
+        //when
+
+        ModelAndView mv = adapter.handle(req, res, handler);
+        String post = (String) mv.getModel().getAttribute("post");
+
+        //then
+        assertNotNull(post);
+        logger.debug(post);
+
+    }
 }
