@@ -21,8 +21,6 @@ public class PostHtml {
     private static final int paginationSize = 5;
 
     public static String postList(String template) {
-        if (template == null)
-            return "";
         int pageNumber = SharedData.getParamDataOrElse("page", Integer.class, 1);
         List<Post> postList = new ArrayList<>(PostDatabase.getPage(pageSize, pageNumber));
 
@@ -39,9 +37,6 @@ public class PostHtml {
     }
 
     public static String pagination(String template) {
-        if (template == null)
-            return "";
-
         int pageNumber = SharedData.getParamDataOrElse("page", Integer.class, 1);
         int startPage = ((pageNumber - 1) / paginationSize) * paginationSize + 1;
         int endPage = startPage + paginationSize - 1;
@@ -66,9 +61,13 @@ public class PostHtml {
         return sb.toString();
     }
 
+    public static String postBtn(String template) {
+        if (SharedData.requestUser.get() == null)
+            return template.replace("<!--link-->", "/user/login.html");
+        return template.replace("<!--link-->", "/post/write.html");
+    }
+
     public static String postContent(String template) {
-        if (template == null)
-            return "";
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         Post post = PostDatabase.findById(postId);
         if (post == null)
@@ -82,8 +81,6 @@ public class PostHtml {
     }
 
     public static String postBtnGroup(String template) {
-        if (template == null)
-            return "";
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         Post post = PostDatabase.findById(postId);
         User user = SharedData.requestUser.get();
@@ -93,8 +90,6 @@ public class PostHtml {
     }
 
     public static String comments(String template) {
-        if (template == null)
-            return "";
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         Collection<Comment> comments = CommentDatabase.findByPostId(postId);
 
@@ -119,8 +114,6 @@ public class PostHtml {
     }
 
     public static String commentForm(String template) {
-        if (template == null)
-            return "";
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         return template.replace("<!--post-id-->", Long.toString(postId));
     }

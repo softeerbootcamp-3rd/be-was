@@ -9,14 +9,10 @@ import java.util.List;
 
 public class UserHtml {
     public static String replaceUser(String template) {
-        if (template == null)
-            return "";
         return template.replace("<!--user-name-->", SharedData.requestUser.get().getName());
     }
 
     public static String replaceUserList(String template) {
-        if (template == null)
-            return "";
         StringBuilder sb = new StringBuilder();
         List<User> userList = new ArrayList<>(UserDatabase.findAll());
         for (int i = 0; i < userList.size(); i++) {
