@@ -1,5 +1,7 @@
 package util;
 
+import com.google.common.base.Strings;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,8 @@ public class ByteReader {
             wasCarriageReturn = (currentByte == '\r');
         }
         String result = byteArrayOutputStream.toString();
+        if (Strings.isNullOrEmpty(result))
+            return "";
         return result.substring(0, result.length() - 1);
     }
 

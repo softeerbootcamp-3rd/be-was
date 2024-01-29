@@ -95,14 +95,13 @@ public class HttpResponse {
         if (this.status == null)
             throw new IllegalStateException("Status is required for HttpResponse.");
         try {
-            DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes("HTTP/1.1 " + this.status.getFullMessage() + " \r\n");
+            out.write(("HTTP/1.1 " + this.status.getFullMessage() + " \r\n").getBytes());
             for (Map.Entry<HttpHeader, String> entry : header.entrySet()) {
-                dos.writeBytes(entry.getKey().getValue() + ": " + entry.getValue() + "\r\n");
+                out.write((entry.getKey().getValue() + ": " + entry.getValue() + "\r\n").getBytes());
             }
-            dos.writeBytes("\r\n");
-            dos.write(this.body, 0, this.body.length);
-            dos.flush();
+            out.write("\r\n".getBytes());
+            out.write(this.body);
+            out.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
