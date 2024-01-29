@@ -25,7 +25,7 @@ public class HttpResponse {
 
     public void setBody(String body) {
         this.body = body.getBytes();
-        this.header.put(HttpHeader.CONTENT_LENGTH, Integer.toString(this.body.length));
+        this.header.put(HttpHeader.CONTENT_LENGTH, "" + this.body.length);
     }
 
     public static HttpResponseBuilder builder() {
@@ -63,13 +63,13 @@ public class HttpResponse {
 
         public HttpResponseBuilder body(String body) {
             this.httpResponse.body = body.getBytes();
-            addHeader(HttpHeader.CONTENT_LENGTH, Integer.toString(this.httpResponse.body.length));
+            addHeader(HttpHeader.CONTENT_LENGTH, "" + this.httpResponse.body.length);
             return this;
         }
 
         public HttpResponseBuilder body(byte[] body) {
             this.httpResponse.body = body;
-            addHeader(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length));
+            addHeader(HttpHeader.CONTENT_LENGTH, "" + body.length);
             return this;
         }
 

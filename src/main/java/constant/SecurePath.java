@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 public enum SecurePath {
     POST_WRITE("^/post/write\\.html.*", SecureChecker::isLoggedIn, "/user/login.html"),
     POST_SHOW("^/post/show\\.html.*", SecureChecker::isLoggedIn, "/user/login.html"),
+    ATTACHMENT("^/attachment.*", SecureChecker::isLoggedIn, "/user/login.html"),
     ;
 
     private final String pattern;

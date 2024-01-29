@@ -29,11 +29,11 @@ public class PostHtml {
         StringBuilder sb = new StringBuilder();
         for (Post post : postList) {
             User writer = UserRepository.findByIdOrEmpty(post.getWriterId());
-            sb.append(template.replace("<!--post-id-->", Long.toString(post.getId()))
+            sb.append(template.replace("<!--post-id-->", "" + post.getId())
                     .replace("<!--title-->", post.getTitle())
                     .replace("<!--create-date-->", dateFormat.format(post.getCreateDatetime()))
                     .replace("<!--user-name-->", writer.getName())
-                    .replace("<!--comments-->", Long.toString(CommentRepository.countByPostId(post.getId()))));
+                    .replace("<!--comments-->", "" + CommentRepository.countByPostId(post.getId())));
         }
         return sb.toString();
     }
@@ -48,17 +48,17 @@ public class PostHtml {
 
         StringBuilder sb = new StringBuilder();
         if (startPage > 1)
-            sb.append(template.replace("<!--link-->", Integer.toString(startPage - 1))
+            sb.append(template.replace("<!--link-->", "" + (startPage - 1))
                     .replace("<!--page-number-->", "«"));
         for (int i = startPage; i <= Math.min(totalPages, endPage); i++) {
-            String temp = template.replace("<!--link-->", Integer.toString(i))
-                    .replace("<!--page-number-->", Integer.toString(i));
+            String temp = template.replace("<!--link-->", "" + i)
+                    .replace("<!--page-number-->", "" + i);
             if (pageNumber == i)
                 temp = temp.replace("<!--active-->", "active");
             sb.append(temp);
         }
         if (endPage < totalPages)
-            sb.append(template.replace("<!--link-->", Integer.toString(endPage + 1))
+            sb.append(template.replace("<!--link-->", "" + (endPage + 1))
                     .replace("<!--page-number-->", "»"));
         return sb.toString();
     }
@@ -72,8 +72,8 @@ public class PostHtml {
                 .replace("<!--writer-->", UserRepository.findByIdOrEmpty(post.getWriterId()).getName())
                 .replace("<!--create-date-->", dateFormat.format(post.getCreateDatetime()))
                 .replace("<!--contents-->", "<p>" + post.getContents().replace("\n", "</br>") + "</p>")
-                .replace("<!--post-id-->", Long.toString(post.getId()))
-                .replace("<!--comment-count-->", Long.toString(CommentRepository.countByPostId(postId)));
+                .replace("<!--post-id-->", "" + post.getId())
+                .replace("<!--comment-count-->", "" + CommentRepository.countByPostId(postId));
     }
 
     public static String attachment(String template) {
@@ -85,6 +85,14 @@ public class PostHtml {
                 .replace("<!--filename-->", attachment.getFilename());
     }
 
+    public static String preview(String template) {
+        Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
+        Attachment attachment = AttachmentRepository.findByPostId(postId);
+        if (attachment == null)
+            return "";
+        return template.replace("<!--post-id-->", "" + postId);
+    }
+
     public static String postBtnGroup(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         Post post = PostRepository.findById(postId);
@@ -92,7 +100,7 @@ public class PostHtml {
         assert post != null;
         if (!Objects.equals(user.getUserId(), post.getWriterId()))
             return "";
-        return template.replace("<!--post-id-->", Long.toString(postId));
+        return template.replace("<!--post-id-->", "" + postId);
     }
 
     public static String comments(String template) {
@@ -115,12 +123,12 @@ public class PostHtml {
         if (user == null || !Objects.equals(user.getUserId(), comment.getWriterId()))
             return "";
         return HtmlTemplates.get("<!--comment-btn-group-->").getTemplate()
-                .replace("<!--post-id-->", Long.toString(postId))
-                .replace("<!--comment-id-->", Long.toString(comment.getId()));
+                .replace("<!--post-id-->", "" + postId)
+                .replace("<!--comment-id-->", "" + comment.getId());
     }
 
     public static String commentForm(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
-        return template.replace("<!--post-id-->", Long.toString(postId));
+        return template.replace("<!--post-id-->", "" + postId);
     }
 }

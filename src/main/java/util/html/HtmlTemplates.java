@@ -40,6 +40,8 @@ public class HtmlTemplates {
                 new HtmlTemplate("post/post.html", PostHtml::postContent, PostHtml::postContent));
         builder.put("<!--attachment-->",
                 new HtmlTemplate("post/attachment.html", PostHtml::attachment, PostHtml::attachment));
+        builder.put("<!--preview-->",
+                new HtmlTemplate("post/preview.html", PostHtml::preview, HtmlBuilder::empty));
         builder.put("<!--post-btn-group-->",
                 new HtmlTemplate("post/btn_group.html", PostHtml::postBtnGroup, HtmlBuilder::empty));
         builder.put("<!--comments-->",
