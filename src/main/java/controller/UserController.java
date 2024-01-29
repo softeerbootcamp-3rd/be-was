@@ -32,7 +32,6 @@ public class UserController {
         String userId = httpRequest.getBody().get("userId");
         String password = httpRequest.getBody().get("password");
 
-        // todo max-age 설정
         if ((sessionId = UserService.login(userId, password)) != null ) {
             httpResponse.addHeader("Set-Cookie", ("sessionId=" + sessionId + "; Path=/"));
             ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
