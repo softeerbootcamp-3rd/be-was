@@ -7,11 +7,11 @@ import service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class UserController {
     private final UserService userService = new UserService();
-    private Map<String, Function<Object, ResourceDto>> methodMap =  new HashMap<>();
+    private Map<String, BiFunction<String, Object, ResourceDto>> methodMap =  new HashMap<>();
 
     {
         methodMap.put("/user/create", this::generateUserResource);
@@ -20,10 +20,13 @@ public class UserController {
         methodMap.put("/user/login.html", this::process);
         methodMap.put("/user/login", this::loginUserResource);
         methodMap.put("/user/login_failed.html", this::process);
-
     }
 
-    public ResourceDto loginUserResource(Object bodyData) {
+//    public ResourceDto generateUserListResource(String session, Object headData) {
+//        if ()
+//    }
+
+    public ResourceDto loginUserResource(String session, Object bodyData) {
         String sessionId = userService.loginUser((ParseParams) bodyData);
         if (sessionId == null) {
             return ResourceDto.of("/user/login_failed.html", 302);
@@ -32,16 +35,16 @@ public class UserController {
         return ResourceDto.of("/index.html", 302);
     }
 
-    public ResourceDto generateUserResource(Object queryParams) {
+    public ResourceDto generateUserResource(String session, Object queryParams) {
         userService.createUser((ParseParams) queryParams);
         return ResourceDto.of("/index.html", 302);
     }
 
-    public ResourceDto process(Object path) {
+    public ResourceDto process(String session, Object path) {
         return ResourceDto.of((String) path);
     }
 
-    public Function<Object, ResourceDto> getCorrectMethod(String path) {
+    public BiFunction<String, Object, ResourceDto> getCorrectMethod(String path) {
         for (String key : methodMap.keySet()) {
             if (path.matches(key)) {
                 return methodMap.get(key);

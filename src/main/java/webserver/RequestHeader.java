@@ -37,6 +37,10 @@ public class RequestHeader {
         return contentLength;
     }
 
+    public String getCookie() {
+        return cookie;
+    }
+
     public static void setHeader(RequestHeader requestHeader, String key, String value) {
         Class<RequestHeader> requestHeaderClazz = RequestHeader.class;
         try {
