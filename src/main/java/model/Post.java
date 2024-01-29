@@ -9,12 +9,14 @@ public class Post {
     private final String title;
     private final String contents;
     private final LocalDateTime postTime;
+    private final int reply;
 
     public Post(String writer, String title, String contents, LocalDateTime postTime) {
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.postTime = postTime;
+        this.reply = 0;
     }
 
     public String getWriter() {
@@ -32,6 +34,10 @@ public class Post {
     public String getPostTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
         return postTime.format(formatter);
+    }
+
+    public int getReply() {
+        return reply;
     }
 
     @Override

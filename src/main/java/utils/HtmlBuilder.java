@@ -19,12 +19,12 @@ public class HtmlBuilder {
             + "</strong>"
             + "<div class=\"auth-info\">"
             + "<i class=\"icon-add-comment\"></i>"
-            + "<span class=\"time\">{{post-time}}</span>"
+            + "<span class=\"time\">{{post-time}} </span>"
             + "<a href=\"./user/profile.html\" class=\"author\">{{writer}}</a>"
             + "</div>"
             + "<div class=\"reply\" title=\"댓글\">"
             + "<i class=\"icon-reply\"></i>"
-            + "<span class=\"point\">12</span>"
+            + "<span class=\"point\">{{reply}}</span>"
             + "</div>"
             + "</div>"
             + "</div>"
@@ -56,7 +56,7 @@ public class HtmlBuilder {
     /**
      * 포스팅 목록을 생성합니다.
      *
-     * <p> 모든 작성글을 가져와 제목, 작성자, 작성시간을 각각 알맞는 키워드에 대체하고, 본문에 추가합니다.
+     * <p> 모든 작성글을 가져와 제목, 작성자, 작성시간, 댓글 수를 각각 알맞는 키워드에 대체하고, 본문에 추가합니다.
      *
      * @param bodyString 본문 페이지
      * @return 수정된 페이지
@@ -68,7 +68,8 @@ public class HtmlBuilder {
         for (Post post : allPost) {
             String postContent = postContentHtml.replace("{{title}}", post.getTitle())
                     .replace("{{writer}}", post.getWriter())
-                    .replace("{{post-time}}", post.getPostTime());
+                    .replace("{{post-time}}", post.getPostTime())
+                    .replace("{{reply}}", String.valueOf(post.getReply()));
             sb.append(postContent);
         }
 
