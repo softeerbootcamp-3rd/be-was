@@ -5,7 +5,6 @@ import exception.WebServerException;
 import model.User;
 import session.Session;
 import session.SessionManager;
-import webserver.HttpResponse;
 
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class UserService {
         // null 값이 있는 경우 예외 처리
         if (newUser.getUserId() == null | newUser.getPassword() == null |
         newUser.getName() == null | newUser.getEmail() == null)
-            throw new WebServerException(NO_ESSENTIAL_INFO);
+            throw new WebServerException(NO_ENOUGH_INPUT);
 
         // 회원 id, 이메일 중복 확인
         if (Database.findUserById(newUser.getUserId()) != null) {
@@ -36,6 +35,10 @@ public class UserService {
     // 로그인
     public static String login(String userId, String password) {
         User loginUser;
+
+        if (userId == null || password == null) {
+            throw new WebServerException(NO_ENOUGH_INPUT);
+        }
 
         // 회원가입 하지 않은 유저 OR 비밀번호가 틀린 경우
         if ((loginUser = Database.findUserById(userId)) == null ||
