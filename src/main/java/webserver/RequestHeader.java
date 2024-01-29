@@ -14,6 +14,7 @@ public class RequestHeader {
     private String accept;
     private String referer;
     private String contentLength;
+    private String cookie;
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHeader.class);
 
@@ -53,7 +54,9 @@ public class RequestHeader {
                 "\n path = " + path +
                 "\n protocol = " + protocol +
                 "\n host = " + host +
+                "\n cookie = " + cookie +
                 "\n connection = " +  connection +
+                "\n Content-length = " +  contentLength +
                 "\n accpet = " + accept +
                 "\n referer = " + referer + "\n===");
     }
