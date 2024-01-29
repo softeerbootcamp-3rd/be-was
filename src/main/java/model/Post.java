@@ -5,18 +5,24 @@ import java.time.format.DateTimeFormatter;
 
 public class Post {
 
+    private final long postId;
     private final String writer;
     private final String title;
     private final String contents;
     private final LocalDateTime postTime;
     private final int reply;
 
-    public Post(String writer, String title, String contents, LocalDateTime postTime) {
+    public Post(long postId, String writer, String title, String contents, LocalDateTime postTime) {
+        this.postId = postId;
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.postTime = postTime;
         this.reply = 0;
+    }
+
+    public long getPostId() {
+        return postId;
     }
 
     public String getWriter() {

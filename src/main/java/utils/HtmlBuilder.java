@@ -15,7 +15,7 @@ public class HtmlBuilder {
             + "<div class=\"wrap\">"
             + "<div class=\"main\">"
             + "<strong class=\"subject\">"
-            + "<a href=\"post/show.html\">{{title}}</a>"
+            + "<a href=\"post/{{post-id}}/show.html\">{{title}}</a>"
             + "</strong>"
             + "<div class=\"auth-info\">"
             + "<i class=\"icon-add-comment\"></i>"
@@ -67,6 +67,7 @@ public class HtmlBuilder {
 
         for (Post post : allPost) {
             String postContent = postContentHtml.replace("{{title}}", post.getTitle())
+                    .replace("{{post-id}}", String.valueOf(post.getPostId()))
                     .replace("{{writer}}", post.getWriter())
                     .replace("{{post-time}}", post.getPostTime())
                     .replace("{{reply}}", String.valueOf(post.getReply()));

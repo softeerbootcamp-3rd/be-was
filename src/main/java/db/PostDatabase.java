@@ -1,6 +1,7 @@
 package db;
 
 import com.google.common.collect.Maps;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
 import model.Post;
@@ -25,5 +26,10 @@ public class PostDatabase {
 
     public static void clear() {
         posts.clear();
+    }
+
+    public static void addPost(String writer, String title, String contents, LocalDateTime time) {
+        Post post = new Post(++id, writer, title, contents, time);
+        PostDatabase.addPost(post);
     }
 }

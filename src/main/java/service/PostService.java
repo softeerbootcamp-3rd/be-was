@@ -3,7 +3,6 @@ package service;
 import db.PostDatabase;
 import java.time.LocalDateTime;
 import java.util.Map;
-import model.Post;
 
 public class PostService {
 
@@ -26,7 +25,6 @@ public class PostService {
             throw new IllegalArgumentException("title is required.");
         }
 
-        Post post = new Post(writer, title, contents, time);
-        PostDatabase.addPost(post);
+        PostDatabase.addPost(writer, title, contents, time);
     }
 }
