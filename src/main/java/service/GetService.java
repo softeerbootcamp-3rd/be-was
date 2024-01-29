@@ -85,11 +85,23 @@ public class GetService {
     // 파일 확장자에 따라 파일 경로 찾기
     private String findFilePath(String url) {
         String path = "./src/main/resources";
-
         // 1. html일 경우
-        if(url.contains(".html"))
+        if(url.contains(".html")) {
             path += "/templates" + url;
-        // 2. css, fonts, images, js, ico일 경우
+            // .html 뒤에 추가 요청이 붙어있을 경우 제거
+            if(path.contains(".html/"))
+                path = path.substring(0, path.indexOf(".html")+".html".length());
+        }
+        // 2. css, fonts, images, js일 경우
+        else if(url.contains("/css"))
+            path += "/static" + url.substring(url.indexOf("/css"));
+        else if(url.contains("/js"))
+            path += "/static" + url.substring(url.indexOf("/js"));
+        else if(url.contains("/fonts"))
+            path += "/static" + url.substring(url.indexOf("/fonts"));
+        else if(url.contains("/images"))
+            path += "/static" + url.substring(url.indexOf("/images"));
+        // 3. ico일 경우
         else
             path += "/static" + url;
         return path;
@@ -116,15 +128,8 @@ public class GetService {
         if(byteFile == null)
             return null;
 
-        // index.html일 경우 로그인 여부에 따라 동적인 화면 반환
-        if(path.contains("index.html"))
-            byteFile = makeIndex(httpRequestDto, byteFile);
-        // list.html일 경우 전체 사용자 목록 동적 생성 후 반환
-        if(path.contains("list.html"))
-            byteFile = makeUserList(byteFile);
-        if(path.contains("profile.html"))
-            byteFile = makeProfile(httpRequestDto, byteFile);
-        return byteFile;
+        // 동적 페이지 처리
+        return makeDynamicPage(httpRequestDto, byteFile);
     }
 
     // 로그인 여부에 따른 파일 요청 처리
@@ -141,6 +146,18 @@ public class GetService {
 
     ///////////////////////////// 동적 화면 처리 ////////////////////////////////
 
+    private byte[] makeDynamicPage(HTTPRequestDto httpRequestDto, byte[] byteFile) {
+        if(httpRequestDto.getRequestTarget().contains("index.html"))
+            return makeIndex(httpRequestDto, byteFile);
+        if(httpRequestDto.getRequestTarget().contains("list.html"))
+            return makeUserList(byteFile);
+        if(httpRequestDto.getRequestTarget().contains("profile.html"))
+            return makeProfile(httpRequestDto, byteFile);
+        if(httpRequestDto.getRequestTarget().contains("show.html"))
+            return makeShowPost(httpRequestDto, byteFile);
+        return byteFile;
+    }
+
     // index.html의 동적 화면 처리
     private byte[] makeIndex(HTTPRequestDto httpRequestDto, byte[] byteFile) {
         String stringFile = new String(byteFile);
@@ -149,7 +166,7 @@ public class GetService {
         // 2. 게시물 목록 탐색하여 화면에 추가
         String front = stringFile.substring(0, stringFile.indexOf("<ul class=\"list\">") + "<ul class=\"list\">".length());
         String back = stringFile.substring(stringFile.indexOf("<div class=\"row\">"));
-        String postList = getPostList() + "</ul";
+        String postList = getPostList() + "</ul>";
         return (front + postList + back).getBytes();
     }
 
@@ -233,6 +250,42 @@ public class GetService {
         String stringFile = new String(byteFile);
         stringFile = stringFile.replace("자바지기", user.getName());
         stringFile = stringFile.replace("javajigi@slipp.net", user.getEmail());
+        return stringFile.getBytes();
+    }
+
+    // 게시물 하나에 대해 세부사항 동적 페이지 반환
+    private byte[] makeShowPost(HTTPRequestDto httpRequestDto, byte[] byteFile) {
+        try {
+            String url = httpRequestDto.getRequestTarget();
+            Long postId = Long.parseLong(url.substring(url.indexOf("show.html/")+"show.html/".length()));
+            // 해당하는 게시물 가져오기
+            Post post = Database.findPostById(postId);
+            if(post == null)
+                return null;
+            return replaceShowPost(byteFile, post);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private byte[] replaceShowPost(byte[] byteFile, Post post) {
+        String stringFile = new String(byteFile);
+        stringFile = stringFile.replace("제목", post.getTitle());
+        stringFile = stringFile.replace("글쓴이", post.getWriterName());
+        stringFile = stringFile.replace("작성 시간", post.getCreateAtWithFormat());
+        // 내용 주입
+        StringBuilder sb = new StringBuilder();
+        String[] tokens = post.getContents().split("\n");
+        for(int i = 0; i < tokens.length; i++) {
+            sb.append(tokens[i]);
+            if(i == tokens.length - 1)
+                break;
+            sb.append("</p><p>");
+        }
+        stringFile = stringFile.replace("내용", sb.toString());
+        // 수정, 삭제 링크 걸기
+        stringFile = stringFile.replace("/qna/form.html/12345", "/qna/form.html/" + post.getId());
+        stringFile = stringFile.replace("/qna//12345/delete", "/qna/" + post.getId() + "/delete");
         return stringFile.getBytes();
     }
 }
