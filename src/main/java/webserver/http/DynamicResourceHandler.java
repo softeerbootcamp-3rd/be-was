@@ -1,8 +1,10 @@
 package webserver.http;
 
 import db.H2Database;
+import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
+import model.Post;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +38,38 @@ public class DynamicResourceHandler {
             logger.error("Encoding Exception", e);
             responseContent = new String(responseBody);
         }
-        String originLink = "<a href=\"./qna/form.html\" class=\"btn btn-primary pull-right\" role=\"button\">질문하기</a>";
-        String newLink = "<a href=\"./post/form.html\" class=\"btn btn-secondary pull-right\" role=\"button\">글쓰기</a>";
-        responseContent = responseContent.replace(originLink,originLink + newLink);
+
+        Collection<Post> allPost = PostRepository.findAll();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<ul class =\"list\">");
+        allPost.forEach(post -> {
+            stringBuilder.append("<li>");
+            stringBuilder.append("<div class='wrap'>");
+            stringBuilder.append("<div class='main'>");
+            stringBuilder.append("<strong class='subject'><a href='./qna/show.html'>").append(post.getTitle()).append("</a></strong>");
+            stringBuilder.append("<div class='auth-info'>");
+            stringBuilder.append("<i class='icon-add-comment'></i>");
+            stringBuilder.append("<span class='time'>").append(post.getCreatedTime()).append("</span>");
+            stringBuilder.append("<a href='./user/profile.html' class='author'>").append(post.getWriter()).append("</a>");
+            stringBuilder.append("</div>");
+            stringBuilder.append("<div class='reply' title='댓글'>");
+            stringBuilder.append("<i class='icon-reply'></i>");
+            stringBuilder.append("<span class='point'>").append(post.getCommentCount()).append("</span>");
+            stringBuilder.append("</div>");
+            stringBuilder.append("</div>");
+            stringBuilder.append("</div>");
+            stringBuilder.append("</li>");
+        });
+        stringBuilder.append("</ul>");
+
+        StringBuilder replacer = new StringBuilder(responseContent);
+        Pattern pattern = Pattern.compile("(?s)<ul class=\"list\"></ul>");
+        Matcher matcher = pattern.matcher(replacer);
+
+        if (matcher.find()) {
+            replacer.replace(matcher.start(), matcher.end(), stringBuilder.toString());
+        }
 
         if(!LoginChecker.loginCheck(request)){
             response.setResponseBody(responseContent.getBytes());
@@ -47,7 +78,7 @@ public class DynamicResourceHandler {
 
         String sessionVal = request.getRequestHeader().get("Cookie").split("=")[1];
         User curUser = SessionManager.findUserById(sessionVal);
-
+        //로그인 됐을시 이름으로 변경 로직
         responseContent = responseContent.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", "<li><a>"+curUser.getName() +"</a></li>");
         response.setResponseBody(responseContent.getBytes());
     }

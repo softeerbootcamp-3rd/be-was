@@ -39,7 +39,9 @@ public class H2Database {
                 "id INT PRIMARY KEY AUTO_INCREMENT," +
                 "writer VARCHAR(255) NOT NULL," +
                 "title VARCHAR(255) NOT NULL," +
-                "content VARCHAR(255) NOT NULL" +
+                "content VARCHAR(255) NOT NULL," +
+                "createdtime TIMESTAMP NOT NULL," +
+                "commentcount int NOT NULL" +
                 ");";
 
         try (Connection conn = DriverManager.getConnection(url, username, password); Statement stmt = conn.createStatement()) {

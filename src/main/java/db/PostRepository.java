@@ -1,11 +1,12 @@
 package db;
 
+import db.dto.CreatePost;
 import model.Post;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,16 +19,21 @@ public class PostRepository {
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
-    public static void addPost(Post post) {
+    public static void addPost(CreatePost post) {
         try {
             conn = DriverManager.getConnection(url, username, password);
 
-            String sql = "INSERT INTO Post (writer, title, content) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Post (writer, title, content,createdtime ,commentcount) VALUES (?, ?, ?, ?, ?)";
             preparedStatement = conn.prepareStatement(sql);
+
+            LocalDateTime now = LocalDateTime.now();
+            Timestamp timestamp = Timestamp.valueOf(now);
 
             preparedStatement.setString(1, post.getWriter());
             preparedStatement.setString(2, post.getTitle());
             preparedStatement.setString(3, post.getContent());
+            preparedStatement.setTimestamp(4, timestamp);
+            preparedStatement.setInt(5, 0);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -57,7 +63,10 @@ public class PostRepository {
                 String userId = resultSet.getString("writer");
                 String password = resultSet.getString("title");
                 String name = resultSet.getString("content");
-                posts.add(new Post(userId, password, name));
+                Timestamp timestamp = resultSet.getTimestamp("createdtime");
+                int commentCount = resultSet.getInt("commentcount");
+
+                posts.add(new Post(userId, password, name, timestamp.toLocalDateTime(),commentCount ));
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());

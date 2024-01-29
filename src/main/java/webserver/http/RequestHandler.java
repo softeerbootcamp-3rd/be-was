@@ -4,6 +4,7 @@ import db.H2Database;
 import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
+import db.dto.CreatePost;
 import model.Post;
 import model.User;
 import org.slf4j.Logger;
@@ -122,7 +123,7 @@ public class RequestHandler {
         }
 
         HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
-        Post post = new Post(formData.get("writer"), formData.get("title"), formData.get("contents"));
+        CreatePost post = new CreatePost(formData.get("writer"), formData.get("title"), formData.get("contents") );
         PostRepository.addPost(post);
         request.addRequestHeader("Location","/index.html");
     }
