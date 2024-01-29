@@ -37,7 +37,7 @@ public class ResponseBuilder {
                     String stringValue = String.valueOf(value);
                     try {
                         dos.writeBytes("Set-Cookie: sid=" + stringValue + "; Expires="
-                                + formattingDate(Database.getSession(stringValue).getExpires()) + "; Path=/");
+                                + formattingDate(Database.getSession(stringValue).getExpires()) + "; Path=/\r\n");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
