@@ -8,7 +8,6 @@ import db.Database;
 import model.User;
 
 import java.io.*;
-import java.nio.Buffer;
 
 import static webserver.RequestHandler.threadUuid;
 

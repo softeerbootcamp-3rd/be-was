@@ -14,18 +14,16 @@ import static webserver.RequestHandler.threadUuid;
 public class QnaController {
     public static HTTPResponse createQna(HTTPRequest request) {
 
-        if(threadUuid == null)
+        if(threadUuid.get() == null)
             return PageController.RedirectStaticPage("/user/login.html");
-
-        HTTPResponse response = null;
 
         Qna qna = parseToQna(request);
         Database.addQna(qna);
 
 
 
+        return PageController.RedirectStaticPage("/index.html");
 
-        return response;
     }
     private static Qna parseToQna(HTTPRequest request){
         List<String> bodyStrings = new ArrayList<>(Arrays.asList(request.getBody().toString().split("&")));
@@ -37,9 +35,9 @@ public class QnaController {
             if(str.contains("writer"))
                 writer = str.substring("writer=".length());
             else if(str.contains("title"))
-                writer = str.substring("title=".length());
+                title = str.substring("title=".length());
             else if(str.contains("content"))
-                writer = str.substring("content=".length());
+                content = str.substring("contents=".length());
         }
 
         return new Qna(writer,title,content);
