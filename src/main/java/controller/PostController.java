@@ -19,7 +19,7 @@ public class PostController implements Controller {
             response.addHeader("Set-Cookie", cookie + "; Path=/; Max-Age=600");
         }
 
-        if (request.getUrl().startsWith("/post/form")) {
+        if (request.getUrl().startsWith("/post/write")) {
             if (cookie == null || Session.getUserBySessionId(cookie) == null) {
                 response.setCode(302);
                 response.addHeader("Location", "/user/login.html");
