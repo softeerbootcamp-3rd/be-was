@@ -25,7 +25,7 @@ public class IndexTemplate {
             "                          </div>\n" +
             "                          <div class=\"reply\" title=\"댓글\">\n" +
             "                              <i class=\"icon-reply\"></i>\n" +
-            "                              <span class=\"point\">0</span>\n" +
+            "                              <span class=\"point\">{number_of_comment}</span>\n" +
             "                          </div>\n" +
             "                      </div>\n" +
             "                  </div>\n" +
@@ -39,7 +39,9 @@ public class IndexTemplate {
             sb.append(POST.replace("{postId}", p.getPostId().toString())
                     .replace("{title}", p.getTitle())
                     .replace("{created}", p.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                    .replace("{writer}",p.getWriter().getName()));
+                    .replace("{writer}",p.getWriter().getName())
+                    .replace("{number_of_comment}", String.valueOf(p.getComments().size()))
+            );
         }
         html = html.replace("<li id=\"replace\"></li>", sb.toString());
 

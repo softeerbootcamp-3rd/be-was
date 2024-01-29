@@ -29,6 +29,13 @@ public class BoardService {
         logger.debug(post.toString());
     }
 
+    public void comment(Long postId, User writer, String body) {
+        body = decode(body);
+
+        Post post = BoardDatabase.findPostById(postId);
+        post.addComment(writer, body);
+    }
+
     public Post getPostById(Long postId) {
         return BoardDatabase.findPostById(postId);
     }

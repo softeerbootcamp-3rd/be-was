@@ -37,6 +37,12 @@ public class BoardController {
                 else
                     throw new MethodNotAllowedException();
             }
+            if (lastPath.equals("comment")) {
+                if (httpRequest.getMethod() == HttpMethod.POST)
+                    responseEntity = comment();
+                else
+                    throw new MethodNotAllowedException();
+            }
             if (StringUtils.isMatched(path, "/board/show/\\d+")) {
                 String[] tokens = path.split("/");
                 Long postId = Long.parseLong(tokens[tokens.length - 1]);
@@ -109,5 +115,19 @@ public class BoardController {
                 .contentType(MediaType.getContentType(httpRequest))
                 .contentLength(body.length)
                 .body(body);
+    }
+
+    private ResponseEntity<?> comment() {
+        Map<String, String> query = httpRequest.getBodyParams();
+
+        User writer = SessionManager.getLoggedInUser(httpRequest);
+        String postId = query.get("postId");
+        String body = query.get("body");
+
+        boardService.comment(Long.parseLong(postId), writer, body);
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("/board/show/" + postId))
+                .build();
     }
 }

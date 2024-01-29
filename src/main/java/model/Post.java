@@ -10,16 +10,24 @@ public class Post {
     private User writer;
     private String title;
     private String contents;
-    private List<Comment> comments;
     private LocalDateTime created;
+    private List<Comment> comments;
+    private Long commentId;
 
     public Post(User writer, String title, String contents) {
         this.postId = ++sequence;
         this.writer = writer;
         this.title = title;
         this.contents = contents;
-        this.comments = new ArrayList<>();
         this.created = LocalDateTime.now();
+        this.comments = new ArrayList<>();
+        this.commentId = 0L;
+    }
+
+    public Long addComment(User writer, String body) {
+        Comment comment = new Comment(postId, ++commentId, writer, body);
+        this.comments.add(comment);
+        return commentId;
     }
 
     public Long getPostId() {
