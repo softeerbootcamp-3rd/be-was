@@ -20,7 +20,7 @@ public class MainController implements BasicController{
     QnaService qnaService = QnaService.getInstance();
     @GetMapping(url = "/")
     public String index(Model model){
-        Collection<Qna> posts = qnaService.getPostList();
+        String posts = qnaService.getPostList();
         model.addAttribute("posts",posts);
         return "index";
     }

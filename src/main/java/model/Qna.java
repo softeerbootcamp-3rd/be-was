@@ -12,7 +12,7 @@ public class Qna {
     User writer;
     String title;
     String contents;
-    LocalDateTime createAt;
+    LocalDateTime createAt = LocalDateTime.now();;
 
     public Qna() {
     }
@@ -20,9 +20,12 @@ public class Qna {
     public Qna(QnaDto qnaDto){
         this.title = qnaDto.getTitle();
         this.contents = qnaDto.getContents();
-        createAt = LocalDateTime.now();
+
     }
 
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
 
     public Long getId() {
         return Id;

@@ -50,8 +50,9 @@ public class QnaTest {
         qnaRepository = QnaRepository.getInstance();
         Response res = new Response(dos);
 
-        User user = new User();
+        user = new User();
         user.setUserId("jomulagy");
+        user.setName("김지훈");
         SessionManager.createSession(user,res,"SID");
 
         cookieString = res.getCookieString();
@@ -80,25 +81,26 @@ public class QnaTest {
 
         Request req = new Request("GET","/",cookieString,"");
         BasicController handler = new MainController();
-        Qna qna = new Qna();
-        qna.setWriter(user);
-        qna.setTitle("dd");
-        qna.setContent("cc");
-        QnaRepository.addQna(qna);
+        Qna qna1 = new Qna();
+        qna1.setWriter(user);
+        qna1.setTitle("dd");
+        qna1.setContent("cc");
+        QnaRepository.addQna(qna1);
+
+        Qna qna2 = new Qna();
+        qna2.setWriter(user);
+        qna2.setTitle("dd");
+        qna2.setContent("cc");
+        QnaRepository.addQna(qna2);
         //when
 
         ModelAndView mv = adapter.handle(req, res, handler);
-        Object postsAttribute = mv.getModel().getAttribute("posts");
+        String posts = (String) mv.getModel().getAttribute("posts");
 
 
         //then
-        if (postsAttribute instanceof Collection) {
-            Collection<Qna> collections = (Collection<Qna>) postsAttribute;
-            List<Qna> posts = new ArrayList<Qna>(collections);
-            assertNotNull(posts);
-            assertEquals(posts.get(0),qna);
-
-        }
+        assertNotNull(posts);
+        logger.debug(posts);
 
     }
 
