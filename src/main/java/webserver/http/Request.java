@@ -3,6 +3,9 @@ package webserver.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.RequestBodyParse.RequestBodyParser;
+import webserver.http.constants.ContentType;
+import webserver.http.constants.HttpMethod;
+import webserver.http.constants.Mime;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static webserver.http.HttpMethod.convertHttpMethodType;
-import static webserver.http.Mime.convertMime;
+import static webserver.http.constants.HttpMethod.convertHttpMethodType;
+import static webserver.http.constants.Mime.convertMime;
 
 public class Request {
     private static final Logger logger = LoggerFactory.getLogger(Request.class);

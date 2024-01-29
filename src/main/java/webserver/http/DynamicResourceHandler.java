@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DynamicResourceHandler {
     private static final Logger logger = LoggerFactory.getLogger(DynamicResourceHandler.class);
@@ -26,14 +28,6 @@ public class DynamicResourceHandler {
 
     private void indexFunction(Request request, Response response) {
         byte[] responseBody = response.getResponseBody();
-
-        if(!LoginChecker.loginCheck(request)){
-            response.setResponseBody(responseBody);
-            return;
-        }
-
-        String sessionVal = request.getRequestHeader().get("Cookie").split("=")[1];
-        User curUser = SessionManager.findUserById(sessionVal);
         String responseContent;
         try {
             responseContent = new String(responseBody, "UTF-8");
@@ -41,6 +35,18 @@ public class DynamicResourceHandler {
             logger.error("Encoding Exception", e);
             responseContent = new String(responseBody);
         }
+        String originLink = "<a href=\"./qna/form.html\" class=\"btn btn-primary pull-right\" role=\"button\">질문하기</a>";
+        String newLink = "<a href=\"./board/write.html\" class=\"btn btn-secondary pull-right\" role=\"button\">글쓰기</a>";
+        responseContent = responseContent.replace(originLink,originLink + newLink);
+
+        if(!LoginChecker.loginCheck(request)){
+            response.setResponseBody(responseContent.getBytes());
+            return;
+        }
+
+        String sessionVal = request.getRequestHeader().get("Cookie").split("=")[1];
+        User curUser = SessionManager.findUserById(sessionVal);
+
         responseContent = responseContent.replace("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>", "<li><a>"+curUser.getName() +"</a></li>");
         response.setResponseBody(responseContent.getBytes());
     }
@@ -59,6 +65,7 @@ public class DynamicResourceHandler {
         Collection<User> allUser = H2Database.findAll();
         byte[] responseBody = response.getResponseBody();
 
+        //byte[] -> String
         String responseContent;
         try {
             responseContent = new String(responseBody, "UTF-8");
@@ -69,6 +76,7 @@ public class DynamicResourceHandler {
 
         StringBuilder stringBuilder = new StringBuilder();
         AtomicInteger counter = new AtomicInteger(1);
+        stringBuilder.append("<tbody>");
         allUser.forEach(user -> {
             stringBuilder.append("<tr>");
             stringBuilder.append("<th scope='row'>").append(counter.getAndIncrement()).append("</th>");
@@ -78,11 +86,17 @@ public class DynamicResourceHandler {
             stringBuilder.append("<td><a href='#' class='btn btn-success' role='button'>수정</a></td>");
             stringBuilder.append("</tr>");
         });
-
         stringBuilder.append("</tbody>");
 
-        String updatedHtml = responseContent.replaceAll("(?s)<tbody>.*?</tbody>", stringBuilder.toString());
-        response.setResponseBody(updatedHtml.getBytes());
+        StringBuilder replacer = new StringBuilder(responseContent);
+        Pattern pattern = Pattern.compile("(?s)<tbody>.*?</tbody>");
+        Matcher matcher = pattern.matcher(replacer);
+
+        if (matcher.find()) {
+            replacer.replace(matcher.start(), matcher.end(), stringBuilder.toString());
+        }
+
+        response.setResponseBody(replacer.toString().getBytes());
     }
 
     public void handle(Request request, Response response) {

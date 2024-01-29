@@ -1,4 +1,4 @@
-package webserver.http;
+package webserver.http.constants;
 
 public enum StatusCode {
     OK(200),

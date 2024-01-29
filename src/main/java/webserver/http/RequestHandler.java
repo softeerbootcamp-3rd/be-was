@@ -1,6 +1,5 @@
 package webserver.http;
 
-import db.Database;
 import db.H2Database;
 import db.SessionManager;
 import model.User;
@@ -8,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.LoginChecker;
 import utils.UserFormDataParser;
+import webserver.http.constants.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;

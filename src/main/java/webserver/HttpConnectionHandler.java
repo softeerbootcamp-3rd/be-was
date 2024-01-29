@@ -4,10 +4,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
-import db.H2Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.Mime;
 import webserver.http.Request;
 import webserver.http.Response;
 

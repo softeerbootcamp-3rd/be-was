@@ -1,6 +1,6 @@
 package utils.RequestBodyParse;
 
-import webserver.http.ContentType;
+import webserver.http.constants.ContentType;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

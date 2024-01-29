@@ -1,5 +1,7 @@
 package webserver.http;
 
+import webserver.http.constants.StatusCode;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
