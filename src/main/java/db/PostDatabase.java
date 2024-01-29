@@ -13,7 +13,7 @@ public class PostDatabase {
     private static long id = 0L;
 
     public static void addPost(Post post) throws IllegalArgumentException {
-        posts.put(++id, post);
+        posts.put(post.getPostId(), post);
     }
 
     public static Post findPostById(long postId) {
