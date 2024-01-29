@@ -5,6 +5,8 @@ import dto.response.HTTPResponseDto;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum GetRequestEnum {
     DEFAULT("/") {
@@ -25,19 +27,25 @@ public enum GetRequestEnum {
             return Config.httpGetService.logout(httpRequestDto);
         }
     },
-    USERLIST("/user/list.html") {
+    USERLIST("/user/list\\.html") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.showWithLogin(httpRequestDto);
         }
     },
-    PROFILE("/user/profile.html") {
+    PROFILE("/user/profile\\.html") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.showWithLogin(httpRequestDto);
         }
     },
-    WRITEFORM("/qna/form.html") {
+    WRITEFORM("/qna/form\\.html") {
+        @Override
+        public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            return Config.httpGetService.showWithLogin(httpRequestDto);
+        }
+    },
+    SHOWPOST("/qna/show\\.html/(\\d+)") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
             return Config.httpGetService.showWithLogin(httpRequestDto);
@@ -50,21 +58,28 @@ public enum GetRequestEnum {
         }
     };
 
-    private String url;
+    private String urlPattern;
 
-    GetRequestEnum(String url) {
-        this.url = url;
+    GetRequestEnum(String urlPattern) {
+        this.urlPattern = urlPattern;
     }
 
     // 요청 url에 해당하는 상수 반환
     public static GetRequestEnum getRequest(String url) {
         return Arrays.stream(GetRequestEnum.values())
-                .filter(request -> request.url.equals(url))
+                .filter(request -> request.patternMatcher(url))
                 .findAny()
                 .orElse(FILE);
     }
 
     // 상수별로 상속받을 함수
     public abstract HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto);
+
+    // 정규표현식을 이용한 패턴 매칭 결과 반환
+    private boolean patternMatcher(String url) {
+        Pattern urlPattern = Pattern.compile(this.urlPattern);
+        Matcher matcher = urlPattern.matcher(url);
+        return matcher.matches();
+    }
 
 }
