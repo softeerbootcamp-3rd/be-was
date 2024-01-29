@@ -6,12 +6,16 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import model.Request;
 import model.Response;
+import model.User;
+import service.PostService;
 import utils.HtmlBuilder;
 import utils.PageReader;
 import utils.ParamBuilder;
 import webserver.Session;
 
 public class PostController implements Controller {
+
+    PostService postService = new PostService();
 
     public void route(Request request, Response response) {
         String cookie = request.getHeader("Cookie");
@@ -35,12 +39,18 @@ public class PostController implements Controller {
 
     private void post(Request request, Response response) {
         Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
-
-        for (String key : params.keySet()) {
-            System.out.println(key + " : " + params.get(key));
-        }
+        User user = Session.getUserBySessionId(request.getHeader("Cookie"));
         LocalDateTime time = LocalDateTime.now();
-        System.out.println(time);
+
+        try {
+            postService.createPost(user.getName(), params, time);
+
+            response.setCode(302);
+            response.addHeader("Location", "/");
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setBody(e.getMessage());
+        }
     }
 
     /**
