@@ -59,7 +59,6 @@ public class HomeController implements Controller {
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
-            response.setBody(e.getMessage());
         }
     }
 
@@ -83,7 +82,6 @@ public class HomeController implements Controller {
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
-            response.setBody(e.getMessage());
         }
     }
 }

@@ -88,7 +88,6 @@ public class UserController implements Controller {
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
-            response.setBody(e.getMessage());
         }
     }
 
@@ -108,9 +107,10 @@ public class UserController implements Controller {
             userService.createUser(params);
             response.setCode(302);
             response.addHeader("Location", "/index.html");
-        } catch (NullPointerException | IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             response.setCode(400);
-            response.setBody(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            response.setCode(422);
         }
     }
 }

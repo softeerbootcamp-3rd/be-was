@@ -61,7 +61,6 @@ public class PostController implements Controller {
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
-            response.setBody(e.getMessage());
         }
     }
 
@@ -85,7 +84,6 @@ public class PostController implements Controller {
             response.addHeader("Location", "/");
         } catch (IllegalArgumentException e) {
             response.setCode(400);
-            response.setBody(e.getMessage());
         }
     }
 
@@ -111,7 +109,6 @@ public class PostController implements Controller {
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
-            response.setBody(e.getMessage());
         }
     }
 }
