@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import utils.LoginChecker;
 
 import java.io.UnsupportedEncodingException;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,17 +41,18 @@ public class DynamicResourceHandler {
         }
 
         Collection<Post> allPost = PostRepository.findAll();
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<ul class =\"list\">");
         allPost.forEach(post -> {
+            String formattedDateTime = post.getCreatedTime().format(formatter);
             stringBuilder.append("<li>");
             stringBuilder.append("<div class='wrap'>");
             stringBuilder.append("<div class='main'>");
             stringBuilder.append("<strong class='subject'><a href='./qna/show.html'>").append(post.getTitle()).append("</a></strong>");
             stringBuilder.append("<div class='auth-info'>");
             stringBuilder.append("<i class='icon-add-comment'></i>");
-            stringBuilder.append("<span class='time'>").append(post.getCreatedTime()).append("</span>");
+            stringBuilder.append("<span class='time'>").append(formattedDateTime).append("</span>");
             stringBuilder.append("<a href='./user/profile.html' class='author'>").append(post.getWriter()).append("</a>");
             stringBuilder.append("</div>");
             stringBuilder.append("<div class='reply' title='댓글'>");
@@ -64,11 +66,11 @@ public class DynamicResourceHandler {
         stringBuilder.append("</ul>");
 
         StringBuilder replacer = new StringBuilder(responseContent);
-        Pattern pattern = Pattern.compile("(?s)<ul class=\"list\"></ul>");
+        Pattern pattern = Pattern.compile("<(?s)ul class=\"list\">.*?</ul>");
         Matcher matcher = pattern.matcher(replacer);
 
         if (matcher.find()) {
-            replacer.replace(matcher.start(), matcher.end(), stringBuilder.toString());
+            responseContent = replacer.replace(matcher.start(), matcher.end(), stringBuilder.toString()).toString();
         }
 
         if(!LoginChecker.loginCheck(request)){
