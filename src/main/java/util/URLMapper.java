@@ -1,5 +1,6 @@
 package util;
 
+import controller.HomeController;
 import controller.ResourceController;
 import controller.UserController;
 import model.HttpRequest;
@@ -16,6 +17,7 @@ public class URLMapper {
     static {
         URL_MAPPING.put("POST /user/create", UserController::createUser);
         URL_MAPPING.put("POST /user/login", UserController::login);
+        URL_MAPPING.put("GET /index.html", HomeController::home);
         URL_MAPPING.put("GET /user/list.html", UserController::userList);
     }
 
