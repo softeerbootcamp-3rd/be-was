@@ -2,6 +2,7 @@ package webserver.http;
 
 import db.H2Database;
 import db.SessionManager;
+import db.UserRepository;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class DynamicResourceHandler {
     }
 
     private void userListAPIFunction(Request request, Response response) {
-        Collection<User> allUser = H2Database.findAll();
+        Collection<User> allUser = UserRepository.findAll();
         StringBuilder responseContent = new StringBuilder();
         responseContent.append("<div><ul>");
         allUser.forEach(user -> responseContent.append("<li><p>").append(user.getUserId()).append("</p></li>"));
@@ -62,7 +63,7 @@ public class DynamicResourceHandler {
     }
 
     private void userListFunction(Request request, Response response){
-        Collection<User> allUser = H2Database.findAll();
+        Collection<User> allUser = UserRepository.findAll();
         byte[] responseBody = response.getResponseBody();
 
         //byte[] -> String

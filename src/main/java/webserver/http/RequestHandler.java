@@ -2,6 +2,7 @@ package webserver.http;
 
 import db.H2Database;
 import db.SessionManager;
+import db.UserRepository;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.POST,"/user/login"), (Request r)-> postUserLogin(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/user/list"), (Request r)-> getUserList(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/user/list.html"), (Request r)-> getUserList(r));
+        routeHandlers.put(new Route(HttpMethod.GET,"/board/write.html"), (Request r)-> getBoardWrite(r));
     }
 
     public void handleRequest(Request request) {
@@ -70,7 +72,7 @@ public class RequestHandler {
         UserFormDataParser userFormDataParser = new UserFormDataParser(data);
         HashMap<String,String> formData = new HashMap<>(userFormDataParser.parseData());
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
-        H2Database.adduser(user);
+        UserRepository.adduser(user);
         request.addRequestHeader("Location","/user/form.html");
     }
 
@@ -79,10 +81,10 @@ public class RequestHandler {
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
 
         //같은 아이디 회원 가입 방지
-        if(H2Database.findUserById(user.getUserId()) != null)
+        if(UserRepository.findUserById(user.getUserId()) != null)
             return;
 
-        H2Database.adduser(user);
+        UserRepository.adduser(user);
         request.addRequestHeader("Location","/index.html");
     }
 
@@ -90,9 +92,9 @@ public class RequestHandler {
         HashMap<String,String> formData = (HashMap<String, String>) request.getRequestBody();
         String id = formData.get("userId");
         String pw = formData.get("password");
-        if(H2Database.isValidLogin(id, pw)){
+        if(UserRepository.isValidLogin(id, pw)){
             request.addRequestHeader("Location","/index.html");
-            String session = SessionManager.addSession(H2Database.findUserById(id));
+            String session = SessionManager.addSession(UserRepository.findUserById(id));
             request.addRequestHeader("Set-Cookie", "sid=" + session + "; Path=/");
         }else{
             request.addRequestHeader("Location","/user/login_failed.html");
@@ -105,6 +107,11 @@ public class RequestHandler {
         }
     }
 
+    private void getBoardWrite(Request request) {
+        if(!LoginChecker.loginCheck(request)){
+            request.addRequestHeader("Location","/user/login.html");
+        }
+    }
 
     private void handleNotFound() {
         logger.error("request : NOT FOUND");
