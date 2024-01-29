@@ -167,10 +167,10 @@ public class GetService {
     private String getPostList() {
         StringBuilder sb = new StringBuilder();
         List<Post> posts = Database.findAllPost();
-        Collections.sort(posts);        // id 낮은 순 정렬
+        Collections.sort(posts);
 
-        for(int i = 1; i <= posts.size(); i++) {
-            String row = makePostListOneRow(posts.get(i), i);
+        for(int i = 0; i < posts.size(); i++) {
+            String row = makePostListOneRow(posts.get(i), i+1);
             sb.append(row);
         }
 

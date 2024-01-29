@@ -176,7 +176,7 @@ public class PostService {
         Database.addPost(post);
 
         // /index.html로 리다이렉트
-        return new HTTPResponseDto("/index.html");
+        return new HTTPResponseDto("/");
     }
     private HTTPResponseDto checkCreatePostBadRequest(HTTPRequestDto httpRequestDto, User user) {
         // body 또는 유저가 null일 경우
