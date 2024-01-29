@@ -5,6 +5,7 @@ import controller.DefaultController;
 import controller.QnaController;
 import controller.UserController;
 import dto.HttpRequestDto;
+import service.QnaService;
 import service.UserService;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class ControllerMapper {
     static {
         CONTROLLER_MAP.put("user", new UserController(new UserService()));
         CONTROLLER_MAP.put("default", new DefaultController());
-        CONTROLLER_MAP.put("qna", new QnaController());
+        CONTROLLER_MAP.put("qna", new QnaController(new QnaService()));
     }
 
     public static Controller mappingController(HttpRequestDto request) {

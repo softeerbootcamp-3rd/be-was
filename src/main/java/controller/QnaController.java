@@ -6,17 +6,28 @@ import dto.HttpResponseDto;
 import dto.HttpResponseDtoBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.QnaService;
 import util.HtmlBuilder;
 import util.HttpResponseUtil;
 import util.WebUtil;
 
+import java.util.Map;
+
 public class QnaController implements Controller {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final QnaService qnaService;
+
+    public QnaController(QnaService qnaService) {
+        this.qnaService = qnaService;
+    }
 
     @Override
     public HttpResponseDto handleRequest(HttpRequestDto request) {
         if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/qna/form")) {
             return printWriteForm(request);
+        }
+        if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/qna/show")) {
+            return printWriteDetailPage(request);
         }
         if (request.getMethod().equalsIgnoreCase("POST") && request.getUri().startsWith("/qna/write")) {
             return writePost(request);
@@ -44,13 +55,39 @@ public class QnaController implements Controller {
     }
 
     public HttpResponseDto writePost(HttpRequestDto request) {
-        // TODO: 글쓰기 기능 구현
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
         if (request.getUser() != null) {
+            try {
+                Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
+                String postId = qnaService.writePost(parameters, request.getUser());
 
+                return responseDtoBuilder.response302Header()
+                        .setHeaders(HttpHeader.LOCATION, "/qna/show?postId=" + postId).build();
+            } catch (IllegalArgumentException e) {
+                logger.error(e.getMessage());
+
+                return responseDtoBuilder.response400Header().build();
+            }
         }
 
         return responseDtoBuilder.response302Header()
                 .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
+    }
+
+    public HttpResponseDto printWriteDetailPage(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        Map<String, String> queryString = WebUtil.parseQueryString(request.getUri());
+        try {
+            byte[] body = qnaService.printWriteDetailPage(queryString, request.getUser());
+
+            return responseDtoBuilder.response200Header()
+                    .setHeaders(HttpHeader.CONTENT_TYPE, "text/html;charset=utf-8")
+                    .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
+                    .setBody(body)
+                    .build();
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            return responseDtoBuilder.response400Header().build();
+        }
     }
 }

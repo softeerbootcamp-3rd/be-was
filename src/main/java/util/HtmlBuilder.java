@@ -1,12 +1,15 @@
 package util;
 
+import db.PostDatabase;
 import db.UserDatabase;
 import dto.HttpRequestDto;
+import model.Post;
 import model.User;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +20,7 @@ public class HtmlBuilder {
         String html = readHtmlInString(WebUtil.getPath(request.getUri()));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildIndexNavBar(request.getUser()));
+        replacements.put("{{post-list}}", buildPostList());
 
         return replaceHtml(html, replacements);
     }
@@ -44,6 +48,18 @@ public class HtmlBuilder {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildNavBar(request.getUser()));
         replacements.put("{{writer-name}}", request.getUser().getName());
+
+        return replaceHtml(html, replacements);
+    }
+
+    public static byte[] buildWriteDetailPage(Post post, User user) {
+        String html = readHtmlInString(WebUtil.getPath("/qna/show.html"));
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{{user-navbar}}", buildNavBar(user));
+        replacements.put("{{post-title}}", post.getTitle());
+        replacements.put("{{post-user-name}}", post.getWriterName());
+        replacements.put("{{post-create-date}}", post.getCreateTime());
+        replacements.put("{{post-contents}}", post.getContents());
 
         return replaceHtml(html, replacements);
     }
@@ -96,6 +112,29 @@ public class HtmlBuilder {
             index++;
         }
         return userList.toString();
+    }
+
+    private static String buildPostList() {
+        Collection<Post> posts = PostDatabase.findAll();
+        StringBuilder postList = new StringBuilder();
+        for (Post post: posts) {
+            postList.append("<li>")
+                    .append("<div class=\"main\">")
+                    .append("<strong class=\"subject\">")
+                    .append("<a href=\"./qna/show?postId=").append(post.getPostId()).append("\">").append(post.getTitle()).append("</a>")
+                    .append("</strong>")
+                    .append("<div class=\"auth-info\">")
+                    .append("<i class=\"icon-add-comment\"></i>\n")
+                    .append("<span class=\"time\">").append(post.getCreateTime()).append("</span>")
+                    .append("<a href=\"./user/profile.html\" class=\"author\">").append(post.getWriterName()).append("</a>")
+                    .append("</div>")
+                    .append("<div class=\"reply\" title=\"댓글\">")
+                    .append("<i class=\"icon-reply\"></i>")
+                    .append("<span class=\"point\">8</span>")
+                    .append("</div>")
+                    .append("</li>");
+        }
+        return postList.toString();
     }
 
     private static byte[] replaceHtml(String html, Map<String, String> replaces) {
