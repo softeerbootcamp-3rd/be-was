@@ -2,6 +2,9 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -13,6 +16,7 @@ import webserver.http.*;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final List<String> AUTHORIZED_URI = List.of(new String[]{"/user/list.html", "/write.html"});
+
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
