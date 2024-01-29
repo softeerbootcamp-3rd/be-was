@@ -1,15 +1,15 @@
 package util;
 
 import ch.qos.logback.core.util.FileUtil;
+import content.FileContent;
 import dto.ResourceDto;
 import exception.SourceException;
+import model.Model;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 
 public class ResourceHandler {
 
@@ -17,13 +17,33 @@ public class ResourceHandler {
         String resourcePath = getResourcePath(resource.getPath());
         FileInputStream fis = new FileInputStream(resourcePath);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] bodyData = changeFileToByte(fis, bos);
+        if (!resourcePath.contains(".html")) {
+            return bodyData;
+        }
+
+        // 로그인시의 뷰
+        String bodyString = new String(bodyData);
+        if (resource.isIsloggined()) {
+            bodyString = bodyString.replace("{{menu}}",
+                    FileContent.LOGIN.getText(String.valueOf(Model.getAttribute("username"))));
+        } else {
+            bodyString = bodyString.replace("{{menu}}",
+                    FileContent.NON_LOGIN.getText());
+        }
+
+        return bodyString.getBytes();
+    }
+
+    private static byte[] changeFileToByte(FileInputStream fis, ByteArrayOutputStream bos) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
         while ((read = fis.read(buffer)) != -1) {
             bos.write(buffer, 0, read);
         }
         fis.close();
-        return bos.toByteArray();
+        byte[] bodyData = bos.toByteArray();
+        return bodyData;
     }
 
     private static String getResourcePath(String path) {
