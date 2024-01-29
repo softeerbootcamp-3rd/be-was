@@ -16,7 +16,7 @@ public class CreateUserExceptionHandler {
         String html = new String(ResourceUtils.getStaticResource("/user/form.html"));
         byte[] body =  html.replace("<div id=\"replace\"></div>", line).getBytes();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.badRequest()
                 .contentType(MediaType.TEXT_HTML)
                 .contentLength(body.length)
                 .body(body);
@@ -40,7 +40,7 @@ public class CreateUserExceptionHandler {
                 .replace("<li><a href=\"../user/login.html\" role=\"button\">로그인</a></li>", li)
                 .getBytes();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.badRequest()
                 .contentType(MediaType.TEXT_HTML)
                 .contentLength(body.length)
                 .body(body);

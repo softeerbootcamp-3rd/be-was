@@ -11,32 +11,26 @@ import java.lang.reflect.Method;
 
 public class ResourceUtilsTest {
     @Test
-    void notFoundExceptionHandler() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void getExtension() {
         //given
-        ResourceUtils resourceUtils = new ResourceUtils();
-        Class<ResourceUtils> clazz = ResourceUtils.class;
-        Method method = clazz.getDeclaredMethod("notFoundExceptionHandler");
-        method.setAccessible(true);
+        String path = "/index.html";
 
         //when
-        ResponseEntity<?> responseEntity = (ResponseEntity<?>)method.invoke(resourceUtils);
-
-        //then
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-    @Test
-    void getExtension() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        //given
-        ResourceUtils resourceUtils = new ResourceUtils();
-        Class<ResourceUtils> clazz = ResourceUtils.class;
-        Method method = clazz.getDeclaredMethod("getExtension", String.class);
-        method.setAccessible(true);
-
-        //when
-        String extension = (String)method.invoke(resourceUtils, "/index.html");
+        String extension = ResourceUtils.getExtension(path);
 
         //then
         Assertions.assertEquals("html", extension);
+    }
+
+    @Test
+    void getExtension확장자없을때() {
+        //given
+        String path = "/";
+
+        //when
+        String extension = ResourceUtils.getExtension(path);
+
+        //then
+        Assertions.assertEquals("/", extension);
     }
 }

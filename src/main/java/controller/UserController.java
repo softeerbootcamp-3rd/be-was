@@ -1,8 +1,6 @@
 package controller;
 
-import exception.CreateUserException;
-import exception.CreateUserExceptionHandler;
-import exception.FileNotFoundExceptionHandler;
+import exception.*;
 import model.User;
 import service.UserService;
 import util.HtmlTemplate;
@@ -33,10 +31,14 @@ public class UserController {
             if (lastPath.equals("create")) {
                 if (httpRequest.getMethod() == HttpMethod.POST)
                     responseEntity = create();
+                else
+                    throw new MethodNotAllowedException();
             }
             if (lastPath.equals("login")) {
                 if (httpRequest.getMethod() == HttpMethod.POST)
                     responseEntity = login();
+                else
+                    throw new MethodNotAllowedException();
             }
             if (lastPath.equals("list")) {
                 responseEntity = list();
@@ -54,6 +56,8 @@ public class UserController {
                     responseEntity = postUpdate();
             }
             return responseEntity;
+        } catch (MethodNotAllowedException e) {
+            return MethodNotAllowedExceptionHandler.handle();
         } catch (FileNotFoundException e) {
             return FileNotFoundExceptionHandler.handle();
         }

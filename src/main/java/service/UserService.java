@@ -36,6 +36,17 @@ public class UserService {
         return user.getUserId();
     }
 
+    private void createValidate(String userId, String email) {
+        Collection<User> users = Database.findAll();
+        for (User user : users) {
+            if (user.getUserId().equals(userId)) {
+                throw new CreateUserException(CreateUserException.DUPLICATE_ID);
+            }
+            if (user.getEmail().equals(email)) {
+                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
+            }
+        }
+    }
 
     public String login(String userId, String password) {
         User user = Database.findUserById(userId);
@@ -73,18 +84,6 @@ public class UserService {
         return user.getUserId();
     }
 
-    private void createValidate(String userId, String email) {
-        Collection<User> users = Database.findAll();
-        for (User user : users) {
-            if (user.getUserId().equals(userId)) {
-                throw new CreateUserException(CreateUserException.DUPLICATE_ID);
-            }
-            if (user.getEmail().equals(email)) {
-                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
-            }
-        }
-    }
-
     private void updateValidate(String userId, String email) {
         Collection<User> users = Database.findAll();
         for (User user : users) {
@@ -95,23 +94,4 @@ public class UserService {
             }
         }
     }
-
-
-//    private void isDuplicateId(String userId) {
-//        Collection<User> users = Database.findAll();
-//        for (User user : users) {
-//            if (user.getUserId().equals(userId)) {
-//                throw new CreateUserException(CreateUserException.DUPLICATE_ID);
-//            }
-//        }
-//    }
-//
-//    private void isDuplicateEmail(String email) {
-//        Collection<User> users = Database.findAll();
-//        for (User user : users) {
-//            if (user.getEmail().equals(email)) {
-//                throw new CreateUserException(CreateUserException.DUPLICATE_EMAIL);
-//            }
-//        }
-//    }
 }
