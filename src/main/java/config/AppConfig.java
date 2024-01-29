@@ -5,6 +5,7 @@ import controller.qna.QnaFormController;
 import controller.user.UserCreateController;
 import controller.user.UserListController;
 import controller.user.UserLoginController;
+import repository.QnaRepository;
 import repository.UserRepository;
 import service.QnaService;
 import service.UserService;
@@ -18,6 +19,7 @@ public class AppConfig {
     private static UserService userService;
     private static QnaService qnaService;
     private static UserRepository userRepository;
+    private static QnaRepository qnaRepository;
 
     public static UserService userService() {
         if (userService == null) {
@@ -28,7 +30,7 @@ public class AppConfig {
 
     public static QnaService qnaService() {
         if (qnaService == null) {
-            qnaService = new QnaService();
+            qnaService = new QnaService(qnaRepository());
         }
         return qnaService;
     }
@@ -72,5 +74,12 @@ public class AppConfig {
             userRepository = new UserRepository();
         }
         return userRepository;
+    }
+
+    public static QnaRepository qnaRepository() {
+        if (qnaRepository == null) {
+            qnaRepository = new QnaRepository();
+        }
+        return qnaRepository;
     }
 }

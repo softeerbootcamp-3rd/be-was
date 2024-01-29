@@ -10,15 +10,15 @@ import java.util.Map;
 public class QnaRepository {
     private static Map<String, Qna> qnas = Maps.newHashMap();
 
-    public static void addQna(Qna qna) {
+    public void addQna(Qna qna) {
         qnas.put(qna.getWriter(), qna);
     }
 
-    public static Qna findQnaByUsername(String username) {
+    public Qna findQnaByUsername(String username) {
         return qnas.get(username);
     }
 
-    public static Collection<Qna> findAllQnas() {
+    public Collection<Qna> findAllQnas() {
         return qnas.values();
     }
 

@@ -18,6 +18,7 @@ public class FrontController {
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     static String DEFAULT_PAGE = "/templates/index.html";
+    private final QnaRepository qnaRepository = AppConfig.qnaRepository();
 
     public FrontController() {
         initHandlerMappingMap();
@@ -59,7 +60,7 @@ public class FrontController {
 
         if (request.getURI().contains("index.html")) {
             HashMap<String, Object> model = new HashMap<>();
-            Collection<Qna> allQnas = QnaRepository.findAllQnas();
+            Collection<Qna> allQnas = qnaRepository.findAllQnas();
             model.put("{{qna-list}}", allQnas);
             mv.setModel(model);
         }
