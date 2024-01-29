@@ -5,6 +5,7 @@ import dto.request.UserSignUpDto;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -50,4 +51,31 @@ class UserServiceTest {
                 .hasMessage("이미 존재하는 아이디입니다.");
     }
 
+    @DisplayName("아이디와 비밀번호로 로그인을 성공하면 userId를 반환한다.")
+    @Test
+    void loginSuccess(){
+        //given
+        User user = new User("1", "1234", "test", "test@naver.com");
+        Database.addUser(user);
+
+        //when
+        String success = UserService.login(user.getUserId(), user.getPassword());
+
+        //then
+        assertThat(success).isEqualTo("1");
+    }
+
+    @DisplayName("아이디와 비밀번호가 일치하지 않는 경우 예외가 발생한다.")
+    @Test
+    void loginWrongUser(){
+        //given
+        User user = new User("1", "1234", "test", "test@naver.com");
+        Database.addUser(user);
+
+        //when //then
+        String wrongUserId = "2";
+        assertThatThrownBy(() -> UserService.login(wrongUserId, user.getPassword()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("아이디 또는 비밀번호가 잘못되었습니다.");
+    }
 }
