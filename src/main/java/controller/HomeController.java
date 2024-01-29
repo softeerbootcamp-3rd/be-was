@@ -6,34 +6,43 @@ import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
 import httpmessage.response.FilePathContent;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class HomeController implements Controller {
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         FilePathContent filePathContent = new FilePathContent();
 
         String filePath =  filePathContent.getFilePath(httpRequest.getPath());
+
         String contentType = ContentType.getContentType(httpRequest.getPath());
         String statusLine;
         int statusCode;
         byte[] body;
 
-        statusCode = 200;
-        statusLine = HttpStatusCode.findBy(statusCode);
+        File file = new File(filePath);
 
-        FileInputStream fis = new FileInputStream(filePath);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        if (!file.exists() || file.isDirectory()) {
+            // 파일이 존재하지 않거나 디렉토리인 경우 404 상태 코드 반환
+            statusCode = 404;
+            statusLine = HttpStatusCode.findBy(statusCode);
+            body = "404 Not Found".getBytes();
+        } else {
+            // 파일이 존재하는 경우 정상적으로 읽어옴
+            statusCode = 200;
+            statusLine = HttpStatusCode.findBy(statusCode);
 
-        byte[] buffer = new byte[4096];
-        int bytesRead;
+            try (FileInputStream fis = new FileInputStream(file);
+                 ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
-        while ((bytesRead = fis.read(buffer)) != -1) {
-            bos.write(buffer, 0, bytesRead);
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    bos.write(buffer, 0, bytesRead);
+                }
+                body = bos.toByteArray();
+            }
         }
-        body = bos.toByteArray();
         httpResponse.setHttpResponse(body,contentType,statusCode,statusLine);
     }
 }

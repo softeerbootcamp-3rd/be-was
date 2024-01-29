@@ -8,12 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class Article {
-    String title = "제목";
-    String contents = "내용";
+    private Long articleId;
+    private String title = "제목";
+    private String contents = "내용";
 
-    String userId = "이대산";
+    private String userId = "이대산";
 
-    String createdate = "2024.1.29";
+    private String createdate = "2024.1.29";
     String filePath;
 
     public Article(){};
@@ -50,6 +51,14 @@ public class Article {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
+    }
+
+    public Long getArticleId() {
+        return articleId;
     }
 
     public String getContents() {

@@ -29,7 +29,7 @@ public class HtmlController implements Controller{
             Content listContent = new Content(users);
 
             String userConent = listContent.getString();
-            modifiedContent = body.replace("{{list}}",userConent);
+            modifiedContent = modifiedContent.replace("{{list}}",userConent);
         }
 
         if(requestPath.contains("index")) {
@@ -44,16 +44,52 @@ public class HtmlController implements Controller{
                 Content articlesContent = new Content(articles);
 
                 String ArticleList = articlesContent.getString();
-                modifiedContent = body.replace("{{articleList}}",ArticleList);
+                modifiedContent = modifiedContent.replace("{{articleList}}",ArticleList);
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         }
+
+        if(requestPath.contains("show")){
+            Class.forName("org.h2.Driver");
+            String url = "jdbc:h2:~/wasDB";
+            String user = "sa";
+            String password = "";
+            String articleId = httpRequest.getPath().split("=")[1];
+
+            try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                Article article = specificArticle(connection,articleId);
+                System.out.println(article);
+
+                modifiedContent = new Content().detailContent(article,modifiedContent);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
 
         byte[] modifiedBody = modifiedContent.getBytes();
         httpResponse.setBody(modifiedBody);
+    }
+
+    private Article specificArticle(Connection connection, String articleId) throws SQLException {
+        Article article = new Article();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Article WHERE id = "+articleId)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                article.setTitle(resultSet.getString("title"));
+                article.setUserId(resultSet.getString("userid"));
+                article.setContents(resultSet.getString("content"));
+                article.setCreatedate(resultSet.getString("createdate"));
+            }
+
+            return article;
+        }
     }
 
     private LinkedList<Article> fetchArticles(Connection connection) throws SQLException {
@@ -69,6 +105,7 @@ public class HtmlController implements Controller{
             while (resultSet.next()) {
                 Article article = new Article();
 
+                article.setArticleId(Long.valueOf(resultSet.getString("id")));
                 article.setTitle(resultSet.getString("title"));
                 article.setUserId(resultSet.getString("userid"));
                 article.setContents(resultSet.getString("content"));
