@@ -101,7 +101,7 @@ public class ResourceManager {
     public static String changeHTMLGetUserList(String original) {
         StringBuilder listBuilder = new StringBuilder("<tbody>").append(System.lineSeparator());
         int id = 1;
-        for (User user : Database.findAll()) {
+        for (User user : UserDao.findAll()) {
             listBuilder.append("<tr>").append(System.lineSeparator());
             listBuilder.append("<th scope=\"row\">").append(id).append("</th> ");
             listBuilder.append("<td>").append(user.getUserId()).append("</td> ");

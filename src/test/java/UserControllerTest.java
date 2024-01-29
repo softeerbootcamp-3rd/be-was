@@ -1,5 +1,4 @@
 import db.Database;
-import dto.Response;
 import model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

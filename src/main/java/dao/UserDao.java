@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
 
@@ -30,7 +32,6 @@ public class UserDao {
     public static boolean isUserIdExist(String userId) {
         String query = "SELECT COUNT(*) FROM users WHERE user_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
             preparedStatement.setString(1, userId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -50,7 +51,6 @@ public class UserDao {
     public static boolean isEmailExist(String email) {
         String query = "SELECT COUNT(*) FROM users WHERE email = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
             preparedStatement.setString(1, email);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -71,7 +71,6 @@ public class UserDao {
     public static User findUserByUserId(String userId) {
         String query = "SELECT * FROM users WHERE USER_ID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
             preparedStatement.setString(1, userId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -96,7 +95,6 @@ public class UserDao {
     public static String findUserNameByUserId(String userId) {
         String query = "SELECT USERNAME FROM users WHERE USER_ID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
             preparedStatement.setString(1, userId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -105,6 +103,31 @@ public class UserDao {
                 }
             }
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static List<User> findAll() {
+        String query = "SELECT * FROM users";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            List<User> userList = new ArrayList<>();
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    User user = new User(
+                            resultSet.getString("USER_ID"),
+                            resultSet.getString("USERNAME"),
+                            resultSet.getString("PASSWORD"),
+                            resultSet.getString("EMAIL")
+                    );
+                    userList.add(user);
+                }
+            }
+
+            return userList;
         } catch (SQLException e) {
             e.printStackTrace();
         }

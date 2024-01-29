@@ -32,8 +32,6 @@ public class RequestHandler implements Runnable {
 
             execute(in, dos);
             out.close();
-            // DB Connection 종료
-            JdbcUtil.closeJdbcConnection();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
