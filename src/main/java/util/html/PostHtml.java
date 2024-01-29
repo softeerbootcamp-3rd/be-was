@@ -1,9 +1,11 @@
 package util.html;
 
+import database.AttachmentRepository;
 import database.CommentRepository;
 import database.PostRepository;
 import database.UserRepository;
 import exception.ResourceNotFoundException;
+import model.Attachment;
 import model.Comment;
 import model.Post;
 import model.User;
@@ -74,10 +76,20 @@ public class PostHtml {
                 .replace("<!--comment-count-->", Long.toString(CommentRepository.countByPostId(postId)));
     }
 
+    public static String attachment(String template) {
+        Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
+        Attachment attachment = AttachmentRepository.findByPostId(postId);
+        if (attachment == null)
+            return "";
+        return template.replace("<!--link-->", "/attachment/download?postId=" + postId)
+                .replace("<!--filename-->", attachment.getFilename());
+    }
+
     public static String postBtnGroup(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
         Post post = PostRepository.findById(postId);
         User user = SharedData.requestUser.get();
+        assert post != null;
         if (!Objects.equals(user.getUserId(), post.getWriterId()))
             return "";
         return template.replace("<!--post-id-->", Long.toString(postId));

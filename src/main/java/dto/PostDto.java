@@ -8,8 +8,7 @@ public class PostDto {
     private String title;
     @NotEmpty
     private String contents;
-
-    private MultipartFile image;
+    private MultipartFile attachment;
 
     public PostDto() {}
 
@@ -29,11 +28,11 @@ public class PostDto {
         this.contents = contents;
     }
 
-    public MultipartFile getImage() {
-        return image;
+    public MultipartFile getFile() {
+        return attachment;
     }
 
-    public void setImage(MultipartFile image) {
-        this.image = image;
+    public void setAttachment(MultipartFile attachment) {
+        this.attachment = attachment;
     }
 }

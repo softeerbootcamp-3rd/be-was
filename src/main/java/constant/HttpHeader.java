@@ -12,6 +12,7 @@ public enum HttpHeader {
     SERVER("Server"),
     CONTENT_TYPE("Content-Type"),
     CONTENT_LENGTH("Content-Length"),
+    CONTENT_DISPOSITION("Content-Disposition"),
 
     // 요청 헤더
     AUTHORIZATION("Authorization"),

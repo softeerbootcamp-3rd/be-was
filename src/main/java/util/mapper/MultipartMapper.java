@@ -1,6 +1,7 @@
 package util.mapper;
 
 import com.google.common.base.Strings;
+import constant.HttpHeader;
 import constant.ParamType;
 import util.ByteArrayUtils;
 import util.ByteReader;
@@ -39,23 +40,29 @@ public class MultipartMapper {
         ByteReader reader = new ByteReader(inputStream);
 
         String contentDisposition = reader.readLine();
-        String name = extractEntry(contentDisposition, "name").replace("\"", "");
+        String name = extractEntry(contentDisposition, "name");
         if (Strings.isNullOrEmpty(name))
             return;
         boolean isFile = contentDisposition.contains("filename");
 
         String s;
-        int contentLength = part.length;
+        Map<HttpHeader, String> partValues = new HashMap<>();
         while ((s = reader.readLine()) != null && !s.isEmpty()) {
-            contentLength -= s.getBytes().length;
+            String[] splitParts = s.split(":\\s*", 2);
+            if (splitParts.length == 2) {
+                try {
+                    partValues.put(HttpHeader.of(splitParts[0]), splitParts[1]);
+                } catch (IllegalArgumentException ignored) {}
+            }
         }
-        byte[] data = new byte[contentLength];
+        byte[] data = new byte[part.length];
         int readLength = reader.read(data);
         data = Arrays.copyOfRange(data, 0, readLength);
 
         if (isFile) {
             MultipartFile file = new MultipartFile();
-            file.setFilename(extractEntry(contentDisposition, "name"));
+            file.setFilename(extractEntry(contentDisposition, "filename"));
+            file.setContentType(partValues.get(HttpHeader.CONTENT_TYPE));
             file.setData(data);
             fileMap.put(name, file);
         } else {
@@ -72,7 +79,8 @@ public class MultipartMapper {
 
         for (String token : tokens) {
             if (token.trim().startsWith(entry + "=")) {
-                return token.trim().substring((entry + "=").length());
+                String result = token.trim().substring((entry + "=").length());
+                return result.substring(1, result.length() - 1);
             }
         }
         return "";

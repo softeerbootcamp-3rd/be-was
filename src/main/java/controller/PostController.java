@@ -6,23 +6,18 @@ import annotation.RequestMapping;
 import com.google.common.base.Strings;
 import constant.HttpStatus;
 import database.CommentRepository;
-import database.ImageRepository;
+import database.AttachmentRepository;
 import database.PostRepository;
 import dto.CommentDto;
 import dto.PostDto;
 import model.Comment;
-import model.Image;
+import model.Attachment;
 import model.Post;
 import model.User;
+import util.mapper.MultipartFile;
 import util.web.SharedData;
 import webserver.HttpResponse;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Objects;
 
@@ -36,9 +31,9 @@ public class PostController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         Long postId = PostRepository.add(new Post(currentUser.getUserId(), post.getTitle(), post.getContents(), new Date()));
-        if (post.getImage() != null) {
-            ImageRepository.add(new Image(postId, "png", post.getImage().getData()));
-        }
+        MultipartFile file = post.getFile();
+        if (post.getFile() != null)
+            AttachmentRepository.add(new Attachment(postId, file.getFilename(), file.getContentType(), file.getData()));
         return HttpResponse.redirect("/index.html");
     }
 
@@ -70,7 +65,7 @@ public class PostController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         PostRepository.deleteById(postId);
-        ImageRepository.deleteByPostId(postId);
+        AttachmentRepository.deleteByPostId(postId);
         CommentRepository.deleteByPostId(postId);
         return HttpResponse.redirect("/index.html");
     }

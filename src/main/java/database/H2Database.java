@@ -33,16 +33,16 @@ public class H2Database {
                      "CREATE TABLE IF NOT EXISTS comments " +
                              "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
                              "writerId VARCHAR(255), contents VARCHAR(255), createDatetime TIMESTAMP)");
-             PreparedStatement imageStatement = connection.prepareStatement(
-                     "CREATE TABLE IF NOT EXISTS images " +
+             PreparedStatement attachmentStatement = connection.prepareStatement(
+                     "CREATE TABLE IF NOT EXISTS attachments " +
                              "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
-                             "extension VARCHAR(20), data BLOB)"
+                             "filename VARCHAR(255), mimeType VARCHAR(20), data BLOB)"
              )
         ) {
             usersStatement.executeUpdate();
             postStatement.executeUpdate();
             commentStatement.executeUpdate();
-            imageStatement.executeUpdate();
+            attachmentStatement.executeUpdate();
         }
     }
 
