@@ -12,6 +12,7 @@ public class ControllerContainer {
         controllerMap = new HashMap<>();
         controllerMap.put("/user", new UserController());
         controllerMap.put("/post", new PostController());
+        controllerMap.put("/index", new IndexController());
     }
 
     public static ControllerContainer getInstance() {

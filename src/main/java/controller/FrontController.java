@@ -44,7 +44,6 @@ public class FrontController {
             InputData inputData = setInputData(request); //inputdata 세팅
 
             path = (String)method.invoke(controller, inputData, outputData); //메서드 실행
-            path += ".html";
 
             if (outputData.headerExists()) {
                 Map<String, String> headerMap = outputData.getHeaderMap();

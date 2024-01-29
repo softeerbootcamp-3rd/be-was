@@ -32,7 +32,7 @@ public class UserController implements Controller{
             SessionManager.addSession(sid, user.getUserId());
             return "redirect:/index";
         } else {
-            return "redirect:/user/login_failed";
+            return "redirect:/user/login_failed.html";
         }
     }
 
@@ -49,7 +49,7 @@ public class UserController implements Controller{
     public String getUserList(InputData data, OutputData outputData) {
         String sessionId = data.getSessionId();
         if (sessionId == null)
-            return "redirect:/user/login";
+            return "redirect:/user/login.html";
 
         ListMapData users = new ListMapData();
         for (User user : UserRepository.findAll()) {
@@ -60,7 +60,7 @@ public class UserController implements Controller{
             users.putMap(u);
         }
         outputData.getView().set("users", users);
-        return "/user/list";
+        return "/user/list.html";
     }
 
     private String generateSessionId() {
