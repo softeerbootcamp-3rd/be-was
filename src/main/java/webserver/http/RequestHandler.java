@@ -1,6 +1,7 @@
 package webserver.http;
 
 import db.Database;
+import db.H2Database;
 import db.SessionManager;
 import model.User;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class RequestHandler {
         UserFormDataParser userFormDataParser = new UserFormDataParser(data);
         HashMap<String,String> formData = new HashMap<>(userFormDataParser.parseData());
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
-        Database.addUser(user);
+        H2Database.adduser(user);
         request.addRequestHeader("Location","/user/form.html");
     }
 
@@ -80,7 +81,7 @@ public class RequestHandler {
         if(Database.findUserById(user.getUserId()) != null)
             return;
 
-        Database.addUser(user);
+        H2Database.adduser(user);
         request.addRequestHeader("Location","/index.html");
     }
 

@@ -5,8 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.Collection;
 
-public class H2Database {private static final Logger logger = LoggerFactory.getLogger(H2Database.class);
+public class H2Database {
+    private static final Logger logger = LoggerFactory.getLogger(H2Database.class);
     private static final String url = "jdbc:h2:tcp://localhost:9092/~/was";
     private static final String username = "sa";
     private static final String password = "";
@@ -34,11 +36,18 @@ public class H2Database {private static final Logger logger = LoggerFactory.getL
     }
 
 
-    public static void userAdd(User user) {
+    public static void adduser(User user) {
         try {
             conn = DriverManager.getConnection(url, username, password);
 
-            // 쿼리 실행
+            String sql = "INSERT INTO User (userId, password, name, email) VALUES (?, ?, ?, ?)";
+            preparedStatemnt = conn.prepareStatement(sql);
+
+            preparedStatemnt.setString(1, user.getUserId());
+            preparedStatemnt.setString(2, user.getPassword());
+            preparedStatemnt.setString(3, user.getName());
+            preparedStatemnt.setString(4, user.getEmail());
+
             int affectedRows = preparedStatemnt.executeUpdate();
             logger.debug(affectedRows + "실행 완료");
         } catch (SQLException e) {
@@ -54,4 +63,17 @@ public class H2Database {private static final Logger logger = LoggerFactory.getL
             }
         }
     }
+
+   /* public static User findUserById(String userId) {
+
+    }
+
+    public static Collection<User> findAll() {
+        return users.values();
+    }
+
+    public static boolean isValidLogin(String id, String pw){
+        User user = findUserById(id);
+        return user != null && user.getPassword().equals(pw);
+    }*/
 }

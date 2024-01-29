@@ -29,12 +29,4 @@ public class Database {
         User user = findUserById(id);
         return user != null && user.getPassword().equals(pw);
     }
-
-    public static void printAllUsers() {
-        for (Map.Entry<String, User> entry : users.entrySet()) {
-            String key = entry.getKey();
-            User user = entry.getValue();
-            System.out.println("Key: " + key + ", Value: " + user);
-        }
-    }
 }

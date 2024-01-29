@@ -31,7 +31,7 @@ public class HttpConnectionHandler implements Runnable {
             request.print();
             DataOutputStream dos = new DataOutputStream(out);
             Response response = new Response(request);
-            sendResponse(dos,request, response);
+            sendResponse(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
