@@ -9,6 +9,7 @@ import http.request.RequestLine;
 import http.response.HttpResponse;
 import http.request.HttpRequest;
 import http.HttpStatus;
+import resource.ResourceHandler;
 import utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class RequestHandler implements Runnable {
             // 정적 자원 처리 - basePath 찾은 경우
             String basePath = FileReader.getBasePath(requestUrl);
             if (!basePath.isEmpty()) {
-                String filePath = basePath + requestUrl;
+                String filePath = basePath + Parser.extractPath(requestUrl);
                 response = ResourceHandler.process(filePath, httpRequest);
             } else {
                 // 동적 자원 처리
@@ -54,17 +55,18 @@ public class RequestHandler implements Runnable {
                 ValidatorControllerMapper vc = ValidatorControllerMapper.getValidatorAndControllerByPath(requestLine.getMethodAndPath());
 
                 if (vc != null) {
-                    Function<Map<String, String>, Boolean> validator = vc.getValidator();
+                    Function<String, Boolean> validator = vc.getValidator();
                     // 유효성 검증 실패할 경우 BAD_REQUEST 반환
                     if (validator != null && !validator.apply(httpRequest.getBody())) {
                         response = HttpResponse.of(HttpStatus.BAD_REQUEST);
                     } else {
                         // validator 없거나 유효성 검증에 통과할 경우 컨트롤러에게 HttpRequest 전달
-                        Function<HttpRequest, HttpResponse> controller = vc.getController();
-                        response = controller.apply(httpRequest);
+                        Function<String, HttpResponse> controller = vc.getController();
+                        response = controller.apply(httpRequest.getBody());
                     }
                 } else {
-                    response = HttpResponse.of(HttpStatus.NOT_FOUND);
+                    Map<String, String> header = Map.of("Location", "/404.html");
+                    response = HttpResponse.of(HttpStatus.REDIRECT, header);
                 }
             }
 
