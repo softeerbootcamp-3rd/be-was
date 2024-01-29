@@ -32,8 +32,7 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpResponse response;
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                HttpRequest request = new HttpRequest(reader);
+                HttpRequest request = new HttpRequest(in);
                 SharedData.request.set(request);
                 SharedData.requestUser.set(SessionManager.getLoggedInUser(request));
 
@@ -49,6 +48,7 @@ public class RequestHandler implements Runnable {
                 response = HttpResponse.of(HttpStatus.NOT_FOUND);
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NoSuchMethodException
                      | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
                 response = HttpResponse.of(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
                 logger.error("error processing request: {}", e.getMessage());

@@ -35,37 +35,11 @@ public class PostController {
         if (currentUser == null)
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
-        String filePath = "src/main/resources/templates/test.png";
-        saveByteArrayToFile(post.getImage().getData(), filePath);
-
-        System.out.println("File saved successfully!");
         Long postId = PostRepository.add(new Post(currentUser.getUserId(), post.getTitle(), post.getContents(), new Date()));
-//        if (post.getImage() != null) {
-//            ImageRepository.add(new Image(postId, "png", post.getImage().getData()));
-//        }
-        return HttpResponse.redirect("/index.html");
-    }
-
-    private static void saveByteArrayToFile(byte[] data, String filePath) {
-        try {
-            // 파일 경로를 Path 객체로 변환
-            Path path = Paths.get(filePath);
-
-            // 파일이 존재하지 않으면 생성
-            if (!Files.exists(path)) {
-                Files.createFile(path);
-            }
-
-            // 파일에 데이터 쓰기
-            try (FileOutputStream fos = new FileOutputStream(filePath)) {
-                fos.write(data);
-            }
-        } catch (FileAlreadyExistsException e) {
-            // 파일이 이미 존재할 경우 예외 처리
-            System.err.println("File already exists: " + filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (post.getImage() != null) {
+            ImageRepository.add(new Image(postId, "png", post.getImage().getData()));
         }
+        return HttpResponse.redirect("/index.html");
     }
 
     @RequestMapping(method = "POST", path = "/post/{postId}/comment")
@@ -96,6 +70,7 @@ public class PostController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         PostRepository.deleteById(postId);
+        ImageRepository.deleteByPostId(postId);
         CommentRepository.deleteByPostId(postId);
         return HttpResponse.redirect("/index.html");
     }

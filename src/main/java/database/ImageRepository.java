@@ -38,4 +38,14 @@ public class ImageRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public static void deleteByPostId(Long postId) {
+        String query = "DELETE FROM images WHERE postId = ?";
+        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+            statement.setLong(1, postId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
