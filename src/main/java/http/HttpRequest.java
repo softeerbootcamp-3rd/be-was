@@ -62,7 +62,7 @@ public class HttpRequest {
         method = lines[0];
         if (lines[1].contains("?")) {
             getQueryParam(lines[1]);
-            lines[1] = lines[1].substring(0, line.indexOf('?'));
+            lines[1] = lines[1].substring(0, lines[1].indexOf('?'));
         }
         url = lines[1];
         httpVersion = lines[2];
