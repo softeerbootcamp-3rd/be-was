@@ -28,4 +28,23 @@ public class IndexController implements Controller {
 
         return "/index.html";
     }
+
+    @RequestMapping(value = "/index/search", method = "GET")
+    public String searchPage(InputData inputData, OutputData outputData) {
+        String findThis = inputData.get("srch-term");
+
+        ListMapData listMapData = new ListMapData();
+        for (Post post : PostRepository.findAll()) {
+            if (post.getTitle().contains(findThis)) {
+                Map<String, String> p = new HashMap<>();
+                p.put("postId", post.getPostId().toString());
+                p.put("writer", post.getWriter());
+                p.put("title", post.getTitle());
+                listMapData.putMap(p);
+            }
+        }
+        outputData.getView().set("posts", listMapData);
+
+        return "/index.html";
+    }
 }
