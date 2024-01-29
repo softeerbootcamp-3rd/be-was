@@ -1,6 +1,6 @@
 package util.html;
 
-import db.UserDatabase;
+import database.UserRepository;
 import model.User;
 import util.web.SharedData;
 
@@ -14,7 +14,7 @@ public class UserHtml {
 
     public static String replaceUserList(String template) {
         StringBuilder sb = new StringBuilder();
-        List<User> userList = new ArrayList<>(UserDatabase.findAll());
+        List<User> userList = new ArrayList<>(UserRepository.findAll());
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
             sb.append(template.replace("<!--order-->", String.valueOf(i + 1))

@@ -4,10 +4,9 @@ import annotation.Controller;
 import annotation.RequestBody;
 import annotation.RequestMapping;
 import com.google.common.base.Strings;
-import constant.HttpHeader;
 import constant.HttpStatus;
-import db.CommentDatabase;
-import db.PostDatabase;
+import database.CommentRepository;
+import database.PostRepository;
 import dto.CommentDto;
 import dto.PostDto;
 import model.Comment;
@@ -28,7 +27,7 @@ public class PostController {
         if (currentUser == null)
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
-        PostDatabase.add(new Post(currentUser.getUserId(), post.getTitle(), post.getContents(), new Date()));
+        PostRepository.add(new Post(currentUser.getUserId(), post.getTitle(), post.getContents(), new Date()));
         return HttpResponse.redirect("/index.html");
     }
 
@@ -43,7 +42,7 @@ public class PostController {
             return HttpResponse.of(HttpStatus.BAD_REQUEST);
 
         Long postId = Long.valueOf(postIdString);
-        CommentDatabase.add(new Comment(postId, currentUser.getUserId(), comment.getContent(), new Date()));
+        CommentRepository.add(new Comment(postId, currentUser.getUserId(), comment.getContent(), new Date()));
         return HttpResponse.redirect("/post/show.html?postId=" + postIdString);
     }
 
@@ -53,14 +52,14 @@ public class PostController {
         if (Strings.isNullOrEmpty(postIdString))
             return HttpResponse.of(HttpStatus.BAD_REQUEST);
         Long postId = Long.valueOf(postIdString);
-        Post post = PostDatabase.findById(postId);
+        Post post = PostRepository.findById(postId);
 
         User currentUser = SharedData.requestUser.get();
         if (currentUser == null || !Objects.equals(currentUser.getUserId(), post.getWriterId()))
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
-        PostDatabase.deleteById(postId);
-        CommentDatabase.deleteByPostId(postId);
+        PostRepository.deleteById(postId);
+        CommentRepository.deleteByPostId(postId);
         return HttpResponse.redirect("/index.html");
     }
 

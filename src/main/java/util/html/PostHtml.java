@@ -1,8 +1,8 @@
 package util.html;
 
-import db.CommentDatabase;
-import db.PostDatabase;
-import db.UserDatabase;
+import database.CommentRepository;
+import database.PostRepository;
+import database.UserRepository;
 import exception.ResourceNotFoundException;
 import model.Comment;
 import model.Post;
@@ -22,16 +22,16 @@ public class PostHtml {
 
     public static String postList(String template) {
         int pageNumber = SharedData.getParamDataOrElse("page", Integer.class, 1);
-        List<Post> postList = new ArrayList<>(PostDatabase.getPage(pageSize, pageNumber));
+        List<Post> postList = new ArrayList<>(PostRepository.getPage(pageSize, pageNumber));
 
         StringBuilder sb = new StringBuilder();
         for (Post post : postList) {
-            User writer = UserDatabase.findByIdOrEmpty(post.getWriterId());
+            User writer = UserRepository.findByIdOrEmpty(post.getWriterId());
             sb.append(template.replace("<!--post-id-->", Long.toString(post.getId()))
                     .replace("<!--title-->", post.getTitle())
                     .replace("<!--create-date-->", dateFormat.format(post.getCreateDatetime()))
                     .replace("<!--user-name-->", writer.getName())
-                    .replace("<!--comments-->", Long.toString(CommentDatabase.countByPostId(post.getId()))));
+                    .replace("<!--comments-->", Long.toString(CommentRepository.countByPostId(post.getId()))));
         }
         return sb.toString();
     }
@@ -41,7 +41,7 @@ public class PostHtml {
         int startPage = ((pageNumber - 1) / paginationSize) * paginationSize + 1;
         int endPage = startPage + paginationSize - 1;
 
-        int totalPages = (int) Math.ceil((double) PostDatabase.countAll() / pageSize);
+        int totalPages = (int) Math.ceil((double) PostRepository.countAll() / pageSize);
         if (totalPages == 0) totalPages = 1;
 
         StringBuilder sb = new StringBuilder();
@@ -63,20 +63,20 @@ public class PostHtml {
 
     public static String postContent(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
-        Post post = PostDatabase.findById(postId);
+        Post post = PostRepository.findById(postId);
         if (post == null)
             throw new ResourceNotFoundException(SharedData.request.get().getPath());
         return template.replace("<!--title-->", post.getTitle())
-                .replace("<!--writer-->", UserDatabase.findByIdOrEmpty(post.getWriterId()).getName())
+                .replace("<!--writer-->", UserRepository.findByIdOrEmpty(post.getWriterId()).getName())
                 .replace("<!--create-date-->", dateFormat.format(post.getCreateDatetime()))
                 .replace("<!--contents-->", "<p>" + post.getContents().replace("\n", "</br>") + "</p>")
                 .replace("<!--post-id-->", Long.toString(post.getId()))
-                .replace("<!--comment-count-->", Long.toString(CommentDatabase.countByPostId(postId)));
+                .replace("<!--comment-count-->", Long.toString(CommentRepository.countByPostId(postId)));
     }
 
     public static String postBtnGroup(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
-        Post post = PostDatabase.findById(postId);
+        Post post = PostRepository.findById(postId);
         User user = SharedData.requestUser.get();
         if (!Objects.equals(user.getUserId(), post.getWriterId()))
             return "";
@@ -85,11 +85,11 @@ public class PostHtml {
 
     public static String comments(String template) {
         Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
-        Collection<Comment> comments = CommentDatabase.findByPostId(postId);
+        Collection<Comment> comments = CommentRepository.findByPostId(postId);
 
         StringBuilder sb = new StringBuilder();
         for (Comment comment : comments) {
-            User writer = UserDatabase.findByIdOrEmpty(comment.getWriterId());
+            User writer = UserRepository.findByIdOrEmpty(comment.getWriterId());
             sb.append(template.replace("<!--writer-->", writer.getName())
                     .replace("<!--create-date-->", dateFormat.format(comment.getCreateDatetime()))
                     .replace("<!--content-->", comment.getContents().replace("\n", "</br>"))

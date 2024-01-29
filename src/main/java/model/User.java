@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class User {
@@ -52,5 +54,14 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(userId, password, name, email);
+    }
+
+    public static User of(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.userId = resultSet.getString("userId");
+        user.password = resultSet.getString("password");
+        user.name = resultSet.getString("name");
+        user.email = resultSet.getString("email");
+        return user;
     }
 }

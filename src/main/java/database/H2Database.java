@@ -1,4 +1,4 @@
-package db;
+package database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +27,20 @@ public class H2Database {
                         "name VARCHAR(255), email VARCHAR(255))");
              PreparedStatement postStatement = connection.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS posts " +
-                             "(id BIGINT PRIMARY KEY IDENTITY, writerId VARCHAR(255), " +
-                             "title VARCHAR(255), contents VARCHAR(1000), image BLOB, createDatetime TIMESTAMP)");
+                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, writerId VARCHAR(255), " +
+                             "title VARCHAR(255), contents VARCHAR(1000), createDatetime TIMESTAMP)");
              PreparedStatement commentStatement = connection.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS comments " +
-                             "(id BIGINT PRIMARY KEY IDENTITY, postId BIGINT, " +
+                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
                              "writerId VARCHAR(255), contents VARCHAR(255), createDatetime TIMESTAMP)")
         ) {
-
             usersStatement.executeUpdate();
             postStatement.executeUpdate();
-
+            commentStatement.executeUpdate();
         }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcUrl, user, password);
     }
 }

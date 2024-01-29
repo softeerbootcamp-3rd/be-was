@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
 
@@ -24,6 +26,9 @@ public class Comment {
         this.writerId = writerId;
         this.contents = contents;
         this.createDatetime = createDatetime;
+    }
+
+    public Comment() {
     }
 
     public Long getId() {
@@ -88,5 +93,15 @@ public class Comment {
                 ", contents='" + contents + '\'' +
                 ", createDatetime=" + createDatetime +
                 '}';
+    }
+
+    public static Comment of(ResultSet resultSet) throws SQLException {
+        Comment comment = new Comment();
+        comment.id = resultSet.getLong("id");
+        comment.postId = resultSet.getLong("postId");
+        comment.writerId = resultSet.getString("writerId");
+        comment.contents = resultSet.getString("contents");
+        comment.createDatetime = resultSet.getTimestamp("createDatetime");
+        return comment;
     }
 }

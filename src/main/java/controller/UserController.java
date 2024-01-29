@@ -5,8 +5,7 @@ import annotation.RequestBody;
 import annotation.RequestMapping;
 import constant.HttpHeader;
 import constant.HttpStatus;
-import constant.MimeType;
-import db.UserDatabase;
+import database.UserRepository;
 import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
@@ -23,18 +22,18 @@ public class UserController {
 
     @RequestMapping(method = "POST", path = "/user/create")
     public static HttpResponse createUser(@RequestBody UserCreateDto user) {
-        User existUser = UserDatabase.findById(user.getUserId());
+        User existUser = UserRepository.findByUserId(user.getUserId());
 
         if (existUser != null)
             return HttpResponse.of(HttpStatus.CONFLICT);
 
-        UserDatabase.add(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
+        UserRepository.add(new User(user.getUserId(), user.getPassword(), user.getName(), user.getEmail()));
         return HttpResponse.redirect("/index.html");
     }
 
     @RequestMapping(method = "POST", path = "/user/login")
     public static HttpResponse login(@RequestBody LoginDto loginInfo) {
-        User existUser = UserDatabase.findById(loginInfo.getUserId());
+        User existUser = UserRepository.findByUserId(loginInfo.getUserId());
         if (existUser == null || !Objects.equals(existUser.getPassword(), loginInfo.getPassword()))
             return HttpResponse.redirect("/user/login_failed.html");
 

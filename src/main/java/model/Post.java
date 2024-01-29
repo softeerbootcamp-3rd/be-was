@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
 
@@ -91,5 +93,15 @@ public class Post {
 
     public void setCreateDatetime(Date createDatetime) {
         this.createDatetime = createDatetime;
+    }
+
+    public static Post of(ResultSet resultSet) throws SQLException {
+        Post post = new Post();
+        post.id = resultSet.getLong("id");
+        post.writerId = resultSet.getString("writerId");
+        post.title = resultSet.getString("title");
+        post.contents = resultSet.getString("contents");
+        post.createDatetime = resultSet.getTimestamp("createDatetime");
+        return post;
     }
 }

@@ -1,7 +1,7 @@
 package controller;
 
 import constant.HttpStatus;
-import db.UserDatabase;
+import database.UserRepository;
 import dto.LoginDto;
 import dto.UserCreateDto;
 import model.User;
@@ -26,13 +26,13 @@ public class UserControllerTest {
         createUser(new UserCreateDto(userId, password, name, email));
 
         User expectedUser = new User("testUser", "testPassword", "TestName", "test@example.com");
-        assertEquals(expectedUser, UserDatabase.findById("testUser"));
+        assertEquals(expectedUser, UserRepository.findByUserId("testUser"));
     }
 
     @Test
     public void testLogin() {
         User user = new User("validUserId", "validPassword", "TestName", "test@example.com");
-        UserDatabase.add(user);
+        UserRepository.add(user);
 
         LoginDto validLoginInfo = new LoginDto("validUserId", "validPassword");
         HttpResponse httpResponse = login(validLoginInfo);
