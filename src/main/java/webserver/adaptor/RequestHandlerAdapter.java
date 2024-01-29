@@ -4,31 +4,19 @@ import annotation.*;
 import controller.BasicController;
 import exception.GlobalExceptionHandler;
 import exception.InternalServerException;
-import exception.ResourceNotFoundException;
 import exception.UnAuthorizedException;
-import http.Cookie;
 import http.Request;
 import http.Response;
-import controller.RequestController;
-import http.SessionManager;
 import interceptor.Intercepter;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.Model;
 import webserver.ModelAndView;
 
-import java.awt.*;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 public class RequestHandlerAdapter implements HandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandlerAdapter.class);
@@ -36,14 +24,14 @@ public class RequestHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(BasicController handler) {
-        return (handler instanceof RequestController);
+        return (handler instanceof BasicController);
     }
 
     @Override
     public ModelAndView handle(Request req, Response res, BasicController handler) {
 
 
-        RequestController controller = (RequestController) handler;
+        BasicController controller = (BasicController) handler;
         Model model = new Model();
         String viewName;
         try {
@@ -53,7 +41,6 @@ public class RequestHandlerAdapter implements HandlerAdapter {
         } catch (Exception e) {
             viewName = GlobalExceptionHandler.handle(e, res);
         }
-        logger.debug("model.getAttribute(\"user\") = {}",model.getAttribute("user"));
         ModelAndView mv = new ModelAndView(viewName);
 
         mv.setModel(model);
@@ -61,7 +48,7 @@ public class RequestHandlerAdapter implements HandlerAdapter {
         return mv;
     }
 
-        private String process(RequestController controller, Request req, Response res, Model model){
+        private String process(BasicController controller, Request req, Response res, Model model){
             try {
                 Class<?> clazz = controller.getClass();
                 String prefix =clazz.getAnnotation(RequestMapping.class).value();
@@ -70,6 +57,7 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                 Method target = null;
                 for (Method method : methods) {
                     if (req.getMethod().equals("GET") && method.isAnnotationPresent(GetMapping.class)) {
+
                         if ((method.getAnnotation(GetMapping.class).url()).equals(subPath)) {
                             target = method;
                             break;

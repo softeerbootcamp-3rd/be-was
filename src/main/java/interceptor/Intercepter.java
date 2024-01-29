@@ -18,6 +18,7 @@ public class Intercepter {
 
     public Intercepter(){
         whiteList.add("/");
+        whiteList.add("/header");
         whiteList.add("/user/login");
         whiteList.add("/user/form.html");
         whiteList.add("/user/create");
