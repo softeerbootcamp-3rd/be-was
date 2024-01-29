@@ -3,6 +3,7 @@ package webserver;
 import config.HTTPRequest;
 import config.HTTPResponse;
 import controller.PageController;
+import controller.QnaController;
 import controller.UserController;
 
 public enum ControllerHandler {
@@ -21,6 +22,14 @@ public enum ControllerHandler {
         public HTTPResponse toController(HTTPRequest request){
             HTTPResponse response;
             response = UserController.login(request);
+            return response;
+        }
+    },
+    CREATE_POST("/qna/form.html"){
+        @Override
+        public HTTPResponse toController(HTTPRequest request){
+            HTTPResponse response;
+            response = QnaController.createQna(request);
             return response;
         }
     }
