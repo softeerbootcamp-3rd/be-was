@@ -149,7 +149,7 @@ public class Request {
     public ArrayList<Cookie> getCookies() {
         return cookies.isEmpty() ? null : cookies;
     }
-    private void setCookies(String cookieString){
+    public void setCookies(String cookieString){
         String[] cookiePairs = cookieString.split("; ");
         for (String cookiePair : cookiePairs) {
             String[] keyValue = cookiePair.split("=");
