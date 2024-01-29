@@ -2,13 +2,13 @@ package dto;
 
 import annotation.NotEmpty;
 
-public class QnaDto {
+public class PostDto {
     @NotEmpty
     private String title;
     @NotEmpty
     private String contents;
 
-    public QnaDto() {}
+    public PostDto() {}
 
     public String getTitle() {
         return this.title;

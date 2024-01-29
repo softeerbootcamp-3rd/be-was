@@ -24,15 +24,15 @@ public class CommentDatabase {
         return comments.get(id);
     }
 
-    public static Collection<Comment> findByQnaId(Long qnaId) {
+    public static Collection<Comment> findByPostId(Long postId) {
         return comments.values().stream()
-                .filter(comment -> Objects.equals(comment.getQnaId(), (qnaId)))
+                .filter(comment -> Objects.equals(comment.getPostId(), (postId)))
                 .collect(Collectors.toList());
     }
 
-    public static Long countByQnaId(Long qnaId) {
+    public static Long countByPostId(Long postId) {
         return comments.values().stream()
-                .filter(comment -> Objects.equals(comment.getQnaId(), (qnaId)))
+                .filter(comment -> Objects.equals(comment.getPostId(), (postId)))
                 .count();
     }
 
@@ -40,8 +40,8 @@ public class CommentDatabase {
         comments.remove(commentId);
     }
 
-    public static void deleteByQnaId(Long qnaId) {
-        comments.entrySet().removeIf(entry -> Objects.equals(entry.getValue().getQnaId(), qnaId));
+    public static void deleteByPostId(Long postId) {
+        comments.entrySet().removeIf(entry -> Objects.equals(entry.getValue().getPostId(), postId));
     }
 
     public static Collection<Comment> findAll() {

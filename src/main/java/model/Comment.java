@@ -6,21 +6,21 @@ import java.util.Objects;
 public class Comment {
 
     private Long id;
-    private Long qnaId;
+    private Long postId;
     private String writerId;
     private String content;
     private Date createDatetime;
 
-    public Comment(Long id, Long qnaId, String writerId, String content, Date createDatetime) {
+    public Comment(Long id, Long postId, String writerId, String content, Date createDatetime) {
         this.id = id;
-        this.qnaId = qnaId;
+        this.postId = postId;
         this.writerId = writerId;
         this.content = content;
         this.createDatetime = createDatetime;
     }
 
-    public Comment(Long qnaId, String writerId, String content, Date createDatetime) {
-        this.qnaId = qnaId;
+    public Comment(Long postId, String writerId, String content, Date createDatetime) {
+        this.postId = postId;
         this.writerId = writerId;
         this.content = content;
         this.createDatetime = createDatetime;
@@ -34,12 +34,12 @@ public class Comment {
         this.id = id;
     }
 
-    public Long getQnaId() {
-        return qnaId;
+    public Long getPostId() {
+        return postId;
     }
 
-    public void setQnaId(Long qnaId) {
-        this.qnaId = qnaId;
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
     public String getWriterId() {
@@ -71,19 +71,19 @@ public class Comment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id) && Objects.equals(qnaId, comment.qnaId) && Objects.equals(writerId, comment.writerId) && Objects.equals(content, comment.content) && Objects.equals(createDatetime, comment.createDatetime);
+        return Objects.equals(id, comment.id) && Objects.equals(postId, comment.postId) && Objects.equals(writerId, comment.writerId) && Objects.equals(content, comment.content) && Objects.equals(createDatetime, comment.createDatetime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, qnaId, writerId, content, createDatetime);
+        return Objects.hash(id, postId, writerId, content, createDatetime);
     }
 
     @Override
     public String toString() {
         return "Comment{" +
                 "id=" + id +
-                ", qnaId='" + qnaId + '\'' +
+                ", postId='" + postId + '\'' +
                 ", writerId='" + writerId + '\'' +
                 ", content='" + content + '\'' +
                 ", createDatetime=" + createDatetime +

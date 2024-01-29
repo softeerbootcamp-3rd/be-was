@@ -3,7 +3,7 @@ package model;
 import java.util.Date;
 import java.util.Objects;
 
-public class Qna {
+public class Post {
 
     private Long id;
     private String writerId;
@@ -11,9 +11,9 @@ public class Qna {
     private String contents;
     private Date createDatetime;
 
-    public Qna() {}
+    public Post() {}
 
-    public Qna(Long id, String writerId, String title, String contents, Date createDatetime) {
+    public Post(Long id, String writerId, String title, String contents, Date createDatetime) {
         this.id = id;
         this.writerId = writerId;
         this.title = title;
@@ -21,7 +21,7 @@ public class Qna {
         this.createDatetime = createDatetime;
     }
 
-    public Qna(String writerId, String title, String contents, Date createDatetime) {
+    public Post(String writerId, String title, String contents, Date createDatetime) {
         this.writerId = writerId;
         this.title = title;
         this.contents = contents;
@@ -50,7 +50,7 @@ public class Qna {
 
     @Override
     public String toString() {
-        return "Qna{" +
+        return "Post{" +
                 "id=" + id +
                 ", writerId='" + writerId + '\'' +
                 ", title='" + title + '\'' +
@@ -63,9 +63,9 @@ public class Qna {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Qna qna = (Qna) o;
-        return Objects.equals(id, qna.id) && Objects.equals(writerId, qna.writerId) && Objects.equals(title, qna.title)
-                && Objects.equals(contents, qna.contents) && Objects.equals(createDatetime, qna.createDatetime);
+        Post post = (Post) o;
+        return Objects.equals(id, post.id) && Objects.equals(writerId, post.writerId) && Objects.equals(title, post.title)
+                && Objects.equals(contents, post.contents) && Objects.equals(createDatetime, post.createDatetime);
     }
 
     @Override

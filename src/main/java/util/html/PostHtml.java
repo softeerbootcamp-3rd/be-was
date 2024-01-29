@@ -1,11 +1,11 @@
 package util.html;
 
 import db.CommentDatabase;
-import db.QnaDatabase;
+import db.PostDatabase;
 import db.UserDatabase;
 import exception.ResourceNotFoundException;
 import model.Comment;
-import model.Qna;
+import model.Post;
 import model.User;
 import util.web.SharedData;
 
@@ -15,25 +15,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class QnaHtml {
+public class PostHtml {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static final int pageSize = 10;
     private static final int paginationSize = 5;
 
-    public static String qnaList(String template) {
+    public static String postList(String template) {
         if (template == null)
             return "";
         int pageNumber = SharedData.getParamDataOrElse("page", Integer.class, 1);
-        List<Qna> qnaList = new ArrayList<>(QnaDatabase.getPage(pageSize, pageNumber));
+        List<Post> postList = new ArrayList<>(PostDatabase.getPage(pageSize, pageNumber));
 
         StringBuilder sb = new StringBuilder();
-        for (Qna qna : qnaList) {
-            User writer = UserDatabase.findByIdOrEmpty(qna.getWriterId());
-            sb.append(template.replace("<!--qna-id-->", Long.toString(qna.getId()))
-                    .replace("<!--title-->", qna.getTitle())
-                    .replace("<!--create-date-->", dateFormat.format(qna.getCreateDatetime()))
+        for (Post post : postList) {
+            User writer = UserDatabase.findByIdOrEmpty(post.getWriterId());
+            sb.append(template.replace("<!--post-id-->", Long.toString(post.getId()))
+                    .replace("<!--title-->", post.getTitle())
+                    .replace("<!--create-date-->", dateFormat.format(post.getCreateDatetime()))
                     .replace("<!--user-name-->", writer.getName())
-                    .replace("<!--comments-->", Long.toString(CommentDatabase.countByQnaId(qna.getId()))));
+                    .replace("<!--comments-->", Long.toString(CommentDatabase.countByPostId(post.getId()))));
         }
         return sb.toString();
     }
@@ -46,7 +46,7 @@ public class QnaHtml {
         int startPage = ((pageNumber - 1) / paginationSize) * paginationSize + 1;
         int endPage = startPage + paginationSize - 1;
 
-        int totalPages = (int) Math.ceil((double) QnaDatabase.countAll() / pageSize);
+        int totalPages = (int) Math.ceil((double) PostDatabase.countAll() / pageSize);
         if (totalPages == 0) totalPages = 1;
 
         StringBuilder sb = new StringBuilder();
@@ -66,37 +66,37 @@ public class QnaHtml {
         return sb.toString();
     }
 
-    public static String qnaContent(String template) {
+    public static String postContent(String template) {
         if (template == null)
             return "";
-        Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
-        Qna qna = QnaDatabase.findById(qnaId);
-        if (qna == null)
+        Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
+        Post post = PostDatabase.findById(postId);
+        if (post == null)
             throw new ResourceNotFoundException(SharedData.request.get().getPath());
-        return template.replace("<!--title-->", qna.getTitle())
-                .replace("<!--writer-->", UserDatabase.findByIdOrEmpty(qna.getWriterId()).getName())
-                .replace("<!--create-date-->", dateFormat.format(qna.getCreateDatetime()))
-                .replace("<!--contents-->", "<p>" + qna.getContents().replace("\n", "</br>") + "</p>")
-                .replace("<!--qna-id-->", Long.toString(qna.getId()))
-                .replace("<!--comment-count-->", Long.toString(CommentDatabase.countByQnaId(qnaId)));
+        return template.replace("<!--title-->", post.getTitle())
+                .replace("<!--writer-->", UserDatabase.findByIdOrEmpty(post.getWriterId()).getName())
+                .replace("<!--create-date-->", dateFormat.format(post.getCreateDatetime()))
+                .replace("<!--contents-->", "<p>" + post.getContents().replace("\n", "</br>") + "</p>")
+                .replace("<!--post-id-->", Long.toString(post.getId()))
+                .replace("<!--comment-count-->", Long.toString(CommentDatabase.countByPostId(postId)));
     }
 
-    public static String qnaBtnGroup(String template) {
+    public static String postBtnGroup(String template) {
         if (template == null)
             return "";
-        Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
-        Qna qna = QnaDatabase.findById(qnaId);
+        Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
+        Post post = PostDatabase.findById(postId);
         User user = SharedData.requestUser.get();
-        if (!Objects.equals(user.getUserId(), qna.getWriterId()))
+        if (!Objects.equals(user.getUserId(), post.getWriterId()))
             return "";
-        return template.replace("<!--qna-id-->", Long.toString(qnaId));
+        return template.replace("<!--post-id-->", Long.toString(postId));
     }
 
     public static String comments(String template) {
         if (template == null)
             return "";
-        Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
-        Collection<Comment> comments = CommentDatabase.findByQnaId(qnaId);
+        Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
+        Collection<Comment> comments = CommentDatabase.findByPostId(postId);
 
         StringBuilder sb = new StringBuilder();
         for (Comment comment : comments) {
@@ -104,24 +104,24 @@ public class QnaHtml {
             sb.append(template.replace("<!--writer-->", writer.getName())
                     .replace("<!--create-date-->", dateFormat.format(comment.getCreateDatetime()))
                     .replace("<!--content-->", comment.getContent().replace("\n", "</br>"))
-                    .replace("<!--comment-btn-group-->", commentBtnGroup(qnaId, comment)));
+                    .replace("<!--comment-btn-group-->", commentBtnGroup(postId, comment)));
         }
         return sb.toString();
     }
 
-    private static String commentBtnGroup(Long qnaId, Comment comment) {
+    private static String commentBtnGroup(Long postId, Comment comment) {
         User user = SharedData.requestUser.get();
         if (user == null || !Objects.equals(user.getUserId(), comment.getWriterId()))
             return "";
         return HtmlTemplates.get("<!--comment-btn-group-->").getTemplate()
-                .replace("<!--qna-id-->", Long.toString(qnaId))
+                .replace("<!--post-id-->", Long.toString(postId))
                 .replace("<!--comment-id-->", Long.toString(comment.getId()));
     }
 
     public static String commentForm(String template) {
         if (template == null)
             return "";
-        Long qnaId = SharedData.getParamDataNotEmpty("qnaId", Long.class);
-        return template.replace("<!--qna-id-->", Long.toString(qnaId));
+        Long postId = SharedData.getParamDataNotEmpty("postId", Long.class);
+        return template.replace("<!--post-id-->", Long.toString(postId));
     }
 }

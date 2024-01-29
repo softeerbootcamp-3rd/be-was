@@ -2,12 +2,12 @@ package dto;
 
 import annotation.NotEmpty;
 
-public class QnaCommentDto {
+public class CommentDto {
 
     @NotEmpty
     private String content;
 
-    public QnaCommentDto() {
+    public CommentDto() {
     }
 
     public String getContent() {

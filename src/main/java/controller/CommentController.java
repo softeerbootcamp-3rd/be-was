@@ -31,7 +31,7 @@ public class CommentController {
         CommentDatabase.deleteById(commentId);
         return HttpResponse.builder()
                 .status(HttpStatus.FOUND)
-                .addHeader(HttpHeader.LOCATION, "/qna/show.html?qnaId=" + comment.getQnaId())
+                .addHeader(HttpHeader.LOCATION, "/post/show.html?postId=" + comment.getPostId())
                 .build();
     }
 }

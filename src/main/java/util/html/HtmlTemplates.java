@@ -29,23 +29,23 @@ public class HtmlTemplates {
         builder.put("<!--user-list-->",
                 new HtmlTemplate("user/user_list.html", UserHtml::replaceUserList, HtmlBuilder::empty));
 
-        // qna
-        builder.put("<!--qna-list-->",
-                new HtmlTemplate("qna/list.html", QnaHtml::qnaList, QnaHtml::qnaList));
-        builder.put("<!--qna-pagination-->",
-                new HtmlTemplate("qna/pagination.html", QnaHtml::pagination, QnaHtml::pagination));
-        builder.put("<!--post-qna-btn-->",
-                new HtmlTemplate("qna/post_btn.html", HtmlBuilder::getRaw, HtmlBuilder::empty));
-        builder.put("<!--qna-->",
-                new HtmlTemplate("qna/qna.html", QnaHtml::qnaContent, QnaHtml::qnaContent));
-        builder.put("<!--qna-btn-group-->",
-                new HtmlTemplate("qna/btn_group.html", QnaHtml::qnaBtnGroup, HtmlBuilder::empty));
+        // post
+        builder.put("<!--post-list-->",
+                new HtmlTemplate("post/list.html", PostHtml::postList, PostHtml::postList));
+        builder.put("<!--post-pagination-->",
+                new HtmlTemplate("post/pagination.html", PostHtml::pagination, PostHtml::pagination));
+        builder.put("<!--post-btn-->",
+                new HtmlTemplate("post/post_btn.html", HtmlBuilder::getRaw, HtmlBuilder::empty));
+        builder.put("<!--post-->",
+                new HtmlTemplate("post/post.html", PostHtml::postContent, PostHtml::postContent));
+        builder.put("<!--post-btn-group-->",
+                new HtmlTemplate("post/btn_group.html", PostHtml::postBtnGroup, HtmlBuilder::empty));
         builder.put("<!--comments-->",
-                new HtmlTemplate("qna/comments.html", QnaHtml::comments, QnaHtml::comments));
+                new HtmlTemplate("post/comments.html", PostHtml::comments, PostHtml::comments));
         builder.put("<!--comment-btn-group-->",
-                new HtmlTemplate("qna/comment_btn_group.html", null, null));
+                new HtmlTemplate("post/comment_btn_group.html", null, null));
         builder.put("<!--comment-form-->",
-                new HtmlTemplate("qna/comment_form.html", QnaHtml::commentForm, HtmlBuilder::empty));
+                new HtmlTemplate("post/comment_form.html", PostHtml::commentForm, HtmlBuilder::empty));
 
         HTML_TEMPLATES = builder.build();
     }
