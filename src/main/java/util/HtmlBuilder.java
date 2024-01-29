@@ -9,7 +9,6 @@ import model.User;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +59,17 @@ public class HtmlBuilder {
         replacements.put("{{post-user-name}}", post.getWriterName());
         replacements.put("{{post-create-date}}", post.getCreateTime());
         replacements.put("{{post-contents}}", post.getContents());
+        replacements.put("{{post-user-id}}", post.getUserId());
+
+        return replaceHtml(html, replacements);
+    }
+
+    public static byte[] buildProfile(User user) {
+        String html = readHtmlInString(WebUtil.getPath("/user/profile.html"));
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{{user-navbar}}", buildNavBar(user));
+        replacements.put("{{profile-user-name}}", user == null ? "존재하지 않는 유저입니다." : user.getName());
+        replacements.put("{{profile-user-email}}", user == null ? "" : user.getEmail());
 
         return replaceHtml(html, replacements);
     }
@@ -75,7 +85,7 @@ public class HtmlBuilder {
             // 로그인 한 경우
             navBar.append("<li><a href=\"/user/logout\" role=\"button\">로그아웃</a></li>")
                     .append("<li><a href=\"#\" role=\"button\">개인정보수정</a></li>")
-                    .append("<li><a>").append(user.getName()).append("</a></li>");
+                    .append("<li><a href=\"/user/profile.html\">").append(user.getName()).append("</a></li>");
         }
         return navBar.toString();
     }
@@ -126,7 +136,7 @@ public class HtmlBuilder {
                     .append("<div class=\"auth-info\">")
                     .append("<i class=\"icon-add-comment\"></i>\n")
                     .append("<span class=\"time\">").append(post.getCreateTime()).append("</span>")
-                    .append("<a href=\"./user/profile.html\" class=\"author\">").append(post.getWriterName()).append("</a>")
+                    .append("<a href=\"./user/profile?userId=").append(post.getUserId()).append("\" class=\"author\">").append(post.getWriterName()).append("</a>")
                     .append("</div>")
                     .append("<div class=\"reply\" title=\"댓글\">")
                     .append("<i class=\"icon-reply\"></i>")

@@ -27,6 +27,10 @@ public class Post {
         return this.writer.getName();
     }
 
+    public String getUserId() {
+        return this.writer.getUserId();
+    }
+
     public String getTitle() {
         return this.title;
     }

@@ -38,6 +38,9 @@ public class UserController implements Controller {
         if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/user/logout")) {
             return logoutUser(request);
         }
+        if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/user/profile")) {
+            return printProfile(request);
+        }
 
         return HttpResponseUtil.loadResource(request, logger);
     }
@@ -104,5 +107,23 @@ public class UserController implements Controller {
         // 로그인하지 않은 경우
         return responseDtoBuilder.response302Header()
                 .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
+    }
+
+    public HttpResponseDto printProfile(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        Map<String, String> queryString = WebUtil.parseQueryString(request.getUri());
+
+        try {
+            byte[] body = userService.printUserProfile(queryString, request.getUser());
+
+            return responseDtoBuilder.response200Header()
+                    .setHeaders(HttpHeader.CONTENT_TYPE, "text/html;charset=utf-8")
+                    .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
+                    .setBody(body)
+                    .build();
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            return responseDtoBuilder.response400Header().build();
+        }
     }
 }
