@@ -82,7 +82,8 @@ public class UserController {
                 byte[] body = fis.readAllBytes();
 
                 String content = new String(body, "UTF-8");
-                String replacedBody = replaceWord(content, "<tbody></tbody>", makeListHtml(users));
+                String replacedBody = replaceWord(content, "로그인", loginUser.getName());
+                replacedBody = replaceWord(replacedBody, "<tbody></tbody>", makeListHtml(users));
                 body = replacedBody.getBytes("UTF-8");
 
                 responseHeaders.put(CONTENT_TYPE, "text/html; charset=utf-8");

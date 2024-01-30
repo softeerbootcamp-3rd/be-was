@@ -52,7 +52,7 @@ public class ResourceController {
                 User loginUser = sessionManager.getUserBySessionId(request);
                 if (loginUser != null && url.endsWith(".html")) {
                     String content = new String(body, "UTF-8");
-                    String replacedBody = replaceWord(content, "로그인", loginUser.getName());
+                    String replacedBody = replaceTag(content, "로그인", loginUser.getName());
                     body = replacedBody.getBytes("UTF-8");
                 }
 
@@ -87,24 +87,6 @@ public class ResourceController {
             return "font/" + extension;
         }
         return result;
-    }
-
-    private static String replaceWord(String content, String targetWord, String replacement) {
-        // 정규 표현식 패턴 생성
-        String regex = "\\b" + Pattern.quote(targetWord) + "\\b";
-        Pattern pattern = Pattern.compile(regex);
-
-        // 패턴과 일치하는 단어 찾기
-        Matcher matcher = pattern.matcher(content);
-
-        // 대체된 내용으로 문자열 빌드
-        StringBuffer result = new StringBuffer();
-        if (matcher.find()) {
-            matcher.appendReplacement(result, replacement);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
     }
 
     private static String replaceTag(String content, String targetWord, String replacement) {

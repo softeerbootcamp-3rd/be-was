@@ -5,6 +5,7 @@ import annotation.PostMapping;
 import annotation.RequestParam;
 import db.Database;
 import model.Post;
+import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
 import response.HttpResponseBuilder;
@@ -52,7 +53,8 @@ public class PostController {
         if (file.isFile()) {
             try (FileInputStream fis = new FileInputStream(file)) {
                 byte[] body = fis.readAllBytes();
-                if (sessionManager.getUserBySessionId(request) == null) {
+                User loginUser = sessionManager.getUserBySessionId(request);
+                if (loginUser == null) {
                     responseHeaders.put("Location", "/user/login.html");
                     return new HttpResponseBuilder().status(HttpResponseStatus.FOUND)
                             .headers(responseHeaders).build();
@@ -60,7 +62,8 @@ public class PostController {
                     String id = request.getParams().get("id");
                     Long postId = Long.parseLong(id);
                     String content = new String(body, "UTF-8");
-                    String replacedBody = replaceTag(content, "<div class=\"panel panel-default\"><div class=\"article-utils\">", getPostDetailHtml(postId));
+                    String replacedBody = replaceTag(content, "로그인", loginUser.getName());
+                    replacedBody = replaceTag(replacedBody, "<div class=\"panel panel-default\"><div class=\"article-utils\">", getPostDetailHtml(postId));
                     body = replacedBody.getBytes("UTF-8");
 
                     responseHeaders.put("Content-Type", "text/html; charset=utf-8");
