@@ -12,10 +12,6 @@ public class PostDatabase {
 
     private static long id = 0L;
 
-    public static void addPost(Post post) throws IllegalArgumentException {
-        posts.put(post.getPostId(), post);
-    }
-
     public static Post findPostById(long postId) {
         return posts.get(postId);
     }
@@ -28,8 +24,8 @@ public class PostDatabase {
         posts.clear();
     }
 
-    public static void addPost(String writer, String title, String contents, LocalDateTime time) {
-        Post post = new Post(++id, writer, title, contents, time);
-        PostDatabase.addPost(post);
+    public static void addPost(String writer, String title, String contents, LocalDateTime time, String imagePath) {
+        Post post = new Post(++id, writer, title, contents, time, imagePath);
+        posts.put(post.getPostId(), post);
     }
 }
