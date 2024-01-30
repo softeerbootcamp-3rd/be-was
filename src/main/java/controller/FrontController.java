@@ -57,7 +57,7 @@ public class FrontController {
         ModelView mv = adapter.handle(httpRequest, httpResponse, handler);
 
         String viewName = mv.getViewName();
-        View view = viewResolver(viewName);
+        View view = ViewResolver.resolveViewName(viewName);
 
         if (httpRequest.getURI().contains("index.html")) {
             HashMap<String, Object> model = new HashMap<>();
@@ -66,6 +66,7 @@ public class FrontController {
             mv.setModel(model);
         }
 
+        //todo 이걸 없애자
         if (adapter instanceof ResourceHandlerAdapter) {
             ResourceController resourceController = (ResourceController) handler;
             view.render(httpRequest, httpResponse, mv, resourceController.getType());
@@ -75,10 +76,6 @@ public class FrontController {
 
         view.render(httpRequest, httpResponse, mv);
         ResponseSender.send(httpResponse, out);
-    }
-
-    private View viewResolver(String viewName) {
-        return new View("./src/main/resources" + viewName);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
