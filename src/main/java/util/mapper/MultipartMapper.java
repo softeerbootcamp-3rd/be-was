@@ -51,7 +51,6 @@ public class MultipartMapper {
         if (isFile && Strings.isNullOrEmpty(extractEntry(contentDisposition, "filename")))
             return;
 
-        String s;
         Map<HttpHeader, String> partValues = RequestParser.extractHeader(reader);
         byte[] data = new byte[part.length];
         int readLength = reader.read(data);

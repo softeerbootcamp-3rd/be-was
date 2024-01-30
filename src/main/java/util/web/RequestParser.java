@@ -88,10 +88,11 @@ public class RequestParser {
         return result;
     }
 
-    public static <T> T parseBody(HttpRequest request, Class<T> clazz)
+    public static <T> T parseBody(Class<T> clazz)
             throws IOException, InvocationTargetException,
             IllegalAccessException, NoSuchMethodException, InstantiationException {
 
+        HttpRequest request = SharedData.request.get();
         Map<String, String> queryMap;
         String contentType = request.getHeader().get(HttpHeader.CONTENT_TYPE);
         String[] entries = new String[1];
