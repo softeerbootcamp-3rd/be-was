@@ -67,7 +67,7 @@ public class RequestHandler {
         if (routeHandlers.containsKey(inputRoute)) {
             routeHandlers.get(inputRoute).accept(request);
         } else {
-            handleNotFound();
+            handleNotFound(request);
         }
     }
 
@@ -128,7 +128,13 @@ public class RequestHandler {
         request.addRequestHeader("Location","/index.html");
     }
 
-    private void handleNotFound() {
-        logger.error("request : NOT FOUND");
+    private void handleNotFound(Request request) {
+        //405에러처리
+        String requestTarget = request.getRequestTarget().split("\\?")[0]; // 쿼리 스트링 제거
+        boolean routeExists = routeHandlers.keySet().stream()
+                .anyMatch(route -> route.routeName.equals(requestTarget));
+        if(routeExists){
+            request.addRequestHeader("Error","405");
+        }
     }
 }

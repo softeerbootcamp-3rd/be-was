@@ -17,6 +17,8 @@ public class ResponseHandler {
     private static final String STATIC_DIRECTORY ="/src/main/resources/static";
     public byte[] setResponseBody(Mime responseMimeType, String requestTarget, Response response) {
         byte[] responseBody = new byte[0];
+
+
         try {
             File file = null;
             if (responseMimeType == Mime.TEXT_HTML) {
@@ -25,6 +27,17 @@ public class ResponseHandler {
                 responseBody = new byte[0];
             } else {
                 file = new File(ROOT_DIRECTORY + STATIC_DIRECTORY + requestTarget);
+            }
+
+            if(response.getStatusCode() == 405){
+                //405 error 처리
+                file = new File(ROOT_DIRECTORY + TEMPLATE_DIRECTORY + "/error/405.html");
+                FileInputStream fis = new FileInputStream(file);
+                responseBody = new byte[(int) file.length()];
+                fis.read(responseBody);
+                fis.close();
+                response.setStatusCode(StatusCode.NOT_FOUND);
+                return responseBody;
             }
 
             if (file != null && file.exists()) {

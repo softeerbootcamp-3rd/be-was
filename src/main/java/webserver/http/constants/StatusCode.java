@@ -17,4 +17,14 @@ public enum StatusCode {
     public int getCode() {
         return code;
     }
+
+    public static StatusCode fromString(String codeString) {
+        int code = Integer.parseInt(codeString);
+        for (StatusCode statusCode : StatusCode.values()) {
+            if (statusCode.getCode() == code) {
+                return statusCode;
+            }
+        }
+        throw new IllegalArgumentException("No constant with code " + codeString + " found");
+    }
 }

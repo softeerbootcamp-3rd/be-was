@@ -42,6 +42,13 @@ public class Response {
             return;
         }
 
+        if(request.getRequestHeader().get("Error")!=null){
+            StatusCode errorStatusCode = StatusCode.fromString(request.getRequestHeader().get("Error"));
+            this.statusCode = errorStatusCode.getCode();
+            this.statusText = errorStatusCode.name();
+            return;
+        }
+
         this.statusCode = StatusCode.OK.getCode();
         this.statusText = StatusCode.OK.name();
     }
