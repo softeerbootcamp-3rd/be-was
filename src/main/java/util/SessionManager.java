@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SessionManager {
 
-    public static final long EXPIRED_TIME = 20; // todo 테스트용으로 20초, 후에 1800으로 수정
+    public static final long EXPIRED_TIME = 1800;
     private static final TimeUnit EXPIRED_TIME_UNIT = TimeUnit.SECONDS;
     private final static SessionStorage storage = new SessionStorage();
 
