@@ -5,7 +5,6 @@ import http.request.HttpRequest;
 import http.response.HttpResponse;
 import model.User;
 import utils.FileReader;
-import utils.Parser;
 import utils.SessionManager;
 
 import java.io.File;
