@@ -2,6 +2,8 @@ package controller;
 
 import data.CookieData;
 import data.RequestData;
+import db.Database;
+import model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -31,6 +33,8 @@ public class RequestDataController {
     private static final String ERROR_BAD_REQUEST_HTML = "/error/badrequest.html";
     private static final String USER_LOGIN_HTML = "/user/login.html";
     private static final String USER_LOGIN_FAILED_HTML = "/user/login_failed.html";
+
+    private RequestDataController() {}
 
     public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
@@ -142,5 +146,37 @@ public class RequestDataController {
             return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
         }
         return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+    }
+
+    @Route(method = HttpMethod.POST, uri = "/qna/form.html")
+    private static Response handleApiWrite(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            try {
+                // 글 작성자, 제목, 내용 추출
+                Post postData = requestData.getPostData();
+
+                // 데이터베이스에 글 추가
+                Database.addPost(postData);
+
+                // 글 추가 후 리다이렉션
+                return new Response(HttpStatusCode.FOUND, INDEX_HTML);
+            } catch (IllegalArgumentException e) {
+                logger.debug("글 작성을 위한 파라미터의 수가 부족합니다.");
+                return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
+            }
+        } else {
+            // 로그인되지 않은 사용자는 글 작성 권한이 없음
+            return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+        }
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/qna/show.html")
+    private static Response handleFileShow(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+        } else {
+            // 로그인되지 않은 사용자는 글 작성 권한이 없음
+            return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+        }
     }
 }
