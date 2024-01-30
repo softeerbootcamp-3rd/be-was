@@ -709,10 +709,37 @@ Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
 >- 파일 업로드가 정상적으로 동작하기 위해서 사용자가 업로드한 파일을 POST로 처리할 수 있도록 구현한다.
 
 ## 4. 학습 내용
-- `H2`, `JDBC`
->- 
+- `H2`
+>- 자바로 작성된 관계형 데이터베이스 관리 시스템
+>- 설치가 필요없고 용량이 가볍다.
+>- 웹으로 콘솔에 접근 가능하며, 개발용 로컬 DB로 사용함
+
+- `JDBC`
+>- Java Database Connectivity의 약자로서 자바 어플과 데이터베이스간의 API
+>- 자바 기반 애플리케이션의 데이터를 데이터베이스에 저장 및 업데이트
+>- 데이터베이스에 저장된 데이터를 JAVA에서 사용
+>- 동작 흐름: JAVA App -> JDBC API -> JDBC Driver -> Database
+>- JDBC Driver: DB와의 통신을 담당하는 인터페이스로 DB 종류에 맞는 Driver가 필요함
 
 ## 5. Trouble Shooting
+- `h2` 콘솔 접근 불가
+>- DB의 동작을 확인하기 위해 `h2` 콘솔에 접근하려했으나 불가능함
+>- `Spring Boot`와 다르게 `h2` 콘솔이 자동으로 실행되지 않음
+>- DB의 static 생성자에서 `h2` 콘솔 서버를 실행하여 해결
+
+- `form-data` 읽고 파싱
+>- 일반 데이터와 바디의 양식이 다름
+>- 기존의 `Parser`로는 파싱이 불가능함
+>- 전용 `Parser`를 생성하여 바디를 파싱하여 해결함 (바운더리 등 고려)
+>
+> 
+>- 파일을 읽을 때 파일이 깨짐
+>- 파일을 `byte[]`로 받아서 자료형으로 인한 값의 손실을 방지함
+>- `BufferedReader`를 사용하지 않고 `InputStream`으로 바이트 단위로 바디를 읽어서 해결함
+>
+> 
+>- 더이상 읽을 내용이 없는데 `inputStream.read()`를 호출하면 `Broken Pipe`됨
+>- 더이상 읽을 내용이 없으면 파싱하지 않도록 예외처리하여 해결함
 
 </details>
 
