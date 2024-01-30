@@ -1,9 +1,11 @@
 package db;
 
 import com.google.common.collect.Maps;
+import model.Comment;
 import model.Post;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class PostRepository {
@@ -24,5 +26,12 @@ public class PostRepository {
     public static Post findByPostId(Long postId) { return posts.get(postId); }
 
     public static Collection<Post> findAll() { return posts.values(); }
+
+    public static void addComment(Long postId, Comment comment) {
+        Post post = posts.get(postId);
+        List<Comment> commentList = post.getCommentList();
+        comment.setCommentId(commentList.size()+1L);
+        commentList.add(comment);
+    }
 
 }

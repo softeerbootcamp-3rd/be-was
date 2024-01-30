@@ -3,13 +3,17 @@ package controller;
 import annotation.RequestMapping;
 import auth.SessionManager;
 import controller.dto.InputData;
+import controller.dto.ListMapData;
 import controller.dto.OutputData;
 import db.PostRepository;
 import db.UserRepository;
+import model.Comment;
 import model.Post;
 import view.View;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostController implements Controller {
 
@@ -20,7 +24,7 @@ public class PostController implements Controller {
         String userId = SessionManager.getUserBySessionId(inputData.getSessionId());
         String userName = UserRepository.findUserById(userId).getName();
 
-        Post post = new Post(userName, inputData.get("title"), inputData.get("contents"));
+        Post post = new Post(userId, userName, inputData.get("title"), inputData.get("contents"));
         PostRepository.addPost(post);
 
         return "redirect:/index";
@@ -32,19 +36,51 @@ public class PostController implements Controller {
         Post post = PostRepository.findByPostId(postId);
 
         View view = outputData.getView();
-        view.set("writer", post.getWriter());
-        view.set("contents", post.getContents());
-        view.set("title", post.getTitle());
-        view.set("createdAt", post.getCreatedAt().format(formatter));
+        setPostInfo(view, post);
 
+        ListMapData listMapData = new ListMapData();
+        for (Comment comment : post.getCommentList()) {
+            Map<String, String> c = setCommentInfo(comment);
+            listMapData.putMap(c);
+        }
+        view.set("comments", listMapData);
+        view.set("commentNumber", listMapData.getListSize().toString());
         return "/qna/show.html";
     }
 
     @RequestMapping(value = "/post/form", method = "GET")
     public String getPostForm(InputData inputData, OutputData outputData) {
         String sessionId = inputData.getSessionId();
-        if(sessionId==null)
+        if (sessionId == null)
             return "/user/login.html";
         return "/qna/form.html";
+    }
+
+    @RequestMapping(value = "/post/comment", method = "POST")
+    public String createComment(InputData inputData, OutputData outputData) {
+
+        Long postId = Long.parseLong(inputData.get("postId"));
+        String userId =SessionManager.getUserBySessionId(inputData.getSessionId());
+        String content = inputData.get("content");
+        String writer = inputData.get("writer");
+        PostRepository.addComment(postId, new Comment(userId, writer, content));
+
+        return "redirect:/post/show?postId="+postId;
+    }
+
+    private void setPostInfo(View view, Post post) {
+        view.set("writer", post.getWriter());
+        view.set("contents", post.getContents());
+        view.set("title", post.getTitle());
+        view.set("createdAt", post.getCreatedAt().format(formatter));
+        view.set("postId", post.getPostId().toString());
+    }
+
+    private Map<String, String> setCommentInfo(Comment comment) {
+        Map<String, String> c = new HashMap<>();
+        c.put("writer", comment.getWriter());
+        c.put("content", comment.getContent());
+        c.put("createdAt", comment.getCreatedAt().format(formatter));
+        return c;
     }
 }
