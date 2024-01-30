@@ -1,6 +1,8 @@
 package controller;
 
 import annotation.GetMapping;
+import db.Database;
+import model.Post;
 import model.User;
 import request.HttpRequest;
 import response.HttpResponse;
@@ -11,6 +13,7 @@ import session.SessionManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -49,6 +52,12 @@ public class ResourceController {
                 if (loginUser != null && url.endsWith(".html")) {
                     String content = new String(body, "UTF-8");
                     String replacedBody = replaceWord(content, "로그인", loginUser.getName());
+                    body = replacedBody.getBytes("UTF-8");
+                }
+
+                if (request.getUrl().equals("/index.html")) {
+                    String content = new String(body, "UTF-8");
+                    String replacedBody = replaceTag(content, "<ul class=\"list\"></ul>", getContentListHtml(Database.getPostList()));
                     body = replacedBody.getBytes("UTF-8");
                 }
 
@@ -94,5 +103,50 @@ public class ResourceController {
         matcher.appendTail(result);
 
         return result.toString();
+    }
+
+    private static String replaceTag(String content, String targetWord, String replacement) {
+        // 정규 표현식 패턴 생성
+        String regex = "\\Q" + targetWord + "\\E";  // 정규 표현식 특수 문자를 이스케이프
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+
+        // 패턴과 일치하는 단어 찾기
+        Matcher matcher = pattern.matcher(content);
+
+        // 대체된 내용으로 문자열 빌드
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
+    }
+
+    private String getContentListHtml(Map<Long, Post> postList) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<ul class=\"list\">");
+        for (Post post : postList.values()) {
+            sb.append("<li>");
+            sb.append("<div class=\"wrap\">");
+            sb.append("<div class=\"main\">");
+            sb.append("<strong class=\"subject\">");
+            sb.append("<a href=\"./post?id=" + post.getId() + "\">" + post.getTitle() + "</a>");
+            sb.append("</strong>");
+            sb.append("<div class=\"auth-info\">");
+            sb.append("<i class=\"icon-add-comment\"></i>");
+            sb.append("<span class=\"time\">2016-01-15 18:47</span>");
+            sb.append("<a href=\"./user/profile.html\" class=\"author\">"+ post.getWriter() +"</a>");
+            sb.append("</div>");
+            sb.append("<div class=\"reply\" title=\"댓글\">");
+            sb.append("<i class=\"icon-reply\"></i>");
+            sb.append("<span class=\"point\">8</span>");
+            sb.append("</div>");
+            sb.append("</div>");
+            sb.append("</div>");
+            sb.append("</li>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
     }
 }

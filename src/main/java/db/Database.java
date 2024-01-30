@@ -33,4 +33,8 @@ public class Database {
     public static void clear() {
         users.clear();
     }
+
+    public static Map<Long, Post> getPostList() {
+        return postList;
+    }
 }
