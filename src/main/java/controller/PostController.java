@@ -33,6 +33,10 @@ public class PostController implements Controller {
 
     @RequestMapping(value = "/post/show", method = "GET")
     public String showPost(InputData inputData, OutputData outputData) {
+        if (inputData.getSessionId() == null) {
+            return "redirect:/user/login.html";
+        }
+
         Long postId = Long.parseLong(inputData.get("postId"));
         Post post = PostRepository.findByPostId(postId);
 
