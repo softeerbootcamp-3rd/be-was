@@ -11,6 +11,29 @@ import java.util.List;
 
 public class ShowTemplate {
     public static final String USERNAME = "<li><a role=\"button\">{}</a></li>";
+    public static final String POST_UPDATE_DELETE =  "                  <div class=\"article-utils\">\n" +
+            "                      <ul class=\"article-utils-list\">\n" +
+            "                          <li>\n" +
+            "                              <a class=\"link-modify-article\" href=\"/questions/423/form\">수정</a>\n" +
+            "                          </li>\n" +
+            "                          <li>\n" +
+            "                              <form class=\"form-delete\" action=\"/board/delete/{postId}\" method=\"POST\">\n" +
+            "                                  <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
+            "                                  <button class=\"link-delete-article\" type=\"submit\">삭제</button>\n" +
+            "                              </form>\n" +
+            "                          </li>\n" +
+            "                      </ul>\n" +
+            "                  </div>\n";
+    public static final String COMMENT_DELETE = "                              <div class=\"article-utils\">\n" +
+            "                                  <ul class=\"article-utils-list\">\n" +
+            "                                      <li>\n" +
+            "                                          <form class=\"delete-answer-form\" action=\"/questions/413/answers/1405\" method=\"POST\">\n" +
+            "                                              <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
+            "                                              <button type=\"submit\" class=\"delete-answer-button\">삭제</button>\n" +
+            "                                          </form>\n" +
+            "                                      </li>\n" +
+            "                                  </ul>\n" +
+            "                              </div>\n";
 
     public static final String COMMENT = "                          <article class=\"article\" id=\"answer-1405\">\n" +
             "                              <div class=\"article-header\">\n" +
@@ -25,16 +48,7 @@ public class ShowTemplate {
             "                              <div class=\"article-doc comment-doc\">\n" +
             "                                  <p>{body}</p>\n" +
             "                              </div>\n" +
-            "                              <div class=\"article-utils\">\n" +
-            "                                  <ul class=\"article-utils-list\">\n" +
-            "                                      <li>\n" +
-            "                                          <form class=\"delete-answer-form\" action=\"/questions/413/answers/1405\" method=\"POST\">\n" +
-            "                                              <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
-            "                                              <button type=\"submit\" class=\"delete-answer-button\">삭제</button>\n" +
-            "                                          </form>\n" +
-            "                                      </li>\n" +
-            "                                  </ul>\n" +
-            "                              </div>\n" +
+            "                              <div id=\"comment-delete\"></div>\n" +
             "                          </article>\n";
     public static final String TEMPLATE = "<div class=\"container\" id=\"main\">\n" +
             "    <div class=\"col-md-12 col-sm-12 col-lg-12\">\n" +
@@ -59,19 +73,7 @@ public class ShowTemplate {
             "                  <div class=\"article-doc\">\n" +
             "                      <p>{contents}</p>\n" +
             "                  </div>\n" +
-            "                  <div class=\"article-utils\">\n" +
-            "                      <ul class=\"article-utils-list\">\n" +
-            "                          <li>\n" +
-            "                              <a class=\"link-modify-article\" href=\"/questions/423/form\">수정</a>\n" +
-            "                          </li>\n" +
-            "                          <li>\n" +
-            "                              <form class=\"form-delete\" action=\"/questions/423\" method=\"POST\">\n" +
-            "                                  <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
-            "                                  <button class=\"link-delete-article\" type=\"submit\">삭제</button>\n" +
-            "                              </form>\n" +
-            "                          </li>\n" +
-            "                      </ul>\n" +
-            "                  </div>\n" +
+            "                  <div id=\"post-update-delete\"></div>\n" +
             "              </article>\n" +
             "\n" +
             "              <div class=\"qna-comment\">\n" +
@@ -105,9 +107,13 @@ public class ShowTemplate {
 
         List<Comment> comments = post.getComments();
         for (Comment comment : comments) {
-            sb.append(COMMENT.replace("{writer}", comment.getWriter().getName())
+            String commentTemplate;
+            commentTemplate = COMMENT.replace("{writer}", comment.getWriter().getName())
                             .replace("{created}", comment.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                            .replace("{body}", comment.getBody()));
+                            .replace("{body}", comment.getBody());
+            if (loggedInUser.equals(comment.getWriter()))
+                commentTemplate = commentTemplate.replace("                              <div id=\"comment-delete\"></div>\n", COMMENT_DELETE);
+            sb.append(commentTemplate);
         }
 
         String template = TEMPLATE.replace("{author}", post.getWriter().getName())
@@ -117,6 +123,8 @@ public class ShowTemplate {
                 .replace("{number_of_comment}", String.valueOf(post.getComments().size()))
                 .replace("{comments}", sb.toString())
                 .replace("{postId}", post.getPostId().toString());
+        if (loggedInUser.equals(post.getWriter()))
+            template = template.replace("                  <div id=\"post-update-delete\"></div>\n", POST_UPDATE_DELETE.replace("{postId}", post.getPostId().toString()));
 
         String html = new String(ResourceUtils.getStaticResource("/board/show.html"));
 

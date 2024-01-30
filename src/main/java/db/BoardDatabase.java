@@ -20,4 +20,8 @@ public class BoardDatabase {
     public static Collection<Post> findAll() {
         return posts.values();
     }
+
+    public static void removePost(Long postId) {
+        posts.remove(postId);
+    }
 }

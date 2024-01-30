@@ -32,13 +32,13 @@ public class UserController {
                 if (httpRequest.getMethod() == HttpMethod.POST)
                     responseEntity = create();
                 else
-                    throw new MethodNotAllowedException();
+                    throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
             }
             if (lastPath.equals("login")) {
                 if (httpRequest.getMethod() == HttpMethod.POST)
                     responseEntity = login();
                 else
-                    throw new MethodNotAllowedException();
+                    throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
             }
             if (lastPath.equals("list")) {
                 responseEntity = list();
@@ -56,8 +56,8 @@ public class UserController {
                     responseEntity = postUpdate();
             }
             return responseEntity;
-        } catch (MethodNotAllowedException e) {
-            return MethodNotAllowedExceptionHandler.handle();
+        } catch (WebException e) {
+            return WebExceptionHandler.handle(e);
         } catch (FileNotFoundException e) {
             return FileNotFoundExceptionHandler.handle();
         }

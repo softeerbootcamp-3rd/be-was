@@ -2,10 +2,12 @@ package service;
 
 import db.BoardDatabase;
 import exception.PostException;
+import exception.WebException;
 import model.Post;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.http.HttpStatus;
 
 import static util.StringUtils.decode;
 
@@ -37,6 +39,14 @@ public class BoardService {
 
     public Post getPostById(Long postId) {
         return BoardDatabase.findPostById(postId);
+    }
+
+    public void delete(Long postId, User loggedInUser) {
+        Post post = BoardDatabase.findPostById(postId);
+        if (loggedInUser == null || !loggedInUser.equals(post.getWriter()))
+            throw new WebException(HttpStatus.UNAUTHORIZED);
+
+        BoardDatabase.removePost(postId);
     }
 
 }

@@ -35,22 +35,29 @@ public class BoardController {
                 if (httpRequest.getMethod() == HttpMethod.POST)
                     responseEntity = write();
                 else
-                    throw new MethodNotAllowedException();
+                    throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
             }
             if (lastPath.equals("comment")) {
                 if (httpRequest.getMethod() == HttpMethod.POST)
                     responseEntity = comment();
                 else
-                    throw new MethodNotAllowedException();
+                    throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
             }
             if (StringUtils.isMatched(path, "/board/show/\\d+")) {
                 String[] tokens = path.split("/");
                 Long postId = Long.parseLong(tokens[tokens.length - 1]);
                 responseEntity = show(postId);
             }
+            if (StringUtils.isMatched(path, "/board/delete/\\d+")) {
+                if (httpRequest.getMethod() != HttpMethod.POST)
+                    throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
+                String[] tokens = path.split("/");
+                Long postId = Long.parseLong(tokens[tokens.length - 1]);
+                responseEntity = delete(postId);
+            }
             return responseEntity;
-        } catch (MethodNotAllowedException e) {
-            return MethodNotAllowedExceptionHandler.handle();
+        } catch (WebException e) {
+            return WebExceptionHandler.handle(e);
         } catch (FileNotFoundException e) {
             return FileNotFoundExceptionHandler.handle();
         }
@@ -128,6 +135,16 @@ public class BoardController {
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create("/board/show/" + postId))
+                .build();
+    }
+
+    private ResponseEntity<?> delete(Long postId) {
+        User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
+
+        boardService.delete(postId, loggedInUser);
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("/index.html"))
                 .build();
     }
 }
