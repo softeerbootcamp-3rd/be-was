@@ -24,7 +24,7 @@ import java.util.Objects;
 @Controller
 public class BoardController {
 
-    @RequestMapping(method = "POST", path = "/board/board")
+    @RequestMapping(method = "POST", path = "/board/post")
     public static HttpResponse boardBoard(@RequestBody BoardDto board) {
         User currentUser = SharedData.requestUser.get();
         if (currentUser == null)
