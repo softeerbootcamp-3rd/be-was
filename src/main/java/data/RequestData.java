@@ -1,6 +1,7 @@
 package data;
 
 import controller.HttpMethod;
+import model.Post;
 
 import java.util.Map;
 
@@ -11,6 +12,8 @@ public class RequestData {
     private final Map<String, String> headers;
     private final String body;
 
+    private final Post postData;
+
     private boolean loggedIn;
 
     public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, boolean loggedIn) {
@@ -19,6 +22,7 @@ public class RequestData {
         this.httpVersion = httpVersion;
         this.headers = headers;
         this.body = null;
+        this.postData = null;
         this.loggedIn = loggedIn;
     }
     public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, String body, boolean loggedIn) {
@@ -27,6 +31,17 @@ public class RequestData {
         this.httpVersion = httpVersion;
         this.headers = headers;
         this.body = body;
+        this.postData = null;
+        this.loggedIn = loggedIn;
+    }
+
+    public RequestData(HttpMethod method, String requestContent, String httpVersion, Map<String, String> headers, Post postData, boolean loggedIn) {
+        this.method = method;
+        this.requestContent = requestContent;
+        this.httpVersion = httpVersion;
+        this.headers = headers;
+        this.body = null;
+        this.postData = postData;
         this.loggedIn = loggedIn;
     }
 
@@ -51,6 +66,10 @@ public class RequestData {
     }
 
     public String getBody() { return body; }
+
+    public Post getPostData() {
+        return postData;
+    }
 
     public boolean isLoggedIn() { return loggedIn; }
     public void setLoggedOut() { loggedIn = false; }
