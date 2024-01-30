@@ -1,8 +1,8 @@
-package util.session;
+package util.web;
 
 import constant.HttpHeader;
-import model.User;
-import util.web.RequestParser;
+import entity.User;
+import model.SessionInfo;
 import webserver.HttpRequest;
 
 import java.util.Map;

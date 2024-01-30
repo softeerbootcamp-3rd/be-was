@@ -1,7 +1,7 @@
 package dto;
 
 import annotation.NotEmpty;
-import util.mapper.MultipartFile;
+import model.MultipartFile;
 
 public class BoardDto {
     @NotEmpty

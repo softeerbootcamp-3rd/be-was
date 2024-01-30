@@ -1,16 +1,12 @@
 package webserver;
 
 import constant.HttpHeader;
-import database.UserRepository;
-import dto.UserCreateDto;
-import model.User;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import static controller.UserController.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpRequestTest {

@@ -1,6 +1,6 @@
 package database;
 
-import model.Comment;
+import entity.Comment;
 
 import java.sql.*;
 import java.util.ArrayList;

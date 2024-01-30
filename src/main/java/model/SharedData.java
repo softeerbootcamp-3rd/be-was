@@ -1,14 +1,12 @@
-package util.web;
+package model;
 
 import com.google.common.base.Strings;
 import constant.ParamType;
-import model.User;
+import entity.User;
 import webserver.HttpRequest;
 
 import java.security.InvalidParameterException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class SharedData {
     public static ThreadLocal<HttpRequest> request = new ThreadLocal<>();

@@ -5,6 +5,7 @@ import annotation.RequestBody;
 import annotation.RequestMapping;
 import annotation.RequestParam;
 import constant.HttpStatus;
+import model.SharedData;
 import util.ClassScanner;
 import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
@@ -112,10 +113,12 @@ public class RequestMapper {
                 .forEach(i -> {
                     Parameter parameter = parameters[i];
                     if (parameter.isAnnotationPresent(RequestParam.class)){
+                        // RequestParam - URI의 queryString으로 받는 파라미터
                         RequestParam annotation = parameter.getAnnotation(RequestParam.class);
                         params[i] = ObjectMapper.mapRequestParam(annotation.value(), parameter.getType());
                         checkRequired(params[i], annotation);
                     } else if (parameter.isAnnotationPresent(RequestBody.class)) {
+                        // RequestBody - body로 받는 파라미터
                         try {
                             params[i] = RequestParser.parseBody(parameter.getType());
                             checkNotEmpty(params[i], parameter.getType());

@@ -5,11 +5,11 @@ import database.CommentRepository;
 import database.BoardRepository;
 import database.UserRepository;
 import exception.ResourceNotFoundException;
-import model.Attachment;
-import model.Board;
-import model.Comment;
-import model.User;
-import util.web.SharedData;
+import entity.Attachment;
+import entity.Board;
+import entity.Comment;
+import entity.User;
+import model.SharedData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

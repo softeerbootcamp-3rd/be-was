@@ -1,7 +1,7 @@
 package util.html;
 
-import model.User;
-import util.web.SharedData;
+import entity.User;
+import model.SharedData;
 
 import java.util.Map;
 

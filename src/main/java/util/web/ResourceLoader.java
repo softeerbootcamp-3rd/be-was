@@ -30,9 +30,11 @@ public class ResourceLoader {
     public static byte[] getFileContent(String path) throws IOException {
         String basePath = "src/main/resources/templates";
         if (path.startsWith("/css/") || path.startsWith("/fonts/")
-                || path.startsWith("/images/") || path.startsWith("/js/"))
+                || path.startsWith("/images/") || path.startsWith("/js/")
+                || path.startsWith("/attachments/"))
             basePath = "src/main/resources/static";
 
+        System.out.println(basePath + path);
         File file = new File(basePath + path);
         if (!file.exists() || !file.isFile())
             throw new ResourceNotFoundException(path);

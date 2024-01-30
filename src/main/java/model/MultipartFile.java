@@ -1,4 +1,4 @@
-package util.mapper;
+package model;
 
 public class MultipartFile {
     private String filename;

@@ -36,7 +36,7 @@ public class H2Database {
              PreparedStatement attachmentStatement = connection.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS attachments " +
                              "(id BIGINT PRIMARY KEY AUTO_INCREMENT, boardId BIGINT, " +
-                             "filename VARCHAR(255), mimeType VARCHAR(255), data BLOB)"
+                             "filename VARCHAR(255), mimeType VARCHAR(255), savedPath VARCHAR(255))"
              )
         ) {
             usersStatement.executeUpdate();

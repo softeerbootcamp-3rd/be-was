@@ -1,18 +1,14 @@
 package webserver;
 
 import com.google.common.base.Strings;
-import constant.HttpHeader;
 import constant.HttpStatus;
-import constant.MimeType;
 import exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.html.HtmlBuilder;
-import util.session.SessionManager;
+import util.web.SessionManager;
 import util.web.RequestMapper;
-import util.web.ResourceLoader;
 import util.web.SecureChecker;
-import util.web.SharedData;
+import model.SharedData;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -47,6 +43,7 @@ public class RequestHandler implements Runnable {
                 response = HttpResponse.of(HttpStatus.NOT_FOUND);
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NoSuchMethodException
                      | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
                 response = HttpResponse.of(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
                 logger.error("error processing request: {}", e.getMessage());

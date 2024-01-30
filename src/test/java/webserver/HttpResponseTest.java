@@ -4,7 +4,7 @@ import constant.HttpHeader;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.web.SharedData;
+import model.SharedData;
 
 import java.io.*;
 

@@ -1,6 +1,7 @@
 package util.web;
 
 import constant.HttpHeader;
+import model.SharedData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ByteReader;
@@ -9,7 +10,6 @@ import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;

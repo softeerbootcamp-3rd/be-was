@@ -1,6 +1,6 @@
 package database;
 
-import model.Board;
+import entity.Board;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

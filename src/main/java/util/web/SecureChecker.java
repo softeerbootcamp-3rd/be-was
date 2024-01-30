@@ -1,6 +1,7 @@
 package util.web;
 
 import constant.SecurePath;
+import model.SharedData;
 import webserver.HttpRequest;
 
 import java.util.regex.Pattern;

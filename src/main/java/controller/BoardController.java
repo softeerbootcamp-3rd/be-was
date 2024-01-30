@@ -10,14 +10,16 @@ import database.AttachmentRepository;
 import database.BoardRepository;
 import dto.CommentDto;
 import dto.BoardDto;
-import model.Board;
-import model.Comment;
-import model.Attachment;
-import model.User;
-import util.mapper.MultipartFile;
-import util.web.SharedData;
+import entity.Board;
+import entity.Comment;
+import entity.Attachment;
+import entity.User;
+import model.MultipartFile;
+import model.SharedData;
+import util.FileUtils;
 import webserver.HttpResponse;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 
@@ -25,15 +27,17 @@ import java.util.Objects;
 public class BoardController {
 
     @RequestMapping(method = "POST", path = "/board/post")
-    public static HttpResponse boardBoard(@RequestBody BoardDto board) {
+    public static HttpResponse boardBoard(@RequestBody BoardDto board) throws IOException {
         User currentUser = SharedData.requestUser.get();
         if (currentUser == null)
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         Long boardId = BoardRepository.add(new Board(currentUser.getUserId(), board.getTitle(), board.getContents(), new Date()));
         MultipartFile file = board.getFile();
-        if (board.getFile() != null)
-            AttachmentRepository.add(new Attachment(boardId, file.getFilename(), file.getContentType(), file.getData()));
+        if (board.getFile() != null) {
+            String savedPath = FileUtils.saveMultipartFile(file);
+            AttachmentRepository.add(new Attachment(boardId, file.getFilename(), file.getContentType(), savedPath));
+        }
         return HttpResponse.redirect("/index.html");
     }
 

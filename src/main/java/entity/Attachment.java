@@ -1,4 +1,4 @@
-package model;
+package entity;
 
 import java.sql.Blob;
 import java.sql.ResultSet;
@@ -12,13 +12,13 @@ public class Attachment {
     private Long boardId;
     private String filename;
     private String mimeType;
-    private byte[] data;
+    private String savedPath;
 
-    public Attachment(Long boardId, String filename, String mimeType, byte[] data) {
+    public Attachment(Long boardId, String filename, String mimeType, String savedPath) {
         this.boardId = boardId;
         this.filename = filename;
         this.mimeType = mimeType;
-        this.data = data;
+        this.savedPath = savedPath;
     }
 
     public Attachment() {
@@ -48,14 +48,6 @@ public class Attachment {
         this.mimeType = mimeType;
     }
 
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
     public String getFilename() {
         return filename;
     }
@@ -71,23 +63,7 @@ public class Attachment {
                 ", boardId=" + boardId +
                 ", fileName='" + filename + '\'' +
                 ", mimeType='" + mimeType + '\'' +
-                ", data=" + Arrays.toString(data) +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Attachment attachment = (Attachment) o;
-        return Objects.equals(id, attachment.id) && Objects.equals(boardId, attachment.boardId) && Objects.equals(filename, attachment.filename) && Objects.equals(mimeType, attachment.mimeType) && Arrays.equals(data, attachment.data);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(id, boardId, filename, mimeType);
-        result = 31 * result + Arrays.hashCode(data);
-        return result;
     }
 
     public static Attachment of(ResultSet resultSet) throws SQLException {
@@ -96,9 +72,28 @@ public class Attachment {
         attachment.boardId = resultSet.getLong("boardId");
         attachment.filename = resultSet.getString("filename");
         attachment.mimeType = resultSet.getString("mimeType");
-        Blob blob = resultSet.getBlob("data");
-        if (blob != null)
-            attachment.data = blob.getBytes(1, (int) blob.length());
+        attachment.savedPath = resultSet.getString("savedPath");
         return attachment;
+    }
+
+    public String getSavedPath() {
+        return savedPath;
+    }
+
+    public void setSavedPath(String savedPath) {
+        this.savedPath = savedPath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attachment that = (Attachment) o;
+        return Objects.equals(id, that.id) && Objects.equals(boardId, that.boardId) && Objects.equals(filename, that.filename) && Objects.equals(mimeType, that.mimeType) && Objects.equals(savedPath, that.savedPath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, boardId, filename, mimeType, savedPath);
     }
 }

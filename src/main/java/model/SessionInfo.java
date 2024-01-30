@@ -1,6 +1,6 @@
-package util.session;
+package model;
 
-import model.User;
+import entity.User;
 
 public class SessionInfo {
     private final User user;

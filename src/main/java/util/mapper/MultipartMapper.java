@@ -3,10 +3,11 @@ package util.mapper;
 import com.google.common.base.Strings;
 import constant.HttpHeader;
 import constant.ParamType;
+import model.MultipartFile;
 import util.ByteArrayUtils;
 import util.ByteReader;
 import util.web.RequestParser;
-import util.web.SharedData;
+import model.SharedData;
 
 import java.io.*;
 import java.lang.reflect.Field;

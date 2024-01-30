@@ -4,10 +4,10 @@ import constant.HttpStatus;
 import database.UserRepository;
 import dto.LoginDto;
 import dto.UserCreateDto;
-import model.User;
+import entity.User;
 import org.junit.jupiter.api.Test;
 import util.web.RequestParser;
-import util.session.SessionManager;
+import util.web.SessionManager;
 import webserver.HttpResponse;
 
 import static controller.UserController.createUser;

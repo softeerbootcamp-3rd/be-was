@@ -2,7 +2,7 @@ package util.mapper;
 
 import com.google.common.base.Strings;
 import constant.ParamType;
-import util.web.SharedData;
+import model.SharedData;
 import webserver.HttpRequest;
 
 import java.lang.reflect.Field;

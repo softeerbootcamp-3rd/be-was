@@ -1,8 +1,8 @@
 package util.html;
 
 import database.UserRepository;
-import model.User;
-import util.web.SharedData;
+import entity.User;
+import model.SharedData;
 
 import java.util.ArrayList;
 import java.util.List;
