@@ -22,18 +22,18 @@ public class UserCreateDto {
     }
 
     public String getUserId() {
-        return this.userId;
+        return userId;
     }
 
     public String getPassword() {
-        return this.password;
+        return password;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public String getEmail() {
-        return this.email;
+        return email;
     }
 }

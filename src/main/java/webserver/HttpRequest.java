@@ -37,23 +37,23 @@ public class HttpRequest {
     }
 
     public String getMethod() {
-        return this.method;
+        return method;
     }
 
     public String getPath() {
-        return this.path;
+        return path;
     }
 
     public Map<String, String> getParamMap() {
-        return this.paramMap;
+        return paramMap;
     }
 
     public Map<HttpHeader, String> getHeader() {
-        return this.header;
+        return header;
     }
 
     public byte[] getBody() {
-        return this.body;
+        return body;
     }
 
     @Override

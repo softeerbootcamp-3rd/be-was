@@ -33,15 +33,15 @@ public class HttpResponse {
     }
 
     public HttpStatus getStatus() {
-        return this.status;
+        return status;
     }
 
     public Map<HttpHeader, String> getHeader() {
-        return this.header;
+        return header;
     }
 
     public byte[] getBody() {
-        return this.body;
+        return body;
     }
 
     public static class HttpResponseBuilder {
@@ -77,7 +77,7 @@ public class HttpResponse {
             if (this.httpResponse.status == null) {
                 throw new IllegalStateException("Status is required for HttpResponse.");
             }
-            return this.httpResponse;
+            return httpResponse;
         }
     }
 

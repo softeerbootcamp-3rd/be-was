@@ -13,11 +13,11 @@ public class PostDto {
     public PostDto() {}
 
     public String getTitle() {
-        return this.title;
+        return title;
     }
 
     public String getContents() {
-        return this.contents;
+        return contents;
     }
 
     public void setTitle(String title) {
