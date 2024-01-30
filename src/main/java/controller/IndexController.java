@@ -20,12 +20,7 @@ public class IndexController implements Controller {
 
         ListMapData listMapData = new ListMapData();
         for (Post post : PostRepository.findAll()) {
-            Map<String, String> p = new HashMap<>();
-            p.put("postId", post.getPostId().toString());
-            p.put("writer", post.getWriter());
-            p.put("title", post.getTitle());
-            p.put("createdAt", post.getCreatedAt().format(formatter));
-            listMapData.putMap(p);
+            listMapData.putMap(setPostInfo(post));
         }
         outputData.getView().set("posts", listMapData);
 
@@ -39,16 +34,20 @@ public class IndexController implements Controller {
         ListMapData listMapData = new ListMapData();
         for (Post post : PostRepository.findAll()) {
             if (post.getTitle().contains(findThis)) {
-                Map<String, String> p = new HashMap<>();
-                p.put("postId", post.getPostId().toString());
-                p.put("writer", post.getWriter());
-                p.put("title", post.getTitle());
-                p.put("createdAt", post.getCreatedAt().format(formatter));
-                listMapData.putMap(p);
+                listMapData.putMap(setPostInfo(post));
             }
         }
         outputData.getView().set("posts", listMapData);
 
         return "/index.html";
+    }
+
+    private Map<String, String> setPostInfo(Post post) {
+        Map<String, String> p = new HashMap<>();
+        p.put("postId", post.getPostId().toString());
+        p.put("writer", post.getWriter());
+        p.put("title", post.getTitle());
+        p.put("createdAt", post.getCreatedAt().format(formatter));
+        return p;
     }
 }
