@@ -119,6 +119,10 @@ public class PostRepository {
                 logger.error(e.getMessage());
             }
         }
+
+        if(post == null)
+            throw new RuntimeException("Illegal value");
+
         return post;
     }
 
