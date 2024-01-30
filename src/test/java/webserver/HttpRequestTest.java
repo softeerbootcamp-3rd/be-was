@@ -28,4 +28,29 @@ public class HttpRequestTest {
         assertEquals("javajigi", request.getParamMap().get("userId"));
     }
 
+    @Test
+    public void testHttpRequestPost() throws Exception {
+
+        InputStream in = new FileInputStream(testDirectory + "Http_POST.txt");
+        HttpRequest request = new HttpRequest(in);
+
+        assertEquals("POST", request.getMethod());
+        assertEquals("/user/create", request.getPath());
+        assertEquals("keep-alive", request.getHeader().get(HttpHeader.CONNECTION));
+        assertEquals("userId=javajigi&password=password&name=JaeSung", new String(request.getBody()));
+    }
+
+    @Test
+    public void testHttpRequestPost2() throws Exception {
+
+        InputStream in = new FileInputStream(testDirectory + "Http_POST2.txt");
+        HttpRequest request = new HttpRequest(in);
+
+        assertEquals("POST", request.getMethod());
+        assertEquals("/user/create", request.getPath());
+        assertEquals("keep-alive", request.getHeader().get(HttpHeader.CONNECTION));
+        assertEquals("1", request.getParamMap().get("id"));
+        assertEquals("userId=javajigi&password=password&name=JaeSung", new String(request.getBody()));
+    }
+
 }

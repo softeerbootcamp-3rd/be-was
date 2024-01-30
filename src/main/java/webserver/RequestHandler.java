@@ -66,17 +66,7 @@ public class RequestHandler implements Runnable {
         if (handler != null) {
             return RequestMapper.invoke(handler);
         } else if (Objects.equals(request.getMethod(), "GET")) {
-            byte[] fileContent = ResourceLoader.getFileContent(request.getPath());
-
-            // html 파일이면 동적으로 내용 변경
-            if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(request.getPath())))
-                fileContent = HtmlBuilder.process(fileContent);
-
-            return HttpResponse.builder()
-                    .status(HttpStatus.OK)
-                    .addHeader(HttpHeader.CONTENT_TYPE, ResourceLoader.getMimeType(request.getPath()))
-                    .body(fileContent)
-                    .build();
+            return HttpResponse.forward(request.getPath());
         } else
             throw new ResourceNotFoundException(request.getPath());
     }

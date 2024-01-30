@@ -4,6 +4,7 @@ import constant.HttpHeader;
 import constant.HttpStatus;
 import constant.MimeType;
 import org.slf4j.Logger;
+import util.html.HtmlBuilder;
 import util.web.ResourceLoader;
 
 import java.io.DataOutputStream;
@@ -21,6 +22,7 @@ public class HttpResponse {
     public HttpResponse() {
         this.status = HttpStatus.OK;
         this.header = new HashMap<>();
+        this.body = new byte[0];
     }
 
     public void setBody(String body) {
@@ -81,6 +83,20 @@ public class HttpResponse {
         }
     }
 
+    public static HttpResponse forward(String path) throws IOException {
+        byte[] fileContent = ResourceLoader.getFileContent(path);
+
+        // html 파일이면 동적으로 내용 변경
+        if (MimeType.HTML.getMimeType().equals(ResourceLoader.getMimeType(path)))
+            fileContent = HtmlBuilder.process(fileContent);
+
+        return builder()
+                .status(HttpStatus.OK)
+                .addHeader(HttpHeader.CONTENT_TYPE, ResourceLoader.getMimeType(path))
+                .body(fileContent)
+                .build();
+    }
+
     public static HttpResponse redirect(String path) {
         return builder().status(HttpStatus.FOUND)
                 .addHeader(HttpHeader.LOCATION, path)
@@ -92,15 +108,15 @@ public class HttpResponse {
     }
 
     public void send(OutputStream out, Logger logger) {
-        if (this.status == null)
+        if (status == null)
             throw new IllegalStateException("Status is required for HttpResponse.");
         try {
-            out.write(("HTTP/1.1 " + this.status.getFullMessage() + " \r\n").getBytes());
+            out.write(("HTTP/1.1 " + status.getFullMessage() + " \r\n").getBytes());
             for (Map.Entry<HttpHeader, String> entry : header.entrySet()) {
                 out.write((entry.getKey().getValue() + ": " + entry.getValue() + "\r\n").getBytes());
             }
             out.write("\r\n".getBytes());
-            out.write(this.body);
+            out.write(body);
             out.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
