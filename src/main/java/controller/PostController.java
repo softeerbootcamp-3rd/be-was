@@ -7,7 +7,11 @@ import db.PostRepository;
 import model.Post;
 import view.View;
 
+import java.time.format.DateTimeFormatter;
+
 public class PostController implements Controller {
+
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @RequestMapping(value = "/post/create", method = "POST")
     public String createPost(InputData inputData, OutputData outputData) {
@@ -26,6 +30,7 @@ public class PostController implements Controller {
         view.set("writer", post.getWriter());
         view.set("contents", post.getContents());
         view.set("title", post.getTitle());
+        view.set("createdAt", post.getCreatedAt().format(formatter));
 
         return "/qna/show.html";
     }

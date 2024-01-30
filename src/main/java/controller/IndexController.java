@@ -7,11 +7,13 @@ import controller.dto.OutputData;
 import db.PostRepository;
 import model.Post;
 
-import java.util.Collection;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class IndexController implements Controller {
+
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @RequestMapping(value = "/index", method = "GET")
     public String indexPage(InputData inputData, OutputData outputData) {
@@ -22,6 +24,7 @@ public class IndexController implements Controller {
             p.put("postId", post.getPostId().toString());
             p.put("writer", post.getWriter());
             p.put("title", post.getTitle());
+            p.put("createdAt", post.getCreatedAt().format(formatter));
             listMapData.putMap(p);
         }
         outputData.getView().set("posts", listMapData);
@@ -40,6 +43,7 @@ public class IndexController implements Controller {
                 p.put("postId", post.getPostId().toString());
                 p.put("writer", post.getWriter());
                 p.put("title", post.getTitle());
+                p.put("createdAt", post.getCreatedAt().format(formatter));
                 listMapData.putMap(p);
             }
         }

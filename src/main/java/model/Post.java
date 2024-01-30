@@ -1,10 +1,15 @@
 package model;
 
+import java.time.LocalDateTime;
+
 public class Post {
     private Long postId;
     private String writer;
     private String title;
     private String contents;
+
+
+    private LocalDateTime createdAt;
 
     public Post(String writer, String title, String contents) {
         this.writer = writer;
@@ -17,6 +22,7 @@ public class Post {
         this.writer = post.getWriter();
         this.title = post.getTitle();
         this.contents = post.getContents();
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getPostId() {
@@ -34,4 +40,6 @@ public class Post {
     public String getContents() {
         return contents;
     }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }
