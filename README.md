@@ -12,3 +12,4 @@ Java Web Application Server 2023
 ## 3. [step-3-README](docs/step-3-README.md)
 ## 4. [step-4-README](docs/step-4-README.md)
 ## 5. [step-5-README](docs/step-5-README.md)
+## 6. [step-6-README](docs/step-6-README.md)

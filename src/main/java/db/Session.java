@@ -12,17 +12,21 @@ public class Session {
         sessions.put(sessionId, userId);
     }
 
-    public static User findUserBySessionId(String seesionId) {
-        String userId = sessions.get(seesionId);
-        return Database.findUserById(userId);
+    public static User findUserBySessionId(String sessionId) {
+        String userId = sessions.get(sessionId);
+        return userId == null ? null : Database.findUserById(userId);
     }
 
-    public static String getSessionId(String userId) {
+    public static String getSessionIdByUserId(String userId) {
         for (String key : sessions.keySet()) {
             if (sessions.get(key).equals(userId)) {
                 return key;
             }
         }
         return null;
+    }
+
+    public static void removeSession(String sessionId) {
+        sessions.remove(sessionId);
     }
 }

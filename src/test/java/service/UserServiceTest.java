@@ -13,7 +13,6 @@ import request.user.LoginRequest;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import static db.Database.addUser;

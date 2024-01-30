@@ -32,6 +32,7 @@
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
+                <li class="navbar-brand" id="welcomeMessage"></li>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
                     <ul class="dropdown-menu">
@@ -64,12 +65,47 @@
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="../index.html">Posts</a></li>
-                <li><a href="../user/login.html" role="button">로그인</a></li>
-                <li><a href="../user/form.html" role="button">회원가입</a></li>
-                <li><a href="#" role="button">로그아웃</a></li>
-                <li><a href="#" role="button">개인정보수정</a></li>
+                <li id="userListButton"><a href="list.html" role="button">회원목록</a></li>
+                <li id="logoutButton">
+                    <form action="/user/logout" method="post">
+                        <button type="submit" class="btn btn-link" style="margin-top: 8px">로그아웃</button>
+                    </form>
+                </li>
             </ul>
         </div>
+
+        <script>
+            function getCookie(name) {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    var parts = cookie.split('=');
+                    if (parts[0] === name) {
+                        return parts[1];
+                    }
+                }
+                return null;
+            }
+
+            var sessionId = getCookie("sid")
+            var userName = getCookie("user-name")
+            var userLoggedIn = false;
+
+            if (sessionId != null) {
+                userLoggedIn = true;
+            }
+
+            if (userLoggedIn) {
+                document.getElementById("userListButton").style.display = 'block'
+                document.getElementById("logoutButton").style.display = 'block';
+                document.getElementById("welcomeMessage").textContent = `Welcome ${userName}!`;
+            }
+            else {
+                document.getElementById("userListButton").style.display = 'none';
+                document.getElementById("logoutButton").style.display = 'none';
+            }
+        </script>
+
     </div>
 </div>
 
@@ -82,13 +118,8 @@
                     <th>#</th> <th>사용자 아이디</th> <th>이름</th> <th>이메일</th><th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                    <th scope="row">1</th> <td>javajigi</td> <td>자바지기</td> <td>javajigi@sample.net</td><td><a href="#" class="btn btn-success" role="button">수정</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th> <td>slipp</td> <td>슬립</td> <td>slipp@sample.net</td><td><a href="#" class="btn btn-success" role="button">수정</a></td>
-                </tr>
+              <tbody >
+                {{userList}}
               </tbody>
           </table>
         </div>

@@ -18,6 +18,7 @@ public class HomeController implements Controller {
         if (instance == null) {
             instance = new HomeController();
         }
+
         return instance;
     }
 
@@ -29,11 +30,12 @@ public class HomeController implements Controller {
 
         File file = new File(filePath);
 
-        if (file.exists() && method.equals("GET")) {
-            if (uri.equals(HOME.getUri())) {
-                return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), null);
-            }
+        if (file.exists() && !file.isDirectory() && method.equals("GET")) {
             return new HttpResponse(OK, filePath);
+        }
+
+        if (uri.equals(HOME.getUri())) {
+            return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), null);
         }
 
         return new HttpResponse(NOT_FOUND);

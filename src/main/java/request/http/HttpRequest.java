@@ -1,7 +1,11 @@
 package request.http;
 
+import model.User;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+
+import static db.Session.*;
 
 public class HttpRequest {
     private String method;
@@ -41,6 +45,10 @@ public class HttpRequest {
 
     public String getHttpVersion() {
         return httpVersion;
+    }
+
+    public RequestHeaders getRequestHeaders() {
+        return requestHeaders;
     }
 
     public String getRequestBody() {

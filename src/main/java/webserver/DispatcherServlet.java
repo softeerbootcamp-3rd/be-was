@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import response.http.HttpResponse;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static webserver.ViewResolver.response;
+import static webserver.HttpResponseHandler.response;
 
 public class DispatcherServlet implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
@@ -40,10 +40,13 @@ public class DispatcherServlet implements Runnable {
 
     public static HttpResponse findController(HttpRequest httpRequest) throws Exception {
         String uri = httpRequest.getUri();
+
         if (uri.startsWith("/user")) { // user로 시작하는 경로는 UserController에서 처리
             return userController.handleUserRequest(httpRequest);
-        } else {                                         // 그 외의 경로는 HomeController에서 처리
-            return homeController.handleUserRequest(httpRequest);
         }
+        if (uri.startsWith("/qna")) { // qna로 시작하는 경로는 QnaController에서 처리
+            //todo
+        }
+        return homeController.handleUserRequest(httpRequest); // 그 외의 경로는 HomeController에서 처리
     }
 }
