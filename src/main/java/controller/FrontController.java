@@ -5,6 +5,7 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
+import exception.NoHandlerFoundException;
 import model.HttpRequest;
 import model.HttpResponse;
 import util.ResponseSender;
@@ -70,6 +71,12 @@ public class FrontController {
         if (URIParser.isResourceURI(requestURI)) {
             return handlerMappingMap.get("resource");
         }
-        return handlerMappingMap.get(requestURI);
+
+        Object handler = handlerMappingMap.get(requestURI);
+        if (handler != null) {
+            return handler;
+        }
+
+        throw new NoHandlerFoundException(httpRequest.getURI() + "에 해당하는 handler를 찾을 수 없습니다.");
     }
 }
