@@ -30,8 +30,9 @@ public class UserController {
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            // 회원가입에 실패할 경우 (중복 아이디) CONFLICT 반환
-            return HttpResponse.of(HttpStatus.CONFLICT);
+            // 회원가입에 실패할 경우 (중복 아이디) 회원가입 실패 페이지 반환
+            Map<String, String> header = Map.of("Location", "/user/signup_failed.html");
+            return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
     }
 
