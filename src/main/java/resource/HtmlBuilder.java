@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class HtmlBuilder {
+    private static final String FILE_PATH = "/data/";
     public static String generateUserList() {
         Collection<User> userList = Database.findAllUsers();
         StringBuilder sb = new StringBuilder();
@@ -81,6 +82,26 @@ public class HtmlBuilder {
                     .append("<div class=\"article-doc\">\n")
                     .append("<p>").append(post.getContents()).append("</p>\n")
                     .append("</div>\n");
+        }
+
+        return sb.toString();
+    }
+
+    public static String generateAttachedFileInfo(Map<String, String> params) {
+        Post post = Database.findPostById(params.get("id"));
+        StringBuilder sb = new StringBuilder();
+
+        if (post == null) {
+            return "";
+        }
+
+        String fileName = post.getAttachedFileName();
+        if (fileName != null && !fileName.isEmpty()) {
+            String filePath = FILE_PATH + fileName;
+            sb.append("<li>\n")
+                .append("<a href=\"").append(filePath).append("\" download=\"").append(fileName).append("\">")
+                .append(fileName).append("</a>\n")
+                .append("</li>\n");
         }
 
         return sb.toString();
