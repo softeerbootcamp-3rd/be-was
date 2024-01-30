@@ -67,12 +67,6 @@ public class FrontController {
         }
 
         //todo 이걸 없애자
-        if (adapter instanceof ResourceHandlerAdapter) {
-            ResourceController resourceController = (ResourceController) handler;
-            view.render(httpRequest, httpResponse, mv, resourceController.getType());
-            ResponseSender.send(httpResponse, out);
-            return;
-        }
 
         view.render(httpRequest, httpResponse, mv);
         ResponseSender.send(httpResponse, out);

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 import util.HtmlBuilder;
+import util.SessionManager;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -71,17 +72,17 @@ public class View {
                 }
             }
 
-            User findUser = null;
+            User loginUser = null;
             try {
-                String userId = httpRequest.getCookie("sid");
-                findUser = userService.findUserById(userId);
+                String sid = httpRequest.getCookie("sid");
+                loginUser = SessionManager.getSessionById(sid);
             } catch (IllegalArgumentException | UserNotFoundException e) {
                 fileString = fileString.replace("{{welcome}}", "");
                 body = fileString.getBytes();
                 httpResponse.setBody(body);
                 return;
             }
-            String renderedHtml = HtmlBuilder.replace("{{welcome}}", findUser.getName());
+            String renderedHtml = HtmlBuilder.replace("{{welcome}}", loginUser.getName());
             fileString = fileString.replace("{{welcome}}", renderedHtml);
             body = fileString.getBytes();
         }
@@ -89,51 +90,4 @@ public class View {
         httpResponse.setBody(body);
     }
 
-    public void render(HttpRequest httpRequest, HttpResponse httpResponse, ModelView mv, String type) {
-        File file = new File(viewPath);
-        byte[] body = new byte[(int) file.length()];
-
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            fileInputStream.read(body);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        httpResponse.setHttpStatus(mv.getHttpStatus());
-        httpResponse.addHeader("Content-Type", "text/" + type + ";charset=utf-8");
-
-// todo
-        if (mv.getViewName().contains("index.html")) {
-            String fileString = new String(body);
-
-            Object attribute = mv.getAttribute("{{qna-list}}");
-            if (attribute != null) {
-                Collection<Qna> qnaCollection = (Collection<Qna>) attribute;
-                ArrayList<Qna> qnas = new ArrayList<>(qnaCollection);
-                if (qnas.size() == 0) {
-                    fileString = fileString.replace("{{qna-list}}", "");
-                } else {
-                    String rendered = HtmlBuilder.replace("{{qna-list}}", qnas);
-                    fileString = fileString.replace("{{qna-list}}", rendered);
-                }
-            }
-
-            User findUser = null;
-            try {
-                String userId = httpRequest.getCookie("sid");
-                findUser = userService.findUserById(userId);
-            } catch (IllegalArgumentException | UserNotFoundException e) {
-                fileString = fileString.replace("{{welcome}}", "");
-                body = fileString.getBytes();
-                httpResponse.setBody(body);
-                return;
-            }
-            String renderedHtml = HtmlBuilder.replace("{{welcome}}", findUser.getName());
-            fileString = fileString.replace("{{welcome}}", renderedHtml);
-            body = fileString.getBytes();
-        }
-
-        httpResponse.setBody(body);
-
-    }
 }
