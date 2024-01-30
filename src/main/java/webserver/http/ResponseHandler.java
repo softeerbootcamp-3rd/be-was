@@ -46,7 +46,7 @@ public class ResponseHandler {
                 fis.read(responseBody);
                 fis.close();
             }
-            else{
+            else if(responseMimeType != Mime.NONE){
                 //404 error 처리
                 file = new File(ROOT_DIRECTORY + TEMPLATE_DIRECTORY + "/error/404.html");
                 FileInputStream fis = new FileInputStream(file);

@@ -1,6 +1,7 @@
 package db;
 
 import db.dto.CreatePost;
+import db.dto.GetPost;
 import model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,8 @@ public class PostRepository {
         }
     }
 
-    public static Collection<Post> findAll() {
-        List<Post> posts = new ArrayList<>();
+    public static Collection<GetPost> findAll() {
+        List<GetPost> posts = new ArrayList<>();
         try {
             conn = DriverManager.getConnection(url, username, password);
             String sql = "SELECT * FROM Post";
@@ -60,13 +61,14 @@ public class PostRepository {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
+                int id = resultSet.getInt("id");
                 String userId = resultSet.getString("writer");
                 String password = resultSet.getString("title");
                 String name = resultSet.getString("content");
                 Timestamp timestamp = resultSet.getTimestamp("createdtime");
                 int commentCount = resultSet.getInt("commentcount");
 
-                posts.add(new Post(userId, password, name, timestamp.toLocalDateTime(),commentCount ));
+                posts.add(new GetPost(id, userId, password, name, timestamp.toLocalDateTime(),commentCount ));
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());

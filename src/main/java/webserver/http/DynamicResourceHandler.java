@@ -4,6 +4,7 @@ import db.H2Database;
 import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
+import db.dto.GetPost;
 import model.Post;
 import model.User;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class DynamicResourceHandler {
             responseContent = new String(responseBody);
         }
 
-        Collection<Post> allPost = PostRepository.findAll();
+        Collection<GetPost> allPost = PostRepository.findAll();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<ul class =\"list\">");
@@ -49,7 +50,7 @@ public class DynamicResourceHandler {
             stringBuilder.append("<li>");
             stringBuilder.append("<div class='wrap'>");
             stringBuilder.append("<div class='main'>");
-            stringBuilder.append("<strong class='subject'><a href='./qna/show.html'>").append(post.getTitle()).append("</a></strong>");
+            stringBuilder.append("<strong class='subject'><a href='./post/show.html'>").append(post.getTitle()).append("</a></strong>");
             stringBuilder.append("<div class='auth-info'>");
             stringBuilder.append("<i class='icon-add-comment'></i>");
             stringBuilder.append("<span class='time'>").append(formattedDateTime).append("</span>");

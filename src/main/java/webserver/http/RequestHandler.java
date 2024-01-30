@@ -85,9 +85,10 @@ public class RequestHandler {
         User user = new User(formData.get("userId"), formData.get("password"), formData.get("name"), formData.get("email") );
 
         //같은 아이디 회원 가입 방지
-        if(UserRepository.findUserById(user.getUserId()) != null)
+        if(UserRepository.findUserById(user.getUserId()) != null) {
+            request.addRequestHeader("Location","/index.html");
             return;
-
+        }
         UserRepository.adduser(user);
         request.addRequestHeader("Location","/index.html");
     }
