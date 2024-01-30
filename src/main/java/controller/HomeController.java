@@ -71,7 +71,12 @@ public class HomeController implements Controller {
      * @param response 응답 메시지
      */
     private void getStatic(String url, Response response) {
-        String filePath = "src/main/resources/static" + url;
+        String filePath;
+        if (url.startsWith("/images")) {
+            filePath = "src/main/resources" + url;
+        } else {
+            filePath = "src/main/resources/static" + url;
+        }
 
         try{
             byte[] body = PageReader.getPage(filePath);

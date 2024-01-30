@@ -22,6 +22,10 @@ public class HtmlBuilder {
             + "<span class=\"time\">{{post-time}} </span>"
             + "<a href=\"./user/profile.html\" class=\"author\">{{writer}}</a>"
             + "</div>"
+            + "<div class=\"reply\" title=\"댓글\">\n"
+            + "<i class=\"icon-reply\"></i>\n"
+            + "<img src=\"../../images/sample.png\" class=\"article-author-thumb\" alt=\"image\">\n"
+            + "</div>"
             + "</div>"
             + "</div>"
             + "</li>\n";
