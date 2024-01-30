@@ -5,8 +5,6 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
-import repository.QnaRepository;
-import model.Qna;
 import model.HttpRequest;
 import model.HttpResponse;
 import util.ResponseSender;
