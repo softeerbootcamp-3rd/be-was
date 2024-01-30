@@ -26,6 +26,23 @@ public class HtmlBuilder {
         return sb.toString();
     }
 
+    public static String generateUserNavBar() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<li><a href=\"user/logout\" role=\"button\">로그아웃</a></li>\n")
+                .append("<li><a href=\"#\" role=\"button\">개인정보수정</a></li>");
+
+        return sb.toString();
+    }
+
+    public static String generateBasicNavBar() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>\n")
+                .append("<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>");
+
+        return sb.toString();
+
+    }
+
     public static String generatePostList() {
         Collection<Post> posts = Database.findAllPosts();
         StringBuilder sb = new StringBuilder();
