@@ -9,6 +9,7 @@ import repository.QnaRepository;
 import repository.UserRepository;
 import service.QnaService;
 import service.UserService;
+import util.SessionManager;
 
 public class AppConfig {
     private static UserCreateController userCreateController;
@@ -20,6 +21,7 @@ public class AppConfig {
     private static QnaService qnaService;
     private static UserRepository userRepository;
     private static QnaRepository qnaRepository;
+    private static SessionManager sessionManager;
 
     public static UserService userService() {
         if (userService == null) {
