@@ -356,7 +356,7 @@ public class GetService {
             sb.append(tokens[i]);
             if(i == tokens.length - 1)
                 break;
-            sb.append("</p><p>");
+            sb.append("<br>");
         }
         stringFile = stringFile.replace("내용", sb.toString());
         // 수정, 삭제 링크 걸기
