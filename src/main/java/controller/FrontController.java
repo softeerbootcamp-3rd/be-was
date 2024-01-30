@@ -47,12 +47,12 @@ public class FrontController {
         HandlerAdapter adapter = getHandlerAdapter(handler);
         ModelView mv = adapter.handle(httpRequest, httpResponse, handler);
 
-        DynamicPageLoader.postHandle(httpRequest, mv);
-
         String viewName = mv.getViewName();
         View view = ViewResolver.resolveViewName(viewName);
 
+        DynamicPageLoader.beforeRender(httpRequest, mv);
         view.render(httpRequest, httpResponse, mv);
+
         ResponseSender.send(httpResponse, out);
     }
 
