@@ -135,7 +135,7 @@ public class UserController implements Controller {
     @PostMapping(value = "/user/create", requiredLogin = false)
     public HttpResponse userCreate(HttpRequest httpRequest) {
         try {
-            User user = Parser.jsonParser(User.class, httpRequest.getRequestBody());
+            User user = Parser.jsonParser(User.class, httpRequest.getRequestBodyS());
             userService.join(user);
 
             return new HttpResponse(FOUND, "text/html", HOME_INDEX.getUri(), null); // 회원가입 성공시 홈으로 이동
@@ -147,7 +147,7 @@ public class UserController implements Controller {
     @PostMapping(value = "/user/login", requiredLogin = false)
     public HttpResponse userLogin(HttpRequest httpRequest) {
         try {
-            LoginRequest loginRequest = Parser.jsonParser(LoginRequest.class, httpRequest.getRequestBody());
+            LoginRequest loginRequest = Parser.jsonParser(LoginRequest.class, httpRequest.getRequestBodyS());
             if (!userService.login(loginRequest)) {
                 return new HttpResponse(FOUND, "text/html", USER_LOGIN_FAILED.getUri(), null); // 로그인 실패시 로그인 실패 페이지로 이동
             }
