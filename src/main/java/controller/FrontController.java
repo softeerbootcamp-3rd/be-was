@@ -8,6 +8,7 @@ import controller.adapter.UserControllerHandlerAdapter;
 import model.HttpRequest;
 import model.HttpResponse;
 import util.ResponseSender;
+import util.URIParser;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,7 +24,6 @@ public class FrontController {
     }
 
     private void initHandlerMappingMap() {
-        // todo 제네릭으로 만들까?
         handlerMappingMap.put("resource", new ResourceController());
 
         handlerMappingMap.put("/user/create", AppConfig.userCreateController());
@@ -67,19 +67,9 @@ public class FrontController {
 
     private Object getHandler(HttpRequest httpRequest) {
         String requestURI = httpRequest.getURI();
-        if (isResourceURI(requestURI)) {
+        if (URIParser.isResourceURI(requestURI)) {
             return handlerMappingMap.get("resource");
         }
         return handlerMappingMap.get(requestURI);
     }
-
-    private boolean isResourceURI(String uri) {
-        return uri.contains(".css")
-                || uri.contains("fonts")
-                || uri.contains(".images")
-                || uri.contains(".js")
-                || uri.contains(".ico")
-                || uri.contains(".html");
-    }
-
 }

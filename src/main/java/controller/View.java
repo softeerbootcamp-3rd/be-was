@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
 import util.HtmlBuilder;
+import util.URIParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +35,7 @@ public class View {
         }
 
         httpResponse.setHttpStatus(mv.getHttpStatus());
-        String type = extractType(mv);
+        String type = URIParser.extractType(mv.getViewName());
         httpResponse.addHeader(HeaderType.CONTENT_TYPE, "text/" + type + ";charset=utf-8");
 
         if (requiredDynamicRendering(mv)) {
@@ -55,11 +56,4 @@ public class View {
     private static boolean requiredDynamicRendering(ModelView mv) {
         return mv.getModel().size() > 0;
     }
-
-    private String extractType(ModelView mv) { //todo URIParser역할
-        String uri = mv.getViewName();
-        int start = uri.lastIndexOf(".");
-        return uri.substring(start + 1);
-    }
-
 }

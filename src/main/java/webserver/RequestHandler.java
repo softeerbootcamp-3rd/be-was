@@ -7,10 +7,10 @@ import model.HttpRequest;
 import model.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.URIParser;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URLDecoder;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -57,7 +57,7 @@ public class RequestHandler implements Runnable {
     }
 
     private void setRequestParamFromQuery(HttpRequest httpRequest, String query) throws UnsupportedEncodingException {
-        Parameter paramMap = getParamMap(query);
+        Parameter paramMap = URIParser.getParamMap(query);
         httpRequest.setParamMap(paramMap);
     }
 
@@ -91,47 +91,28 @@ public class RequestHandler implements Runnable {
         httpRequest.setHeaderMap(headerMap);
     }
 
-    private void setRequestLine(HttpRequest httpRequest, String status) throws UnsupportedEncodingException {
-        String[] tokens = status.split(" ");
+    private void setRequestLine(HttpRequest httpRequest, String statusLine) throws UnsupportedEncodingException {
+        String[] statuses = statusLine.split(" ");
 
-        if (tokens[0].equals(HttpMethod.GET.name())) {
+        if (statuses[0].equals(HttpMethod.GET.name())) {
             httpRequest.setMethod(HttpMethod.GET);
         }
-        if (tokens[0].equals(HttpMethod.POST.name())) {
+        if (statuses[0].equals(HttpMethod.POST.name())) {
             httpRequest.setMethod(HttpMethod.POST);
         }
 
-        String uri = tokens[1];
-        if (uri.contains("?")) {
-            String[] uriWithQuery = uri.split("\\?");
-            httpRequest.setURI(uriWithQuery[0]);
-            setRequestParamFromQuery(httpRequest, uriWithQuery[1]);
-        } else {
+        String uriWithQuery = statuses[1];
+        if (URIParser.hasQuery(uriWithQuery)) {
+            String uri = URIParser.getUri(uriWithQuery);
             httpRequest.setURI(uri);
+
+            String query = URIParser.getQuery(uriWithQuery);
+            setRequestParamFromQuery(httpRequest, query);
+        } else {
+            httpRequest.setURI(uriWithQuery);
         }
 
-        httpRequest.setHttpVer(tokens[2]);
-    }
-
-    private Parameter getParamMap(String query) throws UnsupportedEncodingException {
-        Parameter paramMap = new Parameter();
-
-        query = URLDecoder.decode(query, "UTF-8");
-        String[] params = query.split("&");
-        for (String param : params) {
-            String[] keyValue = param.split("=");
-            paramMap.put(getKey(keyValue), getValue(keyValue));
-        }
-
-        return paramMap;
-    }
-
-    private static String getValue(String[] keyValue) {
-        return keyValue[1].trim();
-    }
-
-    private static String getKey(String[] keyValue) {
-        return keyValue[0];
+        httpRequest.setHttpVer(statuses[2]);
     }
 
 }
