@@ -44,7 +44,7 @@ public class CsvResultSet implements ResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return null;
+        return resultSet.get(nextIndex)[columnIndex - 1];
     }
 
     @Override
@@ -64,12 +64,12 @@ public class CsvResultSet implements ResultSet {
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        return 0;
+        return Integer.parseInt(getString(columnIndex));
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return Long.parseLong(resultSet.get(nextIndex)[0]);
+        return Long.parseLong(getString(columnIndex));
     }
 
     @Override

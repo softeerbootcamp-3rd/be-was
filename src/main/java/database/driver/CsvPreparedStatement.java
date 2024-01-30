@@ -47,7 +47,7 @@ public class CsvPreparedStatement implements PreparedStatement {
             return new String[0];
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            return CsvDriverUtils.split(reader.readLine(), ",");
+            return CsvDriverUtils.readRow(reader.readLine());
         } catch (IOException e) {
             return new String[0];
         }
@@ -65,7 +65,7 @@ public class CsvPreparedStatement implements PreparedStatement {
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 previousLine = line;
             }
-            return Long.parseLong(CsvDriverUtils.split(previousLine, ",")[0]);
+            return Long.parseLong(CsvDriverUtils.readRow(previousLine)[0]);
         } catch (Exception e) {
             return 0L;
         }
@@ -107,7 +107,7 @@ public class CsvPreparedStatement implements PreparedStatement {
             // 첫 줄 무시
             reader.readLine();
             while ((line = reader.readLine()) != null && !line.isEmpty())
-                resultList.add(CsvDriverUtils.split(line, ","));
+                resultList.add(CsvDriverUtils.readRow(line));
         } catch (IOException ignored) {}
         return resultList;
     }
@@ -125,7 +125,7 @@ public class CsvPreparedStatement implements PreparedStatement {
             reader.readLine();
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 boolean isSelected = true;
-                String[] readValues = CsvDriverUtils.split(line, ",");
+                String[] readValues = CsvDriverUtils.readRow(line);
                 for (int i = 0; i < selectColumns.length; i++) {
                     for (int j = 0; j < columns.length; j++) {
                         if (Objects.equals(selectColumns[i], columns[j])
@@ -222,7 +222,7 @@ public class CsvPreparedStatement implements PreparedStatement {
             writer.newLine();
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 boolean isSelected = true;
-                String[] readValues = CsvDriverUtils.split(line, ",");
+                String[] readValues = CsvDriverUtils.readRow(line);
                 for (int i = 0; i < selectColumns.length; i++) {
                     for (int j = 0; j < columns.length; j++) {
                         if (Objects.equals(selectColumns[i], columns[j])
