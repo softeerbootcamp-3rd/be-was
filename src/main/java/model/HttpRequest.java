@@ -111,6 +111,10 @@ public class HttpRequest {
 
     private void initCookieMap() {
         String cookieString = headerMap.get("Cookie");
+        if (cookieString == null) {
+            this.cookieMap = new Cookie();
+            return;
+        }
         String[] cookies = cookieString.split("; ");
 
         Cookie cookieMap = new Cookie();
