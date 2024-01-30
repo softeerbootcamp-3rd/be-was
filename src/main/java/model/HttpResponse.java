@@ -48,4 +48,8 @@ public class HttpResponse {
     public byte[] getBody() {
         return body;
     }
+
+    public static HttpResponse newEmptyInstance() {
+        return new HttpResponse();
+    }
 }

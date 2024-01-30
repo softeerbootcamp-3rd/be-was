@@ -51,7 +51,7 @@ public class FrontController {
 
     public void service(HttpRequest httpRequest, OutputStream out) throws IOException {
         Object handler = getHandler(httpRequest);
-        HttpResponse httpResponse = new HttpResponse();
+        HttpResponse httpResponse = HttpResponse.newEmptyInstance();
 
         HandlerAdapter adapter = getHandlerAdapter(handler);
         ModelView mv = adapter.handle(httpRequest, httpResponse, handler);
