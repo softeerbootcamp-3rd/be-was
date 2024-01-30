@@ -18,11 +18,12 @@ public class Database {
 
     //Maps는 생성할 때 편하게 해주는것, 기능상 차이는 없음
     private static Map<String, User> users = new ConcurrentHashMap<>();
-    private static Map<Long, Qna> qnas = new ConcurrentHashMap<>();
+    public static Map<Long, Qna> qnas = new ConcurrentHashMap<>();
 
     private static LinkedList<Qna> recentQnas = new LinkedList<>();
     public static void addQna(Qna qna){
-        qnas.put(qnaId++, qna);
+        qnas.put(qnaId, qna);
+        qna.setId(qnaId++);
         recentQnas.addFirst(qna);
 
         while(recentQnas.size() > 100)
@@ -44,6 +45,7 @@ public class Database {
     }
 
 
+    public static Qna findQnaById(Long id){return qnas.get(id);}
     public static void updateIndexHtml(){
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\n" +
@@ -119,8 +121,8 @@ public class Database {
                 "                <li><a href=\"#loginModal\" role=\"button\" data-toggle=\"modal\">로그인</a></li>\n" +
                 "                <li><a href=\"#registerModal\" role=\"button\" data-toggle=\"modal\">회원가입</a></li>\n" +
                 "                -->\n" +
-                "                <li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
-                "                <li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n" +
+//                "                <li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
+//                "                <li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n" +
                 "            </ul>\n" +
                 "        </div>\n" +
                 "    </div>\n" +

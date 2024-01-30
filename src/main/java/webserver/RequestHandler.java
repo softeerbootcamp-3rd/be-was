@@ -46,20 +46,24 @@ public class RequestHandler implements Runnable {
             String url = request.getUrl();
             String urlFrontPart = url.split("\\?")[0];
 
+
             HTTPResponse response;
             // 페이지 불러오는 경우 (GET 메소드이며, url에 확장자가 있을 때)
             if(request.getMethod().equals("GET") && urlFrontPart.contains(".")){
                 //로그인 상태에 따라 정적/동적 페이지 로드
 
-                //로그인된 경우 동적페이지
+                //로그인된 경우,html인 경우 동적페이지
                 if(threadUuid.get() != null && url.contains(".html"))
                     response = PageController.getPageDynamic(request);
+
                 //로그인 안되어 있는 경우
                 else if(Redirect.getNewUrl(url)!=null)
                     response = PageController.RedirectStaticPage(Redirect.getNewUrl(url));
+
                 //로그인이 되어 있는 경우
                 else
                     response = PageController.getPageStatic(request);
+
             }
             // 그 외에는 디스패쳐 서블릿으로 컨트롤러를 불러온다 (ControllerHandler가 디스패쳐 서블릿)
             else {

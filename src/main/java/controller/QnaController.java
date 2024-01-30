@@ -17,6 +17,8 @@ public class QnaController {
         if(threadUuid.get() == null)
             return PageController.RedirectStaticPage("/user/login.html");
 
+        System.out.println("{{{");
+        System.out.println(request.getBody().keySet());
         Qna qna = parseToQna(request);
         Database.addQna(qna);
 
@@ -34,7 +36,7 @@ public class QnaController {
 
         title = request.getBody().get("title");
         writer = request.getBody().get("writer");
-        content = request.getBody().get("content");
+        content = request.getBody().get("contents");
 
 
         return new Qna(writer,title,content);

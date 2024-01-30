@@ -1,9 +1,6 @@
 package controller;
 
-import config.HTTPRequest;
-import config.HTTPResponse;
-import config.ResponseCode;
-import config.Session;
+import config.*;
 import db.Database;
 import model.User;
 
@@ -54,43 +51,21 @@ public class PageController {
         return response;
     }
     public static HTTPResponse getPageDynamic(HTTPRequest request){
-        String userId = Session.getUserId(threadUuid.get());
-        User user = Database.findUserById(userId);
 
-        //파일 불러오기
         String url = request.getUrl();
-        File file;
-
-        if (url.contains(".html"))
-            file = new File(TEMPLATE_FILE_PATH + url);
-        else
-            file = new File(STATIC_FILE_PATH + url);
-
         HTTPResponse response = null;
 
         try {
-            BufferedReader bf = new BufferedReader(new FileReader(file));
 
-            String line;
-            StringBuilder sb = new StringBuilder();
-            while((line = bf.readLine()) != null){
-                // html 일부분 수정
-                if(line.contains("role=\"button\">회원가입</a></li>"))
-                    continue;
-                else if(line.contains("role=\"button\">로그인</a></li>")){
-                    sb.append(line.replace("role=\"button\">","class=\"disabled\" role=\"button\">").replace("로그인",user.getName()));
-                    sb.append(System.lineSeparator());
-                    continue;
-                }
+            String str = url.split("\\.")[0];
 
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                // \n 을 사용하면 안되는 이유:
-                // 운영체제마다 줄바꿈 형식이 다름, System.lineSeparator를 사용하면
-                // 운영체제에 맞게 JVM가 설정해줌
-            }
+            PageBuilder pageBuilder = null;
+            pageBuilder = DynamicPageBuilder.dynamicPageBuilders.get(str);
 
-            byte[] body = sb.toString().getBytes();
+            if(pageBuilder == null)
+                throw new FileNotFoundException("file not found");
+            byte[] body = pageBuilder.build(request);
+
             byte[] head = ("HTTP/1.1" + ResponseCode.OK.code +" "+ ResponseCode.OK +" \r\n"+
                     "Content-Type: "+ MIMEType(url)+"\r\n"+
                     "Content-Length: " + body.length  + "\r\n").getBytes();
@@ -144,9 +119,6 @@ public class PageController {
         return type;
 
     }
-
-
-
 
 
 

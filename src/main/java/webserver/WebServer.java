@@ -35,9 +35,9 @@ public class WebServer {
         }
         //더미데이터 생성
 
-        Database.addQna(new Qna("user1", "Hello", "asdfjsadfkjs"));
-        Database.addQna(new Qna("user2", "안녕", "asdfjsadfkjs"));
-        Database.addQna(new Qna("user3", "Bye", "asdfjsadfkjs"));
+        Database.addQna(new Qna("코딩초보", "스레드랑 프로세스 차이점", "스레드랑 프로세스가 뭐가 달라요? \n잘 모르곘어요"));
+        Database.addQna(new Qna("eyeben", "이거 왜 안돼요?", "String str = url.split(\".\")[0];"));
+        Database.addQna(new Qna("코딩초보", "마지막 질문", "asdfjsadfkjs"));
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {

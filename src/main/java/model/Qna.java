@@ -4,10 +4,10 @@ import db.Database;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Deque;
-import java.util.LinkedList;
+
 
 public class Qna {
+    private Long id = 0L;
     private String writer;
     private String title;
     private String content;
@@ -20,6 +20,14 @@ public class Qna {
         this.title = title;
         this.content = content;
         this.creationTime = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getWriter() {
@@ -45,7 +53,10 @@ public class Qna {
                 "                  <div class=\"wrap\">\n" +
                 "                      <div class=\"main\">\n" +
                 "                          <strong class=\"subject\">\n" +
-                "                              <a href=\"./qna/show.html\">");
+                "                              <a href=\"./qna/show.html/");
+
+        sb.append(id);
+        sb.append("\">");
 
         sb.append(title);
         sb.append("</a>\n" +
