@@ -56,15 +56,10 @@ public class FrontController {
         HandlerAdapter adapter = getHandlerAdapter(handler);
         ModelView mv = adapter.handle(httpRequest, httpResponse, handler);
 
+        DynamicPageLoader.postHandle(httpRequest, mv);
+
         String viewName = mv.getViewName();
         View view = ViewResolver.resolveViewName(viewName);
-
-        if (httpRequest.getURI().contains("index.html")) {
-            HashMap<String, Object> model = new HashMap<>();
-            Collection<Qna> allQnas = qnaRepository.findAllQnas();
-            model.put("{{qna-list}}", allQnas);
-            mv.setModel(model);
-        }
 
         view.render(httpRequest, httpResponse, mv);
         ResponseSender.send(httpResponse, out);
