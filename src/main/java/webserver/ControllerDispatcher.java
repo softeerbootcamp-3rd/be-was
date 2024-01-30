@@ -2,11 +2,10 @@ package webserver;
 
 import config.HTTPRequest;
 import config.HTTPResponse;
-import controller.PageController;
 import controller.QnaController;
 import controller.UserController;
 
-public enum ControllerHandler {
+public enum ControllerDispatcher {
 
     //url별로 컨트롤러에게 작업 할당
     CREATE_ACCOUNT("/user/create"){
@@ -37,7 +36,7 @@ public enum ControllerHandler {
 
     public String url;
 
-    private ControllerHandler(String url){
+    private ControllerDispatcher(String url){
         this.url=url;
     }
 

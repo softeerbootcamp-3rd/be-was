@@ -11,11 +11,11 @@ class RequestHandlerTest {
     @Test
     void run() {
 
-        ControllerHandler controllerHandler = null;
-        for (ControllerHandler handler : ControllerHandler.values()) {
+        ControllerDispatcher controllerDispatcher = null;
+        for (ControllerDispatcher handler : ControllerDispatcher.values()) {
             if (handler.url.equals("/index.html")) {
                 System.out.println("good");
-                controllerHandler = handler;
+                controllerDispatcher = handler;
                 break;
             }
         }
