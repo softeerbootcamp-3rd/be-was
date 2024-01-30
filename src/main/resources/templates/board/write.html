@@ -32,6 +32,7 @@
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
+                <li class="navbar-brand" id="welcomeMessage"></li>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
                     <ul class="dropdown-menu">
@@ -64,21 +65,55 @@
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="../index.html">Posts</a></li>
-                <li><a href="../user/login.html" role="button">로그인</a></li>
-                <li><a href="../user/form.html" role="button">회원가입</a></li>
-                <li><a href="#" role="button">로그아웃</a></li>
-                <li><a href="#" role="button">개인정보수정</a></li>
+                <li id="userListButton"><a href="list.html" role="button">회원목록</a></li>
+                <li id="logoutButton">
+                    <form action="/user/logout" method="post">
+                        <button type="submit" class="btn btn-link" style="margin-top: 8px">로그아웃</button>
+                    </form>
+                </li>
             </ul>
         </div>
+
+        <script>
+            function getCookie(name) {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    var parts = cookie.split('=');
+                    if (parts[0] === name) {
+                        return parts[1];
+                    }
+                }
+                return null;
+            }
+
+            var sessionId = getCookie("sid")
+            var userName = getCookie("user-name")
+            var userLoggedIn = false;
+
+            if (sessionId != null) {
+                userLoggedIn = true;
+            }
+
+            if (userLoggedIn) {
+                document.getElementById("userListButton").style.display = 'block'
+                document.getElementById("logoutButton").style.display = 'block';
+                document.getElementById("welcomeMessage").textContent = `Welcome ${userName}!`;
+            }
+            else {
+                document.getElementById("userListButton").style.display = 'none';
+                document.getElementById("logoutButton").style.display = 'none';
+            }
+        </script>
     </div>
 </div>
 
 <div class="container" id="main">
    <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
       <div class="panel panel-default content-main">
-          <form name="question" method="post" action="">
+          <form name="question" method="post" action="/board/create" enctype="multipart/form-data">
               <div class="form-group">
-                  <label for="writer">글쓴이</label>
+                  <label for="writer">작성자</label>
                   <input class="form-control" id="writer" name="writer" placeholder="글쓴이"/>
               </div>
               <div class="form-group">
@@ -86,13 +121,17 @@
                   <input type="text" class="form-control" id="title" name="title" placeholder="제목"/>
               </div>
               <div class="form-group">
-                  <label for="contents">내용</label>
-                  <textarea name="contents" id="contents" rows="5" class="form-control"></textarea>
+                  <label for="content">내용</label>
+                  <textarea name="content" id="content" rows="5" class="form-control"></textarea>
               </div>
-              <button type="submit" class="btn btn-success clearfix pull-right">질문하기</button>
-              <div class="clearfix" />
+              <div class="form-group">
+                  <label for="fileUpload">파일 첨부</label>
+                  <input type="file" class="form-control" id="fileUpload" name="fileUpload" accept="image/jpg"/>
+              </div>
+              <button type="submit" class="btn btn-success clearfix pull-right">작성완료</button>
+              <div class="clearfix"></div>
           </form>
-        </div>
+      </div>
     </div>
 </div>
 
