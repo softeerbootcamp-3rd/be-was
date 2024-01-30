@@ -19,13 +19,12 @@ public class RequestHandler implements Runnable {
     private Socket connection;
 
     private final FrontController frontController;
-    private final ResponseHeaderMaker responseHeaderMaker;
+
     private final AuthFilter authFilter;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.frontController = new FrontController();
-        this.responseHeaderMaker = new ResponseHeaderMaker();
         this.authFilter = new AuthFilter();
     }
 
@@ -45,7 +44,6 @@ public class RequestHandler implements Runnable {
 
             frontController.process(request, response);
 
-            responseHeaderMaker.setHttpResponse(response);
             response.send();
 
         } catch (IOException | InvocationTargetException | IllegalAccessException e) {

@@ -6,6 +6,8 @@ import controller.dto.ListMapData;
 import controller.dto.InputData;
 import controller.dto.OutputData;
 import db.UserRepository;
+import exception.CustomException;
+import exception.ErrorCode;
 import model.User;
 
 import java.util.*;
@@ -15,7 +17,10 @@ public class UserController implements Controller{
     private final UserRepository userRepository = UserRepository.getInstance();
 
     @RequestMapping(value="/user/create", method = "POST")
-    public String createUser(InputData data, OutputData outputData) {
+    public String createUser(InputData data, OutputData outputData) throws CustomException {
+        if (UserRepository.findUserById(data.get("userId"))!=null) {
+            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+        }
         User user = new User(data.get("userId"), data.get("password"), data.get("name"), data.get("email"));
         userRepository.addUser(user);
 

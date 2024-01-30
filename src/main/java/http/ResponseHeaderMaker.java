@@ -14,6 +14,8 @@ public class ResponseHeaderMaker {
         } else if (path.startsWith("redirect:")) {
             response.setHttpStatus(HttpStatus.FOUND);
             response.setHeader("Location", path.substring("redirect:".length()));
+        } else if (path.contains("error")) {
+            response.setHttpStatus(HttpStatus.NOT_FOUND);
         } else {
             response.setHttpStatus(HttpStatus.OK);
         }
