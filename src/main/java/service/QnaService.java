@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 
 
 public class QnaService {
@@ -23,5 +24,9 @@ public class QnaService {
         qnaRepository.addQna(qna);
 
         logger.debug("qna가 추가되었습니다. qna-writer = {}", qna.getWriter());
+    }
+
+    public Collection<Qna> findAllQnas() {
+        return qnaRepository.findAllQnas();
     }
 }
