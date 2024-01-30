@@ -1,16 +1,16 @@
 package webserver;
 
+import constant.HttpMethod;
+import controller.FrontController;
+import model.HttpHeader;
+import model.HttpRequest;
+import model.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import controller.FrontController;
-import constant.HttpMethod;
-import model.HttpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -57,15 +57,14 @@ public class RequestHandler implements Runnable {
     }
 
     private void setRequestParamFromQuery(HttpRequest httpRequest, String query) throws UnsupportedEncodingException {
-        HashMap<String, String> paramMap = getParamMap(query);
+        Parameter paramMap = getParamMap(query);
         httpRequest.setParamMap(paramMap);
     }
 
     private void setRequestBody(HttpRequest httpRequest, BufferedReader br) throws IOException {
-        Map<String, String> headerMap = httpRequest.getHeaderMap();
         StringBuilder sb = new StringBuilder();
 
-        int contentLength = Integer.parseInt(headerMap.get("Content-Length"));
+        int contentLength = Integer.parseInt(httpRequest.getHeader("Content-Length"));
         char[] buffer = new char[BUFFER_SIZE];
         int bytesRead;
         while (contentLength > 0 && (bytesRead = br.read(buffer, 0, Math.min(contentLength, BUFFER_SIZE))) != -1) {
@@ -73,7 +72,7 @@ public class RequestHandler implements Runnable {
             contentLength -= bytesRead;
         }
 
-        if (headerMap.get("Content-Type").startsWith("application/x-www-form-urlencoded")) {
+        if (httpRequest.getHeader("Content-Type").startsWith("application/x-www-form-urlencoded")) {
             setRequestParamFromQuery(httpRequest, sb.toString());
         }
 
@@ -81,7 +80,7 @@ public class RequestHandler implements Runnable {
     }
 
     private void setRequestHeaderMap(HttpRequest httpRequest, BufferedReader br) throws IOException {
-        Map<String, String> headerMap = new HashMap<>();
+        HttpHeader headerMap = new HttpHeader();
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
             // localhost:{port}에도 ':'이 들어가기 때문에 setParamMap()과 로직 다름
@@ -114,8 +113,8 @@ public class RequestHandler implements Runnable {
         httpRequest.setHttpVer(tokens[2]);
     }
 
-    private HashMap<String, String> getParamMap(String query) throws UnsupportedEncodingException {
-        HashMap<String, String> paramMap = new HashMap<>();
+    private Parameter getParamMap(String query) throws UnsupportedEncodingException {
+        Parameter paramMap = new Parameter();
 
         query = URLDecoder.decode(query, "UTF-8");
         String[] params = query.split("&");
