@@ -3,8 +3,10 @@ package controller;
 import annotation.RequestMapping;
 import controller.dto.InputData;
 import controller.dto.OutputData;
+import db.UserRepository;
 import http.HttpRequest;
 import http.HttpResponse;
+import model.User;
 import view.View;
 import view.ViewMaker;
 
@@ -61,7 +63,8 @@ public class FrontController {
         if(!path.startsWith("redirect:")) {
             View view = outputData.getView();
             viewMaker = new ViewMaker(path, view);
-            view.set("userId", request.getUserId());
+            String username = getUsernameByUserId(request.getUserId());
+            if(username!=null) view.set("username", username);
             String bodyString = viewMaker.readFile(view);
             response.readString(bodyString);
         }
@@ -77,8 +80,7 @@ public class FrontController {
         }
     }
 
-    public Method findMethod(Controller controller, String url, String method) {
-
+    private Method findMethod(Controller controller, String url, String method) {
         Class<?> clazz = controller.getClass();
         for (Method m : clazz.getDeclaredMethods()) {
             if (m.isAnnotationPresent(RequestMapping.class)) {
@@ -89,5 +91,11 @@ public class FrontController {
             }
         }
         return null;
+    }
+
+    private String getUsernameByUserId(String userId) {
+        User user = UserRepository.findUserById(userId);
+        if (user == null) return null;
+        return user.getName();
     }
 }

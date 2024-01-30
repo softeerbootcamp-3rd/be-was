@@ -33,14 +33,15 @@ public class ViewMaker {
             StringBuilder forStringBuilder = null;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("<!--ifLoggedIn-->")) {
-                    if (view.get("userId", String.class) != null) {
+                    String username = view.get("username", String.class);
+                    if (username != null) {
                         line = line.strip().substring("<!--ifLoggedIn-->".length());
-                        line = changeWord(line, "${username}", view.get("userId", String.class));
+                        line = changeWord(line, "${username}", username);
                         line = removeCommentSymbols(line);
                     }
                 }
                 if (line.contains("<!--ifNotLoggedIn-->")) {
-                    if (view.get("userId", String.class) == null) {
+                    if (view.get("username", String.class) == null) {
                         line = line.strip().substring("<!--ifNotLoggedIn-->".length());
                         line = removeCommentSymbols(line);
                     }
