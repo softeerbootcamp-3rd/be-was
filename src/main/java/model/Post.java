@@ -7,10 +7,10 @@ public class Post {
     private String writer;
     private String title;
     private String contents;
-    private Date date;
+    private String date;
     private String attachedFileName;
 
-    public Post(String postId, String writer, String title, String contents, Date date, String attachedFileName) {
+    public Post(String postId, String writer, String title, String contents, String date, String attachedFileName) {
         this.postId = postId;
         this.writer = writer;
         this.title = title;
@@ -35,7 +35,7 @@ public class Post {
         return contents;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
