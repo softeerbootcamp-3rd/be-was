@@ -24,12 +24,7 @@ public class FrontController {
 
     private void initHandlerMappingMap() {
         // todo 제네릭으로 만들까?
-        handlerMappingMap.put("css", new ResourceController());
-        handlerMappingMap.put("fonts", new ResourceController());
-        handlerMappingMap.put("images", new ResourceController());
-        handlerMappingMap.put("js", new ResourceController());
-        handlerMappingMap.put("ico", new ResourceController());
-        handlerMappingMap.put("html", new ResourceController());
+        handlerMappingMap.put("resource", new ResourceController());
 
         handlerMappingMap.put("/user/create", AppConfig.userCreateController());
         handlerMappingMap.put("/user/login", AppConfig.userLoginController());
@@ -73,26 +68,9 @@ public class FrontController {
     private Object getHandler(HttpRequest httpRequest) {
         String requestURI = httpRequest.getURI();
         if (isResourceURI(requestURI)) {
-            return handlerMappingMap.get(extractResourceType(requestURI));
+            return handlerMappingMap.get("resource");
         }
         return handlerMappingMap.get(requestURI);
-    }
-
-    private String extractResourceType(String requestURI) {
-        if (requestURI.contains("css"))
-            return "css";
-        if (requestURI.contains("fonts"))
-            return "fonts";
-        if (requestURI.contains("images"))
-            return "images";
-        if (requestURI.contains("js"))
-            return "js";
-        if (requestURI.contains("ico"))
-            return "ico";
-        if (requestURI.contains("html"))
-            return "html";
-
-        return "";
     }
 
     private boolean isResourceURI(String uri) {
