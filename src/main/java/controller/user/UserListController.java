@@ -7,6 +7,7 @@ import model.HttpRequest;
 import model.HttpResponse;
 import model.User;
 import service.UserService;
+import util.SessionManager;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,11 +22,9 @@ public class UserListController implements UserController {
 
     @Override
     public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
-        try {
-            String userId = httpRequest.getCookie("sid");
-            User findUser = userService.findUserById(userId);
-        } catch (IllegalArgumentException | UserNotFoundException e) {
-            e.printStackTrace();
+        String sid = httpRequest.getCookie("sid");
+
+        if (sid == null || !SessionManager.isLoggedIn(sid)) {
             return new ModelView("/user/login.html", HttpStatus.OK);
         }
 

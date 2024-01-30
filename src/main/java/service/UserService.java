@@ -39,13 +39,14 @@ public class UserService {
         return findUser;
     }
 
-    public void login(String userId, String password) {
+    public User login(String userId, String password) {
         User findUser = userRepository.findUserById(userId);
 
         if (findUser == null || isUnmatchedPassword(password, findUser.getPassword())) {
             throw new LoginFailedException("userId 혹은 password가 일치하지 않습니다.");
         }
 
+        return findUser;
     }
 
     private static boolean isUnmatchedPassword(String password, String userPassword) {

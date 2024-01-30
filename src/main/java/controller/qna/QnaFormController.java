@@ -7,24 +7,24 @@ import model.HttpRequest;
 import model.HttpResponse;
 import model.User;
 import service.UserService;
+import util.SessionManager;
 
-public class QnaFormController implements QnaController{
+public class QnaFormController implements QnaController {
     private final UserService userService;
 
     public QnaFormController(UserService userService) {
         this.userService = userService;
     }
+
     @Override
     public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
-        try {
-            String userId = httpRequest.getCookie("sid");
-            User findUser = userService.findUserById(userId);
-        } catch (IllegalArgumentException | UserNotFoundException e) {
-            e.printStackTrace();
+        String sid = httpRequest.getCookie("sid");
+
+        if (!SessionManager.isLoggedIn(sid)) {
             return new ModelView("/user/login.html", HttpStatus.OK);
+
         }
 
-        // 로그인 상태일 경우
         return new ModelView("/qna/form.html", HttpStatus.OK);
     }
 }

@@ -5,9 +5,11 @@ import controller.ModelView;
 import exception.LoginFailedException;
 import model.HttpRequest;
 import model.HttpResponse;
+import model.User;
 import service.UserService;
+import util.SessionManager;
 
-public class UserLoginController implements UserController{
+public class UserLoginController implements UserController {
     private final UserService userService;
 
     public UserLoginController(UserService userService) {
@@ -20,9 +22,9 @@ public class UserLoginController implements UserController{
         String password = httpRequest.getParameter("password");
 
         String path = "";
-
+        User loginUser = null;
         try {
-            userService.login(userId, password);
+            loginUser = userService.login(userId, password);
         } catch (LoginFailedException e) {
             path = "/user/login_failed.html";
             httpResponse.addHeader("Location", path);
@@ -33,9 +35,12 @@ public class UserLoginController implements UserController{
         }
 
         // 로그인 성공
+        String sid = SessionManager.generateSID();
+        SessionManager.addSession(sid, loginUser);
+
         path = "/index.html";
         httpResponse.addHeader("Location", path);
-        httpResponse.addHeader("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=1800");
+        httpResponse.addHeader("Set-Cookie", "sid=" + sid + "; Path=/; Max-Age=1800" + SessionManager.EXPIRED_TIME);
 
         return new ModelView(path, HttpStatus.FOUND);
     }

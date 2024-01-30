@@ -43,6 +43,7 @@ public class AppConfig {
         }
         return userCreateController;
     }
+
     public static UserLoginController userLoginController() {
         if (userLoginController == null) {
             userLoginController = new UserLoginController(userService());
