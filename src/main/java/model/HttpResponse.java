@@ -1,15 +1,13 @@
 package model;
 
 import com.google.common.collect.Maps;
-
+import constant.HttpStatus;
 import java.util.Map;
 
 public class HttpResponse {
-    static final private String DEFAULT_HTTP_VER = "HTTP/1.1";
-
+    private static final String DEFAULT_HTTP_VERSION = "HTTP1.1";
     private String httpVer;
-    private String httpStatus;
-    private String statusMsg;
+    private HttpStatus httpStatus;
     private Map<String, String> headerMap = Maps.newHashMap();
     private byte[] body;
 
@@ -22,20 +20,18 @@ public class HttpResponse {
     }
 
     public void set200Ok() {
-        httpVer = DEFAULT_HTTP_VER;
-        httpStatus = "200";
-        statusMsg = "ok";
+        httpVer = DEFAULT_HTTP_VERSION;
+        httpStatus = HttpStatus.OK;
     }
 
     public void set302Redirect() {
-        httpVer = DEFAULT_HTTP_VER;
-        httpStatus = "302";
-        statusMsg = "redirect";
+        httpVer = DEFAULT_HTTP_VERSION;
+        httpStatus = HttpStatus.FOUND;
     }
 
     public String extractLine() {
         StringBuilder sb = new StringBuilder();
-        sb.append(httpVer).append(" ").append(httpStatus).append(" ").append(statusMsg).append("\r\n");
+        sb.append(httpVer).append(" ").append(httpStatus.getCode()).append(" ").append(httpStatus.getMessage()).append("\r\n");
 
         return sb.toString();
     }
@@ -46,7 +42,6 @@ public class HttpResponse {
             sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
         }
         sb.append("\r\n");
-
         return sb.toString();
     }
 
