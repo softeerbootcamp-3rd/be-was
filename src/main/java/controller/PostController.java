@@ -1,9 +1,11 @@
 package controller;
 
 import annotation.RequestMapping;
+import auth.SessionManager;
 import controller.dto.InputData;
 import controller.dto.OutputData;
 import db.PostRepository;
+import db.UserRepository;
 import model.Post;
 import view.View;
 
@@ -15,7 +17,10 @@ public class PostController implements Controller {
 
     @RequestMapping(value = "/post/create", method = "POST")
     public String createPost(InputData inputData, OutputData outputData) {
-        Post post = new Post(inputData.get("writer"), inputData.get("title"), inputData.get("contents"));
+        String userId = SessionManager.getUserBySessionId(inputData.getSessionId());
+        String userName = UserRepository.findUserById(userId).getName();
+
+        Post post = new Post(userName, inputData.get("title"), inputData.get("contents"));
         PostRepository.addPost(post);
 
         return "redirect:/index";
