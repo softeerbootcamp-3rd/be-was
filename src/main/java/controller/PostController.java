@@ -84,8 +84,9 @@ public class PostController implements Controller {
 
             response.setCode(302);
             response.addHeader("Location", "/");
-        } catch (IllegalArgumentException e) {
-            response.setCode(400);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            response.setCode(302);
+            response.addHeader("Location", "/post/write_failed.html");
         }
     }
 
@@ -110,7 +111,8 @@ public class PostController implements Controller {
             response.addHeader("Content-Type", ContentType.findContentType(filePath));
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
-            response.setCode(404);
+            response.setCode(302);
+            response.addHeader("Location", "/404.html");
         }
     }
 }

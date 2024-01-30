@@ -93,7 +93,8 @@ public class UserController implements Controller {
             response.addHeader("Content-Type", ContentType.findContentType(filePath));
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
-            response.setCode(404);
+            response.setCode(302);
+            response.addHeader("Location", "/404.html");
         }
     }
 
@@ -119,9 +120,11 @@ public class UserController implements Controller {
             response.setCode(302);
             response.addHeader("Location", "/index.html");
         } catch (NullPointerException e) {
-            response.setCode(400);
+            response.setCode(302);
+            response.addHeader("location", "/user/form_failed.html");
         } catch (IllegalArgumentException e) {
-            response.setCode(422);
+            response.setCode(302);
+            response.addHeader("location", "/user/form_dup.html");
         }
     }
 }
