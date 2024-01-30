@@ -28,12 +28,12 @@ public class FrontController {
 
     private void initHandlerMappingMap() {
         // todo 제네릭으로 만들까?
-        handlerMappingMap.put("css", new ResourceController("css"));
-        handlerMappingMap.put("fonts", new ResourceController("fonts"));
-        handlerMappingMap.put("images", new ResourceController("images"));
-        handlerMappingMap.put("js", new ResourceController("js"));
-        handlerMappingMap.put("ico", new ResourceController("ico"));
-        handlerMappingMap.put("html", new ResourceController("html"));
+        handlerMappingMap.put("css", new ResourceController());
+        handlerMappingMap.put("fonts", new ResourceController());
+        handlerMappingMap.put("images", new ResourceController());
+        handlerMappingMap.put("js", new ResourceController());
+        handlerMappingMap.put("ico", new ResourceController());
+        handlerMappingMap.put("html", new ResourceController());
 
         handlerMappingMap.put("/user/create", AppConfig.userCreateController());
         handlerMappingMap.put("/user/login", AppConfig.userLoginController());
@@ -65,8 +65,6 @@ public class FrontController {
             model.put("{{qna-list}}", allQnas);
             mv.setModel(model);
         }
-
-        //todo 이걸 없애자
 
         view.render(httpRequest, httpResponse, mv);
         ResponseSender.send(httpResponse, out);

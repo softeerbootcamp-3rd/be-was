@@ -3,14 +3,7 @@ package controller;
 import constant.HttpStatus;
 
 public class ResourceController {
-    private String type;
-
-    public ResourceController(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
+    public ResourceController() {
     }
 
     public ModelView process(String uri) {
