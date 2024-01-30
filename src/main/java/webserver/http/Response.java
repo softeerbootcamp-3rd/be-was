@@ -46,6 +46,11 @@ public class Response {
         this.statusText = StatusCode.OK.name();
     }
 
+    public void setStatusCode(StatusCode statusCode){
+        this.statusCode = statusCode.getCode();
+        this.statusText = statusCode.name();
+    }
+
     public String getHttpVersion() {
         return httpVersion;
     }
@@ -62,8 +67,8 @@ public class Response {
         return responseHeader;
     }
 
-    void setBody(Request request){
-        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget());
+    private void setBody(Request request){
+        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget(), this);
         dynamicResourceHandler.handle(request, this);
     }
 

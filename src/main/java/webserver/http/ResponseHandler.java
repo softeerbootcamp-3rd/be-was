@@ -3,6 +3,7 @@ package webserver.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.constants.Mime;
+import webserver.http.constants.StatusCode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +15,7 @@ public class ResponseHandler {
     private static final String ROOT_DIRECTORY = System.getProperty("user.dir");
     private static final String TEMPLATE_DIRECTORY ="/src/main/resources/templates";
     private static final String STATIC_DIRECTORY ="/src/main/resources/static";
-    public byte[] setResponseBody(Mime responseMimeType, String requestTarget) {
+    public byte[] setResponseBody(Mime responseMimeType, String requestTarget, Response response) {
         byte[] responseBody = new byte[0];
         try {
             File file = null;
@@ -31,6 +32,15 @@ public class ResponseHandler {
                 responseBody = new byte[(int) file.length()];
                 fis.read(responseBody);
                 fis.close();
+            }
+            else{
+                //404 error 처리
+                file = new File(ROOT_DIRECTORY + TEMPLATE_DIRECTORY + "/error/404.html");
+                FileInputStream fis = new FileInputStream(file);
+                responseBody = new byte[(int) file.length()];
+                fis.read(responseBody);
+                fis.close();
+                response.setStatusCode(StatusCode.NOT_FOUND);
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
