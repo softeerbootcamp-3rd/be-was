@@ -19,7 +19,6 @@ public class HttpRequest {
     private final GeneralHeader generalHeader;
     private Map<String, String> headers = new HashMap<>();
     private Map<String, String> params = new HashMap<>();
-    private Map<String, String> body = new HashMap<>();
     private MultiPartForm multiPartForm;
 
     public HttpRequest(InputStream in) throws IOException {
@@ -56,7 +55,7 @@ public class HttpRequest {
             line = new String(buffer, 0, bytesRead);
             logger.info(line);
             String decodedLine = URLDecoder.decode(line, StandardCharsets.UTF_8);
-            body = Parser.extractParams(decodedLine);
+            params = Parser.extractParams(decodedLine);
         }
     }
 
@@ -105,10 +104,6 @@ public class HttpRequest {
         return params;
     }
 
-    public Map<String, String > getBody() {
-        return body;
-    }
-
     public MultiPartForm getMultiPartForm() {
         return multiPartForm;
     }
@@ -129,7 +124,7 @@ public class HttpRequest {
                 "\n- General Header\n" + mapToString(generalHeader.getGeneralHeaders()) +
                 "\n- 기타 헤더\n" + mapToString(headers) +
                 (!params.isEmpty()? "\n- uri 쿼리 파라미터\n" + mapToString(params) : "") +
-                (!body.isEmpty()? "\n- 바디(페이로드)\n" + mapToString(body) : "") +
+                (!params.isEmpty()? "\n- 바디(페이로드)\n" + mapToString(params) : "") +
                 (multiPartForm != null ? "\n- 멀티파트 폼 데이터\n" + mapToString(multiPartForm.getFields()) + "\n" : "");
     }
 }
