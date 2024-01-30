@@ -1,5 +1,6 @@
 package controller;
 
+import db.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,9 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import request.http.HttpRequest;
 import response.http.HttpResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -18,10 +17,11 @@ import static util.StatusCode.*;
 
 class HomeControllerTest {
     private HomeController homeController;
-
+    private Database database;
     @BeforeEach
     void init() {
         this.homeController = HomeController.getInstance();
+        this.database = new Database();
     }
 
     @ParameterizedTest
@@ -62,34 +62,38 @@ class HomeControllerTest {
 
     private static Stream<Arguments> status_200_Parameters() throws IOException {
 
+        String httpRequestString = "GET /index.html HTTP/1.1\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "Cookie: sid=1234\r\n\r\n";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
+
+
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /index.html HTTP/1.1\n" +
-                        "Host: localhost:8080\n" +
-                        "Connection: keep-alive\n" +
-                        "Accept: */*\n" +
-                        "\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> status_302_Parameters() throws IOException {
 
+        String httpRequestString = "GET / HTTP/1.1\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "Cookie: sid=1234\r\n\r\n";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
+
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET / HTTP/1.1\n" +
-                        "Host: localhost:8080\n" +
-                        "Connection: keep-alive\n" +
-                        "Accept: */*\n" +
-                        "\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> status_404_Parameters() throws IOException {
 
+        String httpRequestString = "GET /indexs.html HTTP/1.1\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "Cookie: sid=1234\r\n\r\n";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
+
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /test.html HTTP/1.1\n" +
-                        "Host: localhost:8080\n" +
-                        "Connection: keep-alive\n" +
-                        "Accept: */*\n" +
-                        "\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 }

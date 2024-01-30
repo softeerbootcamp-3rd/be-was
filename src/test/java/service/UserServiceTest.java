@@ -11,8 +11,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import request.user.LoginRequest;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
 import static db.Database.addUser;
@@ -24,44 +22,18 @@ class UserServiceTest {
     private Database database;
 
     @BeforeEach
-    void init() throws Exception {
+    void init() {
         this.userService = UserService.getInstance();
         this.database = new Database();
-
-        Constructor<User> constructor = User.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        User firstUser = constructor.newInstance();
-        User secondUser = constructor.newInstance();
-
-        Field[] fields = User.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(firstUser, "test1");
-        }
-        addUser(firstUser);
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(secondUser, "test2");
-        }
-        addUser(secondUser);
     }
 
     @Test
     @DisplayName("회원가입이 정상적으로 처리되는지 확인")
     void sign_up_success() throws Exception {
         // given
-        Constructor<User> constructor = User.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        User user = constructor.newInstance();
+        User user = new User(1, "test", "test", "test", "test");
 
-        Field[] fields = User.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(user, "test");
-        }
+        // when
         addUser(user);
 
         // when
@@ -98,8 +70,7 @@ class UserServiceTest {
 
     private static Stream<Arguments> login_success_parameters() {
         return Stream.of(
-                Arguments.of(new LoginRequest("test1", "test1")),
-                Arguments.of(new LoginRequest("test2", "test2"))
+                Arguments.of(new LoginRequest("taegon1998", "1234"))
         );
     }
 
