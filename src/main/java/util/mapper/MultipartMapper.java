@@ -41,9 +41,14 @@ public class MultipartMapper {
 
         String contentDisposition = reader.readLine();
         String name = extractEntry(contentDisposition, "name");
+        // body 종료문자인 경우
         if (Strings.isNullOrEmpty(name))
             return;
+
         boolean isFile = contentDisposition.contains("filename");
+        // 파일 내용물이 없을 경우
+        if (isFile && Strings.isNullOrEmpty(extractEntry(contentDisposition, "filename")))
+            return;
 
         String s;
         Map<HttpHeader, String> partValues = new HashMap<>();
