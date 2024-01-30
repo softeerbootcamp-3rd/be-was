@@ -35,7 +35,7 @@ public class HtmlTemplates {
         builder.put("<!--board-pagination-->",
                 new HtmlTemplate("board/pagination.html", BoardHtml::pagination, BoardHtml::pagination));
         builder.put("<!--board-btn-->",
-                new HtmlTemplate("board/board_btn.html", HtmlBuilder::getRaw, HtmlBuilder::getRaw));
+                new HtmlTemplate("board/post_btn.html", HtmlBuilder::getRaw, HtmlBuilder::getRaw));
         builder.put("<!--board-->",
                 new HtmlTemplate("board/board.html", BoardHtml::boardContent, BoardHtml::boardContent));
         builder.put("<!--attachment-->",
