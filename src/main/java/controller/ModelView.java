@@ -25,16 +25,8 @@ public class ModelView {
         return viewName;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
-    }
-
     public Map<String, Object> getModel() {
         return model;
-    }
-
-    public void setModel(Map<String, Object> model) {
-        this.model = model;
     }
 
     public void addAttribute(String key, Object value) {
