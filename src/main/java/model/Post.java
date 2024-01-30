@@ -8,13 +8,15 @@ public class Post {
     private String title;
     private String contents;
     private Date date;
+    private String attachedFileName;
 
-    public Post(String postId, String writer, String title, String contents, Date date) {
+    public Post(String postId, String writer, String title, String contents, Date date, String attachedFileName) {
         this.postId = postId;
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.date = date;
+        this.attachedFileName = attachedFileName;
     }
 
     public String getPostId() {
@@ -37,8 +39,19 @@ public class Post {
         return date;
     }
 
+    public String getAttachedFileName() {
+        return attachedFileName;
+    }
+
     @Override
     public String toString() {
-        return "Post [postId=" + postId + ", writer=" + writer + ", title=" + title + ", contents=" + contents + ", date=" + date + ']';
+        return "Post[" +
+                "postId='" + postId + '\'' +
+                ", writer='" + writer + '\'' +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", date=" + date +
+                ", attachedFileName='" + attachedFileName + '\'' +
+                ']';
     }
 }
