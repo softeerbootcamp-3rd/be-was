@@ -13,12 +13,12 @@ public class Session {
     private static Map<String, String> sessionData = new HashMap<>();
 
     // 세션 만료 시간
-    private static final long SESSION_EXPIRATION_TIME = 1 * 60 * 1000;
+    private static final long SESSION_EXPIRATION_TIME = 10 * 60 * 1000;
 
     static {
         // 주기적으로 세션 만료 확인 및 제거 스케줄링
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(Session::removeExpiredSessions, 0, 1, TimeUnit.MINUTES);
+        scheduler.scheduleAtFixedRate(Session::removeExpiredSessions, 0, 10, TimeUnit.MINUTES);
     }
 
     public static String createSession(String userId) {
