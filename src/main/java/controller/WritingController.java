@@ -20,12 +20,21 @@ public class WritingController implements Controller {
         // Connect to the database
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
 
+            //dropTable(connection);
             createTable(connection);
-
             Article article = new Article(httpRequest);
             insertArticle(connection, article);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void dropTable(Connection connection) {
+        try (PreparedStatement dropStatement = connection.prepareStatement("DROP TABLE IF EXISTS Article")) {
+            dropStatement.execute();
+        } catch (SQLException e) {
+            System.out.println("Error dropping table: " + e.getMessage());
         }
     }
 

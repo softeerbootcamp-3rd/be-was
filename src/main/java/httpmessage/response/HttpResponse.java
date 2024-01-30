@@ -1,18 +1,19 @@
 package httpmessage.response;
 
+import httpmessage.HttpStatusCode;
+
 public class HttpResponse {
     private byte[] body;
-    Integer statusCode;
-    String statusLine;
+
+    HttpStatusCode httpStatusCode;
     String contentType;
     String redirectionPath;
     String sid = null;
     String expireDate;
 
-    public void setHttpResponse(byte[] body, String contentType, Integer statusCode, String statusLine){
+    public void setHttpResponse(byte[] body, String contentType, HttpStatusCode httpStatusCode){
         this.body = body;
-        this.statusCode = statusCode;
-        this.statusLine = statusLine;
+        this.httpStatusCode = httpStatusCode;
         this.contentType = contentType;
     }
 
@@ -32,13 +33,7 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public void setStatusCode(Integer statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public void setStatusLine(String line) {
-        this.statusLine = line;
-    }
+    public void setHttpStatusCode(HttpStatusCode httpStatusCode) { this.httpStatusCode = httpStatusCode; }
 
     public String getExpireDate() {
         return expireDate;
@@ -52,12 +47,15 @@ public class HttpResponse {
         return contentType;
     }
 
-    public Integer getStatusCode() {
-        return statusCode;
+    public HttpStatusCode getHttpStatusCode() {
+        return httpStatusCode;
     }
 
+    public int getStatusCode() {
+        return httpStatusCode.getValue();
+    }
     public String getStatusLine() {
-        return statusLine;
+        return httpStatusCode.getReasonPhrase();
     }
 
     public String getPath() { return this.redirectionPath; }

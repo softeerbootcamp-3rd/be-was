@@ -19,10 +19,12 @@ public class HtmlController implements Controller{
         final String requestPath =  httpRequest.getPath();
         String body = new String(httpResponse.getBody());
 
+        // login여부에 따라 상단바 동적으로 처리
         Content loginContent = new Content(httpRequest,httpResponse);
         String topContent = loginContent.getString();
         String modifiedContent = body.replace("{{login}}",topContent);
 
+        // list.html일 때, 가입한 사용자 동적으로 처리
         if(requestPath.contains("list")){
             Database database = new Database();
             Collection<User> users = database.findAll();
@@ -32,6 +34,7 @@ public class HtmlController implements Controller{
             modifiedContent = modifiedContent.replace("{{list}}",userConent);
         }
 
+        // index.html일 때, DB에 저장된 게시글 동적으로 처리
         if(requestPath.contains("index")) {
             Class.forName("org.h2.Driver");
             String url = "jdbc:h2:~/wasDB";
@@ -51,6 +54,7 @@ public class HtmlController implements Controller{
             }
         }
 
+        // show.html일 때, 선택한 글 상세 조회
         if(requestPath.contains("show")){
             Class.forName("org.h2.Driver");
             String url = "jdbc:h2:~/wasDB";
@@ -68,8 +72,6 @@ public class HtmlController implements Controller{
                 throw new RuntimeException(e);
             }
         }
-
-
 
         byte[] modifiedBody = modifiedContent.getBytes();
         httpResponse.setBody(modifiedBody);

@@ -11,9 +11,8 @@ import java.io.*;
 public class HomeController implements Controller {
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         FilePathContent filePathContent = new FilePathContent();
-
+        HttpStatusCode httpStatusCode;
         String filePath =  filePathContent.getFilePath(httpRequest.getPath());
-
         String contentType = ContentType.getContentType(httpRequest.getPath());
         String statusLine;
         int statusCode;
@@ -23,13 +22,12 @@ public class HomeController implements Controller {
 
         if (!file.exists() || file.isDirectory()) {
             // 파일이 존재하지 않거나 디렉토리인 경우 404 상태 코드 반환
-            statusCode = 404;
-            statusLine = HttpStatusCode.findBy(statusCode);
+            httpStatusCode = HttpStatusCode.NOT_FOUND;
+
             body = "404 Not Found".getBytes();
         } else {
             // 파일이 존재하는 경우 정상적으로 읽어옴
-            statusCode = 200;
-            statusLine = HttpStatusCode.findBy(statusCode);
+            httpStatusCode = HttpStatusCode.OK;
 
             try (FileInputStream fis = new FileInputStream(file);
                  ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -43,6 +41,6 @@ public class HomeController implements Controller {
                 body = bos.toByteArray();
             }
         }
-        httpResponse.setHttpResponse(body,contentType,statusCode,statusLine);
+        httpResponse.setHttpResponse(body,contentType,httpStatusCode);
     }
 }

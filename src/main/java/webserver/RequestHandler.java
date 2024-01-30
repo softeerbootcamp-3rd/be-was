@@ -2,6 +2,8 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+
+import httpmessage.HttpStatusCode;
 import httpmessage.request.HttpMesssageReader;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
@@ -33,10 +35,9 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            if(httpResponse.getStatusCode()==302){
+            if(httpResponse.getHttpStatusCode()== HttpStatusCode.MOVED_TEMPORARILY){
                 response302Header(dos,httpResponse);
             }
-
             else {
                 responseHeader(dos, httpResponse);
                 responseBody(dos, httpResponse);

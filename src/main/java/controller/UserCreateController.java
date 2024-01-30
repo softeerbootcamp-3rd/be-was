@@ -1,6 +1,7 @@
 package controller;
 
 import db.Database;
+import httpmessage.HttpStatusCode;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
 import model.User;
@@ -14,7 +15,7 @@ public class UserCreateController implements Controller {
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private String path;
 
-    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse){
 
         try {
             makeUser(httpRequest.getParmeter());
@@ -46,10 +47,7 @@ public class UserCreateController implements Controller {
     }
 
     public void makeHttpResponse(HttpResponse httpResponse){
-        int statusCode = 302;
-        httpResponse.setRedirectionPath(this.path);
-        httpResponse.setStatusCode(statusCode);
-
+        httpResponse.setHttpStatusCode(HttpStatusCode.MOVED_TEMPORARILY);
     }
 
 }
