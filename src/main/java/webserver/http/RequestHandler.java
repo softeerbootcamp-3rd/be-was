@@ -61,7 +61,10 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.GET,"/post/form.html"), (Request r)-> getBoardWrite(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/post/create"), (Request r)-> postPostCreate(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/post/show.html"), (Request r)-> getPostShow(r));
+        routeHandlers.put(new Route(HttpMethod.GET,"/user/logout.html"), (Request r)-> getUserLogout(r));
+
     }
+
     public void handleRequest(Request request) {
         if (request.getHttpMethod() == HttpMethod.NULL)
             throw new IllegalArgumentException("Method NULL");
@@ -149,6 +152,14 @@ public class RequestHandler {
         requestedData.put("commentcount", String.valueOf(getPost.getCommentCount()));
 
         request.setRequestedData(requestedData);
+    }
+
+
+
+    private void getUserLogout(Request request) {
+        SessionManager.printAllUsers();
+        SessionManager.deleteSession(request.getRequestHeader().get("Cookie").split("=")[1]);
+        request.addRequestHeader("Location","/index.html");
     }
 
 

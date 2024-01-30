@@ -38,4 +38,8 @@ public class SessionManager {
             logger.debug("Key: {}, Value : {}",key , user);
         }
     }
+
+    public static void deleteSession(String session){
+        sessions.remove(session);
+    }
 }
