@@ -33,7 +33,7 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             // HTTP 요청을 파싱한다.
-            RequestData requestData = RequestParserUtil.parseRequest(br);
+            RequestData requestData = RequestParserUtil.parseRequest(in);
 
             // 파싱한 요청의 세부 내용 출력
             logger.debug("RequestData: {}", requestData);

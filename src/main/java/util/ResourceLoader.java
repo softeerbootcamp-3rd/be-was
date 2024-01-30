@@ -9,6 +9,8 @@ import service.UserService;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.UUID;
 
 import static util.RequestParserUtil.getFileExtension;
 
@@ -18,8 +20,10 @@ public class ResourceLoader {
 
     public static final String RESOURCE_URL = "/Users/admin/Softeer/be-was/src/main/resources";
 
+    private ResourceLoader() {}
+
     public static byte[] loadResource(String resourcePath, RequestData requestData) throws IOException {
-        logger.debug("resourcePath: " + resourcePath);
+        logger.debug("resourcePath: {}", resourcePath);
 
         String extension = getFileExtension(resourcePath);
         String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
@@ -37,12 +41,45 @@ public class ResourceLoader {
                 bytesRead = inputStream.read(buffer);
             }
 
-            if (requestData.isLoggedIn() && extension.equals("html")) {
-                String modifiedContent = DynamicHtml.modifyHtml(new String(buffer), true, requestData);
+            if (extension.equals("html")) {
+                String modifiedContent = DynamicHtml.modifyHtml(new String(buffer), requestData.isLoggedIn(), requestData);
                 return modifiedContent.getBytes();
             }
 
             return buffer;
+        }
+    }
+
+    public static String handleFileUpload(Map<String, String> formData, byte[] file) throws IOException {
+        // 저장할 디렉토리 경로 설정 (원하는 경로로 변경)
+        String uploadDirectory = ResourceMapping.ResourceConstants.UPLOADS_URL;
+
+        // 파일 필드의 이름을 얻음
+        String fileName = formData.get("fileName");
+
+        // 파일 내용을 얻음
+        byte[] fileContent = file;
+
+        // 파일 아이디 생성 (UUID 사용)
+        String fileId = UUID.randomUUID().toString();
+
+        // 파일 확장자 추출 (확장자가 없을 경우 고려 필요)
+        String fileExtension = getFileExtension(fileName);
+
+        // 파일을 디스크에 저장
+        saveFile(uploadDirectory, fileId, fileExtension, fileContent);
+
+        return fileId;
+    }
+
+    private static void saveFile(String directory, String fileId, String fileExtension, byte[] fileContent) throws IOException {
+        String filePath = ResourceLoader.RESOURCE_URL + directory + "/" + fileId + "." + fileExtension;
+
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(fileContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 파일 저장 실패에 대한 처리
         }
     }
 }
