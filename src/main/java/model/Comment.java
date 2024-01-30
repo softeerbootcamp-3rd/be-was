@@ -16,6 +16,8 @@ public class Comment {
         this.createdAt = LocalDateTime.now();
     }
 
+    public String getUserId() { return userId; }
+
     public String getWriter() {
         return writer;
     }

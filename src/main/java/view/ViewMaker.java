@@ -37,6 +37,7 @@ public class ViewMaker {
                     if (username != null) {
                         line = line.strip().substring("<!--ifLoggedIn-->".length());
                         line = changeWord(line, "${username}", username);
+                        line = changeWord(line, "${userId}", view.get("userId", String.class));
                         line = removeCommentSymbols(line);
                     }
                 }

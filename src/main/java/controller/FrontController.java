@@ -49,7 +49,6 @@ public class FrontController {
             String[] urlToken = url.split("/");
             Controller controller = container.get("/" + urlToken[1]); //적합한 controller 찾기
             Method method = findMethod(controller, url, request.getMethod()); //찾은 컨트롤러에서 메서드 찾기
-
             InputData inputData = setInputData(request); //inputdata 세팅
             try {
                 path = (String) method.invoke(controller, inputData, outputData); //메서드 실행
@@ -91,6 +90,7 @@ public class FrontController {
             viewMaker = new ViewMaker(path, view);
             String username = getUsernameByUserId(request.getUserId());
             if (username != null) view.set("username", username);
+            if (request.getUserId() != null) view.set("userId", request.getUserId());
             String bodyString = viewMaker.readFile(view);
             response.readString(bodyString);
         }

@@ -9,6 +9,7 @@ import db.UserRepository;
 import exception.CustomException;
 import exception.ErrorCode;
 import model.User;
+import view.View;
 
 import java.util.*;
 
@@ -66,6 +67,16 @@ public class UserController implements Controller{
         }
         outputData.getView().set("users", users);
         return "/user/list.html";
+    }
+
+    @RequestMapping(value = "/user/profile", method = "GET")
+    public String getUserProfile(InputData inputData, OutputData outputData) {
+        User user = UserRepository.findUserById(inputData.get("userId"));
+        View view = outputData.getView();
+        view.set("username", user.getName());
+        view.set("email", user.getEmail());
+
+        return "/user/profile.html";
     }
 
     private String generateSessionId() {

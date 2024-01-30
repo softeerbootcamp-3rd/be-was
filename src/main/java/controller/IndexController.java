@@ -1,11 +1,13 @@
 package controller;
 
 import annotation.RequestMapping;
+import auth.SessionManager;
 import controller.dto.InputData;
 import controller.dto.ListMapData;
 import controller.dto.OutputData;
 import db.PostRepository;
 import model.Post;
+import view.View;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -17,13 +19,13 @@ public class IndexController implements Controller {
 
     @RequestMapping(value = "/index", method = "GET")
     public String indexPage(InputData inputData, OutputData outputData) {
-
+        View view = outputData.getView();
         ListMapData listMapData = new ListMapData();
         for (Post post : PostRepository.findAll()) {
             listMapData.putMap(setPostInfo(post));
         }
-        outputData.getView().set("posts", listMapData);
-
+        view.set("posts", listMapData);
+        view.set("userId", "a");
         return "/index.html";
     }
 

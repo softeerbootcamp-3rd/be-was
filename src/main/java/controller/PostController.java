@@ -84,6 +84,7 @@ public class PostController implements Controller {
 
     private Map<String, String> setCommentInfo(Comment comment) {
         Map<String, String> c = new HashMap<>();
+        c.put("userId", comment.getUserId());
         c.put("writer", comment.getWriter());
         c.put("content", comment.getContent());
         c.put("createdAt", comment.getCreatedAt().format(formatter));
