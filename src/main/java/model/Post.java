@@ -15,6 +15,15 @@ public class Post implements Comparable<Post>{
     private String contents;
     private LocalDateTime createdAt;
 
+    public Post(Long id, String userId, String writerName, String title, String contents) {
+        this.id = id;
+        this.userId = userId;
+        this.writerName = writerName;
+        this.title = title;
+        this.contents = contents;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Post(String userId, String writerName, String title, String contents) {
         this.id = ++Config.postId;
         this.userId = userId;

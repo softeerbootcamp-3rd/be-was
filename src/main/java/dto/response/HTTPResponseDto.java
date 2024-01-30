@@ -43,6 +43,9 @@ public class HTTPResponseDto {
     public void setHeader(String key, String value) {
         header.put(key, value);
     }
+    public void setBody(byte[] body) {
+        this.body = body;
+    }
     // header에 Date 추가
     public void setDate() {
         // 현재 날짜 및 시간 가져오기

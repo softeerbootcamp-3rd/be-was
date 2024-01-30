@@ -169,6 +169,26 @@ public class GetService {
         return new HTTPResponseDto("/");
     }
 
+    // 게시글 수정 요청 처리
+    public HTTPResponseDto updatePost(HTTPRequestDto httpRequestDto) {
+        // 게시글 아이디 파싱
+        try {
+            String url = httpRequestDto.getRequestTarget();
+            Long postId = Long.parseLong(url.substring(url.indexOf("form.html/")+"form.html/".length()));
+            // 글 작성자인지 판단
+            HTTPResponseDto httpResponseDto = isWriter(postId, httpRequestDto);
+            if(httpResponseDto != null)
+                return httpResponseDto;
+            httpResponseDto = requestFile(httpRequestDto);
+            // 기존 게시글 내용으로 띄워서 동적 페이지 반환
+            if(httpResponseDto.getStatusCode() == 200)
+                httpResponseDto.setBody(makeFormPost(httpResponseDto.getBody(), postId));
+            return httpResponseDto;
+        } catch (NumberFormatException e) {
+            return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        }
+    }
+
     private HTTPResponseDto isWriter(Long postId, HTTPRequestDto httpRequestDto) {
         // 해당 게시글 가져오기
         Post post = Database.findPostById(postId);
@@ -183,7 +203,7 @@ public class GetService {
             return new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
         // 작성자 여부 판단
         if(!post.getUserId().equals(user.getUserId()))
-            return new HTTPResponseDto(200, "text/plain", "글 작성자만 삭제 가능합니다.".getBytes());
+            return new HTTPResponseDto(200, "text/plain", "글 작성자가 아닙니다.".getBytes());
         return null;
     }
 
@@ -329,7 +349,35 @@ public class GetService {
         stringFile = stringFile.replace("내용", sb.toString());
         // 수정, 삭제 링크 걸기
         stringFile = stringFile.replace("/qna/form.html/12345", "/qna/form.html/" + post.getId());
-        stringFile = stringFile.replace("/qna//12345/delete", "/qna/" + post.getId() + "/delete");
+        stringFile = stringFile.replace("/qna/12345/delete", "/qna/" + post.getId() + "/delete");
         return stringFile.getBytes();
     }
+
+    // 기존 게시글 내용 띄워서 수정 폼 반환
+    private byte[] makeFormPost(byte[] body, Long postId) {
+        // 기존 게시글 가져오기
+        Post post = Database.findPostById(postId);
+        String stringFile = new String(body);
+        // 글쓴이 넣기
+        stringFile = stringFile.replace(
+                "<input class=\"form-control\" id=\"writer\" name=\"writer\" placeholder=\"글쓴이\"/>",
+                "<input class=\"form-control\" id=\"writer\" name=\"writer\" placeholder=\"글쓴이\""
+                        + " value=\"" + post.getWriterName() + "\"/>");
+        // 제목 넣기
+        stringFile = stringFile.replace(
+                "<input type=\"text\" class=\"form-control\" id=\"title\" name=\"title\" placeholder=\"제목\"/>",
+                "<input type=\"text\" class=\"form-control\" id=\"title\" name=\"title\" placeholder=\"제목\""
+                        + " value=\"" + post.getTitle() + "\"/>"
+        );
+        // 내용 넣기
+        stringFile = stringFile.replace(
+                "<textarea name=\"contents\" id=\"contents\" rows=\"5\" class=\"form-control\"></textarea>",
+                "<textarea name=\"contents\" id=\"contents\" rows=\"5\" class=\"form-control\">"
+                        + post.getContents() + "</textarea>"
+        );
+        // 질문하기 버튼 -> 수정하기 버튼
+        stringFile = stringFile.replace("질문하기", "수정하기");
+        return stringFile.getBytes();
+    }
+
 }

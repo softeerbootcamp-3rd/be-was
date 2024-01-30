@@ -156,7 +156,7 @@ public class PostService {
     }
 
     // 게시글 생성 요청 처리
-    public HTTPResponseDto createPost(HTTPRequestDto httpRequestDto) {
+    public HTTPResponseDto createOrUpdatePost(HTTPRequestDto httpRequestDto) {
         String sessionId = httpRequestDto.getSessionId();
         User user = Database.findUserBySessionId(sessionId);
         HTTPResponseDto httpResponseDto = checkCreatePostBadRequest(httpRequestDto, user);
@@ -171,8 +171,9 @@ public class PostService {
         if(writer == null || writer.equals(""))
             writer = user.getName();
 
+        // 게시물 생성
+        Post post = makePost(httpRequestDto.getRequestTarget(), user.getUserId(), writer, title, contents);
         // 게시물 저장
-        Post post = new Post(user.getUserId(), writer, title, contents);
         Database.addPost(post);
 
         // /index.html로 리다이렉트
@@ -190,5 +191,14 @@ public class PostService {
             return new HTTPResponseDto(400, "text/plain", "제목과 내용을 모두 입력해주세요.".getBytes());
 
         return null;
+    }
+    // 게시물 생성 또는 수정하여 반환
+    private Post makePost(String url, String userId, String writer, String title, String contents) {
+        try {
+            String postId = url.substring(url.indexOf("form.html/") + "form.html/".length());
+            return new Post(Long.parseLong(postId), userId, writer, title, contents);
+        } catch(NumberFormatException e) {
+            return new Post(userId, writer, title, contents);       // 새로운 게시글 생성
+        }
     }
 }
