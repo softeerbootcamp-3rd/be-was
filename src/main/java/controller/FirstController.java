@@ -14,10 +14,12 @@ public class FirstController {
 
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException, ClassNotFoundException {
         final String requestPath =  httpRequest.getPath();
+
         Controller controller = controllerMap.get(requestPath);
 
-        if(controller == null){
-            controller = new HomeController();
+        if(requestPath.startsWith("/qna/detail?id=")) controller = controllerMap.get("/qna/detail");
+        else if(controller == null){
+            controller = controllerMap.get("/");
         }
 
         controller.service(httpRequest,httpResponse);
@@ -35,6 +37,7 @@ public class FirstController {
         controllerMap.put("/user/login", new UserLoginController());
         controllerMap.put("/user/list", new UserListController());
         controllerMap.put("/qna/write", new WritingController());
+        controllerMap.put("/qna/detail", new WritingDetailController());
     }
 
 }

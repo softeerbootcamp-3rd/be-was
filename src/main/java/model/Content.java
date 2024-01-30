@@ -46,7 +46,7 @@ public class Content {
                     .append("<div class=\"wrap\">\n")
                     .append("<div class=\"main\">\n")
                     .append("<strong class=\"subject\">\n")
-                    .append("<a href=\"./qna/show.html?id=").append(article.getArticleId()).append("\">")  // 게시글 ID를 추가
+                    .append("<a href=\"/qna/detail?id=").append(article.getArticleId()).append("\">")  // 게시글 ID를 추가
                     .append(article.getTitle()).append("</a>")
                     .append("</strong>")
                     .append("<div class=\"auth-info\">")
@@ -56,16 +56,6 @@ public class Content {
         }
     }
 
-    //  제목:<h2 class="qna-title">InitializingBean implements afterPropertiesSet() 호출되지 않는 문제.</h2>
-    //  닉네임:<a href="/users/92/kimmunsu" class="article-author-name">kimmunsu</a>
-    // 시간:<a href="/questions/413" class="article-header-time" title="퍼머링크">
-    // 2015-12-30 01:47
-    // <i class="icon-link"></i>
-    // </a>
-    //  <div class="article-doc">
-    //  <p>A 에 의존성을 가지는 B라는 클래스가 있습니다.</p><p>B라는 클래스는 InitializingBean 을 상속하고 afterPropertiesSet을 구현하고 있습니다.
-    //  서버가 가동되면서 bean들이 초기화되는 시점에 B라는 클래스의 afterPropertiesSet 메소드는</p><p>A라는 클래스의 특정 메소드인 afunc()를 호출하고 있습니다.</p>
-    //
     public String detailContent(Article article,String body){
         body = body.replace("{{title}}",article.getTitle());
         body = body.replace("{{userId}}", article.getUserId());

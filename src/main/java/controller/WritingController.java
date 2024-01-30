@@ -35,9 +35,7 @@ public class WritingController implements Controller {
             //dropTable(connection);
             createTable(connection);
             Article article = new Article(httpRequest);
-            System.out.println("ㅎㅇㅎㅇ2");
             insertArticle(connection, article);
-            System.out.println("ㅎㅇㅎㅇ3");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
