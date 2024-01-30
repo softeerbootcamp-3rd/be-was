@@ -19,7 +19,8 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final Socket connection;
     private static final String INDEX_PAGE = "/index.html";
-    private static final String REDIRECT_PAGE = "/404.html";
+    private static final String REDIRECT_404_PAGE = "/404.html";
+    private static final String REDIRECT_400_PAGE = "/400.html";
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -77,14 +78,15 @@ public class RequestHandler implements Runnable {
             Function<HttpRequest, Boolean> validator = vc.getValidator();
             // 유효성 검증 실패할 경우 BAD_REQUEST 반환
             if (validator != null && !validator.apply(httpRequest)) {
-                return HttpResponse.of(HttpStatus.BAD_REQUEST);
+                Map<String, String> header = Map.of("Location", REDIRECT_400_PAGE);
+                return HttpResponse.of(HttpStatus.REDIRECT, header);
             } else {
                 // validator 없거나 유효성 검증에 통과할 경우 컨트롤러에게 HttpRequest 전달
                 Function<HttpRequest, HttpResponse> controller = vc.getController();
                 return controller.apply(httpRequest);
             }
         } else {
-            Map<String, String> header = Map.of("Location", REDIRECT_PAGE);
+            Map<String, String> header = Map.of("Location", REDIRECT_404_PAGE);
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
     }
