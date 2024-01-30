@@ -1,5 +1,6 @@
 package controller.user;
 
+import constant.HttpStatus;
 import controller.ModelView;
 import exception.AlreadyExistUserException;
 import model.HttpRequest;
@@ -20,7 +21,6 @@ public class UserCreateController implements UserController {
         String name = httpRequest.getParameter("name");
         String email = httpRequest.getParameter("email");
 
-        httpResponse.set302Redirect();
         String path = "";
 
         try {
@@ -29,13 +29,13 @@ public class UserCreateController implements UserController {
             path = "/user/form_failed.html";
             httpResponse.addHeader("Location", path);
 
-            return new ModelView(path);
+            return new ModelView(path, HttpStatus.FOUND);
         }
 
         // 회원가입 성공
         path = "/index.html";
         httpResponse.addHeader("Location", path);
 
-        return new ModelView(path);
+        return new ModelView(path, HttpStatus.FOUND);
     }
 }

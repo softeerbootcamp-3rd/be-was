@@ -1,5 +1,6 @@
 package controller.user;
 
+import constant.HttpStatus;
 import controller.ModelView;
 import exception.LoginFailedException;
 import model.HttpRequest;
@@ -18,7 +19,6 @@ public class UserLoginController implements UserController{
         String userId = httpRequest.getParameter("userId");
         String password = httpRequest.getParameter("password");
 
-        httpResponse.set302Redirect();
         String path = "";
 
         try {
@@ -29,7 +29,7 @@ public class UserLoginController implements UserController{
 
             e.printStackTrace();
 
-            return new ModelView(path);
+            return new ModelView(path, HttpStatus.FOUND);
         }
 
         // 로그인 성공
@@ -37,6 +37,6 @@ public class UserLoginController implements UserController{
         httpResponse.addHeader("Location", path);
         httpResponse.addHeader("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=1800");
 
-        return new ModelView(path);
+        return new ModelView(path, HttpStatus.FOUND);
     }
 }

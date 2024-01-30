@@ -35,6 +35,14 @@ public class View {
             e.printStackTrace();
         }
 
+        httpResponse.setHttpStatus(mv.getHttpStatus());
+
+        String uri = mv.getViewName();
+        int start = uri.lastIndexOf(".");
+        String type = uri.substring(start + 1);
+
+        httpResponse.addHeader("Content-Type", "text/" + type + ";charset=utf-8");
+
         // 동적 페이지 변환을 위한 데이터가 존재한다면
         if (mv.getModel().size() > 0) {
             String fileString = new String(body);
@@ -91,20 +99,24 @@ public class View {
             e.printStackTrace();
         }
 
-        httpResponse.set200Ok();
+        httpResponse.setHttpStatus(mv.getHttpStatus());
         httpResponse.addHeader("Content-Type", "text/" + type + ";charset=utf-8");
 
-//        // todo
+// todo
         if (mv.getViewName().contains("index.html")) {
             String fileString = new String(body);
 
-            Collection<Qna> attribute = (Collection<Qna>) mv.getAttribute("{{qna-list}}");
-            ArrayList<Qna> qnas = new ArrayList<>(attribute);
-            if (qnas.size() == 0) {
-                fileString = fileString.replace("{{qna-list}}", "");
+            Object attribute = mv.getAttribute("{{qna-list}}");
+            if (attribute != null) {
+                Collection<Qna> qnaCollection = (Collection<Qna>) attribute;
+                ArrayList<Qna> qnas = new ArrayList<>(qnaCollection);
+                if (qnas.size() == 0) {
+                    fileString = fileString.replace("{{qna-list}}", "");
+                } else {
+                    String rendered = HtmlBuilder.replace("{{qna-list}}", qnas);
+                    fileString = fileString.replace("{{qna-list}}", rendered);
+                }
             }
-            String rendered = HtmlBuilder.replace("{{qna-list}}", qnas);
-            fileString = fileString.replace("{{qna-list}}", rendered);
 
             User findUser = null;
             try {
@@ -120,7 +132,7 @@ public class View {
             fileString = fileString.replace("{{welcome}}", renderedHtml);
             body = fileString.getBytes();
         }
-        httpResponse.addHeader("Content-Length", String.valueOf(body.length));
+
         httpResponse.setBody(body);
 
     }

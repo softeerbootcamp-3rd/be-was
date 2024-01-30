@@ -1,5 +1,6 @@
 package controller.user;
 
+import constant.HttpStatus;
 import controller.ModelView;
 import exception.UserNotFoundException;
 import model.HttpRequest;
@@ -21,19 +22,17 @@ public class UserListController implements UserController {
     @Override
     public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
         try {
-            httpResponse.set200Ok();
-
             String userId = httpRequest.getCookie("sid");
             User findUser = userService.findUserById(userId);
         } catch (IllegalArgumentException | UserNotFoundException e) {
             e.printStackTrace();
-            return new ModelView("/templates/user/login.html");
+            return new ModelView("/user/login.html", HttpStatus.OK);
         }
 
         Collection<User> users = userService.findAll();
         HashMap<String, Object> model = new HashMap<>();
         model.put("{{user-list}}", users);
 
-        return new ModelView("/templates/user/list.html", model);
+        return new ModelView("/user/list.html", model, HttpStatus.OK);
     }
 }

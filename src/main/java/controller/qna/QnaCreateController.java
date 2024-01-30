@@ -1,5 +1,6 @@
 package controller.qna;
 
+import constant.HttpStatus;
 import controller.ModelView;
 import model.HttpRequest;
 import model.HttpResponse;
@@ -19,9 +20,8 @@ public class QnaCreateController implements QnaController {
         String contents = httpRequest.getParameter("contents");
 
         qnaService.addQna(writer, title, contents);
-        httpResponse.set302Redirect();
-        httpResponse.addHeader("Location", "/index.html");
 
-        return new ModelView("/templates/index.html");
+        httpResponse.addHeader("Location", "/index.html");
+        return new ModelView("/index.html", HttpStatus.FOUND);
     }
 }

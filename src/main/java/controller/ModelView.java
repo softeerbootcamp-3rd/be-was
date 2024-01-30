@@ -1,19 +1,24 @@
 package controller;
 
+import constant.HttpStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelView {
     private String viewName;
     private Map<String, Object> model = new HashMap<>();
+    private HttpStatus httpStatus;
 
-    public ModelView(String viewName) {
+    public ModelView(String viewName, HttpStatus httpStatus) {
         this.viewName = viewName;
+        this.httpStatus = httpStatus;
     }
 
-    public ModelView(String viewName, Map<String, Object> model) {
+    public ModelView(String viewName, Map<String, Object> model, HttpStatus httpStatus) {
         this.viewName = viewName;
         this.model = model;
+        this.httpStatus = httpStatus;
     }
 
     public String getViewName() {
@@ -40,4 +45,7 @@ public class ModelView {
         return model.get(key);
     }
 
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
 }

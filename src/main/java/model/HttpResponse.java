@@ -19,6 +19,11 @@ public class HttpResponse {
         this.body = body;
     }
 
+    public void setHttpStatus(HttpStatus httpStatus) {
+        httpVer = DEFAULT_HTTP_VERSION;
+        this.httpStatus = httpStatus;
+    }
+
     public void set200Ok() {
         httpVer = DEFAULT_HTTP_VERSION;
         httpStatus = HttpStatus.OK;
