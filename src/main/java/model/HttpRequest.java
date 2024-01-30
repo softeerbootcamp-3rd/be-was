@@ -26,8 +26,8 @@ public class HttpRequest {
     public static HttpRequest from(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String line = br.readLine();
-
         String[] startLine = line.split(PATH_DELIMITER);
+
         String method = startLine[HTTP_METHOD_POS];
         URI uri = URI.create(startLine[PATH_POS]);
 
@@ -48,18 +48,12 @@ public class HttpRequest {
         return split.length > 1 ? split[1] : split[0];
     }
 
-    private static Map<String, String> getHeaders(BufferedReader br) throws IOException {
-        Map<String, String> headers = new HashMap<>();
-        String line;
-
-        while (!(line = br.readLine()).equals(END)) {
-            String[] header = line.split(" ");
-            if (line.startsWith(HOST) || line.startsWith(CONNECTION) || line.startsWith(ACCEPT) || line.startsWith(CONTENT_LENGTH)) {
-                headers.put(header[KEY_INDEX], header[VALUE_INDEX]);
-            }
+    public String getSessionId(){
+        String cookieHeader = headers.get(COOKIE);
+        if(cookieHeader == null){
+            return null;
         }
-
-        return headers;
+        return cookieHeader.split(SID_DELIMITER)[SID_POS];
     }
 
     public URI getUri() {
@@ -73,6 +67,20 @@ public class HttpRequest {
     }
     public String getBody() {
         return body;
+    }
+
+    private static Map<String, String> getHeaders(BufferedReader br) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String line;
+
+        while (!(line = br.readLine()).equals(END)) {
+            String[] header = line.split(HEADER_DELIMITER);
+            if (line.startsWith(HOST) || line.startsWith(CONNECTION) || line.startsWith(ACCEPT) || line.startsWith(CONTENT_LENGTH) || line.startsWith(COOKIE)) {
+                headers.put(header[KEY_INDEX], header[VALUE_INDEX]);
+            }
+        }
+
+        return headers;
     }
 
     @Override

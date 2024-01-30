@@ -1,7 +1,7 @@
 package service;
 
 import db.Database;
-import dto.request.UserDto;
+import dto.request.UserSignUpDto;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,10 +24,10 @@ class UserServiceTest {
     @ParameterizedTest
     void signUp(String query){
         //given
-        UserDto userDto = UserDto.from(query);
+        UserSignUpDto userSignUpDto = UserSignUpDto.from(query);
 
         //when
-        UserService.signUp(userDto);
+        UserService.signUp(userSignUpDto);
 
         //then
         User user = Database.findUserById("user1");
@@ -42,10 +42,10 @@ class UserServiceTest {
     @ParameterizedTest
     void signUpWithSameUser(String query){
         //given
-        UserDto userDto = UserDto.from(query);
+        UserSignUpDto userSignUpDto = UserSignUpDto.from(query);
 
         //when //then
-        assertThatThrownBy(() -> UserService.signUp(userDto))
+        assertThatThrownBy(() -> UserService.signUp(userSignUpDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 존재하는 아이디입니다.");
     }

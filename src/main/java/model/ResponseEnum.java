@@ -34,5 +34,4 @@ public enum ResponseEnum {
         }
         return DEFAULT.contentType;
     }
-
 }
