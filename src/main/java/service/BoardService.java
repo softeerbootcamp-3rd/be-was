@@ -43,11 +43,11 @@ public class BoardService {
         return post.getPostId();
     }
 
-    public void comment(Long postId, User writer, String body) {
+    public Long comment(Long postId, User writer, String body) {
         body = decode(body);
 
         Post post = BoardDatabase.findPostById(postId);
-        post.addComment(writer, body);
+        return post.addComment(writer, body);
     }
 
     public Post getPostById(Long postId) {
