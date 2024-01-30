@@ -2,17 +2,17 @@ package dto;
 
 public class PostDto {
 
-    private long postId;
+    private int postId;
     private String title;
     private String content;
-    private String userId;
+    private String userName;
     private String date;
 
-    public PostDto(long postId, String title, String content, String userId, String date) {
+    public PostDto(int postId, String title, String content, String userName, String date) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.userId = userId;
+        this.userName = userName;
         this.date = date;
     }
 

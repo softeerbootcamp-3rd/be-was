@@ -1,5 +1,6 @@
 package dao;
 
+import dto.PostDto;
 import model.User;
 import util.JdbcUtil;
 
@@ -116,7 +117,7 @@ public class UserDao {
             List<User> userList = new ArrayList<>();
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
+                while (resultSet.next()) {
                     User user = new User(
                             resultSet.getString("USER_ID"),
                             resultSet.getString("USERNAME"),
@@ -126,7 +127,6 @@ public class UserDao {
                     userList.add(user);
                 }
             }
-
             return userList;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -134,5 +134,6 @@ public class UserDao {
 
         return null;
     }
+
 
 }

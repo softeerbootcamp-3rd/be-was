@@ -1,9 +1,5 @@
 package model;
 
-import webserver.MultipartFile;
-
-import java.util.List;
-
 public class Post {
 
     private String title;

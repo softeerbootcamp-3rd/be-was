@@ -59,7 +59,7 @@ public class UserController {
     public static ResponseEntity login(@RequestParam(name = "userId") String userId,
                                  @RequestParam(name = "password") String password) {
 
-        User user = UserDao.findUserByUserId(userId);
+        User user = UserDao.findUserByUserId(userId);;
         Map<String, List<String>> headerMap = new HashMap<>();
         if (!validateInput(userId, password) || user == null || !user.getPassword().equals(password)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login_failed.html"));

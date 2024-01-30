@@ -17,7 +17,7 @@ import webserver.http.*;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final List<String> AUTHORIZED_URI = Arrays.asList(
-            "/user/list.html", "/write.html", "/post/post_detail.html"
+            "/user/list.html", "/post/write.html", "/post/post_detail.html"
     );
 
     private Socket connection;

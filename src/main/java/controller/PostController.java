@@ -4,16 +4,20 @@ import annotation.*;
 import dao.FileDao;
 import dao.PostDao;
 import dto.PostDto;
+import file.MultipartFile;
 import model.File;
 import model.Post;
+import type.MimeType;
+import util.MultipartParser;
 import util.SessionManager;
 import util.StringParser;
-import webserver.MultipartFile;
 import webserver.http.HttpHeader;
 import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -21,26 +25,36 @@ import java.util.*;
 public class PostController {
 
     @PostMapping(path = "/upload")
-    public static ResponseEntity postUpload(HttpRequest httpRequest) {
+    public static ResponseEntity postUpload(HttpRequest httpRequest) throws IOException {
 
-        List<MultipartFile> files = httpRequest.getFiles();
-        Map<String, String> body = httpRequest.getParams();
-
+        String requestBody = new String(httpRequest.getByteBody());
         String SID = StringParser.getCookieValue(httpRequest.getCookie(), "SID");
         String userId = (String) SessionManager.getAttribute(SID, "user");
 
-        Post post = new Post(
-                body.get("title"),
-                body.get("contents"),
-                userId
-        );
-        long postId = PostDao.insertPost(post);
+        List<MultipartFile> files = MultipartParser.parseMultipartData(requestBody, httpRequest.getBoundary());
+        String title = "";
+        String contents = "";
+        byte[] fileContent = null;
+        for (MultipartFile m : files) {
+            if (m.getFieldName().equals("title")) {
+                title = new String(m.getContent());
+                continue;
+            }
 
-        for (MultipartFile f : files) {
-            File file = new File(
-                    postId,
-                    f.getContent()
-            );
+            if (m.getFieldName().equals("contents")) {
+                contents = new String(m.getContent());
+                continue;
+            }
+
+            if (m.getFieldName().equals("file")) {
+                fileContent = m.getContent();
+            }
+        }
+
+        Post post = new Post(title, contents, userId);
+        int postId = PostDao.insertPost(post);
+        if (fileContent != null) {
+            File file = new File(postId, fileContent);
             FileDao.insertFile(file);
         }
 
@@ -69,7 +83,7 @@ public class PostController {
 
     @GetMapping(path = "/detail")
     @ResponseBody
-    public static ResponseEntity getPostDetail(@RequestParam(name = "postId") long postId) {
+    public static ResponseEntity getPostDetail(@RequestParam(name = "postId") int postId) {
 
         PostDto postDto = PostDao.findPostByPostId(postId);
 
@@ -80,6 +94,5 @@ public class PostController {
                 postDto
         );
     }
-
 
 }

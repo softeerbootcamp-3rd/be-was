@@ -5,30 +5,34 @@ import model.Post;
 import model.User;
 import util.JdbcUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostDao {
 
     private static final Connection connection = JdbcUtil.getJdbcConnection();
-    private static long postId = 10;
 
-    public static long insertPost(Post post) {
-        String query = "INSERT INTO posts (post_id, title, content, author_id) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+    public static int insertPost(Post post) {
+        String query = "INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setLong(1, postId);
-            preparedStatement.setString(2, post.getTitle());
-            preparedStatement.setString(3, post.getContent());
-            preparedStatement.setString(4, post.getAuthorId());
+            preparedStatement.setString(1, post.getTitle());
+            preparedStatement.setString(2, post.getContent());
+            preparedStatement.setString(3, post.getAuthorId());
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
 
-            return postId++;
+            if (rowsAffected > 0) {
+                // 생성된 키 가져오기
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int postId = generatedKeys.getInt("post_id");
+                        return postId;
+                    }
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -36,17 +40,17 @@ public class PostDao {
     }
 
     public static List<PostDto> findAll() {
-        String query = "SELECT * FROM posts";
+        String query = "SELECT * FROM posts LEFT JOIN users ON posts.author_id = users.user_id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             List<PostDto> postList = new ArrayList<>();
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
+                while (resultSet.next()) {
                     PostDto post = new PostDto(
-                            resultSet.getLong("post_id"),
+                            resultSet.getInt("post_id"),
                             resultSet.getString("title"),
                             resultSet.getString("content"),
-                            resultSet.getString("author_id"),
+                            resultSet.getString("userName"),
                             resultSet.getString("created_at")
                     );
                     postList.add(post);
@@ -61,18 +65,19 @@ public class PostDao {
         return null;
     }
 
-    public static PostDto findPostByPostId(long postId) {
-        String query = "SELECT * FROM posts WHERE post_id = ?";
+
+    public static PostDto findPostByPostId(int postId) {
+        String query = "SELECT * FROM posts LEFT JOIN users ON posts.author_id = users.user_id WHERE post_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, postId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     PostDto post = new PostDto(
-                            resultSet.getLong("post_id"),
+                            resultSet.getInt("post_id"),
                             resultSet.getString("title"),
                             resultSet.getString("content"),
-                            resultSet.getString("author_id"),
+                            resultSet.getString("userName"),
                             resultSet.getString("created_at")
                     );
                     return post;
