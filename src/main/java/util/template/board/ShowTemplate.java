@@ -1,4 +1,4 @@
-package util.template;
+package util.template.board;
 
 import model.Comment;
 import model.Post;
@@ -14,7 +14,7 @@ public class ShowTemplate {
     public static final String POST_UPDATE_DELETE =  "                  <div class=\"article-utils\">\n" +
             "                      <ul class=\"article-utils-list\">\n" +
             "                          <li>\n" +
-            "                              <a class=\"link-modify-article\" href=\"/questions/423/form\">수정</a>\n" +
+            "                              <a class=\"link-modify-article\" href=\"/board/update/{postId}\">수정</a>\n" +
             "                          </li>\n" +
             "                          <li>\n" +
             "                              <form class=\"form-delete\" action=\"/board/delete/{postId}\" method=\"POST\">\n" +

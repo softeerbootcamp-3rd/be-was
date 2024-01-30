@@ -1,7 +1,9 @@
 package service;
 
 import db.BoardDatabase;
+import db.UserDatabase;
 import exception.PostException;
+import exception.UserException;
 import exception.WebException;
 import model.Post;
 import model.User;
@@ -14,7 +16,7 @@ import static util.StringUtils.decode;
 public class BoardService {
     private static final Logger logger = LoggerFactory.getLogger(BoardService.class);
 
-    public void write(User writer, String title, String contents) {
+    public Long write(User writer, String title, String contents) {
         if (writer == null)
             throw new PostException(PostException.NULL_WRITER);
         if (title == null)
@@ -27,7 +29,18 @@ public class BoardService {
 
         Post post = new Post(writer, title, contents);
         BoardDatabase.addPost(post);
-        logger.debug(post.toString());
+        logger.debug("Created: " + post.toString());
+        return post.getPostId();
+    }
+
+    public Long update(Long postId, String title, String contents) {
+        title = decode(title);
+        contents = decode(contents);
+
+        Post post = BoardDatabase.findPostById(postId);
+        post.update(title, contents);
+        logger.debug("Updated: " + post.toString());
+        return post.getPostId();
     }
 
     public void comment(Long postId, User writer, String body) {

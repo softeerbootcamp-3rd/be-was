@@ -29,16 +29,14 @@ public class UserController {
 
             ResponseEntity<?> responseEntity = null;
             if (lastPath.equals("create")) {
-                if (httpRequest.getMethod() == HttpMethod.POST)
-                    responseEntity = create();
-                else
+                if (httpRequest.getMethod() != HttpMethod.POST)
                     throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
+                responseEntity = create();
             }
             if (lastPath.equals("login")) {
-                if (httpRequest.getMethod() == HttpMethod.POST)
-                    responseEntity = login();
-                else
+                if (httpRequest.getMethod() != HttpMethod.POST)
                     throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
+                responseEntity = login();
             }
             if (lastPath.equals("list")) {
                 responseEntity = list();
@@ -51,9 +49,9 @@ public class UserController {
             }
             if (lastPath.equals("update")) {
                 if (httpRequest.getMethod() == HttpMethod.GET)
-                    responseEntity = getUpdate();
+                    responseEntity = updateForm();
                 if (httpRequest.getMethod() == HttpMethod.POST)
-                    responseEntity = postUpdate();
+                    responseEntity = update();
             }
             return responseEntity;
         } catch (WebException e) {
@@ -174,7 +172,7 @@ public class UserController {
                 .build();
     }
 
-    private ResponseEntity<?> getUpdate() throws IOException {
+    private ResponseEntity<?> updateForm() throws IOException {
         boolean isLoggedIn = SessionManager.isLoggedIn(httpRequest);
 
         if (!isLoggedIn) {
@@ -199,7 +197,7 @@ public class UserController {
                 .body(body);
     }
 
-    private ResponseEntity<?> postUpdate() throws IOException {
+    private ResponseEntity<?> update() throws IOException {
         User loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
         Map<String, String> query = httpRequest.getBodyParams();

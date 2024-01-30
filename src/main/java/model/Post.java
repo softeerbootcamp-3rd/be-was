@@ -11,6 +11,7 @@ public class Post {
     private String title;
     private String contents;
     private LocalDateTime created;
+    private LocalDateTime updated;
     private List<Comment> comments;
     private Long commentId;
 
@@ -28,6 +29,17 @@ public class Post {
         Comment comment = new Comment(postId, ++commentId, writer, body);
         this.comments.add(comment);
         return commentId;
+    }
+
+    public void update(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+        updated = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Post [writer=" + writer.getUserId() + ", title=" + title + ", created=" + created + "]";
     }
 
     public Long getPostId() {
@@ -52,10 +64,5 @@ public class Post {
 
     public LocalDateTime getCreated() {
         return created;
-    }
-
-    @Override
-    public String toString() {
-        return "Post [writer=" + writer.getUserId() + ", title=" + title + ", created=" + created + "]";
     }
 }

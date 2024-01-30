@@ -39,4 +39,11 @@ public class ResourceUtils {
         String[] tokens = path.split("/");
         return tokens[tokens.length - 1];
     }
+
+    public static String getMiddlePath(String path) {
+        if (path == null || "/".equals(path))
+            return path;
+        String[] tokens = path.split("/");
+        return tokens[tokens.length - 2];
+    }
 }
