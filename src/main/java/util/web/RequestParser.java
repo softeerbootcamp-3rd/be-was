@@ -3,11 +3,13 @@ package util.web;
 import constant.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ByteReader;
 import util.mapper.MultipartMapper;
 import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -56,6 +58,20 @@ public class RequestParser {
         if (cookieString == null || cookieString.isEmpty())
             return new HashMap<>();
         return extractKeyValue(cookieString, "; ");
+    }
+
+    public static Map<HttpHeader, String> extractHeader(ByteReader reader) throws IOException {
+        Map<HttpHeader, String> header = new HashMap<>();
+        String s;
+        while ((s = reader.readLine()) != null && !s.isEmpty()) {
+            String[] requestParts = s.split(":\\s*", 2);
+            if (requestParts.length == 2) {
+                try {
+                    header.put(HttpHeader.of(requestParts[0]), requestParts[1]);
+                } catch (IllegalArgumentException ignored) {}
+            }
+        }
+        return header;
     }
 
     private static Map<String, String> extractKeyValue(String input, String delimiter1) {
