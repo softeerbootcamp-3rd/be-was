@@ -115,7 +115,7 @@ public class HttpRequest {
             }
         }
 
-        throw new IllegalArgumentException("일치하는 cookie가 존재하지 않습니다.");
+        return "";
     }
 
     private void initCookieMap() {
