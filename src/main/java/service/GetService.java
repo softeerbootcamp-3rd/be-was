@@ -268,7 +268,8 @@ public class GetService {
         return "<li><div class=\"wrap\"><div class=\"main\"><strong class=\"subject\"><a href=\"./qna/show.html/"
                 + post.getId() + "\">"
                 + post.getTitle() + "</a></strong><div class=\"auth-info\"><i class=\"icon-add-comment\"></i><span class=\"time\">"
-                + post.getCreateAtWithFormat() + " </span><a href=\"./user/profile.html\" class=\"author\">"
+                + post.getCreateAtWithFormat() + " </span><a href=\"./user/profile.html/"
+                + post.getUserId() + "\" class=\"author\">"
                 + post.getUserId() + "</a></div><div class=\"reply\" title=\"댓글\"><i class=\"icon-reply\"></i><span class=\"point\">"
                 + index + "</span></div></div></div></li>";
     }
@@ -306,12 +307,21 @@ public class GetService {
                 + "</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td></tr>";
     }
 
-    // 현재 로그인한 유저 정보로 profile.html 수정 후 반환
+    // 동적 profile.html 반환
     private byte[] makeProfile(HTTPRequestDto httpRequestDto, byte[] byteFile) {
-        String sessionId = httpRequestDto.getSessionId();
-        User user = Database.findUserBySessionId(sessionId);
+
+        String url = httpRequestDto.getRequestTarget();
+        User user = null;
+        if(url.equals("/user/profile.html") || url.equals("/user/profile.html/")) {     // 현재 로그인한 유저로 반환
+            String sessionId = httpRequestDto.getSessionId();
+            user = Database.findUserBySessionId(sessionId);
+        }
+        else {      // 요청으로 들어온 유저로 반환
+            String userId = url.substring(url.indexOf("profile.html/")+"profile.html/".length());
+            user = Database.findUserById(userId);
+        }
         if(user == null)
-            return byteFile;
+            return null;
 
         String stringFile = new String(byteFile);
         stringFile = stringFile.replace("자바지기", user.getName());

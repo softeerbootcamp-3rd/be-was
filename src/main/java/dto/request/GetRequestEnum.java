@@ -33,9 +33,10 @@ public enum GetRequestEnum {
             return Config.httpGetService.showWithLogin(httpRequestDto);
         }
     },
-    PROFILE("/user/profile\\.html") {
+    PROFILE("/user/profile\\.html(?:/[a-zA-Z0-9가-힣]+)?") {
         @Override
         public HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
+            System.out.println("here!!!");
             return Config.httpGetService.showWithLogin(httpRequestDto);
         }
     },
