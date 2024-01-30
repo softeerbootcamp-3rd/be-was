@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 
 class DatabaseTest {
 
-    @BeforeEach
-    void beforeEach() {
-        Database.clear();
-    }
-
     @Test
     @DisplayName("사용자 추가")
     void addUser() {

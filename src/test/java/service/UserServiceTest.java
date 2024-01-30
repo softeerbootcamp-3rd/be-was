@@ -13,11 +13,6 @@ class UserServiceTest {
 
     private final UserService userService = new UserService();
 
-    @BeforeEach
-    void beforeEach() {
-        Database.clear();
-    }
-
     @Test
     @DisplayName("회원가입 정상처리")
     void saveUser() {
