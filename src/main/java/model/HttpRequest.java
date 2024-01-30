@@ -9,8 +9,8 @@ public class HttpRequest {
     private HttpMethod method;
     private String URI;
     private String httpVer;
-    private Map<String, String> headerMap;
-    private Map<String, String> paramMap;
+    private HttpHeader headerMap;
+    private Parameter paramMap;
     private Map<String, String> cookieMap;
     private String body;
 
@@ -30,24 +30,16 @@ public class HttpRequest {
         this.httpVer = httpVer;
     }
 
-    public void setHeaderMap(Map<String, String> headerMap) {
-        this.headerMap = headerMap;
+    public void setHeaderMap(HttpHeader header) {
+        this.headerMap = header;
     }
 
     public void setBody(String body) {
         this.body = body;
     }
 
-    public void setParamMap(Map<String, String> paramMap) {
+    public void setParamMap(Parameter paramMap) {
         this.paramMap = paramMap;
-    }
-
-    public Map<String, String> getHeaderMap() {
-        return headerMap;
-    }
-
-    public Map<String, String> getParamMap() {
-        return paramMap;
     }
 
     public HttpMethod getMethod() {
@@ -80,13 +72,13 @@ public class HttpRequest {
                 .append("URI = ").append(URI).append("\n")
                 .append("Http version = ").append(httpVer).append("\n")
                 .append("====== Request Header ======\n");
-        for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-            builder.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        for (Map.Entry<String, String> header : headerMap.getHeader().entrySet()) {
+            builder.append(header.getKey()).append(": ").append(header.getValue()).append("\n");
         }
 
         if (paramMap != null) {
             builder.append("====== Request Param ======\n");
-            for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            for (Map.Entry<String, String> entry : paramMap.getParamMap().entrySet()) {
                 builder.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
         }
