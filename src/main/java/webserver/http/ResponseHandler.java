@@ -8,6 +8,7 @@ import webserver.http.constants.StatusCode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class ResponseHandler {
 
@@ -17,7 +18,6 @@ public class ResponseHandler {
     private static final String STATIC_DIRECTORY ="/src/main/resources/static";
     public byte[] setResponseBody(Mime responseMimeType, String requestTarget, Response response) {
         byte[] responseBody = new byte[0];
-
 
         try {
             File file = null;
@@ -57,6 +57,14 @@ public class ResponseHandler {
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+
+        try {
+            String string = new String(responseBody, "UTF-8");
+            // Use the string as needed
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            // Handle the exception, maybe use a different encoding
         }
 
         return responseBody;

@@ -25,6 +25,7 @@ public class Request {
     private Float httpVersionNum;
     private Mime responseMimeType;
     private final ArrayList<String> headerContent = new ArrayList<>();
+    private HashMap<String, String> requestedData = new HashMap<>();
     private char[] bodyContent;
     private final HashMap<String, String> requestHeader = new HashMap<>();
     private HashMap<String, String> requestBody;
@@ -66,7 +67,7 @@ public class Request {
         this.httpVersion = requestStartLine[2];
         int lastDotIndex = requestTarget.lastIndexOf('.');
         if (lastDotIndex != -1 && lastDotIndex < requestTarget.length() - 1) {
-            this.responseMimeType = convertMime(requestTarget.substring(lastDotIndex + 1));
+            this.responseMimeType = convertMime(requestTarget.substring(lastDotIndex + 1).split("\\?")[0]);
         } else {
             this.responseMimeType = Mime.NONE;
         }
@@ -104,7 +105,6 @@ public class Request {
                 logger.debug("{} {}",entry.getKey(), entry.getValue());
             }
         }
-        System.out.println("*******************************************");
     }
 
     public String getRequestTarget() {
@@ -129,5 +129,13 @@ public class Request {
 
     public Map<String, String> getRequestBody() {
         return requestBody;
+    }
+
+    public void setRequestedData(HashMap<String, String> requestedData){
+        this.requestedData = requestedData;
+    }
+
+    public HashMap<String, String> getRequestedData(){
+        return requestedData;
     }
 }

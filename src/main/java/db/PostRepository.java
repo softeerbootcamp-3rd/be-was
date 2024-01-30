@@ -83,4 +83,43 @@ public class PostRepository {
         }
         return posts;
     }
+
+    public static GetPost findById(int postId) {
+        GetPost post = null;
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = DriverManager.getConnection(url, username, password);
+            String sql = "SELECT * FROM Post WHERE id = ?";
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, postId);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String userId = resultSet.getString("writer");
+                String title = resultSet.getString("title");
+                String content = resultSet.getString("content");
+                Timestamp timestamp = resultSet.getTimestamp("createdtime");
+                int commentCount = resultSet.getInt("commentcount");
+
+                post = new GetPost(id, userId, title, content, timestamp.toLocalDateTime(), commentCount);
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        }
+        return post;
+    }
+
 }

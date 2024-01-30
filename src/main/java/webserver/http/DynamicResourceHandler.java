@@ -1,17 +1,16 @@
 package webserver.http;
 
-import db.H2Database;
 import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
 import db.dto.GetPost;
-import model.Post;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.LoginChecker;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +20,8 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.Integer.parseInt;
+
 public class DynamicResourceHandler {
     private static final Logger logger = LoggerFactory.getLogger(DynamicResourceHandler.class);
     private final Map<String, BiConsumer<Request, Response>> resourceHandlers = new HashMap<>();
@@ -29,8 +30,8 @@ public class DynamicResourceHandler {
         resourceHandlers.put("/index.html", this::indexFunction);
         resourceHandlers.put("/user/list", this::userListAPIFunction);
         resourceHandlers.put("/user/list.html", this::userListFunction);
+        resourceHandlers.put("/post/show.html", this::postShowFuntion);
     }
-
     private void indexFunction(Request request, Response response) {
         byte[] responseBody = response.getResponseBody();
         String responseContent;
@@ -50,10 +51,10 @@ public class DynamicResourceHandler {
             stringBuilder.append("<li>");
             stringBuilder.append("<div class='wrap'>");
             stringBuilder.append("<div class='main'>");
-            stringBuilder.append("<strong class='subject'><a href='./post/show.html'>").append(post.getTitle()).append("</a></strong>");
+            stringBuilder.append("<strong class='subject'><a href='./post/show.html?postId=").append(post.getId()).append("'>").append(post.getTitle()).append("</a></strong>");
             stringBuilder.append("<div class='auth-info'>");
             stringBuilder.append("<i class='icon-add-comment'></i>");
-            stringBuilder.append("<span class='time'>").append(formattedDateTime).append("</span>");
+            stringBuilder.append("<span class='time' style='margin: 2px;'>").append(formattedDateTime).append("</span>");
             stringBuilder.append("<a href='./user/profile.html' class='author'>").append(post.getWriter()).append("</a>");
             stringBuilder.append("</div>");
             stringBuilder.append("<div class='reply' title='댓글'>");
@@ -134,9 +135,68 @@ public class DynamicResourceHandler {
         response.setResponseBody(replacer.toString().getBytes());
     }
 
+    private void postShowFuntion(Request request, Response response) {
+        byte[] responseBody = response.getResponseBody();
+        String responseContent;
+        try {
+            responseContent = new String(responseBody, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Encoding Exception", e);
+            responseContent = new String(responseBody);
+        }
+
+        HashMap<String,String> postMap = request.getRequestedData();
+        String dateTimeString = postMap.get("createdtime");
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_DATE_TIME);
+
+        GetPost post = new GetPost(parseInt(postMap.get("id")),
+                postMap.get("writer"),
+                postMap.get("title"),
+                postMap.get("content"),
+                dateTime,
+                parseInt(postMap.get("commentcount")));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<div class=\"panel panel-default\">")
+                .append("<header class=\"qna-header\">")
+                .append("<h2 class=\"qna-title\">").append(post.getTitle()).append("</h2>")
+                .append("</header>")
+                .append("<div class=\"content-main\">")
+                .append("<article class=\"article\">")
+                .append("<div class=\"article-header\">")
+                .append("<div class=\"article-header-thumb\">")
+                .append("<img src=\"https://graph.facebook.com/v2.3/100000059371774/picture\" class=\"article-author-thumb\" alt=\"\">")
+                .append("</div>")
+                .append("<div class=\"article-header-text\">")
+                .append("<a href='/users/").append(1).append("/").append(post.getWriter()).append("' class='article-author-name'>").append(post.getWriter()).append("</a>")
+                .append("<a href='/questions/").append(post.getId()).append("' class='article-header-time' title='Permalink'>")
+                .append(dateTimeString)
+                .append("<i class='icon-link'></i>")
+                .append("</a>")
+                .append("</div>")
+                .append("</div>")
+                .append("<div class='article-doc'>")
+                .append("<p>").append(post.getContent()).append("</p>")
+                .append("</div>")
+                .append("</article>")
+                .append("</div>")
+                .append("</div>");
+        StringBuilder replacer = new StringBuilder(responseContent);
+        Pattern pattern = Pattern.compile("<(?s)article class=\"article\">.*?</article>");
+        Matcher matcher = pattern.matcher(replacer);
+
+        if (matcher.find()) {
+            responseContent = replacer.replace(matcher.start(), matcher.end(), stringBuilder.toString()).toString();
+        }
+
+        response.setResponseBody(responseContent.getBytes());
+    }
+
+
     public void handle(Request request, Response response) {
-        if (resourceHandlers.containsKey(request.getRequestTarget())) {
-            resourceHandlers.get(request.getRequestTarget()).accept(request, response);
+        String requestTarget = request.getRequestTarget().split("\\?")[0]; // 쿼리 스트링 제거
+        if (resourceHandlers.containsKey(requestTarget)) {
+            resourceHandlers.get(requestTarget).accept(request, response);
         }
     }
 }

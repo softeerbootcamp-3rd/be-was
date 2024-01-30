@@ -5,6 +5,7 @@ import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
 import db.dto.CreatePost;
+import db.dto.GetPost;
 import model.Post;
 import model.User;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import static java.lang.Integer.parseInt;
 
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -57,8 +60,8 @@ public class RequestHandler {
         routeHandlers.put(new Route(HttpMethod.GET,"/user/list.html"), (Request r)-> getUserList(r));
         routeHandlers.put(new Route(HttpMethod.GET,"/post/form.html"), (Request r)-> getBoardWrite(r));
         routeHandlers.put(new Route(HttpMethod.POST,"/post/create"), (Request r)-> postPostCreate(r));
+        routeHandlers.put(new Route(HttpMethod.GET,"/post/show.html"), (Request r)-> getPostShow(r));
     }
-
     public void handleRequest(Request request) {
         if (request.getHttpMethod() == HttpMethod.NULL)
             throw new IllegalArgumentException("Method NULL");
@@ -128,6 +131,26 @@ public class RequestHandler {
         PostRepository.addPost(post);
         request.addRequestHeader("Location","/index.html");
     }
+
+    private void getPostShow(Request request) {
+        if(!LoginChecker.loginCheck(request)){
+            request.addRequestHeader("Location","/user/login.html");
+        }
+
+        String data = request.getRequestTarget().split("\\?")[1].split("=")[1];
+        GetPost getPost = PostRepository.findById(parseInt(data));
+        HashMap<String, String> requestedData = new HashMap<>();
+
+        requestedData.put("id",String.valueOf(getPost.getId()));
+        requestedData.put("writer", getPost.getWriter());
+        requestedData.put("title", getPost.getTitle());
+        requestedData.put("content", getPost.getContent());
+        requestedData.put("createdtime", getPost.getCreatedTime().toString());
+        requestedData.put("commentcount", String.valueOf(getPost.getCommentCount()));
+
+        request.setRequestedData(requestedData);
+    }
+
 
     private void handleNotFound(Request request) {
         //405에러처리

@@ -75,7 +75,8 @@ public class Response {
     }
 
     private void setBody(Request request){
-        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget(), this);
+        String requestTarget = request.getRequestTarget().split("\\?")[0];
+        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), requestTarget, this);
         dynamicResourceHandler.handle(request, this);
     }
 
