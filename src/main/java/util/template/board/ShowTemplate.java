@@ -27,7 +27,7 @@ public class ShowTemplate {
     public static final String COMMENT_DELETE = "                              <div class=\"article-utils\">\n" +
             "                                  <ul class=\"article-utils-list\">\n" +
             "                                      <li>\n" +
-            "                                          <form class=\"delete-answer-form\" action=\"/questions/413/answers/1405\" method=\"POST\">\n" +
+            "                                          <form class=\"delete-answer-form\" action=\"/board/{postId}/delete/{commentId}\" method=\"POST\">\n" +
             "                                              <input type=\"hidden\" name=\"_method\" value=\"DELETE\">\n" +
             "                                              <button type=\"submit\" class=\"delete-answer-button\">삭제</button>\n" +
             "                                          </form>\n" +
@@ -112,7 +112,7 @@ public class ShowTemplate {
                             .replace("{created}", comment.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                             .replace("{body}", comment.getBody());
             if (loggedInUser.equals(comment.getWriter()))
-                commentTemplate = commentTemplate.replace("                              <div id=\"comment-delete\"></div>\n", COMMENT_DELETE);
+                commentTemplate = commentTemplate.replace("                              <div id=\"comment-delete\"></div>\n", COMMENT_DELETE.replace("{postId}", post.getPostId().toString()).replace("{commentId}", comment.getCommentId().toString()));
             sb.append(commentTemplate);
         }
 

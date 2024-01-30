@@ -43,6 +43,15 @@ public class BoardController {
                     throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
                 responseEntity = comment();
             }
+            if (StringUtils.isMatched(path, "/board/(\\d+)/delete/(\\d+)")) {
+                String[] tokens = path.split("/");
+                Long postId = Long.parseLong(tokens[2]);
+                Long commentId = Long.parseLong(tokens[4]);
+
+                if (httpRequest.getMethod() != HttpMethod.POST)
+                    throw new WebException(HttpStatus.METHOD_NOT_ALLOWED);
+                return deleteComment(postId, commentId);
+            }
             if (StringUtils.isMatched(path, "/board/.+/(\\d+)")) {
                 String[] tokens = path.split("/");
                 Long postId = Long.parseLong(tokens[tokens.length - 1]);
@@ -181,6 +190,14 @@ public class BoardController {
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create("/index.html"))
+                .build();
+    }
+
+    private ResponseEntity<?> deleteComment(Long postId, Long commentId) {
+        boardService.deleteComment(postId, commentId);
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("/board/show/" + postId))
                 .build();
     }
 }

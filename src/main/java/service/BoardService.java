@@ -62,4 +62,10 @@ public class BoardService {
         BoardDatabase.removePost(postId);
     }
 
+    public void deleteComment(Long postId, Long commentId) {
+        Post post = BoardDatabase.findPostById(postId);
+
+        post.deleteComment(commentId);
+    }
+
 }

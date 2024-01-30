@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Post {
     private static Long sequence = 0L;
@@ -35,6 +36,10 @@ public class Post {
         this.title = title;
         this.contents = contents;
         updated = LocalDateTime.now();
+    }
+
+    public void deleteComment(Long commentId) {
+        comments.removeIf(comment -> Objects.equals(comment.getCommentId(), commentId));
     }
 
     @Override
