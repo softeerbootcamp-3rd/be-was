@@ -45,7 +45,7 @@ public class Database {
 
 
     public static void updateIndexHtml(){
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\n" +
                 "<html lang=\"kr\">\n" +
                 "\t<head>\n" +

@@ -27,19 +27,15 @@ public class QnaController {
 
     }
     private static Qna parseToQna(HTTPRequest request){
-        List<String> bodyStrings = new ArrayList<>(Arrays.asList(request.getBody().toString().split("&")));
+
         String title = null;
         String writer = null;
         String content = null;
 
-        for(String str : bodyStrings){
-            if(str.contains("writer"))
-                writer = str.substring("writer=".length());
-            else if(str.contains("title"))
-                title = str.substring("title=".length());
-            else if(str.contains("content"))
-                content = str.substring("contents=".length());
-        }
+        title = request.getBody().get("title");
+        writer = request.getBody().get("writer");
+        content = request.getBody().get("content");
+
 
         return new Qna(writer,title,content);
     }
