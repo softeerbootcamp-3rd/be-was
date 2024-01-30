@@ -67,12 +67,22 @@ public class HtmlBuilder {
         return replaceHtml(html, replacements);
     }
 
-    public static byte[] buildProfile(User user) {
+    public static byte[] buildProfile(User user, User loginUser) {
         String html = readHtmlInString(HttpRequestParser.getPath("/user/profile.html"));
         Map<String, String> replacements = new HashMap<>();
-        replacements.put("{{user-navbar}}", buildNavBar(user));
+        replacements.put("{{user-navbar}}", buildNavBar(loginUser));
         replacements.put("{{profile-user-name}}", user == null ? "존재하지 않는 유저입니다." : user.getName());
         replacements.put("{{profile-user-email}}", user == null ? "" : user.getEmail());
+
+        return replaceHtml(html, replacements);
+    }
+
+    public static byte[] buildProfile(User loginUser) {
+        String html = readHtmlInString(HttpRequestParser.getPath("/user/profile.html"));
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{{user-navbar}}", buildNavBar(loginUser));
+        replacements.put("{{profile-user-name}}", loginUser.getName());
+        replacements.put("{{profile-user-email}}", loginUser.getEmail());
 
         return replaceHtml(html, replacements);
     }

@@ -57,13 +57,10 @@ public class UserService {
         if (userId != null) {
             // 특정 유저의 프로파일을 확인하는 경우
             User user = UserDatabase.findUserById(userId);
-            return HtmlBuilder.buildProfile(user);
-        } else if (loginUser != null) {
-            // 자신의 프로파일을 확인하는 경우 (로그인 되어있는 상태여야함)
-            return HtmlBuilder.buildProfile(loginUser);
+            return HtmlBuilder.buildProfile(user, loginUser);
         }
-        // 로그인하지 않았는데 자신의 프로파일을 확인하는 경우
-        throw new IllegalArgumentException("잘못된 접근입니다.");
+        // 자신의 프로파일을 확인하는 경우 (로그인 되어있는 상태여야함)
+        return HtmlBuilder.buildProfile(loginUser);
     }
 
     // 사용자가 입력한 로그인 정보가 유효한지 확인

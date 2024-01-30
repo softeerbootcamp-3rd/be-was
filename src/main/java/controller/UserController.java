@@ -112,6 +112,11 @@ public class UserController implements Controller {
     public HttpResponseDto printProfile(HttpRequestDto request) {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
         Map<String, String> queryString = HttpRequestParser.parseQueryString(request.getUri());
+        if (request.getUser() == null) {
+            // 로그인하지 않은 경우
+            return responseDtoBuilder.response302Header()
+                    .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
+        }
 
         try {
             byte[] body = userService.printUserProfile(queryString, request.getUser());
