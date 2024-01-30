@@ -30,7 +30,7 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // HttpRequest 처리 로직
+            // httpRequest 생성 및 출력
             HttpRequest httpRequest = processRequest(in);
 
             // 동적 & 정적 자원 분할 처리
@@ -46,7 +46,8 @@ public class RequestHandler implements Runnable {
             // 정적 자원 처리 - basePath 찾은 경우
             String basePath = FileReader.getBasePath(requestUrl);
             if (!basePath.isEmpty()) {
-                response = handleStaticResource(basePath, requestUrl, httpRequest);
+                String filePath = basePath + Parser.extractPath(requestUrl);
+                response = ResourceHandler.process(filePath, httpRequest);
             } else {
                 // 동적 자원 처리
                 response = handleDynamicResource(httpRequest.getRequestLine(), httpRequest);
@@ -62,32 +63,25 @@ public class RequestHandler implements Runnable {
     }
 
     private HttpRequest processRequest(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
         // httpRequest 생성 및 출력
-        HttpRequest httpRequest = new HttpRequest(br);
-        logger.debug(httpRequest.toString());
+        HttpRequest httpRequest = new HttpRequest(in);
+        logger.info(httpRequest.toString());
 
         return httpRequest;
-    }
-
-    private HttpResponse handleStaticResource(String basePath, String requestUrl, HttpRequest httpRequest) {
-        String filePath = basePath + Parser.extractPath(requestUrl);
-        return ResourceHandler.process(filePath, httpRequest);
     }
 
     private HttpResponse handleDynamicResource(RequestLine requestLine, HttpRequest httpRequest) {
         ValidatorControllerMapper vc = ValidatorControllerMapper.getValidatorAndControllerByPath(requestLine.getMethodAndPath());
 
         if (vc != null) {
-            Function<String, Boolean> validator = vc.getValidator();
+            Function<HttpRequest, Boolean> validator = vc.getValidator();
             // 유효성 검증 실패할 경우 BAD_REQUEST 반환
-            if (validator != null && !validator.apply(httpRequest.getBody())) {
+            if (validator != null && !validator.apply(httpRequest)) {
                 return HttpResponse.of(HttpStatus.BAD_REQUEST);
             } else {
                 // validator 없거나 유효성 검증에 통과할 경우 컨트롤러에게 HttpRequest 전달
-                Function<String, HttpResponse> controller = vc.getController();
-                return controller.apply(httpRequest.getBody());
+                Function<HttpRequest, HttpResponse> controller = vc.getController();
+                return controller.apply(httpRequest);
             }
         } else {
             Map<String, String> header = Map.of("Location", REDIRECT_PAGE);
