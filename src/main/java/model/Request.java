@@ -40,10 +40,16 @@ public class Request {
         // request body
         if (headers.containsKey("Content-Length")) {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
-            System.out.println(contentLength);
-            byte[] chunk = new byte[contentLength];
-            in.read(chunk);
-            body = chunk;
+            byte[] bodyData = new byte[contentLength];
+            int bytesRead = 0;
+            while (bytesRead < contentLength) {
+                int count = in.read(bodyData, bytesRead, contentLength - bytesRead);
+                if (count == -1) {
+                    throw new IOException("Unexpected end of stream while reading request body.");
+                }
+                bytesRead += count;
+            }
+            body = bodyData;
         } else {
             body = new byte[0];
         }

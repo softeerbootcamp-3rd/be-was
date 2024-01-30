@@ -2,7 +2,6 @@ package controller;
 
 import constants.ContentType;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import model.Request;
@@ -75,11 +74,8 @@ public class PostController implements Controller {
      */
     private void post(Request request, Response response) {
         Map<String, String> params;
-        try {
-            params = ParamBuilder.getParamFromBody(new String(request.getBody(), "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        params = ParamBuilder.getParamFromMultipart(request.getBody(), request);
+
         User user = Session.getUserBySessionId(request.getHeader("Cookie"));
         LocalDateTime time = LocalDateTime.now();
 
