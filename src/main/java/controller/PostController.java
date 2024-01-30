@@ -44,6 +44,7 @@ public class PostController implements Controller {
             Map<String, String> c = setCommentInfo(comment);
             listMapData.putMap(c);
         }
+        view.set("userId", SessionManager.getUserBySessionId(inputData.getSessionId()));
         view.set("comments", listMapData);
         view.set("commentNumber", listMapData.getListSize().toString());
         return "/qna/show.html";
@@ -63,7 +64,7 @@ public class PostController implements Controller {
         Long postId = Long.parseLong(inputData.get("postId"));
         String userId =SessionManager.getUserBySessionId(inputData.getSessionId());
         String content = inputData.get("content");
-        String writer = inputData.get("writer");
+        String writer = UserRepository.findUserById(userId).getName();
         PostRepository.addComment(postId, new Comment(userId, writer, content));
 
         return "redirect:/post/show?postId="+postId;
