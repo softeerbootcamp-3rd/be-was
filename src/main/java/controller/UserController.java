@@ -49,4 +49,10 @@ public class UserController {
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
     }
+
+    public static HttpResponse logout(HttpRequest request) {
+        // 세션 아이디 값을 생성하여 바로 파기되도록 Max-Age=0으로 함
+        Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=1; Max-Age=0; HttpOnly; Path=/");
+        return HttpResponse.of(HttpStatus.REDIRECT, header);
+    }
 }

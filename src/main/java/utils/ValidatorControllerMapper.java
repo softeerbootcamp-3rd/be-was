@@ -16,6 +16,7 @@ import java.util.function.Function;
 public enum ValidatorControllerMapper {
     SIGNUP("POST /user/create", Validator::validateSignUpInfo, UserController::signup),
     LOGIN("POST /user/login", Validator::validateLoginInfo, UserController::login),
+    LOGOUT("GET /user/logout", null, UserController::logout),
     UPLOAD("POST /post/create", Validator::validatePostInfo, PostController::upload),
     ;
 
