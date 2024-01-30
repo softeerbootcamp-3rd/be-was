@@ -22,3 +22,5 @@ Java Web Application Server 2023
 [웹 서버 5단계 - 쿠키를 이용한 로그인](docs/step5.md)
 
 [웹 서버 6단계 - 동적인 HTML](docs/step6.md)
+
+[웹 서버 7단계 - 게시판 기능 완성](docs/step7.md)
