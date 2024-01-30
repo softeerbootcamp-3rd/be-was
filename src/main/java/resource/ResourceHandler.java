@@ -34,16 +34,21 @@ public class ResourceHandler {
         if (user != null && filePath.contains(".html")) {
             // 로그인을 유저 이름으로 변경
             bodyAsString = bodyAsString.replace("<!--user name-->", user.getName());
+
             // 로그인 했을 때 렌더링 될 nav bar
-            bodyAsString = bodyAsString.replace("<!--User Nav Bar-->", HtmlBuilder.generateUserNavBar());
+            bodyAsString = bodyAsString.replace("<!--User Nav Bar-->", HtmlBuilder.generateUserNavBarInUser());
+            bodyAsString = bodyAsString.replace("<!--User Nav Bar ROOT-->", HtmlBuilder.generateUserNavBarInROOT());
+
             // 유저 목록을 출력해야 할 경우 유저 목록 출력
             bodyAsString = bodyAsString.replace("<!--user List-->", HtmlBuilder.generateUserList());
             // 포스트 목록을 출력해야 할 경우 글 목록 출력
             bodyAsString = bodyAsString.replace("<!--Post List-->", HtmlBuilder.generatePostList());
+
             // 게시글 세부 내용 출력
             bodyAsString = bodyAsString.replace("<!--Post Info-->", HtmlBuilder.generatePostInfo(request.getParams()));
             // 게시글 세부 내용 중 첨부파일 출력
             bodyAsString = bodyAsString.replace("<!--Attached File Info-->", HtmlBuilder.generateAttachedFileInfo(request.getParams()));
+
             // 프로필 정보를 출력해야 할 경우 프로필 정보 출력
             bodyAsString = bodyAsString.replace("<!--Profile Info-->", HtmlBuilder.generateProfileInfo(user));
             body = bodyAsString.getBytes();
@@ -52,7 +57,11 @@ public class ResourceHandler {
             Map<String, String> header = Map.of("Location", "/user/login.html");
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         } else if (filePath.contains(".html")) {
-            bodyAsString = bodyAsString.replace("<!--Basic Nav Bar-->", HtmlBuilder.generateBasicNavBar());
+            bodyAsString = bodyAsString.replace("<!--Basic Nav Bar-->", HtmlBuilder.generateBasicNavBarInUser());
+            bodyAsString = bodyAsString.replace("<!--Basic Nav Bar ROOT-->", HtmlBuilder.generateBasicNavBarInROOT());
+
+            // 포스트 목록을 출력해야 할 경우 글 목록 출력
+            bodyAsString = bodyAsString.replace("<!--Post List-->", HtmlBuilder.generatePostList());
             body = bodyAsString.getBytes();
         }
         return HttpResponse.of(HttpStatus.OK, contentType, body);
