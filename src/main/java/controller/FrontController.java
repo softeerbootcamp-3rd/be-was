@@ -5,6 +5,7 @@ import controller.adapter.HandlerAdapter;
 import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
+import exception.NoHandlerAdapterFoundException;
 import exception.NoHandlerFoundException;
 import model.HttpRequest;
 import model.HttpResponse;
@@ -13,7 +14,10 @@ import util.URIParser;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FrontController {
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
@@ -42,11 +46,17 @@ public class FrontController {
     }
 
     public void service(HttpRequest httpRequest, OutputStream out) throws IOException {
-        Object handler = getHandler(httpRequest);
         HttpResponse httpResponse = HttpResponse.newEmptyInstance();
+        ModelView mv = null;
+        try {
+            Object handler = getHandler(httpRequest);
 
-        HandlerAdapter adapter = getHandlerAdapter(handler);
-        ModelView mv = adapter.handle(httpRequest, httpResponse, handler);
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            mv = adapter.handle(httpRequest, httpResponse, handler);
+        } catch (NoHandlerFoundException | NoHandlerAdapterFoundException e) {
+            e.printStackTrace();
+            mv = ModelView.errorInstance();
+        }
 
         String viewName = mv.getViewName();
         View view = ViewResolver.resolveViewName(viewName);
@@ -63,7 +73,7 @@ public class FrontController {
                 return adapter;
             }
         }
-        throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
+        throw new NoHandlerAdapterFoundException(handler + "에 해당하는 handler를 찾을 수 없습니다.");
     }
 
     private Object getHandler(HttpRequest httpRequest) {

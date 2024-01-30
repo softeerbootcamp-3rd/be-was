@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModelView {
+    static final String ERROR_PAGE = "/error.html";
+
     private String viewName;
     private Map<String, Object> model = new HashMap<>();
     private HttpStatus httpStatus;
@@ -19,6 +21,10 @@ public class ModelView {
         this.viewName = viewName;
         this.model = model;
         this.httpStatus = httpStatus;
+    }
+
+    public static ModelView errorInstance() {
+        return new ModelView(ERROR_PAGE, HttpStatus.OK);
     }
 
     public String getViewName() {
