@@ -20,12 +20,12 @@ public class PostService {
             throws IllegalArgumentException {
         String title = params.get("title");
         String contents = params.get("contents");
-        String imagePath = params.get("file_image");
+        String imageName = params.get("file_image");
 
         if (title.isEmpty()) {
             throw new IllegalArgumentException("title is required.");
         }
 
-        PostDatabase.addPost(writer, title, contents, time, imagePath);
+        PostDatabase.addPost(writer, title, contents, time, imageName);
     }
 }

@@ -11,16 +11,16 @@ public class Post {
     private final String contents;
     private final LocalDateTime postTime;
     private final int reply;
-    private final String imagePath;
+    private final String imageName;
 
-    public Post(long postId, String writer, String title, String contents, LocalDateTime postTime, String imagePath) {
+    public Post(long postId, String writer, String title, String contents, LocalDateTime postTime, String imageName) {
         this.postId = postId;
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.postTime = postTime;
         this.reply = 0;
-        this.imagePath = imagePath;
+        this.imageName = imageName;
     }
 
     public long getPostId() {
@@ -48,8 +48,8 @@ public class Post {
         return reply;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageName() {
+        return imageName;
     }
 
     @Override

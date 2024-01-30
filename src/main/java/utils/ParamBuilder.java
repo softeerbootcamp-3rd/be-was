@@ -2,6 +2,8 @@ package utils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import model.Request;
@@ -73,13 +75,15 @@ public class ParamBuilder {
                 String paramName = disposition[1].split("=")[1].replaceAll("\"", "");
 
                 if (headers.contains("Content-Type: image")) {
-                    String imagePath = "src/main/resources/images/" + "sample" + ".png";
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String imageName = timeStamp + ".png";
+                    String imagePath = "src/main/resources/images/" + imageName;
                     try (FileOutputStream fos = new FileOutputStream(imagePath)) {
                         fos.write(bodyPart.getBytes("ISO-8859-1"));
                     } catch (IOException e) {
                         throw new IOException(e);
                     }
-                    params.put(paramName + "_image", imagePath);
+                    params.put(paramName + "_image", imageName);
                 } else {
                     params.put(paramName, bodyPart);
                 }

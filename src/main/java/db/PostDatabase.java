@@ -24,8 +24,8 @@ public class PostDatabase {
         posts.clear();
     }
 
-    public static void addPost(String writer, String title, String contents, LocalDateTime time, String imagePath) {
-        Post post = new Post(++id, writer, title, contents, time, imagePath);
+    public static void addPost(String writer, String title, String contents, LocalDateTime time, String imageName) {
+        Post post = new Post(++id, writer, title, contents, time, imageName);
         posts.put(post.getPostId(), post);
     }
 }
