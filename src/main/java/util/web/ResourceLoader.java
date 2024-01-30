@@ -34,7 +34,6 @@ public class ResourceLoader {
                 || path.startsWith("/attachments/"))
             basePath = "src/main/resources/static";
 
-        System.out.println(basePath + path);
         File file = new File(basePath + path);
         if (!file.exists() || !file.isFile())
             throw new ResourceNotFoundException(path);
