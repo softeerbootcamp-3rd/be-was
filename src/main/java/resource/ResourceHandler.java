@@ -26,12 +26,9 @@ public class ResourceHandler {
         // Request 헤더의 Accept 필드를 참고하여 반환할 타입 지정
         String contentType = request.getEtcHeaderValue("Accept").split(",")[0];
 
-        // 세션 아이디 파싱
-        String cookie = request.getEtcHeaderValue("Cookie");
-
-        // 세션 아이디 검증
+        // 세션 아이디 파싱 및 검증
         // SID에 해당하는 유저가 있으면서 html 파일일 경우
-        User user = SessionManager.findUserBySessionId(Parser.extractSid(cookie));
+        User user = SessionManager.findUserBySessionId(request.getCookie("sid"));
         if (user != null && filePath.contains(".html")) {
             // 동적 HTML 렌더링
             String bodyAsString = new String(body);
@@ -43,6 +40,8 @@ public class ResourceHandler {
             bodyAsString = bodyAsString.replace("<!--Post List-->", HtmlBuilder.generatePostList());
             // 게시글 세부 내용 출력
             bodyAsString = bodyAsString.replace("<!--Post Info-->", HtmlBuilder.generatePostInfo(request.getParams()));
+            // 게시글 세부 내용 중 첨부파일 출력
+            bodyAsString = bodyAsString.replace("<!--Attached File Info-->", HtmlBuilder.generateAttachedFileInfo(request.getParams()));
             // 프로필 정보를 출력해야 할 경우 프로필 정보 출력
             bodyAsString = bodyAsString.replace("<!--Profile Info-->", HtmlBuilder.generateProfileInfo(user));
 
