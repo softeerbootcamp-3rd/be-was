@@ -7,7 +7,7 @@ import java.io.*;
 import static util.MimeType.getMimeType;
 
 public class HttpResponse {
-    private final StatusLine statusLine;
+    private final StatusLine statusLine; // Http version, status code를 저장하는 객체
     private final String contentType;
     private final String sid;
     private final String redirectUri;
@@ -90,8 +90,8 @@ public class HttpResponse {
         String fileContent = new String(buffer);
 
         StringBuilder replacedBuffer = new StringBuilder(fileContent);
-        replacedBuffer.replace(replacedBuffer.indexOf("{{userList}}"),
-                replacedBuffer.indexOf("{{userList}}") + "{{userList}}".length(),
+        replacedBuffer.replace(replacedBuffer.indexOf("{{data}}"),
+                replacedBuffer.indexOf("{{data}}") + "{{data}}".length(),
                 builder.toString());
 
         return replacedBuffer.toString().getBytes();
@@ -110,7 +110,6 @@ public class HttpResponse {
     }
 
     private static String getContentType(String file) { // 파일의 확장자에 따라 Content-Type을 결정
-        System.out.println(file);
         String extension = file.substring(file.lastIndexOf("."));
         return getMimeType(extension);
     }
