@@ -4,31 +4,32 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.*;
-import java.util.Calendar;
-import java.util.Map;
+import java.util.*;
 
 public class CsvResultSet implements ResultSet {
-    private final boolean next;
+    private int nextIndex;
     private final String[] columns;
-    private String[] resultSet;
+    private final List<String[]> resultSet;
 
-    public CsvResultSet(boolean next) {
-        this.next = false;
+    public CsvResultSet() {
+        this.nextIndex = -1;
         this.columns = new String[0];
+        this.resultSet = new ArrayList<>();
     }
 
-    public CsvResultSet(String[] columns, String[] resultSet) {
-        this.next = true;
+    public CsvResultSet(String[] columns, List<String[]> resultSet) {
+        this.nextIndex = -1;
         this.columns = new String[columns.length];
         System.arraycopy(columns, 0, this.columns, 0, columns.length);
-        this.resultSet = new String[resultSet.length];
-        System.arraycopy(resultSet, 0, this.resultSet, 0, resultSet.length);
+        this.resultSet = new ArrayList<>(resultSet);
     }
 
     @Override
     public boolean next() throws SQLException {
-        return next;
+        nextIndex += 1;
+        return resultSet.size() > nextIndex;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class CsvResultSet implements ResultSet {
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return Long.parseLong(resultSet[0]);
+        return Long.parseLong(resultSet.get(nextIndex)[0]);
     }
 
     @Override
@@ -123,7 +124,14 @@ public class CsvResultSet implements ResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        return null;
+        for (int i = 0; i < columns.length; i++) {
+            if (Objects.equals(columns[i], columnLabel)) {
+                return resultSet.get(nextIndex)[i]
+                        .replace("\\n", "\n")
+                        .replace("\\,", ",");
+            }
+        }
+        return "";
     }
 
     @Override
@@ -148,7 +156,12 @@ public class CsvResultSet implements ResultSet {
 
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        return 0;
+        for (int i = 0; i < columns.length; i++) {
+            if (Objects.equals(columns[i], columnLabel)) {
+                return Long.parseLong(resultSet.get(nextIndex)[i]);
+            }
+        }
+        return 0L;
     }
 
     @Override
@@ -183,7 +196,7 @@ public class CsvResultSet implements ResultSet {
 
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        return null;
+        return new Timestamp(getLong(columnLabel));
     }
 
     @Override

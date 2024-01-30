@@ -11,8 +11,8 @@ import java.util.*;
 public class BoardRepository {
 
     public static Long add(Board board) {
-        String query = "INSERT INTO boards (writerId, title, contents, createDatetime) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "insert: boards: writerId, title, contents, createDatetime: ?, ?, ?, ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setString(1, board.getWriterId());
             statement.setString(2, board.getTitle());
             statement.setString(3, board.getContents());
@@ -32,8 +32,8 @@ public class BoardRepository {
     }
 
     public static Board findById(Long id) {
-        String query = "SELECT * FROM boards WHERE id = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "select: boards: id: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -48,8 +48,8 @@ public class BoardRepository {
     }
 
     public static void deleteById(Long id) {
-        String query = "DELETE FROM boards WHERE id = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "delete: boards: id: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -58,8 +58,8 @@ public class BoardRepository {
     }
 
     public static int countAll() {
-        String query = "SELECT COUNT(*) FROM users";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "count: boards";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
@@ -72,10 +72,10 @@ public class BoardRepository {
     }
 
     public static Collection<Board> getPage(int pageSize, int pageNumber) {
-        String query = "SELECT * FROM boards ORDER BY id DESC LIMIT ? OFFSET ?";
+        String query = "select: boards";
         List<Board> boards = new ArrayList<>();
 
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             int offset = (pageNumber - 1) * pageSize;
 
             statement.setInt(1, pageSize);
@@ -86,9 +86,14 @@ public class BoardRepository {
                     boards.add(Board.of(resultSet));
                 }
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return boards;
+
+        Collections.reverse(boards);
+        int startIndex = (pageNumber - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, boards.size());
+        return boards.subList(startIndex, endIndex);
     }
 }

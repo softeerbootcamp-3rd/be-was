@@ -1,5 +1,8 @@
 package database.driver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -12,6 +15,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class CsvPreparedStatement implements PreparedStatement {
+    private static final Logger logger = LoggerFactory.getLogger(CsvPreparedStatement.class);
+
     private final String basePath;
     private final String[][] parsedQuery;
     private final String[][] replacedQuery;
@@ -19,9 +24,7 @@ public class CsvPreparedStatement implements PreparedStatement {
     private final String[] columns;
     private Long lastId;
 
-    private boolean executed;
-    private final List<ResultSet> resultSets;
-    private int nextIndex;
+    private ResultSet resultSet;
 
     public CsvPreparedStatement(String basePath, String queryString) {
         this.basePath = basePath;
@@ -35,9 +38,7 @@ public class CsvPreparedStatement implements PreparedStatement {
         columns = readColumns();
         lastId = readLastId();
 
-        this.executed = false;
-        resultSets = new ArrayList<>();
-        this.nextIndex = 0;
+        resultSet = new CsvResultSet();
     }
 
     private String[] readColumns() {
@@ -70,48 +71,75 @@ public class CsvPreparedStatement implements PreparedStatement {
         }
     }
 
-    private Long getLastId() {
-        return 1L;
-    }
-
     @Override
     public ResultSet executeQuery() throws SQLException {
         if ("select".equalsIgnoreCase(parsedQuery[0][0])) {
-            if (!this.executed)
-                selectRows();
-            this.executed = true;
-            if (resultSets.size() <= nextIndex)
-                return new CsvResultSet(false);
-            ResultSet result = resultSets.get(nextIndex);
-            nextIndex += 1;
-            return result;
+            List<String[]> result = selectRows();
+            resultSet = new CsvResultSet(columns, result);
         }
-        return new CsvResultSet(false);
+        else if ("count".equalsIgnoreCase(parsedQuery[0][0])) {
+            List<String[]> result = selectRows();
+            String[] countColumn = new String[1];
+            countColumn[0] = "count";
+
+            List<String[]> countResult = new ArrayList<>();
+            String[] count = new String[1];
+            count[0] = Integer.toString(result.size());
+            countResult.add(count);
+            resultSet = new CsvResultSet(countColumn, countResult);
+        }
+        return resultSet;
     }
 
-    private void selectRows() {
+    private List<String[]> selectRows() {
         File file = new File(tableFilePath);
         if (!file.exists() || (parsedQuery.length != 2 && parsedQuery.length != 4))
-            return;
+            return new ArrayList<>();
         if (parsedQuery.length == 2)
-            readAll(file);
-        readFilter(file);
+            return readAll(file);
+        return readFilter(file);
     }
 
-    private void readAll(File file) {
+    private List<String[]> readAll(File file) {
+        List<String[]> resultList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             // 첫 줄 무시
             reader.readLine();
             while ((line = reader.readLine()) != null && !line.isEmpty())
-                resultSets.add(new CsvResultSet(columns, CsvDriverUtils.split(line, ",")));
+                resultList.add(CsvDriverUtils.split(line, ","));
         } catch (IOException ignored) {}
+        return resultList;
     }
 
-    private void readFilter(File file) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+    private List<String[]> readFilter(File file) {
+        List<String[]> resultList = new ArrayList<>();
+        if (parsedQuery[2].length != parsedQuery[3].length)
+            return resultList;
 
+        String[] selectColumns = parsedQuery[2];
+        String[] selectValues = replacedQuery[3];
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            // 첫 줄 무시
+            reader.readLine();
+            while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                boolean isSelected = true;
+                String[] readValues = CsvDriverUtils.split(line, ",");
+                for (int i = 0; i < selectColumns.length; i++) {
+                    for (int j = 0; j < columns.length; j++) {
+                        if (Objects.equals(selectColumns[i], columns[j])
+                                && !Objects.equals(selectValues[i], readValues[j])) {
+                            isSelected = false;
+                            break;
+                        }
+                    }
+                }
+                if (isSelected)
+                    resultList.add(readValues);
+            }
         } catch (IOException ignored) {}
+        return resultList;
     }
 
     @Override
@@ -120,7 +148,8 @@ public class CsvPreparedStatement implements PreparedStatement {
             return createTable();
         if ("insert".equalsIgnoreCase(parsedQuery[0][0]))
             return insertRow();
-        this.executed = true;
+        if ("delete".equalsIgnoreCase(parsedQuery[0][0]))
+            return deleteRow();
         return 0;
     }
 
@@ -131,7 +160,7 @@ public class CsvPreparedStatement implements PreparedStatement {
 
         File folder = new File(basePath + "/");
         if (!folder.exists() && !folder.mkdirs()) {
-            System.out.println("cannot create folder");
+            logger.error("cannot create folder");
         }
 
         File file = new File(tableFilePath);
@@ -139,7 +168,6 @@ public class CsvPreparedStatement implements PreparedStatement {
             return 0;
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             writer.println(CsvDriverUtils.createRow(columns));
-            System.out.println("CSV file created at: " + file.getAbsolutePath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -169,14 +197,56 @@ public class CsvPreparedStatement implements PreparedStatement {
                 }
             }
             FileLock lock = channel.lock();
-
             file.seek(file.length());
-            file.writeBytes(CsvDriverUtils.createRow(matchedValues)+ "\n");
-
+            file.write((CsvDriverUtils.createRow(matchedValues)+ "\n").getBytes("UTF-8"));
             lock.release();
-            resultSets.add(new CsvResultSet(columns, matchedValues));
+
+            List<String[]> generatedValue = new ArrayList<>();
+            generatedValue.add(matchedValues);
+            resultSet = new CsvResultSet(columns, generatedValue);
             return 1;
         } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private synchronized int deleteRow() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(tableFilePath));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tableFilePath + ".temp"))) {
+            String[] selectColumns = parsedQuery[2];
+            String[] selectValues = replacedQuery[3];
+
+            String line;
+            line = reader.readLine();
+            writer.write(line);
+            writer.newLine();
+            while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                boolean isSelected = true;
+                String[] readValues = CsvDriverUtils.split(line, ",");
+                for (int i = 0; i < selectColumns.length; i++) {
+                    for (int j = 0; j < columns.length; j++) {
+                        if (Objects.equals(selectColumns[i], columns[j])
+                                && !Objects.equals(selectValues[i], readValues[j])) {
+                            isSelected = false;
+                            break;
+                        }
+                    }
+                }
+                if (!isSelected) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return -1;
+        }
+        File originalFile = new File(tableFilePath);
+        File modifiedFile = new File(tableFilePath + ".temp");
+        if (modifiedFile.renameTo(originalFile)) {
+            return 1;
+        } else {
+            logger.error("Failed to modify the file.");
             return -1;
         }
     }
@@ -208,7 +278,7 @@ public class CsvPreparedStatement implements PreparedStatement {
 
     @Override
     public void setLong(int parameterIndex, long x) throws SQLException {
-
+        setString(parameterIndex, Long.toString(x));
     }
 
     @Override
@@ -234,7 +304,8 @@ public class CsvPreparedStatement implements PreparedStatement {
                 if ("?".equals(parsedQuery[i][j])) {
                     index++;
                     if (parameterIndex == index) {
-                        replacedQuery[i][j] = x;
+                        replacedQuery[i][j] = x.replace("\n", "\\n")
+                                .replace(",", "\\,");
                         return;
                     }
                 }
@@ -259,18 +330,7 @@ public class CsvPreparedStatement implements PreparedStatement {
 
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
-        int index = 0;
-        for (int i = 0; i < parsedQuery.length; i++) {
-            for (int j = 0; j < parsedQuery[i].length; j++) {
-                if ("?".equals(parsedQuery[i][j])) {
-                    index++;
-                    if (parameterIndex == index) {
-                        replacedQuery[i][j] = "" + x.getTime();
-                        return;
-                    }
-                }
-            }
-        }
+        setString(parameterIndex, "" + x.getTime());
     }
 
     @Override
@@ -565,7 +625,7 @@ public class CsvPreparedStatement implements PreparedStatement {
 
     @Override
     public int getFetchDirection() throws SQLException {
-        return 0;
+        return ResultSet.FETCH_FORWARD;
     }
 
     @Override
@@ -580,12 +640,17 @@ public class CsvPreparedStatement implements PreparedStatement {
 
     @Override
     public int getResultSetConcurrency() throws SQLException {
-        return 0;
+
+        if ("create".equalsIgnoreCase(parsedQuery[0][0])
+                || "insert".equalsIgnoreCase(parsedQuery[0][0])
+                || "delete".equalsIgnoreCase(parsedQuery[0][0]))
+            return ResultSet.CONCUR_UPDATABLE;
+        return ResultSet.CONCUR_READ_ONLY;
     }
 
     @Override
     public int getResultSetType() throws SQLException {
-        return 0;
+        return ResultSet.TYPE_FORWARD_ONLY;
     }
 
     @Override
@@ -615,7 +680,7 @@ public class CsvPreparedStatement implements PreparedStatement {
 
     @Override
     public ResultSet getGeneratedKeys() throws SQLException {
-        return resultSets.get(nextIndex);
+        return resultSet;
     }
 
     @Override

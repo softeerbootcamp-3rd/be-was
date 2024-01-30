@@ -1,25 +1,23 @@
-package database.driver;
+package database;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Main {
+public class CsvDatabase {
+    private static final Logger logger = LoggerFactory.getLogger(CsvDatabase.class);
 
     private static final String jdbcUrl = "jdbc:csv:data/be_was";
     private static final String user = "sa";
     private static final String password = "";
 
     static {
-        CsvJdbcDriver driver = new CsvJdbcDriver();
         try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
             initializeDatabase(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
-    }
-
-    public Main() throws SQLException {
     }
 
     private static void initializeDatabase(Connection connection) throws SQLException {
@@ -30,7 +28,7 @@ public class Main {
              PreparedStatement commentStatement = connection.prepareStatement(
                      "create: comments: id, boardId, writerId, contents, createDatetime");
              PreparedStatement attachmentStatement = connection.prepareStatement(
-                     "create: attachments: id, boardId, filename, mimeType, savedPath")
+                     "create: attachments: id, boardId, filename, mineType, savedPath")
         ) {
             usersStatement.executeUpdate();
             boardStatement.executeUpdate();
@@ -41,26 +39,5 @@ public class Main {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(jdbcUrl, user, password);
-    }
-
-    public static void main(String[] args) {
-        String query = "select: boards: writerId: ?";
-
-        List<Long> comments = new ArrayList<>();
-
-        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
-            statement.setString(1, "asdf");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    comments.add(resultSet.getLong(1));
-                    System.out.println(resultSet.getLong(1));
-                }
-            }
-        } catch (SQLException e) {
-            return;
-        }
-        System.out.println("done");
-
-        return;
     }
 }

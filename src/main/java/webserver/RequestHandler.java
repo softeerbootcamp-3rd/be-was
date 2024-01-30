@@ -40,11 +40,14 @@ public class RequestHandler implements Runnable {
                 else
                     response = serveResource(request);
             } catch (ResourceNotFoundException e) {
+                e.printStackTrace();
                 response = HttpResponse.of(HttpStatus.NOT_FOUND);
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NoSuchMethodException
                      | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
                 response = HttpResponse.of(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
+                e.printStackTrace();
                 logger.error("error processing request: {}", e.getMessage());
                 response = HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR);
             }

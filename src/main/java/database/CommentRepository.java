@@ -9,8 +9,8 @@ import java.util.List;
 
 public class CommentRepository {
     public static void add(Comment comment) {
-        String query = "INSERT INTO comments (boardId, writerId, contents, createDatetime) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "insert: comments: boardId, writerId, contents, createDatetime: ?, ?, ?, ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, comment.getBoardId());
             statement.setString(2, comment.getWriterId());
             statement.setString(3, comment.getContents());
@@ -22,8 +22,8 @@ public class CommentRepository {
     }
 
     public static Comment findById(Long id) {
-        String query = "SELECT * FROM comments WHERE id = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "select: comments: id: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -38,10 +38,10 @@ public class CommentRepository {
     }
 
     public static Collection<Comment> findByBoardId(Long boardId) {
-        String query = "SELECT * FROM comments WHERE boardId = ?";
+        String query = "select: comments: boardId: ?";
         List<Comment> comments = new ArrayList<>();
 
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, boardId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -55,8 +55,8 @@ public class CommentRepository {
     }
 
     public static int countByBoardId(Long boardId) {
-        String query = "SELECT COUNT(*) FROM comments WHERE boardId = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "count: comments: boardId: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, boardId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -70,8 +70,8 @@ public class CommentRepository {
     }
 
     public static void deleteById(Long id) {
-        String query = "DELETE FROM comments WHERE id = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "delete: comments: id: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -80,8 +80,8 @@ public class CommentRepository {
     }
 
     public static void deleteByBoardId(Long boardId) {
-        String query = "DELETE FROM comments WHERE boardId = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "delete: comments: boardId: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, boardId);
             statement.executeUpdate();
         } catch (SQLException e) {

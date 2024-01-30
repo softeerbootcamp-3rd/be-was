@@ -7,8 +7,8 @@ import java.sql.*;
 public class AttachmentRepository {
 
     public static void add(Attachment attachment) {
-        String query = "INSERT INTO attachments (boardId, filename, mimeType, savedPath) VALUES (?, ?, ?, ?)";
-        try (Connection connection = H2Database.getConnection();
+        String query = "insert: attachments: boardId, filename, mimeType, savedPath: ?, ?, ?, ?";
+        try (Connection connection = CsvDatabase.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, attachment.getBoardId());
             statement.setString(2, attachment.getFilename());
@@ -20,8 +20,8 @@ public class AttachmentRepository {
         }
     }
     public static Attachment findByBoardId(Long boardId) {
-        String query = "SELECT * FROM attachments WHERE boardId = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "select: attachments: boardId: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, boardId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -36,8 +36,8 @@ public class AttachmentRepository {
     }
 
     public static void deleteByBoardId(Long boardId) {
-        String query = "DELETE FROM attachments WHERE boardId = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "delete: attachments: boardId: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setLong(1, boardId);
             statement.executeUpdate();
         } catch (SQLException e) {

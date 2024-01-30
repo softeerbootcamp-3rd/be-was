@@ -24,10 +24,12 @@ public class HtmlTemplates {
                 new HtmlTemplate("common/signup_btn_active.html", HtmlBuilder::empty, HtmlBuilder::getRaw));
 
         // user
+        builder.put("<!--profile-->",
+                new HtmlTemplate("user/profile.html", UserHtml::profile, HtmlBuilder::empty));
         builder.put("<!--user-name-->",
-                new HtmlTemplate("user/user_name.html", UserHtml::replaceUser, HtmlBuilder::empty));
+                new HtmlTemplate("user/user_name.html", UserHtml::userName, HtmlBuilder::empty));
         builder.put("<!--user-list-->",
-                new HtmlTemplate("user/user_list.html", UserHtml::replaceUserList, HtmlBuilder::empty));
+                new HtmlTemplate("user/user_list.html", UserHtml::userList, HtmlBuilder::empty));
 
         // board
         builder.put("<!--board-list-->",

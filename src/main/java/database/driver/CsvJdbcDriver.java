@@ -7,14 +7,6 @@ import java.util.logging.Logger;
 public class CsvJdbcDriver implements Driver {
     private static final String acceptUrl = "jdbc:csv:";
 
-    static {
-        try {
-            DriverManager.registerDriver(new CsvJdbcDriver());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
         String filePath = url.substring(acceptUrl.length());
