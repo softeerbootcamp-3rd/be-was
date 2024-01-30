@@ -24,16 +24,6 @@ public class HtmlController implements Controller{
         String topContent = loginContent.getString();
         String modifiedContent = body.replace("{{login}}",topContent);
 
-        // list.html일 때, 가입한 사용자 동적으로 처리
-        if(requestPath.contains("list")){
-            Database database = new Database();
-            Collection<User> users = database.findAll();
-            Content listContent = new Content(users);
-
-            String userConent = listContent.getString();
-            modifiedContent = modifiedContent.replace("{{list}}",userConent);
-        }
-
         // index.html일 때, DB에 저장된 게시글 동적으로 처리
         if(requestPath.contains("index")) {
             Class.forName("org.h2.Driver");
@@ -54,6 +44,16 @@ public class HtmlController implements Controller{
             }
         }
 
+        // list.html일 때, 가입한 사용자 동적으로 처리
+        if(requestPath.contains("list")){
+            Database database = new Database();
+            Collection<User> users = database.findAll();
+            Content listContent = new Content(users);
+
+            String userConent = listContent.getString();
+            modifiedContent = modifiedContent.replace("{{list}}",userConent);
+        }
+
         // show.html일 때, 선택한 글 상세 조회
         if(requestPath.contains("show")){
             Class.forName("org.h2.Driver");
@@ -64,7 +64,6 @@ public class HtmlController implements Controller{
 
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 Article article = specificArticle(connection,articleId);
-                System.out.println(article);
 
                 modifiedContent = new Content().detailContent(article,modifiedContent);
 
@@ -76,6 +75,7 @@ public class HtmlController implements Controller{
         byte[] modifiedBody = modifiedContent.getBytes();
         httpResponse.setBody(modifiedBody);
     }
+
 
     private Article specificArticle(Connection connection, String articleId) throws SQLException {
         Article article = new Article();
@@ -97,7 +97,7 @@ public class HtmlController implements Controller{
     private LinkedList<Article> fetchArticles(Connection connection) throws SQLException {
         LinkedList<Article> articles = new LinkedList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Article")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Article ORDER BY id DESC")) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.isBeforeFirst()) {

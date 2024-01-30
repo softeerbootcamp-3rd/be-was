@@ -23,7 +23,6 @@ public class HomeController implements Controller {
         if (!file.exists() || file.isDirectory()) {
             // 파일이 존재하지 않거나 디렉토리인 경우 404 상태 코드 반환
             httpStatusCode = HttpStatusCode.NOT_FOUND;
-
             body = "404 Not Found".getBytes();
         } else {
             // 파일이 존재하는 경우 정상적으로 읽어옴

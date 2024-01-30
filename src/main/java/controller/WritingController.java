@@ -1,5 +1,6 @@
 package controller;
 
+import httpmessage.HttpStatusCode;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
 import model.Article;
@@ -7,10 +8,21 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.ResultSet;
+import java.util.Objects;
 
 public class WritingController implements Controller {
     public  void service(HttpRequest httpRequest, HttpResponse httpResponse) throws ClassNotFoundException {
+
+        if(Objects.equals(httpRequest.getHttpMethod(), "GET")){
+            httpResponse.setHttpStatusCode(HttpStatusCode.MOVED_TEMPORARILY);
+            if(!httpRequest.getCookie().isEmpty()){
+                httpResponse.setRedirectionPath("/qna/form.html");
+            }
+            else{
+                httpResponse.setRedirectionPath("/user/login.html");
+            }
+            return;
+        }
 
         Class.forName("org.h2.Driver");
         String url = "jdbc:h2:~/wasDB";
@@ -23,18 +35,20 @@ public class WritingController implements Controller {
             //dropTable(connection);
             createTable(connection);
             Article article = new Article(httpRequest);
+            System.out.println("ㅎㅇㅎㅇ2");
             insertArticle(connection, article);
-
+            System.out.println("ㅎㅇㅎㅇ3");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        httpResponse.setHttpStatusCode(HttpStatusCode.MOVED_TEMPORARILY);
+        httpResponse.setRedirectionPath("/index.html");
     }
 
     private static void dropTable(Connection connection) {
         try (PreparedStatement dropStatement = connection.prepareStatement("DROP TABLE IF EXISTS Article")) {
             dropStatement.execute();
         } catch (SQLException e) {
-            System.out.println("Error dropping table: " + e.getMessage());
         }
     }
 
@@ -45,7 +59,6 @@ public class WritingController implements Controller {
                         "userid VARCHAR(255), content VARCHAR(255),createdate VARCHAR(255)) ")) {
             preparedStatement.execute();
         }catch (SQLException e) {
-            System.out.println(e);
         }
     }
 

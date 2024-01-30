@@ -47,6 +47,7 @@ public class UserCreateController implements Controller {
     }
 
     public void makeHttpResponse(HttpResponse httpResponse){
+        httpResponse.setRedirectionPath(path);
         httpResponse.setHttpStatusCode(HttpStatusCode.MOVED_TEMPORARILY);
     }
 

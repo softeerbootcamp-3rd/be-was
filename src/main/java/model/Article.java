@@ -9,23 +9,20 @@ import java.util.Map;
 
 public class Article {
     private Long articleId;
-    private String title = "제목";
-    private String contents = "내용";
+    private String title;
+    private String contents;
 
-    private String userId = "이대산";
+    private String userId;
 
-    private String createdate = "2024.1.29";
+    private String createdate;
     String filePath;
 
     public Article(){};
     public Article(HttpRequest httpRequest){
-        Map<String,String> article = httpRequest.getParmeter();
 
-        System.out.println(article.get("filePath"));
-        /*
+        Map<String,String> article = httpRequest.getParmeter();
         title = article.get("title");
         contents = article.get("contents");
-
         LocalDateTime createDate = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         createdate = createDate.format(formatter);
@@ -34,7 +31,7 @@ public class Article {
         userId = new HttpSession().getUser(sid).getUserId();
 
         System.out.println(title+contents+createdate+userId);
-        */
+
     }
 
     public void setContents(String contents) {
