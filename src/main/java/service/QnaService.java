@@ -1,6 +1,7 @@
 package service;
 
 import db.PostDatabase;
+import dto.PostDto;
 import model.Post;
 import model.User;
 import util.HtmlBuilder;
@@ -8,12 +9,16 @@ import util.HtmlBuilder;
 import java.util.Map;
 
 public class QnaService {
-    public String writePost(Map<String, String> writePostParams, User user) {
-        String title = writePostParams.get("title");
-        String contents = writePostParams.get("contents");
+    public String writePost(PostDto postDto, User user) {
+        String title = postDto.getTitle();
+        String contents = postDto.getContents();
+        byte[] file = postDto.getFile();
+        String fileName = postDto.getFileName();
+        String fileContentType = postDto.getFileContentType();
 
         if (title != null && contents != null) {
-            return PostDatabase.addPost(new Post(user, title, contents));
+            Post post = new Post(user, title, contents, file, fileName, fileContentType);
+            return PostDatabase.addPost(post);
         }
         throw new IllegalArgumentException("Invalid Parameters");
     }

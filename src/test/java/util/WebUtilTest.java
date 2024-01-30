@@ -18,16 +18,17 @@ public class WebUtilTest {
     @DisplayName("httpRequestParser(): HTTP Request 요청을 HttpRequestDto로 적절하게 파싱한다.")
     public void httpRequestParseTest() {
         // given
-        String testRequest = "GET /index.html HTTP/1.1\n" +
-                "Host: localhost:8080\n" +
-                "Connection: keep-alive\n" +
-                "Accept: */*\n" +
-                "Content-Length: 12\n\n" +
+        String testRequest = "GET /index.html HTTP/1.1\r\n" +
+                "Host: localhost:8080\r\n" +
+                "Connection: keep-alive\r\n" +
+                "Accept: */*\r\n" +
+                "Content-Length: 12\r\n\r\n" +
                 "request body";
         InputStream inputStream = new ByteArrayInputStream(testRequest.getBytes());
 
         // when
         HttpRequestDto parsedRequest = WebUtil.httpRequestParse(inputStream);
+        System.out.println(new String(parsedRequest.getBody()));
 
         // then
         Assertions.assertThat(parsedRequest.getMethod()).isEqualTo("GET");
@@ -44,11 +45,11 @@ public class WebUtilTest {
     @DisplayName("httpRequestParse(): HTTP Request의 case sensitive 특징을 적절하게 처리하여 파싱한다.")
     public void httpRequestParseCaseSensitiveTest() {
         // given
-        String testRequest = "GET /index.html HTTP/1.1\n" +
-                "host: localhost:8080\n" +
-                "connection: keep-alive\n" +
-                "aCCept: */*\n" +
-                "Content-length: 12\n";
+        String testRequest = "GET /index.html HTTP/1.1\r\n" +
+                "host: localhost:8080\r\n" +
+                "connection: keep-alive\r\n" +
+                "aCCept: */*\r\n" +
+                "Content-length: 12\r\n";
         InputStream inputStream = new ByteArrayInputStream(testRequest.getBytes());
 
         // when

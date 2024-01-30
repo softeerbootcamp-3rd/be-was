@@ -10,13 +10,28 @@ public class Post {
     private String title;
     private String contents;
     private LocalDateTime createTime;
+    private byte[] file;
+    private String fileName;
+    private String fileContentType;
 
-    public Post(User writer, String title, String contents) {
+    public Post(User writer, String title, String contents, byte[] file, String fileName, String fileContentType) {
         this.postId = generatePostId();
         this.writer = writer;
         this.title = title;
         this.contents = contents;
         this.createTime = LocalDateTime.now();
+        this.file = file;
+        this.fileName = fileName;
+        this.fileContentType = fileContentType;
+    }
+
+    public Post(User writer, String title, String contents, byte[] file) {
+        this.postId = generatePostId();
+        this.writer = writer;
+        this.title = title;
+        this.contents = contents;
+        this.createTime = LocalDateTime.now();
+        this.file = file;
     }
 
     public String getPostId() {
@@ -47,4 +62,27 @@ public class Post {
         return UUID.randomUUID().toString();
     }
 
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileContentType() {
+        return fileContentType;
+    }
+
+    public void setFileContentType(String fileContentType) {
+        this.fileContentType = fileContentType;
+    }
 }

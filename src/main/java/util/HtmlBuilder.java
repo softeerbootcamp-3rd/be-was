@@ -9,6 +9,7 @@ import model.User;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +61,8 @@ public class HtmlBuilder {
         replacements.put("{{post-create-date}}", post.getCreateTime());
         replacements.put("{{post-contents}}", post.getContents());
         replacements.put("{{post-user-id}}", post.getUserId());
+        replacements.put("{{post-image}}", buildPostImage(post));
+        replacements.put("{{post-file}}", buildPostFile(post));
 
         return replaceHtml(html, replacements);
     }
@@ -155,6 +158,34 @@ public class HtmlBuilder {
                     .append("</li>");
         }
         return postList.toString();
+    }
+
+    private static String buildPostImage(Post post) {
+        // 파일이 image인 경우
+        if (post.getFile() != null && post.getFileContentType().startsWith("image")) {
+            StringBuilder image = new StringBuilder();
+            String encodedFile = Base64.getEncoder().encodeToString(post.getFile());
+            return image.append("<img src=\"data:")
+                    .append(post.getFileContentType())
+                    .append(";base64,")
+                    .append(encodedFile)
+                    .append("\" alt=\"File\"").toString();
+        }
+        return "";
+    }
+
+    private static String buildPostFile(Post post) {
+        if (post.getFile() != null) {
+            StringBuilder postFile = new StringBuilder();
+
+            return postFile.append("<li>")
+                    .append("<a class=\"link-modify-article\" href=\"")
+                    .append("/download?postId=").append(post.getPostId()).append("\">")
+                    .append("(Download) ").append(post.getFileName())
+                    .append("</a>")
+                    .append("</li>").toString();
+        }
+        return "";
     }
 
     private static byte[] replaceHtml(String html, Map<String, String> replaces) {

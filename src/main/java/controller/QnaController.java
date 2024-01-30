@@ -4,11 +4,13 @@ import constant.HttpHeader;
 import dto.HttpRequestDto;
 import dto.HttpResponseDto;
 import dto.HttpResponseDtoBuilder;
+import dto.PostDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.QnaService;
 import util.HtmlBuilder;
 import util.HttpResponseUtil;
+import util.MultipartFormDataParser;
 import util.WebUtil;
 
 import java.util.Map;
@@ -56,10 +58,10 @@ public class QnaController implements Controller {
 
     public HttpResponseDto writePost(HttpRequestDto request) {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        PostDto postDto = MultipartFormDataParser.parseMultipartFormData(request);
         if (request.getUser() != null) {
             try {
-                Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
-                String postId = qnaService.writePost(parameters, request.getUser());
+                String postId = qnaService.writePost(postDto, request.getUser());
 
                 return responseDtoBuilder.response302Header()
                         .setHeaders(HttpHeader.LOCATION, "/qna/show?postId=" + postId).build();

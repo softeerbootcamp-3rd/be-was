@@ -16,7 +16,8 @@ public enum HttpHeader {
     SEC_FETCH_DEST("Sec-Fetch-Dest"),
     SEC_FETCH_MODE("Sec-Fetch-Mode"),
     SET_COOKIE("Set-Cookie"),
-    LOCATION("Location");
+    LOCATION("Location"),
+    CONTENT_DISPOSITION("Content-Disposition");
 
     private final String headerName;
 
