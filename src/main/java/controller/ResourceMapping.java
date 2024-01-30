@@ -32,5 +32,9 @@ public enum ResourceMapping {
         public static final String TEMPLATE_DIRECTORY = "/templates";
         public static final String STATIC_DIRECTORY = "/static";
         public static final String UPLOADS_URL = "/uploads";
+
+        private ResourceConstants() {
+            throw new AssertionError("This class should not be instantiated.");
+        }
     }
 }
