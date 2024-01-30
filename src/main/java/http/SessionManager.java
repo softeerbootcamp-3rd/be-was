@@ -18,6 +18,7 @@ public class SessionManager {
 
     private static Map<String, Object> sessionStore = new ConcurrentHashMap<>();
 
+
     public static void createSession(Object value, Response response, String cookieName) {
         String sessionId = UUID.randomUUID().toString();
         sessionStore.put(sessionId, value);
@@ -25,6 +26,7 @@ public class SessionManager {
         response.addCookie(mySessionCookie);
         response.addCookie(new Cookie("Path","/"));
     }
+
 
     public static List<User> getLoginedUsers() {
         List<User> userList = new ArrayList<>();
@@ -46,6 +48,7 @@ public class SessionManager {
 
         return sessionStore.get(sessionCookie.getValue());
     }
+
 
     public void expire(Request request,String cookieName) {
 

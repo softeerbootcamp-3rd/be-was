@@ -50,11 +50,13 @@ public class UserController implements BasicController{
 
         sessionManager.createSession(loginMember.get(), response, "SID");
         return "redirect:/";
+
     }
 
     @GetMapping(url = "/logout")
     public String logout(Request req){
         sessionManager.expire(req,"SID");
+
         return "redirect:/";
     }
 
@@ -77,5 +79,6 @@ public class UserController implements BasicController{
             model.addAttribute("author",author);
         }
         return "user/profile";
+
     }
 }
