@@ -70,4 +70,6 @@ Reflection 활용 예시로는 애노테이션이 있으며,
 
 ## 6. 참고 문서
 
+[RFC - Request](https://www.rfc-editor.org/rfc/rfc2616#section-5)
+
 [hudi - HTTP Request Message](https://hudi.blog/woowacourse-level4-tcp-troubleshooting/)
