@@ -2,7 +2,6 @@ package model;
 
 import constant.HttpMethod;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
@@ -11,7 +10,7 @@ public class HttpRequest {
     private String httpVer;
     private HttpHeader headerMap;
     private Parameter paramMap;
-    private Map<String, String> cookieMap;
+    private Cookie cookieMap;
     private String body;
 
     public HttpRequest() {
@@ -100,7 +99,7 @@ public class HttpRequest {
             initCookieMap();
         }
 
-        if (cookieMap.size() != 0) {
+        if (cookieMap.getCookieMap().size() != 0) {
             String value = cookieMap.get(key);
             if (value != null) {
                 return value;
@@ -114,7 +113,7 @@ public class HttpRequest {
         String cookieString = headerMap.get("Cookie");
         String[] cookies = cookieString.split("; ");
 
-        Map<String, String> cookieMap = new HashMap<>();
+        Cookie cookieMap = new Cookie();
         for (String cookie : cookies) {
             String[] keyValue = cookie.split("=");
             cookieMap.put(keyValue[0], keyValue[1]);
