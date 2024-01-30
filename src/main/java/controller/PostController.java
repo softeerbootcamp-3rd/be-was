@@ -23,8 +23,9 @@ public class PostController implements Controller {
     public String createPost(InputData inputData, OutputData outputData) {
         String userId = SessionManager.getUserBySessionId(inputData.getSessionId());
         String userName = UserRepository.findUserById(userId).getName();
+        String contents = inputData.get("contents").replace("\r\n", "<br>");
 
-        Post post = new Post(userId, userName, inputData.get("title"), inputData.get("contents"));
+        Post post = new Post(userId, userName, inputData.get("title"), contents);
         PostRepository.addPost(post);
 
         return "redirect:/index";
