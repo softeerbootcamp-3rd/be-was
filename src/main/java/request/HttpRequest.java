@@ -10,6 +10,7 @@ public class HttpRequest {
     private Map<String, String> params = new HashMap<>();
     private Map<String, String> headers = new HashMap<>();
     private String body;
+    private boolean auth;
 
     public Map<String, String> getParams() {
         return params;
@@ -58,6 +59,16 @@ public class HttpRequest {
     public void setBody(String body) {
         this.body = body;
     }
+
+    public boolean isAuth() {
+        return auth;
+    }
+
+    public void setAuth(boolean auth) {
+        this.auth = auth;
+    }
+
+
 
     @Override
     public String toString() {
