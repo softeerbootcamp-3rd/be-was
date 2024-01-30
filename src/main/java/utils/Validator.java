@@ -9,7 +9,7 @@ import java.util.Map;
 public class Validator {
     private static final Logger logger = LoggerFactory.getLogger(Validator.class);
     public static Boolean validateSignUpInfo(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+        Map<String, String> body = request.getParams();
         // userId, password, name, email 값이 잘 들어왔는지 확인
         if (!body.containsKey("userId") || !body.containsKey("password")
                 || !body.containsKey("name") || !body.containsKey("email")) {
@@ -35,7 +35,7 @@ public class Validator {
     }
 
     public static Boolean validateLoginInfo(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+        Map<String, String> body = request.getParams();
         // userId, password 값이 잘 들어왔는지 확인
         if (!body.containsKey("userId") || !body.containsKey("password")) {
             return false;

@@ -19,7 +19,7 @@ public class UserController {
     private static final UserService userService = new UserService();
 
     public static HttpResponse signup(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+        Map<String, String> body = request.getParams();
         User user = new User(body.get("userId"), body.get("password"), body.get("name"), body.get("email"));
 
         try {
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     public static HttpResponse login(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+        Map<String, String> body = request.getParams();
         try {
             String sid = userService.join(body.get("userId"), body.get("password"));
             // 로그인에 성공할 경우 index.html로 리다이렉션 되며 쿠키 값에 sid값 추가
