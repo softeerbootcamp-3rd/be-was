@@ -62,6 +62,7 @@ public class ResourceController {
                     body = replacedBody.getBytes("UTF-8");
                 }
 
+
                 responseHeaders.put(CONTENT_TYPE, getContentType(url));
                 responseHeaders.put(CONTENT_LENGTH, String.valueOf(body.length));
                 return new HttpResponseBuilder().status(HttpResponseStatus.OK)
@@ -135,7 +136,7 @@ public class ResourceController {
             sb.append("<div class=\"wrap\">");
             sb.append("<div class=\"main\">");
             sb.append("<strong class=\"subject\">");
-            sb.append("<a href=\"./post?id=" + post.getId() + "\">" + post.getTitle() + "</a>");
+            sb.append("<a href=\"./post/detail?id=" + post.getId() + "\">" + post.getTitle() + "</a>");
             sb.append("</strong>");
             sb.append("<div class=\"auth-info\">");
             sb.append("<i class=\"icon-add-comment\"></i>");

@@ -31,7 +31,7 @@ public class MethodHandler {
 
 
         Map<String, String> params = request.getParams();
-        if(params.size() == 0) {
+        if(params.size() == 0 || request.getUrl().equals("/post/detail")) {
             response = method.invoke(instance, request);
         } else {
             Object[] objects = bindParameters(method, params);

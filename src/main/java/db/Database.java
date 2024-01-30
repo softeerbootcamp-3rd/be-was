@@ -37,4 +37,8 @@ public class Database {
     public static Map<Long, Post> getPostList() {
         return postList;
     }
+
+    public static Post getPostById(Long id) {
+        return postList.get(id);
+    }
 }
