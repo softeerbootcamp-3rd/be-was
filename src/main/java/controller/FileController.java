@@ -7,7 +7,7 @@ import dto.HttpResponseDto;
 import dto.HttpResponseDtoBuilder;
 import model.Post;
 import util.HttpResponseUtil;
-import util.WebUtil;
+import util.HttpRequestParser;
 
 import java.net.URLEncoder;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class FileController implements Controller {
 
     public HttpResponseDto downloadFile(HttpRequestDto request) {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
-        Map<String, String> requestParams = WebUtil.parseQueryString(request.getUri());
+        Map<String, String> requestParams = HttpRequestParser.parseQueryString(request.getUri());
 
         if (requestParams.get("postId") != null) {
             Post post = PostDatabase.findPostById(requestParams.get("postId"));

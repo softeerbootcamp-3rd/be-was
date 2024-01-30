@@ -31,13 +31,13 @@ public class HttpResponseUtil {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
         byte[] body = null;
 
-        File file = new File(WebUtil.getPath(request.getUri()));
+        File file = new File(HttpRequestParser.getPath(request.getUri()));
 
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             byte[] buffer = new byte[(int) file.length()];
             fileInputStream.read(buffer);
 
-            if (WebUtil.getFileExtension(request.getUri()).equals("html")) {
+            if (HttpRequestParser.getFileExtension(request.getUri()).equals("html")) {
                 // html 요청인 경우 navBar 변경
                 body = HtmlBuilder.buildPage(request, new String(buffer));
             } else {
@@ -50,7 +50,7 @@ public class HttpResponseUtil {
         }
 
         return responseDtoBuilder.response200Header()
-                .setHeaders(HttpHeader.CONTENT_TYPE, WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                .setHeaders(HttpHeader.CONTENT_TYPE, HttpRequestParser.getContentType(request.getUri()) + ";charset=utf-8")
                 .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
                 .setBody(body)
                 .build();

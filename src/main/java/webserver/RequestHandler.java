@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ControllerMapper;
 import util.HttpResponseUtil;
-import util.WebUtil;
+import util.HttpRequestParser;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,7 +25,7 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // Parsing HTTP Request
-            HttpRequestDto request = WebUtil.httpRequestParse(in);
+            HttpRequestDto request = HttpRequestParser.httpRequestParse(in);
             logger.debug("HTTP Request >>\n" + request.toString() + "\n" +
                     "Connected IP: {}, Port: {}", connection.getInetAddress(), connection.getPort() + "\n");
 

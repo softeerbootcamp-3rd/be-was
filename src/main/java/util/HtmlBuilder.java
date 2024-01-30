@@ -17,7 +17,7 @@ import java.util.Map;
 public class HtmlBuilder {
     // 로그인 여부에 따라 navBar를 변경한 /index.html 파일을 byte[]로 리턴
     public static byte[] buildIndexPage(HttpRequestDto request) {
-        String html = readHtmlInString(WebUtil.getPath(request.getUri()));
+        String html = readHtmlInString(HttpRequestParser.getPath(request.getUri()));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildIndexNavBar(request.getUser()));
         replacements.put("{{post-list}}", buildPostList());
@@ -35,7 +35,7 @@ public class HtmlBuilder {
 
     // User 목록 데이터를 넣은 /user/list.html 파일을 byte[]로 리턴
     public static byte[] buildUserListPage(HttpRequestDto request) {
-        String html = readHtmlInString(WebUtil.getPath(request.getUri()));
+        String html = readHtmlInString(HttpRequestParser.getPath(request.getUri()));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildNavBar(request.getUser()));
         replacements.put("{{user-list}}", buildUserList());
@@ -44,7 +44,7 @@ public class HtmlBuilder {
     }
 
     public static byte[] buildWriteFormPage(HttpRequestDto request) {
-        String html = readHtmlInString(WebUtil.getPath(request.getUri()));
+        String html = readHtmlInString(HttpRequestParser.getPath(request.getUri()));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildNavBar(request.getUser()));
         replacements.put("{{writer-name}}", request.getUser().getName());
@@ -53,7 +53,7 @@ public class HtmlBuilder {
     }
 
     public static byte[] buildWriteDetailPage(Post post, User user) {
-        String html = readHtmlInString(WebUtil.getPath("/qna/show.html"));
+        String html = readHtmlInString(HttpRequestParser.getPath("/qna/show.html"));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildNavBar(user));
         replacements.put("{{post-title}}", post.getTitle());
@@ -68,7 +68,7 @@ public class HtmlBuilder {
     }
 
     public static byte[] buildProfile(User user) {
-        String html = readHtmlInString(WebUtil.getPath("/user/profile.html"));
+        String html = readHtmlInString(HttpRequestParser.getPath("/user/profile.html"));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{user-navbar}}", buildNavBar(user));
         replacements.put("{{profile-user-name}}", user == null ? "존재하지 않는 유저입니다." : user.getName());
@@ -78,7 +78,7 @@ public class HtmlBuilder {
     }
 
     public static  byte[] buildErrorPage(String statusCode, String statusMessage, String message) {
-        String html = readHtmlInString(WebUtil.getPath("/404.html"));
+        String html = readHtmlInString(HttpRequestParser.getPath("/404.html"));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("{{status-code}}", statusCode);
         replacements.put("{{status-message}}", statusMessage);

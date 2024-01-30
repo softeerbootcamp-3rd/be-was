@@ -14,8 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WebUtil {
-    private static final Logger logger = LoggerFactory.getLogger(WebUtil.class);
+public class HttpRequestParser {
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
 
     private static final Map<String, String> MIME_CONTENT_TYPE = new HashMap<>();
 

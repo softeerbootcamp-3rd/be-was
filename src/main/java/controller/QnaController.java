@@ -11,7 +11,7 @@ import service.QnaService;
 import util.HtmlBuilder;
 import util.HttpResponseUtil;
 import util.MultipartFormDataParser;
-import util.WebUtil;
+import util.HttpRequestParser;
 
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class QnaController implements Controller {
             byte[] body = HtmlBuilder.buildWriteFormPage(request);
 
             return responseDtoBuilder.response200Header()
-                    .setHeaders(HttpHeader.CONTENT_TYPE, WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                    .setHeaders(HttpHeader.CONTENT_TYPE, HttpRequestParser.getContentType(request.getUri()) + ";charset=utf-8")
                     .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
                     .setBody(body)
                     .build();
@@ -83,7 +83,7 @@ public class QnaController implements Controller {
             return responseDtoBuilder.response302Header()
                     .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
         }
-        Map<String, String> queryString = WebUtil.parseQueryString(request.getUri());
+        Map<String, String> queryString = HttpRequestParser.parseQueryString(request.getUri());
         try {
             byte[] body = qnaService.printWriteDetailPage(queryString, request.getUser());
 
