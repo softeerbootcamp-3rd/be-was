@@ -66,6 +66,8 @@ public class GetService {
         session.invalidate();
         String setCookie = "sid=" + sessionId + "; expires=" + session.getExpiresWithFormat() + "; Path=/; secure; HttpOnly\r\n";
         httpResponseDto.setHeader("Set-Cookie", "Set-Cookie: " + setCookie);
+        // 해당 세션 저장소에서 삭제
+        Database.deleteSession(sessionId);
         return httpResponseDto;
     }
 
