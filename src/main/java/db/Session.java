@@ -21,12 +21,14 @@ public class Session {
         scheduler.scheduleAtFixedRate(Session::removeExpiredSessions, 0, 10, TimeUnit.MINUTES);
     }
 
+    private Session() {}
+
     public static String createSession(String userId) {
         logger.debug("createSession() method");
         String sessionId = UUID.randomUUID().toString();
         sessionData.put(sessionId, userId);
-        logger.debug("sessionId : " + sessionId);
-        logger.debug("userId : " + userId);
+        logger.debug("sessionId : {}", sessionId);
+        logger.debug("userId : {}", userId);
         showAllSessions();
 
         return sessionId;
