@@ -65,30 +65,50 @@ public class HttpRequest {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+
+        // Request Line
         builder.append("\n")
-                .append("====== Request Line ======\n")
-                .append("HTTP Method = ").append(method.name()).append("\n")
-                .append("URI = ").append(URI).append("\n")
-                .append("Http version = ").append(httpVer).append("\n")
-                .append("====== Request Header ======\n");
+                .append("==============================\n")
+                .append("=        Request Line        =\n")
+                .append("==============================\n")
+                .append("HTTP Method: ").append(method.name()).append("\n")
+                .append("URI        : ").append(URI).append("\n")
+                .append("HTTP Ver   : ").append(httpVer).append("\n\n");
+
+        // Request Headers
+        builder.append("==============================\n")
+                .append("=       Request Header       =\n")
+                .append("==============================\n");
         for (Map.Entry<String, String> header : headerMap.getHeader().entrySet()) {
             builder.append(header.getKey()).append(": ").append(header.getValue()).append("\n");
         }
 
-        if (paramMap != null) {
-            builder.append("====== Request Param ======\n");
+        // Request Parameters
+        if (paramMap != null && !paramMap.getParamMap().isEmpty()) {
+            builder.append("\n")
+                    .append("==============================\n")
+                    .append("=       Request Param        =\n")
+                    .append("==============================\n");
             for (Map.Entry<String, String> entry : paramMap.getParamMap().entrySet()) {
                 builder.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
         }
 
-        if (body != null) {
-            builder.append("====== Request Body ======\n")
-                    .append("Body = " + body);
+        // Request Body
+        if (body != null && !body.trim().isEmpty()) {
+            builder.append("\n")
+                    .append("==============================\n")
+                    .append("=        Request Body        =\n")
+                    .append("==============================\n")
+                    .append(body).append("\n");
         }
+
+        // End of the Request
+        builder.append("==============================\n");
 
         return builder.toString();
     }
+
 
     public String getHeader(String key) {
         return headerMap.get(key);
