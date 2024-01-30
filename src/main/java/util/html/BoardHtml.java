@@ -19,8 +19,8 @@ import java.util.Objects;
 
 public class BoardHtml {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private static final int pageSize = 10;
-    private static final int paginationSize = 5;
+    private static final int pageSize = 5;
+    private static final int paginationSize = 3;
 
     public static String boardList(String template) {
         int pageNumber = SharedData.getParamDataOrElse("page", Integer.class, 1);
