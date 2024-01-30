@@ -9,13 +9,13 @@ import java.util.Objects;
 public class Attachment {
 
     private Long id;
-    private Long postId;
+    private Long boardId;
     private String filename;
     private String mimeType;
     private byte[] data;
 
-    public Attachment(Long postId, String filename, String mimeType, byte[] data) {
-        this.postId = postId;
+    public Attachment(Long boardId, String filename, String mimeType, byte[] data) {
+        this.boardId = boardId;
         this.filename = filename;
         this.mimeType = mimeType;
         this.data = data;
@@ -32,12 +32,12 @@ public class Attachment {
         this.id = id;
     }
 
-    public Long getPostId() {
-        return postId;
+    public Long getBoardId() {
+        return boardId;
     }
 
-    public void setPostId(Long postId) {
-        this.postId = postId;
+    public void setBoardId(Long boardId) {
+        this.boardId = boardId;
     }
 
     public String getMimeType() {
@@ -68,7 +68,7 @@ public class Attachment {
     public String toString() {
         return "Attachment{" +
                 "id=" + id +
-                ", postId=" + postId +
+                ", boardId=" + boardId +
                 ", fileName='" + filename + '\'' +
                 ", mimeType='" + mimeType + '\'' +
                 ", data=" + Arrays.toString(data) +
@@ -80,12 +80,12 @@ public class Attachment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Attachment attachment = (Attachment) o;
-        return Objects.equals(id, attachment.id) && Objects.equals(postId, attachment.postId) && Objects.equals(filename, attachment.filename) && Objects.equals(mimeType, attachment.mimeType) && Arrays.equals(data, attachment.data);
+        return Objects.equals(id, attachment.id) && Objects.equals(boardId, attachment.boardId) && Objects.equals(filename, attachment.filename) && Objects.equals(mimeType, attachment.mimeType) && Arrays.equals(data, attachment.data);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, postId, filename, mimeType);
+        int result = Objects.hash(id, boardId, filename, mimeType);
         result = 31 * result + Arrays.hashCode(data);
         return result;
     }
@@ -93,7 +93,7 @@ public class Attachment {
     public static Attachment of(ResultSet resultSet) throws SQLException {
         Attachment attachment = new Attachment();
         attachment.id = resultSet.getLong("id");
-        attachment.postId = resultSet.getLong("postId");
+        attachment.boardId = resultSet.getLong("boardId");
         attachment.filename = resultSet.getString("filename");
         attachment.mimeType = resultSet.getString("mimeType");
         Blob blob = resultSet.getBlob("data");

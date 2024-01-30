@@ -1,6 +1,6 @@
 package database;
 
-import model.Post;
+import model.Board;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,15 +8,15 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
-public class PostRepository {
+public class BoardRepository {
 
-    public static Long add(Post post) {
-        String query = "INSERT INTO posts (writerId, title, contents, createDatetime) VALUES (?, ?, ?, ?)";
+    public static Long add(Board board) {
+        String query = "INSERT INTO boards (writerId, title, contents, createDatetime) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
-            statement.setString(1, post.getWriterId());
-            statement.setString(2, post.getTitle());
-            statement.setString(3, post.getContents());
-            statement.setTimestamp(4, new Timestamp(post.getCreateDatetime().getTime()));
+            statement.setString(1, board.getWriterId());
+            statement.setString(2, board.getTitle());
+            statement.setString(3, board.getContents());
+            statement.setTimestamp(4, new Timestamp(board.getCreateDatetime().getTime()));
             statement.executeUpdate();
 
             // 생성된 ID 값 얻기
@@ -32,13 +32,13 @@ public class PostRepository {
         }
     }
 
-    public static Post findById(Long id) {
-        String query = "SELECT * FROM posts WHERE id = ?";
+    public static Board findById(Long id) {
+        String query = "SELECT * FROM boards WHERE id = ?";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return Post.of(resultSet);
+                    return Board.of(resultSet);
                 } else {
                     return null;
                 }
@@ -49,7 +49,7 @@ public class PostRepository {
     }
 
     public static void deleteById(Long id) {
-        String query = "DELETE FROM posts WHERE id = ?";
+        String query = "DELETE FROM boards WHERE id = ?";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
             statement.setLong(1, id);
             statement.executeUpdate();
@@ -72,9 +72,9 @@ public class PostRepository {
         return 0;
     }
 
-    public static Collection<Post> getPage(int pageSize, int pageNumber) {
-        String query = "SELECT * FROM posts ORDER BY id DESC LIMIT ? OFFSET ?";
-        List<Post> posts = new ArrayList<>();
+    public static Collection<Board> getPage(int pageSize, int pageNumber) {
+        String query = "SELECT * FROM boards ORDER BY id DESC LIMIT ? OFFSET ?";
+        List<Board> boards = new ArrayList<>();
 
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
             int offset = (pageNumber - 1) * pageSize;
@@ -84,12 +84,12 @@ public class PostRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    posts.add(Post.of(resultSet));
+                    boards.add(Board.of(resultSet));
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return posts;
+        return boards;
     }
 }

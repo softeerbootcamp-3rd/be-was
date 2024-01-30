@@ -68,15 +68,15 @@ public class RequestMapper {
         Matcher matcher = pattern.matcher(requestPath);
 
         Map<String, String> pathParams = new HashMap<>();
-        if (matcher.matches()) {
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                String paramName = extractParamName(mappedPath, i);
-                String paramValue = matcher.group(i);
-                pathParams.put(paramName, paramValue);
-            }
-            return pathParams;
+        if (!matcher.matches())
+            return null;
+
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            String paramName = extractParamName(mappedPath, i);
+            String paramValue = matcher.group(i);
+            pathParams.put(paramName, paramValue);
         }
-        return null;
+        return pathParams;
     }
 
     private static String extractParamName(String mappedPath, int groupIndex) {

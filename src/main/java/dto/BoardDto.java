@@ -3,14 +3,14 @@ package dto;
 import annotation.NotEmpty;
 import util.mapper.MultipartFile;
 
-public class PostDto {
+public class BoardDto {
     @NotEmpty
     private String title;
     @NotEmpty
     private String contents;
     private MultipartFile attachment;
 
-    public PostDto() {}
+    public BoardDto() {}
 
     public String getTitle() {
         return title;

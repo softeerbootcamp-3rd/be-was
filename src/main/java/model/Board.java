@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
 
-public class Post {
+public class Board {
 
     private Long id;
     private String writerId;
@@ -13,9 +13,9 @@ public class Post {
     private String contents;
     private Date createDatetime;
 
-    public Post() {}
+    public Board() {}
 
-    public Post(Long id, String writerId, String title, String contents, Date createDatetime) {
+    public Board(Long id, String writerId, String title, String contents, Date createDatetime) {
         this.id = id;
         this.writerId = writerId;
         this.title = title;
@@ -23,7 +23,7 @@ public class Post {
         this.createDatetime = createDatetime;
     }
 
-    public Post(String writerId, String title, String contents, Date createDatetime) {
+    public Board(String writerId, String title, String contents, Date createDatetime) {
         this.writerId = writerId;
         this.title = title;
         this.contents = contents;
@@ -52,7 +52,7 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post{" +
+        return "Board{" +
                 "id=" + id +
                 ", writerId='" + writerId + '\'' +
                 ", title='" + title + '\'' +
@@ -65,9 +65,9 @@ public class Post {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return Objects.equals(id, post.id) && Objects.equals(writerId, post.writerId) && Objects.equals(title, post.title)
-                && Objects.equals(contents, post.contents) && Objects.equals(createDatetime, post.createDatetime);
+        Board board = (Board) o;
+        return Objects.equals(id, board.id) && Objects.equals(writerId, board.writerId) && Objects.equals(title, board.title)
+                && Objects.equals(contents, board.contents) && Objects.equals(createDatetime, board.createDatetime);
     }
 
     @Override
@@ -95,13 +95,13 @@ public class Post {
         this.createDatetime = createDatetime;
     }
 
-    public static Post of(ResultSet resultSet) throws SQLException {
-        Post post = new Post();
-        post.id = resultSet.getLong("id");
-        post.writerId = resultSet.getString("writerId");
-        post.title = resultSet.getString("title");
-        post.contents = resultSet.getString("contents");
-        post.createDatetime = resultSet.getTimestamp("createDatetime");
-        return post;
+    public static Board of(ResultSet resultSet) throws SQLException {
+        Board board = new Board();
+        board.id = resultSet.getLong("id");
+        board.writerId = resultSet.getString("writerId");
+        board.title = resultSet.getString("title");
+        board.contents = resultSet.getString("contents");
+        board.createDatetime = resultSet.getTimestamp("createDatetime");
+        return board;
     }
 }

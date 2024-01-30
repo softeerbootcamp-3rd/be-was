@@ -28,6 +28,6 @@ public class CommentController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         CommentRepository.deleteById(commentId);
-        return HttpResponse.redirect("/post/show.html?postId=" + comment.getPostId());
+        return HttpResponse.redirect("/board/show.html?boardId=" + comment.getBoardId());
     }
 }

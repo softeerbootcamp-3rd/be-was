@@ -45,6 +45,7 @@ public class RequestHandler implements Runnable {
                 else
                     response = serveResource(request);
             } catch (ResourceNotFoundException e) {
+                System.out.println(SharedData.request.get().getPath());
                 response = HttpResponse.of(HttpStatus.NOT_FOUND);
             } catch (IllegalArgumentException | IndexOutOfBoundsException | NoSuchMethodException
                      | InvocationTargetException | InstantiationException | IllegalAccessException e) {

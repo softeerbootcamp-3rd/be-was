@@ -13,8 +13,8 @@ import webserver.HttpResponse;
 public class AttachmentController {
 
     @RequestMapping(method = "GET", path = "/attachment")
-    public static HttpResponse getAttachment(@RequestParam(value = "postId", required = true) Long postId) {
-        Attachment attachment = AttachmentRepository.findByPostId(postId);
+    public static HttpResponse getAttachment(@RequestParam(value = "boardId", required = true) Long boardId) {
+        Attachment attachment = AttachmentRepository.findByBoardId(boardId);
         if (attachment == null)
             return HttpResponse.of(HttpStatus.NOT_FOUND);
 
@@ -26,8 +26,8 @@ public class AttachmentController {
     }
 
     @RequestMapping(method = "GET", path = "/attachment/download")
-    public static HttpResponse downloadAttachment(@RequestParam(value = "postId", required = true) Long postId) {
-        Attachment attachment = AttachmentRepository.findByPostId(postId);
+    public static HttpResponse downloadAttachment(@RequestParam(value = "boardId", required = true) Long boardId) {
+        Attachment attachment = AttachmentRepository.findByBoardId(boardId);
         if (attachment == null)
             return HttpResponse.of(HttpStatus.NOT_FOUND);
 

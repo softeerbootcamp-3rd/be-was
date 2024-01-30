@@ -9,9 +9,9 @@ import java.util.List;
 
 public class CommentRepository {
     public static void add(Comment comment) {
-        String query = "INSERT INTO comments (postId, writerId, contents, createDatetime) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO comments (boardId, writerId, contents, createDatetime) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
-            statement.setLong(1, comment.getPostId());
+            statement.setLong(1, comment.getBoardId());
             statement.setString(2, comment.getWriterId());
             statement.setString(3, comment.getContents());
             statement.setTimestamp(4, new Timestamp(comment.getCreateDatetime().getTime()));
@@ -37,12 +37,12 @@ public class CommentRepository {
         }
     }
 
-    public static Collection<Comment> findByPostId(Long postId) {
-        String query = "SELECT * FROM comments WHERE postId = ?";
+    public static Collection<Comment> findByBoardId(Long boardId) {
+        String query = "SELECT * FROM comments WHERE boardId = ?";
         List<Comment> comments = new ArrayList<>();
 
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
-            statement.setLong(1, postId);
+            statement.setLong(1, boardId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     comments.add(Comment.of(resultSet));
@@ -54,10 +54,10 @@ public class CommentRepository {
         return comments;
     }
 
-    public static int countByPostId(Long postId) {
-        String query = "SELECT COUNT(*) FROM comments WHERE postId = ?";
+    public static int countByBoardId(Long boardId) {
+        String query = "SELECT COUNT(*) FROM comments WHERE boardId = ?";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
-            statement.setLong(1, postId);
+            statement.setLong(1, boardId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
@@ -79,10 +79,10 @@ public class CommentRepository {
         }
     }
 
-    public static void deleteByPostId(Long postId) {
-        String query = "DELETE FROM comments WHERE postId = ?";
+    public static void deleteByBoardId(Long boardId) {
+        String query = "DELETE FROM comments WHERE boardId = ?";
         try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
-            statement.setLong(1, postId);
+            statement.setLong(1, boardId);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

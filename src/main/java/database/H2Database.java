@@ -25,22 +25,22 @@ public class H2Database {
                 "CREATE TABLE IF NOT EXISTS users " +
                         "(userId VARCHAR(255) PRIMARY KEY, password VARCHAR(255), " +
                         "name VARCHAR(255), email VARCHAR(255))");
-             PreparedStatement postStatement = connection.prepareStatement(
-                     "CREATE TABLE IF NOT EXISTS posts " +
+             PreparedStatement boardStatement = connection.prepareStatement(
+                     "CREATE TABLE IF NOT EXISTS boards " +
                              "(id BIGINT PRIMARY KEY AUTO_INCREMENT, writerId VARCHAR(255), " +
                              "title VARCHAR(255), contents VARCHAR(1000), createDatetime TIMESTAMP)");
              PreparedStatement commentStatement = connection.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS comments " +
-                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
+                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, boardId BIGINT, " +
                              "writerId VARCHAR(255), contents VARCHAR(255), createDatetime TIMESTAMP)");
              PreparedStatement attachmentStatement = connection.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS attachments " +
-                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, postId BIGINT, " +
+                             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, boardId BIGINT, " +
                              "filename VARCHAR(255), mimeType VARCHAR(255), data BLOB)"
              )
         ) {
             usersStatement.executeUpdate();
-            postStatement.executeUpdate();
+            boardStatement.executeUpdate();
             commentStatement.executeUpdate();
             attachmentStatement.executeUpdate();
         }
