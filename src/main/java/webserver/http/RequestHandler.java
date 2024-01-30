@@ -1,12 +1,11 @@
 package webserver.http;
 
-import db.H2Database;
+
 import db.PostRepository;
 import db.SessionManager;
 import db.UserRepository;
 import db.dto.CreatePost;
 import db.dto.GetPost;
-import model.Post;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

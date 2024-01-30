@@ -59,14 +59,6 @@ public class ResponseHandler {
             logger.error(e.getMessage());
         }
 
-        try {
-            String string = new String(responseBody, "UTF-8");
-            // Use the string as needed
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            // Handle the exception, maybe use a different encoding
-        }
-
         return responseBody;
     }
 }
