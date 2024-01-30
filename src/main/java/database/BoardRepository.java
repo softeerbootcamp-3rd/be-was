@@ -19,7 +19,6 @@ public class BoardRepository {
             statement.setTimestamp(4, new Timestamp(board.getCreateDatetime().getTime()));
             statement.executeUpdate();
 
-            // 생성된 ID 값 얻기
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getLong(1);

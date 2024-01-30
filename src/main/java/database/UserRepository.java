@@ -5,7 +5,6 @@ import entity.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -48,7 +47,7 @@ public class UserRepository {
 
     public static Collection<User> findAll() {
         String query = "SELECT * FROM users";
-        try (Statement statement = H2Database.getConnection().createStatement();
+        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query);
              ResultSet resultSet = statement.executeQuery(query)) {
 
             Collection<User> users = new ArrayList<>();
