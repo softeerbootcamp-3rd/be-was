@@ -18,8 +18,6 @@ import java.util.*;
 public class FrontController {
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-    static String DEFAULT_PAGE = "/templates/index.html";
-    private final QnaRepository qnaRepository = AppConfig.qnaRepository();
 
     public FrontController() {
         initHandlerMappingMap();
