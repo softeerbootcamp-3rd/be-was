@@ -29,6 +29,7 @@ public class HtmlBuilder {
             + "</div>"
             + "</li>\n";
     private static final String imageContentHtml = "<img src=\"../../images/{{image-name}}\" class=\"article-author-thumb\" alt=\"image\">\n";
+    private static final String imageDetailHtml = "<img src=\"../../images/{{image-name}}\" alt=\"image\" width=\"300\" height=\"300\">";
 
     /**
      * 페이지 내용을 동적으로 변경합니다.
@@ -69,10 +70,20 @@ public class HtmlBuilder {
         long postId = Long.parseLong(request.getUrl().split("/")[2]);
         Post post = PostDatabase.findPostById(postId);
 
-        return bodyString.replace("{{title}}", post.getTitle())
-                .replace("{{writer}}", post.getWriter())
-                .replace("{{post-time}}", post.getPostTime())
-                .replace("{{contents}}", post.getContents());
+        if (post.getImageName() == null) {
+            return bodyString.replace("{{title}}", post.getTitle())
+                    .replace("{{writer}}", post.getWriter())
+                    .replace("{{post-time}}", post.getPostTime())
+                    .replace("{{contents}}", post.getContents())
+                    .replace("{{image}}", "");
+        } else {
+            String imageContent = imageDetailHtml.replace("{{image-name}}", post.getImageName());
+            return bodyString.replace("{{title}}", post.getTitle())
+                    .replace("{{writer}}", post.getWriter())
+                    .replace("{{post-time}}", post.getPostTime())
+                    .replace("{{contents}}", post.getContents())
+                    .replace("{{image}}", imageContent);
+        }
     }
 
     /**
