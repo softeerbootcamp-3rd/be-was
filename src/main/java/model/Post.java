@@ -1,10 +1,13 @@
 package model;
 
+import java.time.LocalDateTime;
+
 public class Post {
     private Long id;
     private String writer;
     private String title;
     private String contents;
+    private LocalDateTime createTime;
 
     public Post(String writer, String title, String contents) {
         this.writer = writer;
@@ -30,6 +33,14 @@ public class Post {
 
     public String getContents() {
         return contents;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
     }
 
     @Override

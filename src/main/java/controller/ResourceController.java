@@ -13,6 +13,7 @@ import session.SessionManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +128,9 @@ public class ResourceController {
         StringBuilder sb = new StringBuilder();
         sb.append("<ul class=\"list\">");
         for (Post post : postList.values()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String createTime = post.getCreateTime().format(formatter);
+
             sb.append("<li>");
             sb.append("<div class=\"wrap\">");
             sb.append("<div class=\"main\">");
@@ -135,7 +139,7 @@ public class ResourceController {
             sb.append("</strong>");
             sb.append("<div class=\"auth-info\">");
             sb.append("<i class=\"icon-add-comment\"></i>");
-            sb.append("<span class=\"time\">2016-01-15 18:47</span>");
+            sb.append("<span class=\"time\">"+createTime+"</span>");
             sb.append("<a href=\"./user/profile.html\" class=\"author\">"+ post.getWriter() +"</a>");
             sb.append("</div>");
             sb.append("<div class=\"reply\" title=\"댓글\">");

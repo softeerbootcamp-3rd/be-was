@@ -8,6 +8,8 @@ import model.Post;
 import request.HttpRequest;
 import session.SessionManager;
 
+import java.time.LocalDateTime;
+
 public class PostController {
     SessionManager sessionManager = new SessionManager();
     private static Long sequence = 0L;
@@ -27,6 +29,7 @@ public class PostController {
                              @RequestParam(name = "contents") String contents) {
         Post post = new Post(writer, title, contents);
         post.setId(++sequence);
+        post.setCreateTime(LocalDateTime.now());
         Database.addPost(post);
         return "/index.html";
     }
