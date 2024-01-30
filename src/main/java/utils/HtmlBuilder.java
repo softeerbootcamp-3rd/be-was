@@ -23,12 +23,12 @@ public class HtmlBuilder {
             + "<a href=\"./user/profile.html\" class=\"author\">{{writer}}</a>"
             + "</div>"
             + "<div class=\"reply\" title=\"댓글\">\n"
-            + "<i class=\"icon-reply\"></i>\n"
-            + "<img src=\"../../images/sample.png\" class=\"article-author-thumb\" alt=\"image\">\n"
+            + "{{image}}"
             + "</div>"
             + "</div>"
             + "</div>"
             + "</li>\n";
+    private static final String imageContentHtml = "<img src=\"../../images/{{image-name}}\" class=\"article-author-thumb\" alt=\"image\">\n";
 
     /**
      * 페이지 내용을 동적으로 변경합니다.
@@ -88,10 +88,21 @@ public class HtmlBuilder {
         StringBuilder sb = new StringBuilder();
 
         for (Post post : allPost) {
-            String postContent = postContentHtml.replace("{{title}}", post.getTitle())
-                    .replace("{{post-id}}", String.valueOf(post.getPostId()))
-                    .replace("{{writer}}", post.getWriter())
-                    .replace("{{post-time}}", post.getPostTime());
+            String postContent;
+            if (post.getImageName() == null) {
+                postContent = postContentHtml.replace("{{title}}", post.getTitle())
+                        .replace("{{post-id}}", String.valueOf(post.getPostId()))
+                        .replace("{{writer}}", post.getWriter())
+                        .replace("{{post-time}}", post.getPostTime())
+                        .replace("{{image}}", "");
+            } else {
+                String imageContent = imageContentHtml.replace("{{image-name}}", post.getImageName());
+                postContent = postContentHtml.replace("{{title}}", post.getTitle())
+                        .replace("{{post-id}}", String.valueOf(post.getPostId()))
+                        .replace("{{writer}}", post.getWriter())
+                        .replace("{{post-time}}", post.getPostTime())
+                        .replace("{{image}}", imageContent);
+            }
             sb.append(postContent);
         }
 
