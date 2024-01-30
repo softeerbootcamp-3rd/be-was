@@ -1,5 +1,6 @@
 package controller.user;
 
+import constant.HeaderType;
 import constant.HttpStatus;
 import controller.ModelView;
 import exception.AlreadyExistUserException;
@@ -27,14 +28,14 @@ public class UserCreateController implements UserController {
             userService.addUser(userId, password, name, email);
         } catch (AlreadyExistUserException e) {
             path = "/user/form_failed.html";
-            httpResponse.addHeader("Location", path);
+            httpResponse.addHeader(HeaderType.LOCATION, path);
 
             return new ModelView(path, HttpStatus.FOUND);
         }
 
         // 회원가입 성공
         path = "/index.html";
-        httpResponse.addHeader("Location", path);
+        httpResponse.addHeader(HeaderType.LOCATION, path);
 
         return new ModelView(path, HttpStatus.FOUND);
     }

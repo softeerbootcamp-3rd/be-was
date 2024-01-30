@@ -1,5 +1,6 @@
 package controller.qna;
 
+import constant.HeaderType;
 import constant.HttpStatus;
 import controller.ModelView;
 import model.HttpRequest;
@@ -21,7 +22,7 @@ public class QnaCreateController implements QnaController {
 
         qnaService.addQna(writer, title, contents);
 
-        httpResponse.addHeader("Location", "/index.html");
+        httpResponse.addHeader(HeaderType.LOCATION, "/index.html");
         return new ModelView("/index.html", HttpStatus.FOUND);
     }
 }

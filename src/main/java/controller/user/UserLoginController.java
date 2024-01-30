@@ -1,5 +1,6 @@
 package controller.user;
 
+import constant.HeaderType;
 import constant.HttpStatus;
 import controller.ModelView;
 import exception.LoginFailedException;
@@ -27,7 +28,7 @@ public class UserLoginController implements UserController {
             loginUser = userService.login(userId, password);
         } catch (LoginFailedException e) {
             path = "/user/login_failed.html";
-            httpResponse.addHeader("Location", path);
+            httpResponse.addHeader(HeaderType.LOCATION, path);
 
             e.printStackTrace();
 
@@ -39,8 +40,8 @@ public class UserLoginController implements UserController {
         SessionManager.addSession(sid, loginUser);
 
         path = "/index.html";
-        httpResponse.addHeader("Location", path);
-        httpResponse.addHeader("Set-Cookie", "sid=" + sid + "; Path=/; Max-Age=1800" + SessionManager.EXPIRED_TIME);
+        httpResponse.addHeader(HeaderType.LOCATION, path);
+        httpResponse.addHeader(HeaderType.SET_COOKIE, "sid=" + sid + "; Path=/; Max-Age=1800" + SessionManager.EXPIRED_TIME);
 
         return new ModelView(path, HttpStatus.FOUND);
     }

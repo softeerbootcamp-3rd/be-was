@@ -1,6 +1,7 @@
 package model;
 
 import com.google.common.collect.Maps;
+import constant.HeaderType;
 import constant.HttpStatus;
 import java.util.Map;
 
@@ -8,11 +9,11 @@ public class HttpResponse {
     private static final String DEFAULT_HTTP_VERSION = "HTTP1.1";
     private String httpVer;
     private HttpStatus httpStatus;
-    private Map<String, String> headerMap = Maps.newHashMap();
+    private Map<HeaderType, String> headerMap = Maps.newHashMap();
     private byte[] body;
 
-    public void addHeader(String key, String value) {
-        headerMap.put(key, value);
+    public void addHeader(HeaderType type, String value) {
+        headerMap.put(type, value);
     }
 
     public void setBody(byte[] body) {
@@ -43,8 +44,8 @@ public class HttpResponse {
 
     public String extractHeader() {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+        for (Map.Entry<HeaderType, String> entry : headerMap.entrySet()) {
+            sb.append(entry.getKey().getType()).append(": ").append(entry.getValue()).append("\r\n");
         }
         sb.append("\r\n");
         return sb.toString();

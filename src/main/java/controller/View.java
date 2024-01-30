@@ -1,6 +1,7 @@
 package controller;
 
 import config.AppConfig;
+import constant.HeaderType;
 import exception.UserNotFoundException;
 import model.Qna;
 import model.HttpRequest;
@@ -42,7 +43,7 @@ public class View {
         int start = uri.lastIndexOf(".");
         String type = uri.substring(start + 1);
 
-        httpResponse.addHeader("Content-Type", "text/" + type + ";charset=utf-8");
+        httpResponse.addHeader(HeaderType.CONTENT_TYPE, "text/" + type + ";charset=utf-8");
 
         // 동적 페이지 변환을 위한 데이터가 존재한다면
         if (mv.getModel().size() > 0) {
