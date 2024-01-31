@@ -24,7 +24,6 @@ public enum ControllerHandler {
             return response;
         }
     }
-
     ;
 
     public String url;

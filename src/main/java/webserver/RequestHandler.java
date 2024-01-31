@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.UUID;
 
-import config.HTTPRequest;
-import config.HTTPResponse;
-import config.ResponseCode;
-import config.Session;
+import config.*;
 import controller.PageController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,20 +32,34 @@ public class RequestHandler implements Runnable {
 
             HTTPRequest request = new HTTPRequest(br, logger);
             DataOutputStream dos = new DataOutputStream(out);
-            String url = request.getUrl();
+
 
 
 
             //로그인 상태를 우선적으로 확인 후 로컬 스레드에 부여, 로그인이 안되어 있으면 null로 세팅한다
             loginCheck(request);
 
+            //로그인 상태와 URL을 참고하여 접근하면 안되는 URL을 수정
+
+
             ControllerHandler controllerHandler = null;
+            String url = request.getUrl();
             String urlFrontPart = url.split("\\?")[0];
 
             HTTPResponse response;
-            // 정적페이지 불러오는 경우 (GET 메소드이며, url에 확장자가 있을 때)
+            // 페이지 불러오는 경우 (GET 메소드이며, url에 확장자가 있을 때)
             if(request.getMethod().equals("GET") && urlFrontPart.contains(".")){
-                response = PageController.getPage(request);
+                //로그인 상태에 따라 정적/동적 페이지 로드
+
+                //로그인된 경우 동적페이지
+                if(threadUuid.get() != null && url.contains(".html"))
+                    response = PageController.getPageDynamic(request);
+                //로그인 안되어 있는 경우
+                else if(Redirect.getNewUrl(url)!=null)
+                    response = PageController.RedirectStaticPage(Redirect.getNewUrl(url));
+                //로그인이 되어 있는 경우
+                else
+                    response = PageController.getPageStatic(request);
             }
             // 그 외에는 디스패쳐 서블릿으로 컨트롤러를 불러온다 (ControllerHandler가 디스패쳐 서블릿)
             else {

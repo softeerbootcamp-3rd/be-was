@@ -4,8 +4,6 @@ import config.*;
 import db.Database;
 import model.User;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static webserver.RequestHandler.threadUuid;
@@ -25,7 +23,7 @@ public class UserController {
             //유저 아이디가 이미 존재하는 경우 예외 발생
             //그러나 현재 어떻게 처리할지 명시되지 않아서 catch문은 미구현
             if(Database.findUserById(userId)!=null)
-                throw new ExceptionHandler.UserIdTaken("User id already in use");
+                throw new ExceptionType.UserIdTaken("User id already in use");
 
             //유저 저장
             User user = new User(userId, password, name, email);
@@ -71,7 +69,6 @@ public class UserController {
             byte[] head = ("HTTP/1.1 " + ResponseCode.REDIRECT.code + " " + ResponseCode.REDIRECT + "\r\n" +
                     "Location: /user/login_failed.html" + "\r\n" +
                     "Content-Length: " + body.length + "\r\n").getBytes();
-
             response = new HTTPResponse("HTTP/1.1", ResponseCode.REDIRECT.code, ResponseCode.REDIRECT.toString(), head, body);
         }
         // 로그인 성공시 세션 발급, index.html로 리디렉션
