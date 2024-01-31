@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import handler.RequestHandler;
 import handler.HomeRequestHandler;
 import handler.UserRequestHandler;
+import util.SessionCookieUtils;
 
 public class RequestController implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
@@ -25,13 +26,15 @@ public class RequestController implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 			HttpRequest httpRequest = HttpRequestFactory.getRequest(in);
-			httpRequest.logHeaders();
-            handleRequest(httpRequest, out);
+			logger.debug("{}", httpRequest);
+			String findSessionId = SessionCookieUtils.getSessionId(httpRequest.getCookies());
+			HttpResponse httpResponse = handleRequest(httpRequest, findSessionId);
+			HttpResponseSender.send(httpResponse, out);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-    public void handleRequest(HttpRequest httpRequest, OutputStream out) throws IOException {
+    public HttpResponse handleRequest(HttpRequest httpRequest, String findSessionId) throws IOException {
         String uri = httpRequest.getUri();
         RequestHandler requestHandler;
         if (uri.startsWith("/user")) {
@@ -39,7 +42,6 @@ public class RequestController implements Runnable {
         }else{
             requestHandler = new HomeRequestHandler();
         }
-        HttpResponse httpResponse = requestHandler.handle(httpRequest);
-        HttpResponseSender.send(httpResponse, out);
+        return requestHandler.handle(httpRequest, findSessionId);
     }
 }

@@ -1,19 +1,20 @@
 package http.builder;
 
 import http.HttpRequest;
+import http.method.HttpMethod;
 
 import java.util.Map;
 
 public class HttpRequestBuilder {
 
-    private String method;
+    private HttpMethod method;
     private String uri;
     private String queryString;
     private Map<String, String> headerFields;
 	private String body;
 
     public HttpRequestBuilder method(String method) {
-        this.method = method;
+		this.method = HttpMethod.valueOf(method);
         return this;
     }
 

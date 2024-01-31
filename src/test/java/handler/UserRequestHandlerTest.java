@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,6 +26,7 @@ class UserRequestHandlerTest {
 	void 회원가입시_db_저장_O() {
 		//given
 		String body = "userId=hello&password=sdd&name=swk&email=test@naver.com";
+		String session = UUID.randomUUID().toString();
 
 		HttpRequest httpRequest = new HttpRequestBuilder()
 			.method("POST")
@@ -35,8 +37,8 @@ class UserRequestHandlerTest {
 		RequestHandler requestHandler = new UserRequestHandler();
 
 		//when
-		HttpResponse httpResponse = requestHandler.handle(httpRequest);
-		User user = Database.findUserById("hello").orElseThrow(NullPointerException::new);
+		HttpResponse httpResponse = requestHandler.handle(httpRequest ,session);
+		User user = Database.findUserById("hello");
 
 		//then
 		assertThat(user).isNotNull();
@@ -50,12 +52,13 @@ class UserRequestHandlerTest {
 	void 회원가입_O_로그인_O() {
 		//given
 		initUserDB();
+		String session = UUID.randomUUID().toString();
 
 		//when
 		RequestHandler requestHandler = new UserRequestHandler();
 
 		HttpRequest loginRequest = getLoginRequest("user", "userPW");
-		HttpResponse httpResponse = requestHandler.handle(loginRequest);
+		HttpResponse httpResponse = requestHandler.handle(loginRequest, session);
 		Map<String, String> headerFields = httpResponse.getHeaderFields();
 		String uri = headerFields.get("Location");
 
@@ -70,12 +73,13 @@ class UserRequestHandlerTest {
 	void 회원가입_O_로그인_X() {
 		//given
 		initUserDB();
+		String session = UUID.randomUUID().toString();
 
 		//when
 		RequestHandler requestHandler = new UserRequestHandler();
 
 		HttpRequest loginRequest = getLoginRequest("user", "wrongPW");
-		HttpResponse httpResponse = requestHandler.handle(loginRequest);
+		HttpResponse httpResponse = requestHandler.handle(loginRequest, session);
 		Map<String, String> headerFields = httpResponse.getHeaderFields();
 		String uri = headerFields.get("Location");
 
@@ -87,12 +91,12 @@ class UserRequestHandlerTest {
 	@DisplayName("회원가입을 하지 않고 로그인을 시도하여 로그인 실패 테스트")
 	void 회원가입_X_로그인_X() {
 		//given
-
+		String session = UUID.randomUUID().toString();
 		//when
 		RequestHandler requestHandler = new UserRequestHandler();
 
 		HttpRequest loginRequest = getLoginRequest("user", "userPW");
-		HttpResponse httpResponse = requestHandler.handle(loginRequest);
+		HttpResponse httpResponse = requestHandler.handle(loginRequest, session);
 		Map<String, String> headerFields = httpResponse.getHeaderFields();
 		String uri = headerFields.get("Location");
 

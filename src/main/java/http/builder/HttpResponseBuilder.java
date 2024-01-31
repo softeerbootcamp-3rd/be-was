@@ -4,7 +4,6 @@ import http.HttpResponse;
 import http.status.HttpStatusCode;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class HttpResponseBuilder {
     private HttpStatusCode statusCode;

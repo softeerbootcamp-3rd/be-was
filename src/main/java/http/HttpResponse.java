@@ -4,8 +4,6 @@ import http.status.HttpStatusCode;
 
 import java.util.Map;
 
-import static http.HttpVersionConst.*;
-
 public class HttpResponse {
     private final String version;
     private final HttpStatusCode statusCode;
@@ -13,7 +11,7 @@ public class HttpResponse {
     private final byte[] body; // 없는 경우 빈 배열 (body = new byte[0])
 
     public HttpResponse(HttpStatusCode statusCode, Map<String, String> headerFields, byte[] body) {
-        this.version = VERSION;
+		this.version = "HTTP/1.1";
         this.statusCode = statusCode;
         this.headerFields = headerFields;
         this.body = body;

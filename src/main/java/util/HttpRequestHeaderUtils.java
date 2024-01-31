@@ -3,8 +3,8 @@ package util;
 import java.util.Map;
 
 public class HttpRequestHeaderUtils {
+	private Map<String, String> requestLineMap;
     private Map<String, String> requestHeaderMap; // 헤더 <field, value> 저장
-    private Map<String, String> requestLineMap;
     private HttpRequestHeaderUtils() {
     }
 
@@ -16,13 +16,13 @@ public class HttpRequestHeaderUtils {
     }
 
     public String getRequestMethod() {
-        return requestLineMap.get("Method");
+        return requestLineMap.get("method");
     }
     public String getRequestUri() {
-        return requestLineMap.get("RequestUri");
+        return requestLineMap.get("requestUri");
     }
     public String getQueryString() {
-        return  requestLineMap.get("QueryString");
+        return  requestLineMap.get("queryString");
     }
     public Map<String,String> getRequestHeaders() {
         return requestHeaderMap;
