@@ -1,12 +1,13 @@
 package webserver.http;
 
-import java.io.Serializable;
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HttpHeader implements Serializable {
+public class HttpHeader {
 
-    public static Map<String, List<String>> headers = new HashMap<>();
+    public Map<String, List<String>> headers;
 
     public static final String ACCEPT = "Accept";
     public static final String ACCEPT_ENCODING = "Accept-Encoding";
@@ -46,10 +47,9 @@ public class HttpHeader implements Serializable {
         return headers.get(CONTENT_TYPE).get(0);
     }
 
-    public void setContentType(String contentType) {
-        headers.put(CONTENT_TYPE, Collections.singletonList(contentType));
+    public String getContentLength() {
+        return headers.containsKey(CONTENT_LENGTH) ? headers.get(CONTENT_LENGTH).get(0) : null;
     }
-
 
     public String getLocation() {
         return headers.containsKey(LOCATION) ? headers.get(LOCATION).get(0) : null;
@@ -59,6 +59,26 @@ public class HttpHeader implements Serializable {
         return headers.get(SET_COOKIE)
                 .stream()
                 .collect(Collectors.joining("; "));
+    }
+
+    public String getCookie() {
+        return headers.containsKey(COOKIE) ? headers.get(COOKIE).get(0) : null;
+    }
+
+    public String getHost() {
+        return headers.containsKey(HOST) ? headers.get(HOST).get(0) : null;
+    }
+
+    public String getAccept() {
+        return headers.containsKey(ACCEPT) ? headers.get(ACCEPT).get(0) : null;
+    }
+
+    public void setContentType(String contentType) {
+        headers.put(CONTENT_TYPE, Collections.singletonList(contentType));
+    }
+
+    public void setContentLength(String contentLength) {
+        headers.put(CONTENT_LENGTH, Collections.singletonList(contentLength));
     }
 
     public boolean hasSetCookie() {

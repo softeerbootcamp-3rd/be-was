@@ -3,6 +3,7 @@ package webserver.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.JsonConverter;
+import util.ResourceManager;
 
 import java.io.*;
 
@@ -13,97 +14,75 @@ public class HttpResponse {
 
     public static void send(DataOutputStream dos, ResponseEntity responseEntity) throws IOException {
         HttpStatus httpStatus = responseEntity.getHttpStatus();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder logBuilder = new StringBuilder();
 
-        String line = "HTTP/1.1 " + responseEntity.getHttpStatus().getStatusCode() + " " + responseEntity.getHttpStatus().getStatusMessage();
-        dos.writeBytes(line + "\r\n");
-        sb.append(line);
+        String statusLine = "HTTP/1.1 " + httpStatus.getStatusCode() + " " + httpStatus.getStatusMessage();
+        dos.writeBytes(statusLine + System.lineSeparator());
+        logBuilder.append(statusLine);
 
         if (httpStatus == HttpStatus.OK) {
-            sb.append(response200Header(dos, responseEntity));
-            dos.writeBytes("\r\n");
+            logBuilder.append(response200Header(dos, responseEntity));
+            dos.writeBytes(System.lineSeparator());
             responseBody(dos, responseEntity);
         } else if (httpStatus == HttpStatus.FOUND) {
-            redirect(dos, responseEntity);
+            logBuilder.append(redirect(dos, responseEntity));
         }
 
-        dos.writeBytes("\r\n");
+        dos.writeBytes(System.lineSeparator());
         dos.flush();
         dos.close();
 
-        logger.debug("Response [" + sb + "]"); // TODO toString @override 해서 한 번에 처리하기
+        logger.debug("Response [{}]", logBuilder); // TODO toString @override 해서 한 번에 처리하기
     }
 
-    private static String response200Header(DataOutputStream dos, ResponseEntity response) {
-        try {
-            StringBuilder logBuilder = new StringBuilder(", ");
-            String contentType = "Content-Type: " + response.getHeaders().getContentType();
-            logBuilder.append(contentType);
-            dos.writeBytes(contentType + "\r\n");
+    private static String response200Header(DataOutputStream dos, ResponseEntity response) throws IOException {
+        String contentType = "Content-Type: " + response.getHeaders().getContentType();
+        dos.writeBytes(contentType + System.lineSeparator());
 
-            if (!response.getHeaders().getContentType().equals("application/json")) {
-                byte[] body = (byte[]) response.getBody();
-                long bodyLength = body != null ? body.length : 0;
-                String contentLength = "Content-Length: " + bodyLength;
-                dos.writeBytes(contentLength + "\r\n");
+        StringBuilder logBuilder = new StringBuilder(", ").append(contentType);
 
-                logBuilder.append(", " + contentLength);
-            }
+        String contentLength = "Content-Length: " + response.getHeaders().getContentLength();
+        dos.writeBytes(contentLength + System.lineSeparator());
+        logBuilder.append(", ").append(contentLength);
 
-            if (response.getHeaders().hasSetCookie()) {
-                String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
-                dos.writeBytes(cookie + "\r\n");
-
-                logBuilder.append(", " + cookie);
-            }
-
-            return logBuilder.toString();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+        if (response.getHeaders().hasSetCookie()) {
+            String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
+            dos.writeBytes(cookie + System.lineSeparator());
+            logBuilder.append(", ").append(cookie);
         }
 
+        return logBuilder.toString();
+    }
+
+    private static String redirect(DataOutputStream dos, ResponseEntity response) throws IOException {
+        String redirectHeader = "Location: " + response.getHeaders().getLocation();
+        dos.writeBytes(redirectHeader + System.lineSeparator());
+
+        StringBuilder logBuilder = new StringBuilder(", ").append(redirectHeader);
+
+        if (response.getHeaders().hasSetCookie()) {
+            String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
+            dos.writeBytes(cookie + System.lineSeparator());
+
+            logBuilder.append(", ").append(cookie);
+        }
+
+        return logBuilder.toString();
+    }
+
+    private static void responseBody(DataOutputStream dos, ResponseEntity response) throws IOException {
+        byte[] bytes = getResponseBodyBytes(response);
+        dos.write(bytes, 0, bytes.length);
+    }
+
+    private static byte[] getResponseBodyBytes(ResponseEntity response) throws IOException {
+        if (response.getBody().getClass().getName().equals("java.lang.String")) {
+            String body = (String) response.getBody();
+            return body.getBytes();
+        } else if (response.getBody().getClass().getName().equals("java.io.File")){
+            return ResourceManager.readAllBytes((File)response.getBody());
+        }
         return null;
-    }
-
-    private static String redirect(DataOutputStream dos, ResponseEntity response) {
-        try {
-            StringBuilder logBuilder = new StringBuilder(", ");
-            String redirectResponse = "Location: " + response.getHeaders().getLocation();
-            logBuilder.append(redirectResponse);
-
-            dos.writeBytes(redirectResponse + "\r\n");
-
-            if (response.getHeaders().hasSetCookie()) {
-                System.out.println("Cookie : " + response.getHeaders().getSetCookie());
-                String cookie = "Set-Cookie: " + response.getHeaders().getSetCookie();
-                dos.writeBytes(cookie + "\r\n");
-
-                logBuilder.append(", " + cookie);
-            }
-
-            return logBuilder.toString();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-
-        return null;
-    }
-
-    private static void responseBody(DataOutputStream dos, ResponseEntity response) {
-        try {
-            byte[] bytes = null;
-            if (response.getHeaders().getContentType().equals("application/json")) {
-                String body = JsonConverter.convertObjectToJson(response.getBody());
-                bytes = body.getBytes();
-            } else {
-                bytes = (byte[]) response.getBody();
-            }
-
-            dos.write(bytes, 0, bytes.length);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-
     }
 
 }

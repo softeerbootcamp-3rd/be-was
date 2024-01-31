@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import model.User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
@@ -21,4 +22,18 @@ public class Database {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static String findUserNameById(String userId) {
+        return users.get(userId).getName();
+    }
+
+    public static boolean isUserIdExist(String userId) {
+        return users.containsKey(userId);
+    }
+
+    public static boolean isEmailExist(String email) {
+        return users.values().stream()
+                .anyMatch(user -> user.getEmail().equals(email));
+    }
+
 }

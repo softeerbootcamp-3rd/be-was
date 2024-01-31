@@ -57,13 +57,12 @@
                 <li class="nav-divider"></li>
                 <li><a href="#"><i class="glyphicon glyphicon-cog" style="color:#dd1111;"></i> Settings</a></li>
             </ul>
-            
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse2">
-            	<span class="sr-only">Toggle navigation</span>
-            	<span class="icon-bar"></span>
-            	<span class="icon-bar"></span>
-            	<span class="icon-bar"></span>
-            </button>            
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
@@ -79,23 +78,36 @@
 
 <div class="container" id="main">
     <div class="col-md-6 col-md-offset-3">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h4>Profiles</h4></div>
-            <div class="panel-body">
-                <div class="well well-sm">
-                    <div class="media">
-                        <a class="thumbnail pull-left" href="#">
-                            <img class="media-object" src="../images/80-text.png">
-                        </a>
-                        <div class="media-body">
-                            <h4 class="media-heading">자바지기</h4>
-                            <p>
-                                <a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-envelope"></span>&nbsp;javajigi@slipp.net</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <div class="panel panel-default content-main">
+            <div class="alert alert-danger" role="alert">
+                <p>회원가입에 실패하였습니다.</p>
+                <p>다음 중 원인이 있을 수 있습니다.</p>
+                <ul>
+                    <li>모든 값을 채우지 않음</li>
+                    <li>사용자 아이디가 이미 존재하는 경우</li>
+                    <li>이메일이 이미 존재하는 경우</li>
+                </ul>
             </div>
+            <form name="question" method="post" action="/user/create">
+                <div class="form-group">
+                    <label for="userId">사용자 아이디</label>
+                    <input class="form-control" id="userId" name="userId" placeholder="User ID">
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input class="form-control" id="name" name="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                </div>
+                <button type="submit" class="btn btn-success clearfix pull-right">회원가입</button>
+                <div class="clearfix" />
+            </form>
         </div>
     </div>
 </div>
@@ -104,5 +116,5 @@
 <script src="../js/jquery-2.2.0.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script src="../js/scripts.js"></script>
-	</body>
+</body>
 </html>

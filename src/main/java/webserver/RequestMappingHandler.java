@@ -1,17 +1,22 @@
 package webserver;
 
 import annotation.*;
+import db.Database;
+import org.checkerframework.checker.units.qual.C;
 import util.ControllerMapper;
+import util.JsonConverter;
 import util.ResourceManager;
-import webserver.http.HttpRequest;
-import webserver.http.HttpStatus;
-import webserver.http.ResponseEntity;
+import util.SessionManager;
+import webserver.http.*;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,64 +42,63 @@ public class RequestMappingHandler {
         }
 
         ResponseEntity response = null;
-        if (request.getPath().equals("/user/logout")) {
+        if (request.getPath().equals("/user/logout") || request.getPath().equals("/user/name")) {
             response = invokeMethod(method, request);
         } else {
-            Object[] params = createParams(method, request.getParams());
-            response = invokeMethod(method, params);
+            response = invokeMethod(method, createParams(method, request.getParams()));
         }
 
-        if (method.isAnnotationPresent(ResponseBody.class)) {
-            response.getHeaders().setContentType("application/json");
-        }
+        response = addHeaders(request, method, response);
 
         return response;
     }
 
-
-    private static Method findGETMethod(Class<?> controllerClass, String path) {
-        // [ 피드백 ] 아예 처음부터 맵핑해놓고 시작하기
-        Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
-        String basePath = controllerClass.getAnnotation(RequestMapping.class).value();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(GetMapping.class)) {
-                GetMapping getMapping = method.getAnnotation(GetMapping.class);
-                String controllerPath = basePath + getMapping.path();
-                if (controllerPath.equals(basePath + path))
-                    return method;
-            }
+    private static ResponseEntity addHeaders(HttpRequest request, Method method, ResponseEntity response) {
+        // @ResponseBody 어노테이션이 있으면 application/json 타입으로 전송
+        if (method.isAnnotationPresent(ResponseBody.class)) {
+            String body = JsonConverter.convertObjectToJson(response.getBody());
+            response.getHeaders().setContentType("application/json");
+            response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
+            response.setBody(body);
         }
-        return null;
+        return response;
     }
 
-    private static Method findPOSTMethod(Class<?> controllerClass, String path) {
+    private static Method findMethod(Class<?> controllerClass, String path, Class<? extends Annotation> annotationType) {
         Method[] methods = RequestHandlerRegistry.getMethodsForController(controllerClass);
         String basePath = controllerClass.getAnnotation(RequestMapping.class).value();
         for (Method method : methods) {
-            if (method.isAnnotationPresent(PostMapping.class)) {
-                PostMapping postMapping = method.getAnnotation(PostMapping.class);
-                String controllerPath = basePath + postMapping.path();
+            if (method.isAnnotationPresent(annotationType)) {
+                Annotation mappingAnnotation = method.getAnnotation(annotationType);
+
+                String mappingPath = null;
+                try {
+                    mappingPath = (String) annotationType.getMethod("path").invoke(mappingAnnotation);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                String controllerPath = basePath + mappingPath;
                 if (controllerPath.equals(path))
                     return method;
             }
         }
         return null;
     }
+    private static Method findGETMethod(Class<?> controllerClass, String path) {
+        return findMethod(controllerClass, path, GetMapping.class);
+    }
 
-    private static ResponseEntity invokeMethod(Method method, Object[] params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static Method findPOSTMethod(Class<?> controllerClass, String path) {
+        return findMethod(controllerClass, path, PostMapping.class);
+    }
+
+    private static ResponseEntity invokeMethod(Method method, Object... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> c = method.getDeclaringClass();
         Object instance = c.getDeclaredConstructor().newInstance();
 
         return (ResponseEntity) method.invoke(instance, params);
     }
-
-    private static ResponseEntity invokeMethod(Method method, HttpRequest httpRequest) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class<?> c = method.getDeclaringClass();
-        Object instance = c.getDeclaredConstructor().newInstance();
-
-        return (ResponseEntity) method.invoke(instance, httpRequest);
-    }
-
 
     private static Object[] createParams(Method method, Map<String, String> originParams){
         Class<? extends Annotation> requestParam = RequestParam.class;
@@ -109,6 +113,11 @@ public class RequestMappingHandler {
 
                 String paramName = annotation.name();
                 Class<?> paramType = parameter.getType();
+
+                if (originParams.get(paramName) == null) {
+                    params[index++] = null;
+                    continue;
+                }
 
                 // 각 타입에 맞게 변환 처리
                 if (paramType == String.class) {

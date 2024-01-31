@@ -3,10 +3,11 @@ package util;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
-    private static final int SESSION_TIMEOUT_SECONDS = 30 * 60; // 30분
-    private static final Map<String, Session> sessions = new HashMap<>();
+    private static final int SESSION_TIMEOUT_SECONDS = 1 * 60; // 30분
+    private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
 
     private static class Session {
@@ -64,22 +65,26 @@ public class SessionManager {
         return (session != null) ? session.getAttributes().get(attributeName) : null;
     }
 
-    // 세션 만료
-    public static void invalidateSession(String sessionId) {
+    // 세션 삭제
+    public static void deleteSession(String sessionId) {
         sessions.remove(sessionId);
     }
 
-    public static Session getSession(String sessionId) {
-        return sessions.get(sessionId);
-    }
-
     // 세션 존재하는 지 확인
-    public static boolean isSessionPresent(String sessionId) {
+    public static boolean isSessionExist(String sessionId) {
         return sessions.containsKey(sessionId) ? true : false;
     }
 
-    public static int getSessionTimeoutSeconds() {
-        return SESSION_TIMEOUT_SECONDS;
+    // 접속 시간 업데이트
+    public static void updateLastAccessedTime(String sessionId) {
+        Session session = sessions.get(sessionId);
+        session.lastAccessedTime = System.currentTimeMillis();
+    }
+
+    public static boolean isValidateSession(String sessionId) {
+        if (isSessionExist(sessionId) && !checkSessionTimeout(sessionId))
+            return true;
+        return false;
     }
 
 }

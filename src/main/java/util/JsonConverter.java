@@ -1,6 +1,7 @@
 package util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class JsonConverter {
 
@@ -11,11 +12,11 @@ public class JsonConverter {
 
         // 객체의 각 필드를 처리
         if (object == null) {
-            jsonBuilder.append("}");
-            return jsonBuilder.toString();
+            return "";
         }
 
-        Field[] fields = object.getClass().getFields();
+        Class<?> clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true); // 필드 접근 권한 설정
 
