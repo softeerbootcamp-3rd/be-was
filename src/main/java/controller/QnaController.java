@@ -5,9 +5,6 @@ import config.HTTPResponse;
 import db.Database;
 import model.Qna;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static webserver.RequestHandler.threadUuid;
 
@@ -17,13 +14,8 @@ public class QnaController {
         if(threadUuid.get() == null)
             return PageController.RedirectStaticPage("/user/login.html");
 
-        System.out.println("{{{");
-        System.out.println(request.getBody().keySet());
         Qna qna = parseToQna(request);
         Database.addQna(qna);
-
-
-
 
         return PageController.RedirectStaticPage("/index.html");
 

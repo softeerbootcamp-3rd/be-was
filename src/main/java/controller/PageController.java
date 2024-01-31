@@ -1,12 +1,10 @@
 package controller;
 
 import config.*;
-import db.Database;
-import model.User;
+import util.DynamicPageBuilder;
+import util.PageBuilder;
 
 import java.io.*;
-
-import static webserver.RequestHandler.threadUuid;
 
 public class PageController {
 

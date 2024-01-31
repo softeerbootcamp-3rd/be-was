@@ -7,10 +7,8 @@ import model.User;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.*;
 
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Database {
@@ -40,8 +38,8 @@ public class Database {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public static List<User> findAll() {
+        return new ArrayList<> (users.values());
     }
 
 

@@ -1,4 +1,6 @@
-package config;
+package util;
+
+import config.HTTPRequest;
 
 @FunctionalInterface
 public interface PageBuilder {

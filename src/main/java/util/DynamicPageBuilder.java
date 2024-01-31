@@ -1,5 +1,8 @@
-package config;
+package util;
 
+import config.HTTPRequest;
+import config.HTTPResponse;
+import config.Session;
 import controller.PageController;
 import db.Database;
 import model.Qna;
@@ -8,7 +11,6 @@ import model.User;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.lang.reflect.Method;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
@@ -23,6 +25,48 @@ public class DynamicPageBuilder {
         dynamicPageBuilders.put("/index",DynamicPageBuilder::buildIndex);
         dynamicPageBuilders.put("/qna/show",DynamicPageBuilder::buildQnaShow);
         dynamicPageBuilders.put("/qna/form",DynamicPageBuilder::buildQnaForm);
+        dynamicPageBuilders.put("/user/list",DynamicPageBuilder::buildUserList);
+    }
+
+    private static byte[] buildUserList(HTTPRequest request) throws Exception{
+        //HTTPResponse response = PageController.getPageStatic(request);
+        byte[] body;
+        String userId = Session.getUserId(threadUuid.get());
+        User user = Database.findUserById(userId);
+
+        String url = request.getUrl();
+        File file = new File( TEMPLATE_FILE_PATH + url);
+        BufferedReader bf = new BufferedReader(new FileReader(file));
+
+        String line;
+        StringBuilder sb = new StringBuilder();
+
+        StringBuilder txt = new StringBuilder();
+
+        for(User u : Database.findAll()) {
+            txt.append("<tr>\n<td>");
+            txt.append(u.getUserId());
+            txt.append("</td> <td>");
+            txt.append(u.getName());
+            txt.append("</td> <td>");
+            txt.append(u.getEmail());
+            txt.append("</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n</tr>");
+        }
+
+        while ((line = bf.readLine()) != null) {
+            if (line.contains("추가"))
+                sb.append(line.replace("추가", txt));
+
+            else if(line.contains("로그인"))
+                sb.append(line.replace("로그인", user.getName()));
+            else
+                sb.append(line);
+            sb.append(System.lineSeparator());
+        }
+        System.out.println("[[[[["+sb);
+        body = sb.toString().getBytes();
+        return body;
+
     }
 
     private static byte[] buildQnaForm(HTTPRequest request) {

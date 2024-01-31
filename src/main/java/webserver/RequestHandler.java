@@ -53,17 +53,21 @@ public class RequestHandler implements Runnable {
                 //로그인 상태에 따라 정적/동적 페이지 로드
 
                 //로그인된 경우,html인 경우 동적페이지
-                if(threadUuid.get() != null && url.contains(".html"))
+                if(threadUuid.get() != null && url.contains(".html")) {
                     response = PageController.getPageDynamic(request);
-
+                    System.out.println(url+1);
+                }
                 //로그인 안되어 있는 경우
-                else if(Redirect.getNewUrl(url)!=null)
+                else if(Redirect.getNewUrl(url)!=null) {
                     response = PageController.RedirectStaticPage(Redirect.getNewUrl(url));
+                    System.out.println(url+2);
+                }
 
                 //로그인이 되어 있는 경우
-                else
+                else {
                     response = PageController.getPageStatic(request);
-
+                    System.out.println(url+3);
+                }
             }
             // 그 외에는 디스패쳐 서블릿으로 컨트롤러를 불러온다 (ControllerHandler가 디스패쳐 서블릿)
             else {
