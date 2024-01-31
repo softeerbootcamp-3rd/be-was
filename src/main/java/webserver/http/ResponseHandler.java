@@ -34,6 +34,7 @@ public class ResponseHandler {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+
         return responseBody;
     }
 }

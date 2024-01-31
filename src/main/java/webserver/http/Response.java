@@ -15,6 +15,7 @@ public class Response {
     private byte[] responseBody;
     private final String locString = "Location";
     private final String cookieString = "Set-Cookie";
+    private final DynamicResourceHandler dynamicResourceHandler = new DynamicResourceHandler();
 
     public Response(Request request) {
         this.httpVersion = request.getHttpVersion();
@@ -61,9 +62,14 @@ public class Response {
 
     void setBody(Request request){
         responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget());
+        dynamicResourceHandler.handle(request, this);
     }
 
     public byte[] getResponseBody() {
         return responseBody;
+    }
+
+    public void setResponseBody(byte[] responseBody) {
+        this.responseBody = responseBody;
     }
 }

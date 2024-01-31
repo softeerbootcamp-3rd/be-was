@@ -45,10 +45,11 @@ public class HttpConnectionHandler implements Runnable {
                 dos.writeBytes(key + ": " + value + "\r\n");
             }
 
-            if(!request.getResponseMimeType().getMimeType().equals(Mime.NONE.getMimeType())){
+            if(response.getResponseBody().length != 0){
                 dos.writeBytes("\r\n");
                 dos.write(response.getResponseBody(), 0, response.getResponseBody().length);
             }
+
             dos.flush();
         }catch (IOException e) {
             logger.error(e.getMessage());
