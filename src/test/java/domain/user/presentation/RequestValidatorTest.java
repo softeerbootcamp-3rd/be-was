@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import webserver.container.ResponseThreadLocal;
+import webserver.container.CustomThreadLocal;
 
 @DisplayName("RequestValidatorTest 클래스")
 class RequestValidatorTest {
@@ -23,12 +23,12 @@ class RequestValidatorTest {
     @BeforeEach
     void setUp() {
         httpResponse = new HttpResponse(null, null, null);
-        ResponseThreadLocal.setHttpResponse(httpResponse);
+        CustomThreadLocal.setHttpResponse(httpResponse);
     }
 
     @AfterEach
     void tearDown() {
-        ResponseThreadLocal.clearHttpResponse();
+        CustomThreadLocal.clearHttpResponse();
     }
 
     @Test

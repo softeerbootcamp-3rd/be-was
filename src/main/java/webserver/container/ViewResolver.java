@@ -53,6 +53,6 @@ public class ViewResolver {
             body = outputStream.toByteArray();
         }
 
-        ResponseThreadLocal.onSuccess(HttpStatusCode.OK, ResponseUtils.makeViewHeader(body.length, target), body);
+        CustomThreadLocal.onSuccess(HttpStatusCode.OK, ResponseUtils.makeViewHeader(body.length, target), body);
     }
 }

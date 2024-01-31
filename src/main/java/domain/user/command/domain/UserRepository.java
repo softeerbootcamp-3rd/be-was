@@ -10,7 +10,5 @@ public interface UserRepository {
 
     public Collection<User> findAll();
 
-    public void saveSession(String sessionId, String userId);
-    public Optional<String> getSessionIdByUserId(String sessionId);
-    public void removeSession(String sessionId);
+    public void deleteUser(String userId);
 }

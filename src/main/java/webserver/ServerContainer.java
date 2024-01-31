@@ -19,8 +19,8 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import webserver.container.CustomThreadLocal;
 import webserver.container.Dispatcher;
-import webserver.container.ResponseThreadLocal;
 
 public class ServerContainer implements Runnable {
 
@@ -35,7 +35,8 @@ public class ServerContainer implements Runnable {
             HttpRequest httpRequest = httpRequestParser(in);
             HttpResponse response = createInitResponse();
 
-            ResponseThreadLocal.setHttpResponse(response);
+            CustomThreadLocal.setHttpRequest(httpRequest);
+            CustomThreadLocal.setHttpResponse(response);
 //            CustomLogger.printIPAndPort(connection);
             CustomLogger.printRequest(httpRequest);
 
@@ -43,7 +44,7 @@ public class ServerContainer implements Runnable {
             dispatcher.process(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
-            HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+            HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
 
             byte[] convertResponseToByteArray = httpResponse.convertResponseToByteArray();
             dos.write(convertResponseToByteArray, 0, convertResponseToByteArray.length);
@@ -51,7 +52,8 @@ public class ServerContainer implements Runnable {
         } catch (Exception e) {
             CustomLogger.printError(e);
         } finally {
-            ResponseThreadLocal.clearHttpResponse();
+            CustomThreadLocal.clearHttpRequest();
+            CustomThreadLocal.clearHttpResponse();
         }
     }
 

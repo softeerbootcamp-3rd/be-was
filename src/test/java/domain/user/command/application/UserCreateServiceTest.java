@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.container.ResponseThreadLocal;
+import webserver.container.CustomThreadLocal;
 
 @DisplayName("UserCreateServiceTest 클래스")
 class UserCreateServiceTest {
@@ -23,13 +23,13 @@ class UserCreateServiceTest {
     void setUp() {
         Database.Users().clear();
         httpResponse = new HttpResponse(null, null, null);
-        ResponseThreadLocal.setHttpResponse(httpResponse);
+        CustomThreadLocal.setHttpResponse(httpResponse);
     }
 
     @AfterEach
     void tearDown() {
         Database.Users().clear();
-        ResponseThreadLocal.clearHttpResponse();
+        CustomThreadLocal.clearHttpResponse();
     }
 
     @Test
@@ -45,7 +45,7 @@ class UserCreateServiceTest {
         User dbUser = Database.Users().get("userId");
         assertEquals(dbUser.getUserId(), userCreateRequest.getUserId());
 
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
 
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.FOUND);
 
@@ -65,7 +65,7 @@ class UserCreateServiceTest {
         userCreateService.makeNewUser(userCreateRequest);
 
         // then
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
 
         assertEquals(Database.Users().size(), 1);
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.BAD_REQUEST);

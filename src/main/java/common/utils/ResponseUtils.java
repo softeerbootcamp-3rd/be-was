@@ -41,9 +41,14 @@ public class ResponseUtils {
         Map<String, String> header = new HashMap<>();
         header.put("Location", "/index.html");
         header.put("Content-Type", "text/html");
-        header.put("Set-Cookie", "sid=" + sessionId + "; Path=/");
+        header.put("Set-Cookie", "sid=" + sessionId + "; Path=/; Max-Age=86400");
         return header;
     }
 
 
+    public static Map<String, String> makeJsonResponseHeader() {
+        Map<String, String> header = new HashMap<>();
+        header.put("Content-Type", "application/json");
+        return header;
+    }
 }

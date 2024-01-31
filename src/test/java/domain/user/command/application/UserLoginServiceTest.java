@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import webserver.container.ResponseThreadLocal;
+import webserver.container.CustomThreadLocal;
 
 @DisplayName("UserLoginServiceTest 클래스")
 class UserLoginServiceTest {
@@ -29,12 +29,12 @@ class UserLoginServiceTest {
     void setUp() {
         Database.SessionStorage().clear();
         httpResponse = new HttpResponse(null, null, null);
-        ResponseThreadLocal.setHttpResponse(httpResponse);
+        CustomThreadLocal.setHttpResponse(httpResponse);
     }
 
     @AfterEach
     void tearDown() {
-        ResponseThreadLocal.clearHttpResponse();
+        CustomThreadLocal.clearHttpResponse();
     }
 
     @Test
@@ -50,7 +50,7 @@ class UserLoginServiceTest {
         // then
         assertEquals(Database.SessionStorage().size(), 1);
 
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
         String cookieValue = httpResponse.getHeader().getHeaders().get("Set-Cookie");
         Pattern pattern = Pattern.compile("sid=([^;]*)");
         Matcher matcher = pattern.matcher(cookieValue);
@@ -79,7 +79,7 @@ class UserLoginServiceTest {
         userLoginService.login(userLoginRequest);
 
         // then
-        HttpResponse httpResponse = ResponseThreadLocal.getHttpResponse();
+        HttpResponse httpResponse = CustomThreadLocal.getHttpResponse();
         assertEquals(httpResponse.getStartLine().getStatusCode(), HttpStatusCode.FOUND);
         assertEquals(httpResponse.getHeader().getHeaders().get("Location"), "/user/login_failed.html");
     }
