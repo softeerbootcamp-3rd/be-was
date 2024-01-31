@@ -1,13 +1,15 @@
 package controller;
 
 import controller.adapter.HandlerAdapter;
-import controller.adapter.StaticResourceHandlerAdapter;
+import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
 import controller.user.UserCreateController;
-import controller.user.UserFormController;
+import controller.user.UserListController;
 import controller.user.UserLoginController;
 import model.Request;
+import model.Response;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -26,21 +28,22 @@ public class FrontController {
     }
 
     private void initHandlerMappingMap() {
-        handlerMappingMap.put("css", new StaticResourceController("css"));
-        handlerMappingMap.put("fonts", new StaticResourceController("fonts"));
-        handlerMappingMap.put("images", new StaticResourceController("images"));
-        handlerMappingMap.put("js", new StaticResourceController("js"));
-        handlerMappingMap.put("ico", new StaticResourceController("ico"));
+        handlerMappingMap.put("css", new ResourceController("css"));
+        handlerMappingMap.put("fonts", new ResourceController("fonts"));
+        handlerMappingMap.put("images", new ResourceController("images"));
+        handlerMappingMap.put("js", new ResourceController("js"));
+        handlerMappingMap.put("ico", new ResourceController("ico"));
+        handlerMappingMap.put("html", new ResourceController("html"));
 
-        handlerMappingMap.put("/user/form.html", new UserFormController());
         handlerMappingMap.put("/user/create", new UserCreateController());
-        handlerMappingMap.put("/user/login.html", new UserLoginController());
+        handlerMappingMap.put("/user/login", new UserLoginController());
+        handlerMappingMap.put("/user/list", new UserListController());
 
         // qna 추가
     }
 
     private void initHandlerAdapters() {
-        handlerAdapters.add(new StaticResourceHandlerAdapter());
+        handlerAdapters.add(new ResourceHandlerAdapter());
         handlerAdapters.add(new UserControllerHandlerAdapter());
 
         //qna 추가
@@ -48,24 +51,24 @@ public class FrontController {
 
     public void service(Request request, OutputStream out) throws IOException {
         Object handler = getHandler(request);
-        if (handler == null) {
-            View view = viewResolver(DEFAULT_PAGE);
-            view.render(request, out);
-            return;
-        }
+        Response response = new Response();
 
         HandlerAdapter adapter = getHandlerAdapter(handler);
-        ModelView mv = adapter.handle(request, handler);
+        ModelView mv = adapter.handle(request, response, handler);
 
         String viewName = mv.getViewName();
         View view = viewResolver(viewName);
 
-        if (adapter instanceof StaticResourceHandlerAdapter) {
-            StaticResourceController staticResourceController = (StaticResourceController) handler;
-            view.render(request, out, staticResourceController.getType());
+        if (adapter instanceof ResourceHandlerAdapter) {
+            ResourceController resourceController = (ResourceController) handler;
+            view.render(request, response, mv, resourceController.getType());
+            response.send(out);
             return;
         }
-        view.render(request, out);
+
+        view.render(request, response, mv);
+
+        response.send(out);
     }
 
     private View viewResolver(String viewName) {
@@ -100,6 +103,8 @@ public class FrontController {
             return "js";
         if (requestURI.contains("ico"))
             return "ico";
+        if (requestURI.contains("html"))
+            return "html";
 
         return "";
     }
@@ -109,7 +114,8 @@ public class FrontController {
                 || uri.contains("fonts")
                 || uri.contains(".images")
                 || uri.contains(".js")
-                || uri.contains(".ico");
+                || uri.contains(".ico")
+                || uri.contains(".html");
     }
 
 }

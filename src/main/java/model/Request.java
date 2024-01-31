@@ -1,20 +1,22 @@
 package model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
-    private HTTP_METHOD method;
+    private HttpMethod method;
     private String URI;
     private String httpVer;
     private Map<String, String> headerMap;
-    private String body;
     private Map<String, String> paramMap;
+    private Map<String, String> cookieMap;
+    private String body;
 
     public Request() {
     }
 
 
-    public void setMethod(HTTP_METHOD method) {
+    public void setMethod(HttpMethod method) {
         this.method = method;
     }
 
@@ -46,7 +48,7 @@ public class Request {
         return paramMap;
     }
 
-    public HTTP_METHOD getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
@@ -93,5 +95,37 @@ public class Request {
         }
 
         return builder.toString();
+    }
+
+    public String getHeader(String key) {
+        return headerMap.get(key);
+    }
+
+    public String getCookie(String key) {
+        if (cookieMap == null) {
+            initCookieMap();
+        }
+
+        if (cookieMap.size() != 0) {
+            String value = cookieMap.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+
+        throw new IllegalArgumentException("일치하는 cookie가 존재하지 않습니다.");
+    }
+
+    private void initCookieMap() {
+        String cookieString = headerMap.get("Cookie");
+        String[] cookies = cookieString.split("; ");
+
+        Map<String, String> cookieMap = new HashMap<>();
+        for (String cookie : cookies) {
+            String[] keyValue = cookie.split("=");
+            cookieMap.put(keyValue[0], keyValue[1]);
+        }
+
+        this.cookieMap = cookieMap;
     }
 }

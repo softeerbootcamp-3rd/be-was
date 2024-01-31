@@ -1,11 +1,9 @@
 package controller;
 
-import model.Request;
-
-public class StaticResourceController {
+public class ResourceController {
     private String type;
 
-    public StaticResourceController(String type) {
+    public ResourceController(String type) {
         this.type = type;
     }
 
@@ -13,15 +11,19 @@ public class StaticResourceController {
         return type;
     }
 
-    public ModelView process(String uri) {
-        uri = getResourcePath(uri);
+    public ModelView process(String uri) { // todo 해당 역할은 viewResolver에서 일어나도록 리팩토링
+        if (isTemplatesResourceType(uri)) {
+            return new ModelView("/templates" + uri);
+        }
+
+        uri = getStaticResourcePath(uri);
         return new ModelView("/static" + uri);
     }
 
-    private String getResourcePath(String uri) {
+    private String getStaticResourcePath(String uri) {
         String[] uriToken = uri.split("/");
         for (int i = 0; i < uriToken.length; i++) {
-            if (isResourceType(uriToken[i])) {
+            if (isStaticResourceType(uriToken[i])) {
                 if (uriToken[i].equals("favicon.ico")) {
                     return "/" + uriToken[i];
                 }
@@ -31,11 +33,15 @@ public class StaticResourceController {
         return "";
     }
 
-    private boolean isResourceType(String type) {
+    private boolean isStaticResourceType(String type) {
         return type.contains("css")
                 || type.contains("fonts")
                 || type.contains("images")
                 || type.contains("js")
                 || type.contains("favicon.ico");
+    }
+
+    private boolean isTemplatesResourceType(String type) {
+        return type.contains(".html");
     }
 }

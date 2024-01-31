@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.FrontController;
-import model.HTTP_METHOD;
+import model.HttpMethod;
 import model.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class RequestHandler implements Runnable {
         setRequestHeaderMap(request, br);
 
         // Request Body (POST의 경우)
-        if (request.getMethod() == HTTP_METHOD.POST) {
+        if (request.getMethod() == HttpMethod.POST) {
             setRequestBody(request, br);
         }
 
@@ -95,11 +95,11 @@ public class RequestHandler implements Runnable {
     private void setRequestLine(Request request, String status) throws UnsupportedEncodingException {
         String[] tokens = status.split(" ");
 
-        if (tokens[0].equals(HTTP_METHOD.GET.name())) {
-            request.setMethod(HTTP_METHOD.GET);
+        if (tokens[0].equals(HttpMethod.GET.name())) {
+            request.setMethod(HttpMethod.GET);
         }
-        if (tokens[0].equals(HTTP_METHOD.POST.name())) {
-            request.setMethod(HTTP_METHOD.POST);
+        if (tokens[0].equals(HttpMethod.POST.name())) {
+            request.setMethod(HttpMethod.POST);
         }
 
         String uri = tokens[1];

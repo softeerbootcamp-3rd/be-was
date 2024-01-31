@@ -1,10 +1,16 @@
 package controller;
 
+import exception.UserNotFoundException;
 import model.Request;
+import model.Response;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
+import util.HtmlBuilder;
 
 import java.io.*;
+import java.util.Map;
 
 public class View {
     private static final Logger logger = LoggerFactory.getLogger(View.class);
@@ -14,81 +20,79 @@ public class View {
         this.viewPath = viewPath;
     }
 
-    public void render(Request request, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-
+    public void render(Request request, Response response, ModelView mv) {
         File file = new File(viewPath);
         byte[] body = new byte[(int) file.length()];
 
-        try (FileInputStream fileInputStream = new FileInputStream(file);) {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             fileInputStream.read(body);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //todo /user/create가 성공하면 index로 실패하면 form_failed로 가도록 fix 필요
-        if (request.getURI().startsWith("/user/create")) {
-            response302Header(dos);
+        // 동적 페이지 변환을 위한 데이터가 존재한다면
+        if (mv.getModel().size() > 0) {
+            String fileString = new String(body);
+            Map<String, Object> model = mv.getModel();
+            for (String key : model.keySet()) {
+                String renderedHtml = HtmlBuilder.replace(key, model.get(key));
+                fileString = fileString.replace(key, renderedHtml);
+            }
+
+            body = fileString.getBytes();
         }
 
-        response200Header(dos, body.length);
-        responseBody(dos, body);
+        // todo
+        if (mv.getViewName().contains("index.html")) {
+            String fileString = new String(body);
+            User findUser = null;
+            try {
+                String userId = request.getCookie("sid");
+                findUser = new UserService().findUserById(userId);
+            } catch (IllegalArgumentException | UserNotFoundException e) {
+                fileString = fileString.replace("{{welcome}}", "");
+                body = fileString.getBytes();
+                response.setBody(body);
+                return;
+            }
+            String renderedHtml = HtmlBuilder.replace("{{welcome}}", findUser.getName());
+            fileString = fileString.replace("{{welcome}}", renderedHtml);
+            body = fileString.getBytes();
+        }
+
+        response.setBody(body);
     }
 
-    public void render(Request request, OutputStream out, String type) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
-
+    public void render(Request request, Response response, ModelView mv, String type) {
         File file = new File(viewPath);
         byte[] body = new byte[(int) file.length()];
 
-        try (FileInputStream fileInputStream = new FileInputStream(file);) {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             fileInputStream.read(body);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        response200HeaderContent(dos, body.length, type);
-        responseBody(dos, body);
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+        response.set200Ok();
+        response.putToHeaderMap("Content-Type", "text/" + type + ";charset=utf-8");
+        response.putToHeaderMap("Content-Length", String.valueOf(body.length));
+        if (mv.getViewName().contains("index.html")) {
+            String fileString = new String(body);
+            User findUser = null;
+            try {
+                String userId = request.getCookie("sid");
+                findUser = new UserService().findUserById(userId);
+            } catch (IllegalArgumentException | UserNotFoundException e) {
+                fileString = fileString.replace("{{welcome}}", "");
+                body = fileString.getBytes();
+                response.setBody(body);
+                return;
+            }
+            String renderedHtml = HtmlBuilder.replace("{{welcome}}", findUser.getName());
+            fileString = fileString.replace("{{welcome}}", renderedHtml);
+            body = fileString.getBytes();
         }
-    }
-    private void response200HeaderContent(DataOutputStream dos, int lengthOfBodyContent, String type) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/" +type+ ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+        response.setBody(body);
 
-    private void response302Header(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 OK \r\n");
-            dos.writeBytes("Location: " + "/index.html" + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
 }
