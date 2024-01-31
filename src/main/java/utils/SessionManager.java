@@ -10,12 +10,12 @@ public class SessionManager {
 
     private static Map<String, String> sessionIds = Maps.newConcurrentMap();
 
-    public static void addSessionId(String userId, String sessionId) {
-        sessionIds.put(userId, sessionId);
+    public static void addSessionId(String sessionId, String userId) {
+        sessionIds.put(sessionId, userId);
     }
 
-    public static void deleteSessionId(String userId) {
-        sessionIds.remove(userId);
+    public static void deleteSessionId(String sessionId) {
+        sessionIds.remove(sessionId);
     }
 
     public static String createSessionId() {
@@ -23,7 +23,16 @@ public class SessionManager {
     }
 
     public static Collection<String> findAllSessionIds() {
-        return sessionIds.values();
+        return sessionIds.keySet();
+    }
+
+    public static String getUserId(String sessionId) {
+        return sessionIds.get(sessionId);
+    }
+
+    public static boolean isLoggedInUser(String sessionId){
+        String userId = sessionIds.get(sessionId);
+        return userId != null;
     }
 
 }

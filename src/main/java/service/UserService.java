@@ -1,11 +1,10 @@
 package service;
 
 import db.Database;
-import utils.SessionManager;
 import model.User;
+import utils.SessionManager;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 public class UserService {
@@ -29,8 +28,23 @@ public class UserService {
             return null;
         }
         String sessionId = SessionManager.createSessionId();
-        SessionManager.addSessionId(userId, sessionId);
+        SessionManager.addSessionId(sessionId, userId);
         return sessionId;
+    }
+
+    public List<User> getLoginUsers(){
+        Collection<String> sessionIds = SessionManager.findAllSessionIds();
+        List<User> loggedInUsers = new ArrayList<>();
+
+        for (String sessionId : sessionIds) {
+            String userId = SessionManager.getUserId(sessionId);
+            User user = Database.findUserById(userId);
+            if (user != null) {
+                loggedInUsers.add(user);
+            }
+        }
+
+        return loggedInUsers;
     }
 
     private User createUser(Map<String, String> queryParams) {

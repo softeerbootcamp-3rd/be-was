@@ -36,12 +36,17 @@ public class ResourceReader {
         return null;
     }
 
+    public String getFileTemplate(String path) throws IOException {
+        byte[] fileContents = getFileContents(path);
+        return new String(fileContents);
+    }
+
     public String getFileExtension(String path){
         int lastIndex = path.lastIndexOf(".");
         return (lastIndex != -1) ? path.substring(lastIndex + 1) : "";
     }
 
-    public byte[] readAllBytes(File file) throws IOException {
+    private byte[] readAllBytes(File file) throws IOException {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);

@@ -1,14 +1,13 @@
 package webserver.routing;
 
 import controller.UserController;
-import webserver.http.request.enums.HttpMethod;
 import webserver.http.request.HttpRequest;
+import webserver.http.request.enums.HttpMethod;
 import webserver.http.response.HttpResponse;
-import webserver.http.response.HttpResponseBuilder;
-import webserver.http.response.enums.HttpStatus;
+
+import java.io.IOException;
 
 public class DynamicRoutingManager {
-    public static final byte[] NOT_FOUND_MESSAGE = "The requested resource was not found on this server.".getBytes();
     private static final DynamicRoutingManager instance = new DynamicRoutingManager();
 
     private DynamicRoutingManager() {}
@@ -17,7 +16,7 @@ public class DynamicRoutingManager {
         return instance;
     }
 
-    public HttpResponse handleRequest(HttpRequest httpRequest) {
+    public HttpResponse handleRequest(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.getPath();
         if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/create")) {
             UserController userController = new UserController();
@@ -25,8 +24,13 @@ public class DynamicRoutingManager {
         } else if (httpRequest.getMethod() == HttpMethod.POST && path.equals("/user/login")) {
             UserController userController = new UserController();
             return userController.login(httpRequest);
+        } else if (httpRequest.getMethod() == HttpMethod.GET && path.equals("/user/list.html")){
+            UserController userController = new UserController();
+            return userController.listUsers(httpRequest);
+        } else if (httpRequest.getMethod() == HttpMethod.GET && path.equals("/index.html")) {
+            UserController userController = new UserController();
+            return userController.home(httpRequest);
         }
-
-        return HttpResponseBuilder.getInstance().createErrorResponse(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
+        return null;
     }
 }
