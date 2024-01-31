@@ -1,6 +1,5 @@
 package service;
 
-import config.AppConfig;
 import exception.AlreadyExistUserException;
 import exception.LoginFailedException;
 import exception.UserNotFoundException;
@@ -42,14 +41,14 @@ public class UserService {
     public User login(String userId, String password) {
         User findUser = userRepository.findUserById(userId);
 
-        if (findUser == null || isUnmatchedPassword(password, findUser.getPassword())) {
+        if (findUser == null || isWrongPw(password, findUser.getPassword())) {
             throw new LoginFailedException("userId 혹은 password가 일치하지 않습니다.");
         }
 
         return findUser;
     }
 
-    private static boolean isUnmatchedPassword(String password, String userPassword) {
+    private static boolean isWrongPw(String password, String userPassword) {
         return !password.equals(userPassword);
     }
 
