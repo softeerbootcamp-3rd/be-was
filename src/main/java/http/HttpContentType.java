@@ -18,6 +18,7 @@ public class HttpContentType {
         httpContentType.put("ico","image/x-icon");
         httpContentType.put("png","image/png");
         httpContentType.put("jpg","image/jpeg");
+        httpContentType.put("woff","application/font-woff");
     }
 
     public static String getValue(String key){

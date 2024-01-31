@@ -1,13 +1,9 @@
 package webserver.adaptor;
 
 import controller.BasicController;
-import controller.RequestController;
 import http.Request;
 import http.Response;
 import webserver.ModelAndView;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 public interface HandlerAdapter {
     boolean supports(BasicController handler);

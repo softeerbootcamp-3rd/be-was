@@ -4,53 +4,51 @@ import annotation.*;
 import controller.BasicController;
 import exception.GlobalExceptionHandler;
 import exception.InternalServerException;
-import exception.ResourceNotFoundException;
-import http.Cookie;
+import exception.UnAuthorizedException;
 import http.Request;
 import http.Response;
-import controller.RequestController;
-import http.SessionManager;
-import org.checkerframework.checker.units.qual.C;
+import interceptor.Intercepter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.Model;
 import webserver.ModelAndView;
 
-import java.awt.*;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RequestHandlerAdapter implements HandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandlerAdapter.class);
+    private final Intercepter intercepter = new Intercepter();
+
     @Override
     public boolean supports(BasicController handler) {
-        return (handler instanceof RequestController);
+        return (handler instanceof BasicController);
     }
 
     @Override
     public ModelAndView handle(Request req, Response res, BasicController handler) {
-        RequestController controller = (RequestController) handler;
-        Map<String, String> model = new HashMap<>();
+
+
+        BasicController controller = (BasicController) handler;
+        Model model = new Model();
         String viewName;
         try {
+            intercepter.preHandle(req, model);
             viewName = process(controller, req, res,model);
 
         } catch (Exception e) {
             viewName = GlobalExceptionHandler.handle(e, res);
         }
         ModelAndView mv = new ModelAndView(viewName);
+
         mv.setModel(model);
 
         return mv;
     }
 
-        private String process(RequestController controller, Request req, Response res, Map<String, String> model){
+        private String process(BasicController controller, Request req, Response res, Model model){
             try {
                 Class<?> clazz = controller.getClass();
                 String prefix =clazz.getAnnotation(RequestMapping.class).value();
@@ -59,6 +57,7 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                 Method target = null;
                 for (Method method : methods) {
                     if (req.getMethod().equals("GET") && method.isAnnotationPresent(GetMapping.class)) {
+
                         if ((method.getAnnotation(GetMapping.class).url()).equals(subPath)) {
                             target = method;
                             break;
@@ -70,8 +69,6 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                         }
                     }
                 }
-
-
                 Class<?>[] parameterTypes = target.getParameterTypes();
                 Object[] parameters = new Object[parameterTypes.length];
 
@@ -81,6 +78,8 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                     }
                     else if(parameterTypes[i] == Request.class){
                         parameters[i] = req;
+                    }else if(parameterTypes[i] == Model.class){
+                        parameters[i] = model;
                     }
                     Annotation[] annotations = target.getParameterAnnotations()[i];
                     for (Annotation annotation : annotations) {
@@ -106,8 +105,12 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                     }
                 }
 
+
                 return (String) target.invoke(controller, parameters);
-            } catch (Exception e){
+            }catch (UnAuthorizedException e){
+                throw new UnAuthorizedException("로그인 정보 없음");
+            }
+            catch (Exception e){
                 e.printStackTrace();
                 throw new InternalServerException("메서드 실행 실패");
             }

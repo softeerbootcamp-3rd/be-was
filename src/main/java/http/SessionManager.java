@@ -1,11 +1,10 @@
 package http;
 
-import org.checkerframework.checker.units.qual.C;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
@@ -19,7 +18,8 @@ public class SessionManager {
 
     private static Map<String, Object> sessionStore = new ConcurrentHashMap<>();
 
-    public void createSession(Object value, Response response,String cookieName) {
+    public static void createSession(Object value, Response response, String cookieName) {
+
         String sessionId = UUID.randomUUID().toString();
         sessionStore.put(sessionId, value);
         Cookie mySessionCookie = new Cookie(cookieName, sessionId);
@@ -27,8 +27,21 @@ public class SessionManager {
         response.addCookie(new Cookie("Path","/"));
     }
 
+    public static List<User> getLoginedUsers() {
+        List<User> userList = new ArrayList<>();
+
+        for (Object value : sessionStore.values()) {
+            if (value instanceof User) {
+                userList.add((User) value);
+            }
+        }
+        logger.debug("userList = {}",userList);
+        return userList;
+    }
+
     public static Object getSession(Request request, String cookieName) {
-        Cookie sessionCookie = findCookie(request,cookieName);
+        Cookie sessionCookie = findCookie(request, cookieName);
+
         if (sessionCookie == null) {
             return null;
         }
@@ -36,7 +49,8 @@ public class SessionManager {
         return sessionStore.get(sessionCookie.getValue());
     }
 
-    public void expire(Request request, String cookieName) {
+    public void expire(Request request,String cookieName) {
+
 
         Cookie sessionCookie = findCookie(request, cookieName);
         if (sessionCookie != null) {

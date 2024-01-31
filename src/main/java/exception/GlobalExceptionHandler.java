@@ -42,4 +42,10 @@ public class GlobalExceptionHandler{
         res.setStatus(HttpStatus.NOT_FOUND);
         return "redirect:/server-error.html";
     }
+    @ExceptionHandler(UnAuthorizedException.class)
+    public String error403(Response res){
+        logger.debug("error403");
+        res.setStatus(HttpStatus.UNAUTHORIZED);
+        return "redirect:/user/login";
+    }
 }

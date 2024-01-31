@@ -6,8 +6,7 @@ import http.Request;
 import http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.DataOutputStream;
+import webserver.Model;
 
 public class RedirectView implements View{
     private static final Logger logger = LoggerFactory.getLogger(RedirectView.class);
@@ -28,7 +27,7 @@ public class RedirectView implements View{
     }
 
     @Override
-    public void render(Request request, Response response) {
+    public void render(Request request, Response response, Model model) {
         viewPath = viewPath.substring("redirect:".length());
         sendRedirect(request,response,viewPath);
     }

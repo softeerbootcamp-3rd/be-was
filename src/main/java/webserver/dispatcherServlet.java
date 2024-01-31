@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,26 +10,23 @@ import java.util.List;
 
 import annotation.Controller;
 import annotation.RequestMapping;
+import com.sun.tools.javac.Main;
 import controller.BasicController;
-import controller.RequestController;
-import http.Cookie;
+import controller.MainController;
 import http.Request;
 import http.Response;
-import http.SessionManager;
 import utils.ClassScanner;
 import webserver.adaptor.HandlerAdapter;
 import webserver.adaptor.RequestHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.view.InternalResourceView;
-import webserver.view.RedirectView;
-import webserver.view.View;
+import webserver.view.*;
 
 public class dispatcherServlet implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(dispatcherServlet.class);
 
     private Socket connection;
-    private final Map<String, RequestController> handlerMappingMap = new HashMap<>();
+    private final Map<String, BasicController> handlerMappingMap = new HashMap<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     public dispatcherServlet(Socket connectionSocket) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         this.connection = connectionSocket;
@@ -50,7 +46,7 @@ public class dispatcherServlet implements Runnable {
             }
 
             String path = clazz.getAnnotation(RequestMapping.class).value();
-            handlerMappingMap.put(path+"/*", (RequestController) clazz.getDeclaredConstructor().newInstance());
+            handlerMappingMap.put(path+"/*", (BasicController) clazz.getDeclaredConstructor().newInstance());
 
         }
 
@@ -61,18 +57,24 @@ public class dispatcherServlet implements Runnable {
             Request req = new Request(in);
             DataOutputStream dos = new DataOutputStream(out);
             Response res = new Response(dos);
-            RequestController handler = getHandler(req);
+            BasicController handler = getHandler(req);
             if (handler == null) {
                 String filePath = ViewResolver.getAbsolutePath(req.getUrl());
-                View view = new InternalResourceView(filePath);
-                view.render(req,res);
+                InternalResourceView view = new InternalResourceView(filePath);
+                view.render(req,res,null);
                 return;
             }
+
+
             HandlerAdapter adapter = getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(req, res, handler);
+
             View view = ViewResolver.resolve(mv.getViewName());
-            view.render(req, res);
-        } catch (Exception e) {
+            logger.debug("view = {}",view);
+            view.render(req, res, mv.getModel());
+
+        }
+        catch (Exception e) {
             logger.error("e.getMessage() = {}",e.getMessage());
             e.printStackTrace();
         }
@@ -87,16 +89,22 @@ public class dispatcherServlet implements Runnable {
         throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
     }
 
-    private RequestController getHandler(Request req) {
+    private BasicController getHandler(Request req) {
         if(ViewResolver.isTemplate(req.getUrl())||ViewResolver.isStatic(req.getUrl())){
             return null;
         }
+        BasicController result = null;
+        String resultSubPath = req.getUrl();
         for (String key : handlerMappingMap.keySet()) {
             if(isPatternMatch(key,req.getUrl())){
-                return handlerMappingMap.get(key);
+                String compare = req.getUrl().replace(key.replace("/*",""),"");
+                result = (result!=null && resultSubPath.length() < compare.length())?
+                        result:handlerMappingMap.get(key);
+                resultSubPath = (result != null && resultSubPath.length() < compare.length())
+                        ? resultSubPath : compare;
             }
         }
-        return null;
+        return result;
     }
 
     private boolean isPatternMatch(String pattern, String path) {
