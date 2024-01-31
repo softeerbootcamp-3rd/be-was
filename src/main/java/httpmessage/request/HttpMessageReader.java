@@ -8,14 +8,14 @@ import java.io.BufferedReader;
 import java.net.URLDecoder;
 import java.util.HashMap;
 
-public class HttpMesssageReader {
+public class HttpMessageReader {
 
     private RequestHeader rh;
     private Parameter parameter;
 
     private final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public HttpMesssageReader(BufferedReader br) throws IOException {
+    public HttpMessageReader(BufferedReader br) throws IOException {
         this.rh = new RequestHeader();
         String line = br.readLine();
         separteFirstHeader(line);

@@ -7,7 +7,7 @@ public class HttpRequest {
     private RequestHeader requestHeader;
     private Parameter parameter;
 
-    public HttpRequest(HttpMesssageReader httpMesssageReader){
+    public HttpRequest(HttpMessageReader httpMesssageReader){
         this.requestHeader = httpMesssageReader.getRequestHeader();
         this.parameter = httpMesssageReader.getParameter();
     }
@@ -15,7 +15,6 @@ public class HttpRequest {
     public void setPath(String path){
         this.requestHeader.setPath(path);
     }
-
     public String getCookie(){return requestHeader.getCookie(); }
     public Map<String, String> getParmeter() {
         return parameter.getValues();

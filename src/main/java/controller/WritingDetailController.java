@@ -1,14 +1,8 @@
 package controller;
 
-import httpmessage.ContentType;
 import httpmessage.HttpStatusCode;
 import httpmessage.request.HttpRequest;
-import httpmessage.response.FilePathContent;
 import httpmessage.response.HttpResponse;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class WritingDetailController implements Controller{

@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 import httpmessage.HttpStatusCode;
-import httpmessage.request.HttpMesssageReader;
+import httpmessage.request.HttpMessageReader;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
 import org.slf4j.Logger;
@@ -23,12 +23,12 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            //버퍼리더를 바탕으로 httpMessageReader를 통해 파싱
+            HttpRequest httpRequest = new HttpRequest(new HttpMessageReader(br));
             HttpResponse httpResponse = new HttpResponse();
-            HttpRequest httpRequest = new HttpRequest(new HttpMesssageReader(br));
-
-            logger.debug(">> {}:{}",httpRequest.getHttpMethod(),httpRequest.getPath());
 
             FirstController firstController = new FirstController();
             firstController.service(httpRequest,httpResponse);

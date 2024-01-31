@@ -19,6 +19,7 @@ public class HttpSession {
         id = UUID.randomUUID().toString();
         values.put(id,user);
         LocalDateTime createDate = LocalDateTime.now();
+        //쿠키 시간이 utc 기준이므로 한국시간에서 -9
         expireDate = createDate.plusMinutes(10).minusHours(9);;
     }
 

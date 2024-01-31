@@ -18,6 +18,7 @@ public class FirstController {
         Controller controller = controllerMap.get(requestPath);
 
         if(requestPath.startsWith("/qna/detail?id=")) controller = controllerMap.get("/qna/detail");
+
         else if(controller == null){
             controller = controllerMap.get("/");
         }
@@ -29,7 +30,6 @@ public class FirstController {
         }
 
     }
-
     private void initControllerMapping() {
         controllerMap.put("/", new HomeController());
         controllerMap.put("/index.html", new HomeController());

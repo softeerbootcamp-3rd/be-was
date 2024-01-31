@@ -6,13 +6,9 @@ import httpmessage.response.HttpResponse;
 import model.Article;
 import model.Content;
 import model.User;
-import org.checkerframework.framework.qual.LiteralKind;
-
 import java.sql.*;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class HtmlController implements Controller{
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws ClassNotFoundException {
