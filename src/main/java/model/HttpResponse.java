@@ -35,7 +35,7 @@ public class HttpResponse {
         httpStatus = HttpStatus.FOUND;
     }
 
-    public String extractLine() {
+    public String extractStartLine() {
         StringBuilder sb = new StringBuilder();
         sb.append(httpVer).append(" ").append(httpStatus.getCode()).append(" ").append(httpStatus.getMessage()).append("\r\n");
 
