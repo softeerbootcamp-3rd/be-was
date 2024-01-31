@@ -7,8 +7,10 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ErrorCode;
+import util.Session;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -28,4 +30,18 @@ public class UserService {
         return user;
     }
 
+    public String loginUser(QueryParams bodyData) {
+        Map<String, String> data = bodyData.getParamMap();
+        User user = Database.findUserById(data.get("userId"));
+        if (user == null) {
+            return null;
+        }
+
+        if (!user.getPassword().equals(data.get("password"))) {
+            return null;
+        }
+        Session session = new Session(user.getUserId());
+        Database.addSession(session);
+        return session.getSessionId();
+    }
 }
