@@ -46,6 +46,7 @@ public class Qna {
     }
 
 
+    //QNA를 메인화면 썸네일로 변환
     public StringBuilder toThumbnail(){
 
         StringBuilder sb = new StringBuilder();

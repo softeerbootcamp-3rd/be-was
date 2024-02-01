@@ -13,6 +13,8 @@ public class PageController {
 
     static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
     static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
+
+    //정적 페이지 로드
     static public HTTPResponse getPageStatic(HTTPRequest request){
 
         //파일 불러오기
@@ -48,6 +50,7 @@ public class PageController {
 
         return response;
     }
+    //동적 페이지 로드
     public static HTTPResponse getPageDynamic(HTTPRequest request){
 
         String url = request.getUrl();

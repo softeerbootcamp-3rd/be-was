@@ -9,6 +9,8 @@ import model.Qna;
 import static webserver.RequestHandler.threadUuid;
 
 public class QnaController {
+
+    //QNA 생성
     public static HTTPResponse createQna(HTTPRequest request) {
 
         if(threadUuid.get() == null)
@@ -20,6 +22,7 @@ public class QnaController {
         return PageController.RedirectStaticPage("/index.html");
 
     }
+    // request body에서 Qna를 파싱
     private static Qna parseToQna(HTTPRequest request){
 
         String title = null;

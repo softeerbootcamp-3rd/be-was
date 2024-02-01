@@ -27,13 +27,14 @@ public class DynamicPageBuilder {
         dynamicPageBuilders.put("/qna/form",DynamicPageBuilder::buildQnaForm);
         dynamicPageBuilders.put("/user/list",DynamicPageBuilder::buildUserList);
     }
-
+    
     private static byte[] buildUserList(HTTPRequest request) throws Exception{
-        //HTTPResponse response = PageController.getPageStatic(request);
+        //유저를 세션으로 구함
         byte[] body;
         String userId = Session.getUserId(threadUuid.get());
         User user = Database.findUserById(userId);
-
+        
+        //파일 읽어오기
         String url = request.getUrl();
         File file = new File( TEMPLATE_FILE_PATH + url);
         BufferedReader bf = new BufferedReader(new FileReader(file));
@@ -42,7 +43,7 @@ public class DynamicPageBuilder {
         StringBuilder sb = new StringBuilder();
 
         StringBuilder txt = new StringBuilder();
-
+        //유저 불러오기
         for(User u : Database.findAll()) {
             txt.append("<tr>\n<td>");
             txt.append(u.getUserId());
@@ -52,7 +53,7 @@ public class DynamicPageBuilder {
             txt.append(u.getEmail());
             txt.append("</td><td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n</tr>");
         }
-
+        // 바디에 추가
         while ((line = bf.readLine()) != null) {
             if (line.contains("추가"))
                 sb.append(line.replace("추가", txt));
@@ -63,7 +64,6 @@ public class DynamicPageBuilder {
                 sb.append(line);
             sb.append(System.lineSeparator());
         }
-        System.out.println("[[[[["+sb);
         body = sb.toString().getBytes();
         return body;
 
@@ -75,21 +75,22 @@ public class DynamicPageBuilder {
     }
 
     private static byte[] buildQnaShow(HTTPRequest request) throws Exception {
+        //세션으로 유저 찾음
         byte[] body = null;
         String userId = Session.getUserId(threadUuid.get());
         User user = Database.findUserById(userId);
+        // 파일 읽어온 후 재구성
         String url = request.getUrl();
         String[] urlSplit = url.split("/");
         Long qnaId = Long.parseLong(urlSplit[urlSplit.length-1]);
         File file = new File( TEMPLATE_FILE_PATH + url.replace("/"+urlSplit[urlSplit.length-1], ""));
+
         BufferedReader bf = new BufferedReader(new FileReader(file));
         Qna qna = Database.findQnaById(qnaId);
         String line;
         StringBuilder sb = new StringBuilder();
 
-
-
-
+        
         while ((line = bf.readLine()) != null) {
             if (line.contains("role=\"button\">회원가입</a></li>")) {
                 sb.append("<li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
@@ -125,11 +126,11 @@ public class DynamicPageBuilder {
 
 
     private static byte[] buildIndex(HTTPRequest request) throws Exception {
-
+        //세션으로 유저 찾기
         byte[] body = null;
         String userId = Session.getUserId(threadUuid.get());
         User user = Database.findUserById(userId);
-
+        //파일 읽어 온 후 재구성
         String url = request.getUrl();
         File file = new File( TEMPLATE_FILE_PATH + url);
         BufferedReader bf = new BufferedReader(new FileReader(file));

@@ -24,6 +24,7 @@ public class Database {
         qna.setId(qnaId++);
         recentQnas.addFirst(qna);
 
+        // 최신글은 100개 까지만 유지
         while(recentQnas.size() > 100)
             recentQnas.removeLast();
 
@@ -44,6 +45,8 @@ public class Database {
 
 
     public static Qna findQnaById(Long id){return qnas.get(id);}
+
+    //QNA를 생성,삭제 할 때마다 실행되는 메인화면 업데이트
     public static void updateIndexHtml(){
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\n" +
@@ -119,8 +122,6 @@ public class Database {
                 "                <li><a href=\"#loginModal\" role=\"button\" data-toggle=\"modal\">로그인</a></li>\n" +
                 "                <li><a href=\"#registerModal\" role=\"button\" data-toggle=\"modal\">회원가입</a></li>\n" +
                 "                -->\n" +
-//                "                <li><a href=\"#\" role=\"button\">로그아웃</a></li>\n" +
-//                "                <li><a href=\"#\" role=\"button\">개인정보수정</a></li>\n" +
                 "            </ul>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
