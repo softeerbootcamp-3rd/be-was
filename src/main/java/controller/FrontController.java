@@ -22,12 +22,13 @@ public class FrontController {
         controllerMap.put("/user/form.html", new UserController());
         controllerMap.put("/user/login.html", new UserController());
         controllerMap.put("/user/login", new UserController());
+        controllerMap.put("/user/list", new UserController());
     }
 
     public static CommonResponse service(HttpRequest httpRequest) throws IOException {
         // controller Mapping
         UserController controller = getController(httpRequest.getRequestHeader().getPath());
-        CommonResponse response = getResponse(httpRequest.getRequestHeader(), httpRequest.getBody(),controller);
+        CommonResponse response = getResponse(httpRequest.getRequestHeader(), httpRequest.getBody(), controller);
         response.setPath(response.getPath());
         return response;
     }
@@ -35,9 +36,9 @@ public class FrontController {
     private static CommonResponse getResponse(RequestHeader requestHeader, String body, UserController controller) {
         CommonResponse response = null;
         try {
-            ResourceDto resource = PathHandler.responseResource(requestHeader.getMethod(), requestHeader.getPath(), body, controller);
-            response = CommonResponse.onOk(resource.getHttpStatus(), ResourceHandler.resolveResource(resource),
-                    resource.getExtension(), resource.getPath());
+            ResourceDto resource = PathHandler.responseResource(requestHeader, body, controller);
+            byte[] bodyData = ResourceHandler.resolveResource(resource);
+            response = CommonResponse.onOk(resource.getHttpStatus(), bodyData, resource.getExtension(), resource.getPath());
         } catch (SourceException e) {
             response = ExceptionHandler.handleGeneralException(e);
         } finally {

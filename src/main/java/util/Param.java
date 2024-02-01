@@ -1,10 +1,10 @@
 package util;
 
-public class QueryParam {
+public class Param {
     private String key;
     private String value;
 
-    public QueryParam(String key, String value) {
+    public Param(String key, String value) {
         this.key = key;
         this.value = value;
     }
@@ -17,8 +17,8 @@ public class QueryParam {
         return value;
     }
 
-    public static QueryParam from(String param) {
+    public static Param from(String param) {
         String[] split = param.split("=");
-        return new QueryParam(split[0], split[1]);
+        return new Param(split[0], split[1]);
     }
 }
