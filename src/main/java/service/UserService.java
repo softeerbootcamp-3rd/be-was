@@ -40,7 +40,6 @@ public class UserService {
         String sid = SessionManager.getSessionId();
         SessionManager.addSession(sid, user);
 
-        return SessionManager.getSessionId();
+        return sid;
     }
-
 }

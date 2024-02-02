@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.function.Function;
 
+import http.request.RequestLine;
 import http.response.HttpResponse;
 import http.request.HttpRequest;
 import http.HttpStatus;
@@ -46,34 +47,24 @@ public class RequestHandler implements Runnable {
             String basePath = FileReader.getBasePath(requestUrl);
             if (!basePath.isEmpty()) {
                 String filePath = basePath + requestUrl;
-                File file = new File(filePath);
-                // 파일 존재할 경우 해당 파일 반환
-                if (file.exists() && file.isFile()) {
-                    byte[] body = FileReader.readFile(file);
-
-                    // Request 헤더의 Accept 필드를 참고하여 반환할 타입 지정
-                    String contentType = httpRequest.getEtcHeaders().get("Accept").split(",")[0];
-                    response = HttpResponse.of(HttpStatus.OK, contentType, body);
-                } else {
-                    // 파일 존재하지 않을 경우 404 not found 반환
-                    logger.info("404 not found");
-                    response = HttpResponse.of(HttpStatus.NOT_FOUND);
-                }
+                response = ResourceHandler.process(filePath, httpRequest);
             } else {
                 // 동적 자원 처리
-                // method + path 갖고오기
-                String requestURL = httpRequest.getRequestLine().getMethodAndPath();
-                logger.debug("requestURL: {}", requestURL);
-                // 해당 값으로 Validator와 Controller 탐색
-                ValidatorController vc = ValidatorController.getValidatorController(requestURL);
-                Function<Map<String, String>, Boolean> validator = vc.getValidator();
-                // 유효성 검증 통과한 경우 컨트롤러에 값 전달 경우 BAD_REQUEST 반환
-                if (validator.apply(httpRequest.getBody())) {
-                    Function<Map<String, String>, HttpResponse> controller = vc.getController();
-                    response = controller.apply(httpRequest.getBody());
-                } else {
+                RequestLine requestLine = httpRequest.getRequestLine();
+                ValidatorControllerMapper vc = ValidatorControllerMapper.getValidatorAndControllerByPath(requestLine.getMethodAndPath());
+
+                if (vc != null) {
+                    Function<Map<String, String>, Boolean> validator = vc.getValidator();
                     // 유효성 검증 실패할 경우 BAD_REQUEST 반환
-                    response = HttpResponse.of(HttpStatus.BAD_REQUEST);
+                    if (validator != null && !validator.apply(httpRequest.getBody())) {
+                        response = HttpResponse.of(HttpStatus.BAD_REQUEST);
+                    } else {
+                        // validator 없거나 유효성 검증에 통과할 경우 컨트롤러에게 HttpRequest 전달
+                        Function<HttpRequest, HttpResponse> controller = vc.getController();
+                        response = controller.apply(httpRequest);
+                    }
+                } else {
+                    response = HttpResponse.of(HttpStatus.NOT_FOUND);
                 }
             }
 
@@ -85,5 +76,4 @@ public class RequestHandler implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
 }
