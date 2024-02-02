@@ -6,3 +6,6 @@ Java Web Application Server 2023
 
 이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
 를 참고하여 작성되었습니다.
+
+## 프로젝트 구조
+![무제.png](..%2F%EB%AC%B4%EC%A0%9C.png)

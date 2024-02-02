@@ -15,10 +15,10 @@ public class SessionStorage {
     public static Session findBySessionId(String sessionId) {
         return storage.get(sessionId);
     }
-    public static boolean verifySession(String sessionId) {
-        if(sessionId == null) return false;
-        Session session = findBySessionId(sessionId);
-        return session != null;
+    public static String verifySession(String sessionId) {
+        if(sessionId == null || findBySessionId(sessionId) == null)
+            return null;
+        return sessionId;
     }
     public static void addSession(Session session) {
         storage.put(session.getSessionId(), session);
