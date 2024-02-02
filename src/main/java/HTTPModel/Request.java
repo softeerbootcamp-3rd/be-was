@@ -1,4 +1,4 @@
-package DTO;
+package HTTPModel;
 
 import java.util.ArrayList;
 

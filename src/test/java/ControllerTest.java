@@ -1,24 +1,35 @@
 
 import Controller.User.UserController;
-import DTO.Response;
+import HTTPModel.HttpStatus;
+import HTTPModel.Request;
+import HTTPModel.Response;
 import HandlerMapping.HandlerMapping;
 import db.Database;
 import model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import webserver.RequestHandler;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Collection;
-import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static webserver.HTTPHandler.RequestMake.MakeRequest;
 
 
 public class ControllerTest {
+
+
+    @BeforeEach
+    void init(){
+        User user  = new User("1","1234","a","a@naver.com");
+        Database.addUser(user);
+    }
 
 
     @Test
@@ -55,52 +66,53 @@ public class ControllerTest {
     }
 
 
-    /*
+    InputStream requestString(String userId, String password, String name, String email){
+        String testString = "POST /user/create HTTP/1.1\n" +
+                "Host: localhost:8080\n" +
+                "Connection: keep-alive\n" +
+                "Accept: */*\n" +
+                "Content-Length: " + 55 + "\n\n" +
+                "userId=" + userId + "&password=" + password + "&name=" + name + "&email=" + email;
+
+        return new ByteArrayInputStream(testString.getBytes());
+    }
+
     @Test
+    @DisplayName("회원가입 성공하는 controller 시나리오")
     public void signup() throws Exception{
 
+        Request request = new Request();
+        String userId=  "8";
+        String email = "a@naver.com";
+        request = MakeRequest(requestString(userId,"1234","a",email));
 
+        HandlerMapping handlerMapping = new HandlerMapping(request);
 
-        String apiUrl = "http://localhost:8080/user/create?userId=24&password=1234&name=a&email=a%40naver.com";
-        HttpClient httpClient = HttpClient.newHttpClient();
+        Response response = handlerMapping.Controller();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .GET()
-                .build();
-
-
-        try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Check HTTP status code
-            assertEquals(200, response.statusCode());
-
-            // Ensure UserController logic is executed
-            UserController userController = new UserController("create?userId=24&password=1234&name=a&email=a%40naver.com");
-            Response response1 = userController.UserLogic();
-
-            // Print or log the state of the Database
-            Collection<User> userList = Database.findAll();
-            System.out.println("User List after UserController logic: " + userList);
-
-            // Assertions based on the UserController logic
-            assertEquals(1, userList.size()); // Check if the user is added
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertEquals(response.getHttpStatus(), HttpStatus.REDIRECT);
+        assertEquals(Database.findUserById(userId).getEmail(), email);
 
     }
 
-    */
 
     @Test
-    public void dbtest(){
+    @DisplayName("회원가입 실패하는 controller 시나리오")
+    public void signupFail() throws Exception{
 
-        Database.addUser(new User("1","1234","a","a@naver.com"));
-        assertEquals("a", Database.findUserById("1").getName());
+        Request request = new Request();
+        String userId=  "1";
+        String email = "a@naver.com";
+        request = MakeRequest(requestString(userId,"1234","a",email));
+
+        HandlerMapping handlerMapping = new HandlerMapping(request);
+
+        Response response = handlerMapping.Controller();
+
+        assertEquals(response.getHttpStatus(), HttpStatus.OK);
+        assertEquals(Database.findAll().size(), 1);
 
     }
+
 
 }

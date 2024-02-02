@@ -201,3 +201,11 @@ h3,h4,h5 {
     padding-right: 2.5em;
 }
 
+
+.name{
+    width: 100px;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

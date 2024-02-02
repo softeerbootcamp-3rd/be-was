@@ -12,20 +12,24 @@ public class Database {
     private static Map<String, User> users = Collections.synchronizedMap(new HashMap<>());
 
     public static void addUser(User user) {
-        System.out.println("Adding user: " + user);
         users.put(user.getUserId(), user);
-        System.out.println("User added: " + user);
     }
 
     public static User findUserById(String userId) {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
+    public static User findUserByName(String name){
+        for(User user :  users.values()){
+            if(name.equals(user.getName())){
+                return user;
+            }
+        }
+        return null;
+    }
 
-        System.out.println("Retrieving all users");
-        return users.values();
-
+    public static List<User> findAll() {
+        return new ArrayList<>(users.values());
     }
 
 

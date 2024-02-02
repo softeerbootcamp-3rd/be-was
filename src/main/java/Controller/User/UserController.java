@@ -1,114 +1,102 @@
 package Controller.User;
 
-import DTO.HttpStatus;
-import DTO.Request;
-import DTO.Response;
-import Functions.FileBytes;
-import com.sun.net.httpserver.HttpServer;
-import db.Database;
+import Controller.User.UserLogic.UserLogic;
+import HTTPModel.Request;
+import HTTPModel.Response;
+import SessionManager.SessionManager;
 import model.User;
-
-import javax.xml.crypto.Data;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserController {
 
+    private SessionManager sessionManager = SessionManager.getInstance();
     private String URI;
-
     private Request request;
 
-    private byte[] body;
+    private static Map<String, String> URLMapping;
 
-    private static Map<String, User> Session = new HashMap<>();
+    static {
+        URLMapping = new HashMap<>();
+        URLMapping.put("form.html", "userForm");
+        URLMapping.put("loginPost", "userLoginPost");
+        URLMapping.put("create", "userSignup");
+        URLMapping.put("login.html", "userLogin");
+        URLMapping.put("list", "userList");
+        URLMapping.put("profile.html", "userProfile");
+    }
+
+    //private Session Session = new Session();
 
     private static final Logger logger = LoggerFactory.getLogger(webserver.RequestHandler.class);
     public UserController(String URI, Request request)
     {
         this.URI = URI;
         this.request = request;
+
     }
-
-    private String userFile = "./src/main/resources/templates/user";
-    private String filePath = "./src/main/resources/templates";
-
-
 
     public Response UserLogic(Request request) {
 
         Response response = new Response();
         String sid = request.GetSid();
+        User logined_user = null;
+
+        if(sid != null){
+            //logined_user = Session.getSession(sid);
+            logined_user = sessionManager.getSession().getSession(sid);
+        }
+
         try {
+
+            String functionName = URLMapping.get(URI);
+            Class<?> userLogicClass = UserLogic.class;
+            Method method = userLogicClass.getDeclaredMethod(functionName, Request.class, User.class);
+            method.setAccessible(true);
+            UserLogic userLogicInstance = new UserLogic();
+
+            response = (Response) method.invoke(userLogicInstance ,request, logined_user);
+
+            /*
+
             if ("form.html".equals(URI)) {
-                body = FileBytes.FilesreadAllBytes(filePath + "/user/form.html");
-                response.SetHttpStatus(HttpStatus.OK);
 
-            }else if("login".equals(URI)){
-                String body_str = request.GetBody();
+                response = UserLogic.userForm(request, logined_user);
 
-                String userId = body_str.split("&")[0].split("=")[1];
-                String password = body_str.split("&")[1].split("=")[1];
-                User user = Session.get(sid);
+            }else if("loginPost".equals(URI)){
 
-
-                if(user!= null && password.equals(user.getPassword()) && userId.equals(user.getUserId())){ // 로그인 성공
-                    body = FileBytes.FilesreadAllBytes(filePath + "/index.html");
-                    response.SetSid();
-                    response.SetSidSet();
-                    response.SetRedirectUrl(HttpStatus.REDIRECT, "/index.html");
-
-                    logger.debug("login SUCCEESSSS: ");
-
-
-                }else{
-                    body = FileBytes.FilesreadAllBytes(userFile + "/login_failed.html");
-                    response.SetHttpStatus(HttpStatus.OK);
-                }
+                response = UserLogic.userLoginPost(request,logined_user);
 
             }else if(URI.startsWith("create")){
 
-                String body_str = request.GetBody();
-
-                logger.debug(body_str);
-                String userId = body_str.split("&")[0].split("=")[1];
-                String password = body_str.split("&")[1].split("=")[1];
-                String name = body_str.split("&")[2].split("=")[1];
-                String email = body_str.split("&")[3].split("=")[1];
-                User finduser = Database.findUserById(userId);
-                if(finduser == null){
-                    User user = new User(userId, password, name, email);
-                    Database.addUser(user);
-
-                    Session.put(sid,user);
-
-                    body = FileBytes.FilesreadAllBytes(filePath + "/index.html");
-
-                    response.SetRedirectUrl(HttpStatus.REDIRECT, "/index.html");
-
-                }else{
-
-                    body = FileBytes.FilesreadAllBytes(userFile + "/signup_failed.html");
-                    response.SetHttpStatus(HttpStatus.OK);
-                }
-
+                response = UserLogic.userSignup(request, logined_user);
 
 
             }else if("login.html".equals(URI)){
-                body = FileBytes.FilesreadAllBytes(filePath + "/user/login.html");
-                response.SetHttpStatus(HttpStatus.OK);
+
+                response = UserLogic.userLogin(request, logined_user);
+
+
+            }else if("list".equals(URI)){
+
+                response = UserLogic.userList(request, logined_user);
+
+            }else if("profile.html".equals(URI)){
+
+                response = UserLogic.userProfile(request, logined_user);
 
             }
+
+             */
+
         }catch(Exception e){
 
         }
-        response.Setbody(body);
         return response;
     }
 
