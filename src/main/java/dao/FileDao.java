@@ -19,11 +19,13 @@ public class FileDao {
     private static final Connection connection = JdbcUtil.getJdbcConnection();
 
     public static void insertFile(File file) {
-        String query = "INSERT INTO filestorage (post_id, file_data) VALUES (?, ?)";
+        String query = "INSERT INTO filestorage (post_id, file_name, content_type, file_data) VALUES (?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setLong(1, file.getPostId());
-            preparedStatement.setBytes(2, file.getFileContent());
+            preparedStatement.setString(2, file.getFileName());
+            preparedStatement.setString(3, file.getContentType());
+            preparedStatement.setBytes(4, file.getFileContent());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

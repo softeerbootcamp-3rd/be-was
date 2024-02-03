@@ -70,7 +70,6 @@ public class HttpRequest {
     }
 
     private static String readLine(InputStream inputStream) throws IOException {
-        //TODO: byte[]로 받아서 바로 String 변환
         StringBuilder lineBuffer = new StringBuilder();
         int currentChar;
 

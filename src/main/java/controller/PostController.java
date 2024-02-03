@@ -7,7 +7,6 @@ import dto.PostDto;
 import file.MultipartFile;
 import model.File;
 import model.Post;
-import type.MimeType;
 import util.MultipartParser;
 import util.SessionManager;
 import util.StringParser;
@@ -16,8 +15,6 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpStatus;
 import webserver.http.ResponseEntity;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -25,16 +22,16 @@ import java.util.*;
 public class PostController {
 
     @PostMapping(path = "/upload")
-    public static ResponseEntity postUpload(HttpRequest httpRequest) throws IOException {
+    public static ResponseEntity postUpload(HttpRequest httpRequest) {
 
-        String requestBody = new String(httpRequest.getByteBody());
         String SID = StringParser.getCookieValue(httpRequest.getCookie(), "SID");
         String userId = (String) SessionManager.getAttribute(SID, "user");
 
-        List<MultipartFile> files = MultipartParser.parseMultipartData(requestBody, httpRequest.getBoundary());
+        List<MultipartFile> files = MultipartParser.parseMultipartData(httpRequest.getByteBody(), httpRequest.getBoundary());
         String title = "";
         String contents = "";
-        byte[] fileContent = null;
+        File file = new File();
+
         for (MultipartFile m : files) {
             if (m.getFieldName().equals("title")) {
                 title = new String(m.getContent());
@@ -46,15 +43,18 @@ public class PostController {
                 continue;
             }
 
-            if (m.getFieldName().equals("file")) {
-                fileContent = m.getContent();
+            if (m.getFieldName().equals("file") && m.getFileName().length() > 1) {
+                file.setFileName(m.getFileName());
+                file.setContentType(m.getContentType());
+                file.setFileContent(m.getContent());
             }
         }
 
         Post post = new Post(title, contents, userId);
         int postId = PostDao.insertPost(post);
-        if (fileContent != null) {
-            File file = new File(postId, fileContent);
+
+        if (file.getFileContent() != null) {
+            file.setPostId(postId);
             FileDao.insertFile(file);
         }
 
@@ -92,6 +92,19 @@ public class PostController {
                 HttpStatus.OK,
                 headerMap,
                 postDto
+        );
+    }
+
+    @GetMapping(path = "/file")
+    public static ResponseEntity getPostFile(@RequestParam(name = "postId") int postId) {
+
+        byte[] file = FileDao.findFileByPostId(postId);
+
+        Map<String, List<String>> headerMap = new HashMap<>();
+        return new ResponseEntity<>(
+                HttpStatus.OK,
+                headerMap,
+                file
         );
     }
 

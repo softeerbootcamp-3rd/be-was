@@ -65,7 +65,6 @@ public class RequestMappingHandler {
             // List<T> 타입인 경우
             if (responseBody != null && isListType(responseBody.getClass())) {
                 String body = JsonConverter.convertListToJson((List<?>) responseBody);
-                System.out.println(body);
                 response.getHeaders().setContentType("application/json");
                 response.getHeaders().setContentLength(String.valueOf(body.getBytes().length));
                 response.setBody(body);

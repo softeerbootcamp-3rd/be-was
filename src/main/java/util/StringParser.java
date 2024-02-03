@@ -70,35 +70,4 @@ public class StringParser {
         return filePath.substring(lastDotIndex + 1);
     }
 
-    public static void parseMultipartData(String multipartString) {
-        // 정규표현식 패턴 설정
-        String patternString = "------WebKitFormBoundary[^\"\\n]+[\\n\\r]+"
-                + "Content-Disposition: form-data; name=\"([^\"]+)\"[\\n\\r]+"
-                + "(?:Content-Type: [^\\n]+[\\n\\r]+)?(?:filename=\"([^\"]*)\")?[\\n\\r]+[\\n\\r]+"
-                + "([\\s\\S]*?)(?=(?:------WebKitFormBoundary|$))";
-
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(multipartString);
-
-        // 매칭된 데이터 출력
-        while (matcher.find()) {
-            String fieldName = matcher.group(1);
-            String fileName = matcher.group(2);
-            String fieldValue = matcher.group(3);
-
-            System.out.println("Field Name: " + fieldName);
-            System.out.println("File Name: " + fileName);
-
-            // 파일 데이터가 있을 경우 Base64 디코딩하여 출력
-            if (fileName != null && !fileName.isEmpty()) {
-                byte[] decodedData = Base64.getDecoder().decode(fieldValue);
-                System.out.println("Decoded File Data: " + new String(decodedData, StandardCharsets.UTF_8));
-            } else {
-                System.out.println("Field Value: " + fieldValue);
-            }
-
-            System.out.println("------");
-        }
-    }
-
 }
