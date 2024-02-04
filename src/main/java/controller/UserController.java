@@ -83,7 +83,7 @@ public class UserController {
         );
     }
 
-    @GetMapping(path = "/logout")
+    @PostMapping(path = "/logout")
     @ResponseBody
     public static ResponseEntity logout(HttpRequest httpRequest) {
 
