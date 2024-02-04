@@ -50,12 +50,14 @@ public class HttpRequest {
         this.requestHeader = new HttpHeader(headers);
         this.params = StringParser.parseQueryString(requestLineParts[1]);
 
-        if (requestHeader.getContentLength() != null && requestHeader.getContentType().equals("multipart/form-data")) {
+        if (requestHeader.getContentLength() != null && requestHeader.getContentType() != null
+                && requestHeader.getContentType().equals("multipart/form-data")) {
             int contentLength = Integer.parseInt(requestHeader.getContentLength());
             this.byteBody = new byte[contentLength];
             in.read(byteBody);
 
-        } else if (requestHeader.getContentLength() != null && !requestHeader.getContentType().equals("multipart/form-data")) {
+        } else if (requestHeader.getContentLength() != null && requestHeader.getContentType() != null
+                && !requestHeader.getContentType().equals("multipart/form-data")) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             Integer bodySize = Integer.parseInt(requestHeader.getContentLength());
             char[] bodyArr = new char[bodySize];
