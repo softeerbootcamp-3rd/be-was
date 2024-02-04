@@ -86,9 +86,13 @@ public class RequestHandler implements Runnable {
             HttpResponse.send(dos, response);
 
         } catch (IndexOutOfBoundsException e) {
-            HttpResponse.send(dos, new ResponseEntity(HttpStatus.BAD_REQUEST));
+            Map<String, List<String>> headerMap = new HashMap<>();
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/error/400.html"));
+            HttpResponse.send(dos, new ResponseEntity(HttpStatus.FOUND, headerMap));
         } catch (Exception e) {
-            HttpResponse.send(dos, new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR));
+            Map<String, List<String>> headerMap = new HashMap<>();
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/error/500.html"));
+            HttpResponse.send(dos, new ResponseEntity(HttpStatus.FOUND, headerMap));
         }
     }
 

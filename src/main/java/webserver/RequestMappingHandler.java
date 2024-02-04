@@ -24,6 +24,11 @@ public class RequestMappingHandler {
         }
 
         Class<?> controllerClass = ControllerMapper.getController(path);
+        if (controllerClass == null) {
+            Map<String, List<String>> headerMap = new HashMap<>();
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/error/404.html"));
+            return new ResponseEntity<>(HttpStatus.FOUND, headerMap);
+        }
         Method method = null;
 
         if (request.getHttpMethod().equals("GET")) {
@@ -33,7 +38,9 @@ public class RequestMappingHandler {
         }
 
         if (method == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Map<String, List<String>> headerMap = new HashMap<>();
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/error/404.html"));
+            return new ResponseEntity<>(HttpStatus.FOUND, headerMap);
         }
 
         ResponseEntity response = null;
