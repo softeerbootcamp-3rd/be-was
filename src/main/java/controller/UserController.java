@@ -27,7 +27,7 @@ public class UserController {
         Map<String, List<String>> headerMap = new HashMap<>();
 
         // input data 하나라도 없을 때
-        if (!validateInput(userId, password, name, email)) {
+        if (!checkInputsExistence(userId, password, name, email)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -61,7 +61,7 @@ public class UserController {
 
         User user = UserDao.findUserByUserId(userId);;
         Map<String, List<String>> headerMap = new HashMap<>();
-        if (!validateInput(userId, password) || user == null || !user.getPassword().equals(password)) {
+        if (!checkInputsExistence(userId, password) || user == null || !user.getPassword().equals(password)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -105,7 +105,7 @@ public class UserController {
         );
     }
 
-    private static boolean validateInput(Object... objects) {
+    private static boolean checkInputsExistence(Object... objects) {
         for (Object o : objects) {
             if (o == null)
                 return false;
