@@ -12,7 +12,6 @@ public class JdbcUtil {
     private static final String JDBC_URL = "jdbc:h2:tcp://localhost:9092/../test";
     private static final String H2_USER = "sa";
     private static final String H2_PASSWORD = "";
-    private static Connection jdbcConnection;
 
     private JdbcUtil() {}
 
