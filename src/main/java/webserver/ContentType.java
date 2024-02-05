@@ -1,4 +1,6 @@
-package http;
+package webserver;
+
+import exception.NotSupportedContentTypeException;
 
 import java.util.Arrays;
 
@@ -25,24 +27,10 @@ public enum ContentType {
     }
 
     public static ContentType findBy(String file){
-        System.out.println("file = " + file);
-
-        if (file == null) {
-            return NONE;
-        }
-
         return Arrays.stream(values())
                 .filter(type -> file.endsWith(type.value))
                 .findFirst()
                 .orElse(NONE);
-    }
-
-    public String getLocation() {
-        return path;
-    }
-
-    private boolean isRedirect(String file){
-        return "redirect:".equals(file);
     }
 
     public String getPath() {

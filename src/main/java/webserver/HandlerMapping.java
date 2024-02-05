@@ -1,44 +1,36 @@
 package webserver;
 
 import annotation.GetMapping;
+import annotation.PostMapping;
 import controller.Controller;
 import http.HttpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
 
 public class HandlerMapping {
-    private static final Map<String, Method> GET_MAP = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(HandlerMapping.class);
-
-
-    static {
-        Arrays.stream(Controller.class.getMethods())
-                .filter(method -> method.isAnnotationPresent(GetMapping.class))
-                .forEach(method -> {
-                    GetMapping annotation = method.getAnnotation(GetMapping.class);
-                    GET_MAP.put(annotation.value(), method);
-                });
+    public static Map<String, Method> GETMap = new HashMap<>();
+    public static Map<String, Method> POSTMap = new HashMap<>();
+    static{
+        Method[] methods = Controller.class.getMethods();
+        for (Method method : methods) {
+            if(method.isAnnotationPresent(GetMapping.class)){
+                GETMap.put(method.getAnnotation(GetMapping.class).value(), method);
+            }else if(method.isAnnotationPresent(PostMapping.class)){
+                POSTMap.put(method.getAnnotation(PostMapping.class).value(), method);
+            }
+        }
     }
 
     private HandlerMapping() {
     }
 
-    // 주어진 HttpRequest를 통해 매핑된 메소드를 찾아 반환
-    public static Method getMethodMapped(HttpRequest request) {
-        for(String s : GET_MAP.keySet()){
+    public static Method getMethodMapped(HttpRequest request){
+        if(request.isGetMethod()){
+            return GETMap.get(request.getPath());
+        }else{
+            return POSTMap.get(request.getPath());
         }
-        if (request.isGetMethod()) {
-            String path = request.getPath();
-            if (GET_MAP.containsKey(path)) {
-
-                return GET_MAP.get(path);
-            }
-        }
-        return null;
     }
 }

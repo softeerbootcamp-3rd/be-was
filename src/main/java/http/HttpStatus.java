@@ -6,6 +6,7 @@ public enum HttpStatus {
     FOUND(302, "Found (HTTP 1.0)"),
     MOVED_PERMANENTLY(301, "Moved Permanently"),
     NOT_MODIFIED(304, "Not Modified"),
+    BAD_REQUEST(400,"Bad Request"),
     UNAUTHORIZED(401, "Unauthorized"),
     NOT_FOUND(404, "Not Found"),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),

@@ -1,29 +1,32 @@
 package http;
 
+import exception.NotSupportedContentTypeException;
+import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import view.MainPageView;
+import webserver.ContentType;
+
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
+import static http.HttpStatus.*;
+import static webserver.ContentType.NONE;
 
 public class HttpResponse {
+    private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
     private static final String ROOT_PATH = "src/main/resources";
-    private static final String INDEX = "templates";
+    private static final String INDEX = "/index.html";
+    private static final String ERROR_PAGE = "src/main/resources/templates/error.html";
+    private static final String MAIN_PAGE = "src/main/resources/templates" + INDEX;
+
+    private byte[] body;
 
     private HttpStatus status;
     private String filePath;
-    private String responseText;
-
-    private String location;
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    private static final String CRLF = "\r\n";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String LOCATION = "Location";
+    private List<Cookie> cookies = new ArrayList<>();
 
     private HttpResponse(HttpStatus status, String filePath) {
         this.status = status;
@@ -31,111 +34,135 @@ public class HttpResponse {
     }
 
     public static HttpResponse redirect() {
-        return new HttpResponse(HttpStatus.FOUND, INDEX);
+        return new HttpResponse(FOUND, INDEX);
     }
 
     public static HttpResponse init(String filePath) {
-        return new HttpResponse(HttpStatus.OK, filePath);
+        return new HttpResponse(OK, filePath);
     }
 
     public static HttpResponse ok(String filePath) {
-        ContentType type = ContentType.findBy(filePath);
-        return new HttpResponse(HttpStatus.OK, filePath, type.getMime());
+        return new HttpResponse(OK, filePath);
     }
 
-    public static HttpResponse internalServerError(String filePath) {
-        return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, filePath);
+    public String getFilePath() {
+        return filePath;
     }
 
-    public static HttpResponse internalServerErrorWithText(String errorMessage) {
-        HttpResponse response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, "/index.html");
-        response.setResponseText(errorMessage);
-        return response;
-    }
-
-    public void setResponseText(String text) {
-        this.responseText = text;
-    }
-
-    public HttpResponse() {
-
-    }
-    private HttpResponse(HttpStatus status, String filePath, String contentType) {
-        this.status = status;
-        this.filePath = filePath;
-    }
-
-    public void setResponse(HttpStatus status) {
-        this.status = status;
-    }
-
-    public void writeResponseToOutputStream(OutputStream out) {
-        DataOutputStream dos = new DataOutputStream(out);
-        try {
-            responseHeader(dos);
-            responseBody(dos);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+    //리소스 경로 매핑
+    public void mapResourcePath(ContentType type) {
+        if (type == NONE) {
+            throw new NotSupportedContentTypeException();
         }
+        this.filePath = ROOT_PATH + type.getPath() + this.filePath;
+    }
+
+    //사용자 정보로 응답세팅
+    public void setResponse(User user) throws IOException {
+        byte[] body = convertFilePathToBody(user);
+        this.body = body;
+    }
+
+    public void setResponse(HttpStatus status) throws IOException {
+        this.status = status;
+        byte[] body = convertFilePathToBody();
+        this.body = body;
+    }
+
+    //파일 경로
+    private byte[] convertFilePathToBody() throws IOException {
+        handlePathByHttpStatus();
+        return Files.readAllBytes(new File(filePath).toPath());
+    }
+
+    private byte[] convertFilePathToBody(User user) throws IOException {
+        handlePathByHttpStatus();
+        if(isMainPage()){
+            MainPageView page = MainPageView.from(user);
+            return page.getByteArray();
+        }
+        return Files.readAllBytes(new File(filePath).toPath());
+    }
+
+    private boolean isMainPage() {
+        return MAIN_PAGE.equals(filePath);
+    }
+
+    private void handlePathByHttpStatus() {
+        if (status == NOT_FOUND) {
+            filePath = ERROR_PAGE;
+        } else if (status == BAD_REQUEST) {
+            filePath = ERROR_PAGE;
+        } else if (status == FOUND) {
+            filePath = MAIN_PAGE;
+        }
+    }
+
+    public void writeResponseToOutputStream(OutputStream out){
+        DataOutputStream dos = new DataOutputStream(out);
+        ContentType type = ContentType.findBy(this.filePath);
+        try {
+            if (status == OK) {
+                response200Header(dos, type);
+            } else if (status == NOT_FOUND) {
+                response400Header(dos, type);
+            } else if (status == BAD_REQUEST) {
+                response404Header(dos, type);
+            } else if (status == FOUND) {
+                response302Header(dos);
+            }
+            responseCookieHeader(dos);
+            responseBody(dos);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void responseCookieHeader(DataOutputStream dos) throws IOException {
+        for (Cookie cookie : cookies) {
+            dos.writeBytes("Set-Cookie: " + cookie.toString() + "\r\n");
+        }
+    }
+
+    private void response200Header(DataOutputStream dos, ContentType type) throws IOException {
+        dos.writeBytes("HTTP/1.1 200 OK \r\n");
+        dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", type.getMime()));
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+    }
+
+    private void response302Header(DataOutputStream dos) throws IOException {
+        dos.writeBytes("HTTP/1.1 302 OK \r\n");
+        dos.writeBytes("Location: " + INDEX + "\r\n");
+    }
+
+    private void response400Header(DataOutputStream dos, ContentType type) throws IOException {
+        dos.writeBytes("HTTP/1.1 400 NOT_FOUND \r\n");
+        dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", type.getMime()));
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+    }
+
+    private void response404Header(DataOutputStream dos, ContentType type) throws IOException {
+        dos.writeBytes("HTTP/1.1 404 BAD_REQUEST \r\n");
+        dos.writeBytes(String.format("Content-Type: %s;charset=utf-8\r\n", type.getMime()));
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
     }
 
     private void responseBody(DataOutputStream dos) throws IOException {
-        if (status == HttpStatus.OK || status == HttpStatus.FOUND) {
-            if (responseText == null) {
-                try {
-                    writeContentFromFile(dos);
-                } catch (FileNotFoundException e) {
-                    HttpResponse notFoundResponse = HttpResponse.init("/index.html");
-                    notFoundResponse.setResponse(HttpStatus.NOT_FOUND);
-                    notFoundResponse.writeResponseToOutputStream(dos);
-                }
-            } else {
-                dos.write(responseText.getBytes());
-            }
-        }
-    }
-
-    private void writeContentFromFile(DataOutputStream dos) throws IOException {
-        Path filePathObj;
-
-        // 파일 경로에 따라 올바른 위치 설정
-        if (this.filePath.startsWith("static")) {
-            filePathObj = Paths.get(ROOT_PATH, this.filePath);
-        } else {
-            filePathObj = Paths.get(ROOT_PATH, INDEX, this.filePath);
-        }
-
-        // 나머지 코드는 그대로 유지
-        if (!Files.exists(filePathObj)) {
-            throw new FileNotFoundException("File not found");
-        }
-
-        byte[] body = Files.readAllBytes(filePathObj);
+        dos.writeBytes("\r\n");
         dos.write(body, 0, body.length);
+        dos.flush();
     }
 
-
-    private void responseHeader(DataOutputStream dos) throws IOException {
-        ContentType type = ContentType.findBy(this.filePath);
-        dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getDescription() + CRLF);
-        dos.writeBytes(CONTENT_TYPE + ": " + type.getMime() + ";charset=utf-8" + CRLF);
-        if (location != null) {
-            dos.writeBytes("Location: " + location);
-        }
-        System.out.println("location = "+location);
-
-        if (status == HttpStatus.FOUND) {
-            dos.writeBytes(LOCATION + ": " + INDEX + CRLF);
-        }
-
-        dos.writeBytes(CRLF);
+    public void addCookie(String name, String value) {
+        cookies.add(Cookie.from(name, value));
     }
 
     @Override
     public String toString() {
         return "HttpResponse{" +
                 "status=" + status +
-                ", filePath='" + filePath + '}';
+                ", filePath='" + filePath + '\'' +
+                ", cookies=" + cookies +
+                '}';
     }
 }

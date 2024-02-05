@@ -1,7 +1,8 @@
 package webserver;
 
 import controller.Controller;
-import http.HttpStatus;
+import exception.NotSupportedContentTypeException;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import http.HttpRequest;
@@ -12,11 +13,10 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map;
 
+import static http.HttpStatus.*;
 import static java.lang.invoke.MethodType.methodType;
 
 public class DispatcherServlet {
@@ -30,92 +30,62 @@ public class DispatcherServlet {
         return servlet;
     }
 
-    // http 요청 처리를 위한 시작점
+    //클라이언트의 요청 처리
     public void doService(HttpRequest request, OutputStream out) throws Throwable {
-        logger.debug("Request Start\n{}", request);
-        try {
-            HttpResponse httpResponse = new HttpResponse();
-
-            Method method = HandlerMapping.getMethodMapped(request);
-
-            String path;
-
-            if (method == null && request.isGetMethod()) {
-                path = request.getPath();
-            }
-            else {
-                path = String.valueOf(handle(request, method));
-                logger.debug("path = {}",path);
-            }
-
-            if (path.startsWith("redirect:")){
-                httpResponse.setResponse(HttpStatus.MOVED_PERMANENTLY);
-                httpResponse.setLocation(path.substring("redirect:".length()));
-            }
-
-            else {
-                String filePath = getPathForRequest(path);
-                logger.debug("filepath = {}", filePath);
-
-                if (filePath != null) {
-                    String fileContent = readFileContent(filePath);
-                    HttpResponse response = HttpResponse.ok(filePath);
-                    response.setResponseText(fileContent);
-                    processDispatchResult(response, out);
-                    return;
-                }
-            }
-            logger.debug("location = {}",httpResponse.getLocation());
-            processDispatchResult(httpResponse, out);
-            logger.debug("Response End\n{}", httpResponse);
-        } catch (Throwable throwable) {
-            handleException(throwable, out);
-        }
+        logger.debug("Request 시작\n{}", request);
+        doDispatch(request, out);
     }
 
-    private String getPathForRequest(String requestPath) {
-        if(requestPath.startsWith("redirect:")){
-            return requestPath;
-        }
-        else if (requestPath.endsWith(".html")) {
-            // HTML 파일은 templates에서 찾기
-            return Paths.get("src/main/resources/templates", requestPath).toString();
-        } else {
-            // 그외의 파일은 static에서 찾기
-            return Paths.get("src/main/resources/static", requestPath).toString();
-        }
+    public void doDispatch(HttpRequest request, OutputStream out) throws Throwable {
+        Method method = HandlerMapping.getMethodMapped(request);
+        HttpResponse response = handle(request, method, request.getUserInSession());
+        processDispatchResult(response, out);
+        logger.debug("Response 끝\n{}", response);
     }
 
-    private String readFileContent(String filePath) throws IOException {
-        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-        return new String(fileBytes, StandardCharsets.UTF_8);
-    }
-
-    private String handle(HttpRequest request, Method method) throws Throwable {
+    //요청 처리 및 응답 생성
+    private HttpResponse handle(HttpRequest request, Method method, User user) throws Throwable {
         String path = request.getPath();
-        if (hasRequestPathMapped(method)) {
-            return executeRequest(request, method);
-        } else {
-            return path;
-        }
+        HttpResponse response = hasRequestPathMapped(method) ? executeRequest(request, method) : HttpResponse.init(path);
+        processResources(response, user);
+        return response;
     }
 
-    private boolean hasRequestPathMapped(Method method) {
+    private static boolean hasRequestPathMapped(Method method) {
         return method != null;
     }
 
-    private String executeRequest(HttpRequest request, Method method) throws Throwable {
+    //컨트롤러 메소드 실행 및 응답 생성
+    private HttpResponse executeRequest(HttpRequest request, Method method) throws Throwable {
         MethodHandle methodHandle = getMethodHandle(method);
+        HttpResponse response;
         if (hasParameter(methodHandle.type())) {
-            Map<String, String> map = (request.isGetMethod()) ? request.getQuery() : null;
-            return (String) methodHandle.invoke(map);
+            Map<String, String> map = (request.isGetMethod()) ? request.getQuery() : request.getBody();
+            response = (HttpResponse) methodHandle.invoke(map);
         } else {
-            return (String) methodHandle.invoke();
+            response = (HttpResponse) methodHandle.invoke();
+        }
+        return response;
+    }
+
+    private void processResources(HttpResponse response, User user) throws IOException {
+        try {
+            ContentType type = ContentType.findBy(response.getFilePath());
+            response.mapResourcePath(type);
+            response.setResponse(user);
+        } catch (NotSupportedContentTypeException e) {
+            logger.debug("NotSupportedContentTypeException >> {}", response);
+            logger.error(e.getMessage());
+            response.setResponse(FOUND);
+        } catch (IOException e) {
+            logger.debug("IOException (readAllBytes ERROR) >> {}", response);
+            logger.error(Arrays.toString(e.getStackTrace()));
+            response.setResponse(NOT_FOUND);
         }
     }
 
     private MethodHandle getMethodHandle(Method method) throws NoSuchMethodException, IllegalAccessException {
-        MethodType methodType = (hasParameter(method)) ? methodType(String.class, method.getParameterTypes()) : methodType(String.class);
+        MethodType methodType = (hasParameter(method)) ? methodType(HttpResponse.class, method.getParameterTypes()) : methodType(HttpResponse.class);
         return MethodHandles.lookup()
                 .findVirtual(Controller.class, method.getName(), methodType)
                 .bindTo(new Controller());
@@ -131,15 +101,5 @@ public class DispatcherServlet {
 
     private void processDispatchResult(HttpResponse response, OutputStream out) {
         response.writeResponseToOutputStream(out);
-    }
-
-    private void handleException(Throwable throwable, OutputStream out) {
-        try {
-            String errorMessage = "Internal Server Error: " + throwable.getMessage();
-            HttpResponse response = HttpResponse.internalServerErrorWithText(errorMessage);
-            processDispatchResult(response, out);
-        } catch (Throwable e) {
-            logger.error("Error while handling exception", e);
-        }
     }
 }
