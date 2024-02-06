@@ -35,13 +35,13 @@ class UserServiceTest {
         try {
             UserService.signUp(user2);
         } catch (WebServerException e) {
-            Assertions.assertEquals(e.getErrorCode().getErrorMessage(), "중복되는 유저 id 입니다.");
+            Assertions.assertEquals(e.getErrorCode().errorMessage, "중복되는 유저 id 입니다.");
         }
 
         try {
             UserService.signUp(user3);
         } catch (WebServerException e) {
-            Assertions.assertEquals(e.getErrorCode().getErrorMessage(), "중복되는 유저 이메일 입니다.");
+            Assertions.assertEquals(e.getErrorCode().errorMessage, "중복되는 유저 이메일 입니다.");
         }
     }
 }

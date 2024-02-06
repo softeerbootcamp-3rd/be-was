@@ -1,7 +1,9 @@
 package util;
 
-import constant.FileContentType;
-import constant.FilePath;
+import constant.ErrorCode;
+import constant.MimeType;
+import constant.FileConstant;
+import exception.WebServerException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,18 +11,26 @@ import java.io.IOException;
 
 public class FileManager {
 
-    public static byte[] getFileByPath(FilePath basePath, String path) throws IOException {
-        File file = new File(basePath.path + path);
-        if (file.exists()) {
-            return fileToByte(file);
+    public static byte[] getFileBytes(String filePath) throws IOException {
+        // 파일이 존재하는 폴더 (기본 경로) 설정
+        String folder = FileConstant.HTML_BASE_FOLDER;
+        if (!filePath.endsWith(".html")) { folder = FileConstant.SUPPORT_FILE_BASE_FOLDER; }
+
+        // 파일이 존재하면 읽고 바이트코드로 변환해 반환
+        File file = new File(folder + filePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new WebServerException(ErrorCode.PAGE_NOT_FOUND);
         }
 
-        return null;
+        return fileToByte(file);
     }
 
-    public static String getContentType(String path) throws IOException {
-        int extensionPoint = path.lastIndexOf(".");
-        return FileContentType.of(path.substring(extensionPoint));
+    public static MimeType getMimeType(String path) {
+        if (path == null || !path.contains(".") )
+            throw new WebServerException(ErrorCode.PAGE_NOT_FOUND);
+
+        String extension = path.substring(path.lastIndexOf("."));
+        return MimeType.of(extension);
     }
 
     private static byte[] fileToByte(File file) throws IOException {

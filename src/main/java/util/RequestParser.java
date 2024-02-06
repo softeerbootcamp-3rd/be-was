@@ -1,6 +1,6 @@
 package util;
 
-import dto.RequestDto;
+import webserver.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 public class RequestParser {
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
-    public static RequestDto getRequestDto(InputStream in) throws IOException {
+    public static HttpRequest getHttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
         String line = br.readLine();
@@ -23,51 +23,53 @@ public class RequestParser {
         line = line.substring(0, methodIdx);
         String[] pathWithParams = line.split("\\?");
 
-        RequestDto requestDto = new RequestDto(pathWithParams[0]);
+        HttpRequest httpRequest = new HttpRequest(pathWithParams[0]);
 
         if (pathWithParams.length == 2) {
-            requestDto.setParams(getMapFromQueryStr(pathWithParams[1]));
+            httpRequest.setParams(getMapFromQueryStr(pathWithParams[1]));
         }
 
         while ((line = br.readLine()) != null && !line.equals("")) {
             String[] keyAndValue = line.split(": ");
-            requestDto.addHeader(keyAndValue[0], keyAndValue[1]);
+             if (keyAndValue.length == 2)
+                 httpRequest.addHeader(keyAndValue[0], keyAndValue[1]);
         }
 
-        readCookie(requestDto);
-        readBody(requestDto, br);
+        readCookie(httpRequest);
+        readBody(httpRequest, br);
 
-        logger.debug(requestDto.headersToString());
+        logger.debug(httpRequest.headersToString());
 
-        return requestDto;
+        return httpRequest;
     }
 
-    private static void readCookie(RequestDto requestDto) {
+    private static void readCookie(HttpRequest httpRequest) {
         String cookies;
-        if ((cookies = requestDto.getCookieHeader()) != null) {
+        if ((cookies = httpRequest.getCookieHeader()) != null) {
             String[] arr = cookies.split(";");
             for (String cookie : arr) {
                 String[] keyAndValue = cookie.split("=");
                 if (keyAndValue.length == 2) {
-                    requestDto.addCookie(keyAndValue[0], keyAndValue[1]);
+                    httpRequest.addCookie(keyAndValue[0], keyAndValue[1]);
                 }
             }
         }
     }
 
-    private static void readBody(RequestDto requestDto, BufferedReader br) throws IOException {
-        Integer length = requestDto.getContentLength();
-
+    private static void readBody(HttpRequest httpRequest, BufferedReader br) throws IOException {
+        // request 헤더에서 바디의 길이인 Content-Length 헤더 값 가져오기
+        String contentLengthHeader = httpRequest.getContentLengthHeader();
         // request 에 body 가 없는 경우
-        if (length == null) {
+        if (contentLengthHeader == null) {
             return;
         }
 
+        int length = Integer.parseInt(contentLengthHeader);
         char[] body = new char[length];
         br.read(body, 0, length);
 
         String bodyStr = new String(body);
-        requestDto.setBody(getMapFromQueryStr(bodyStr));
+        httpRequest.setBody(getMapFromQueryStr(bodyStr));
     }
 
     private static Map<String, String> getMapFromQueryStr(String str) {
@@ -75,7 +77,8 @@ public class RequestParser {
 
         for (String s : str.split("&")) {
             String[] keyAndValue = s.split("=");
-            result.put(keyAndValue[0], keyAndValue[1]);
+            if (keyAndValue.length == 2)
+                result.put(keyAndValue[0], keyAndValue[1]);
         }
         return result;
     }

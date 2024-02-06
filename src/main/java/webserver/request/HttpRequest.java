@@ -1,22 +1,20 @@
-package dto;
+package webserver.request;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestDto {
+public class HttpRequest {
     private String method;
     private String path;
-    private String methodAndPath;
     private Map<String, String> params;
     private Map<String, String> headers;
     private Map<String, String> body;
     private Map<String, String> cookies;
 
-    public RequestDto(String methodAndPath) {
+    public HttpRequest(String methodAndPath) {
         String[] arr = methodAndPath.split(" ");
         this.method = arr[0];
         this.path = arr[1];
-        this.methodAndPath = methodAndPath;
         this.params = new HashMap<>();
         this.headers = new HashMap<>();
         this.cookies = new HashMap<>();
@@ -34,10 +32,6 @@ public class RequestDto {
         this.path = path;
     }
 
-    public String getMethodAndPath() {
-        return methodAndPath;
-    }
-
     public Map<String, String> getParams() {
         return params;
     }
@@ -46,8 +40,8 @@ public class RequestDto {
         return body;
     }
 
-    public Map<String, String> getCookies() {
-        return cookies;
+    public String getSessionId() {
+        return cookies.get("sessionId");
     }
 
     public void setParams(Map<String, String> params) {
@@ -70,12 +64,8 @@ public class RequestDto {
         return this.headers.get("Cookie");
     }
 
-    public Integer getContentLength() {
-        String len;
-        if ((len = this.headers.get("Content-Length")) != null) {
-            return Integer.parseInt(len);
-        }
-        return  null;
+    public String getContentLengthHeader() {
+        return  this.headers.get("Content-Length");
     }
 
     public String headersToString() {

@@ -1,40 +1,55 @@
 package controller;
 
+import annotation.GetMapping;
 import annotation.PostMapping;
-import dto.RequestDto;
-import dto.ResponseDto;
+import session.SessionManager;
+import webserver.ThreadLocalManager;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
 import service.UserService;
-import session.Session;
+import webserver.response.ResponseHandler;
 
-import static constant.FilePath.MAIN_PAGE;
+import static constant.FileConstant.LOGIN_FAILED_PAGE_PATH;
+import static constant.FileConstant.MAIN_PAGE_PATH;
+
 
 public class UserController {
 
-    @PostMapping(path = "/user/create")
-    public static ResponseDto create(RequestDto requestDto) {
-        UserService.signUp(requestDto.getBody());
+    @PostMapping("/user/create")
+    public static HttpResponse create(HttpRequest httpRequest) {
+        HttpResponse httpResponse = new HttpResponse();
+        UserService.signUp(httpRequest.getBody());
 
-        return new ResponseDto().makeRedirect(MAIN_PAGE.path);
+        ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
+        return httpResponse;
     }
 
-    @PostMapping(path = "/user/login")
-    public static ResponseDto login(RequestDto requestDto) {
-        ResponseDto response = new ResponseDto();
-        response.makeRedirect(MAIN_PAGE.path);
+    @PostMapping("/user/login")
+    public static HttpResponse login(HttpRequest httpRequest) {
+        HttpResponse httpResponse = new HttpResponse();
 
-        // 이전에 로그인한 유저 (요청 헤더 쿠키에 sessionId 가 있음) && 세션이 만료되지 않은 경우
-        // MAIN_PAGE 로 리다이렉트
-        String sessionId = requestDto.getCookies().get("sessionId");
-        if (sessionId != null && Session.getAttribute(sessionId) != null) {
-            return response;
+        String sessionId;
+        String userId = httpRequest.getBody().get("userId");
+        String password = httpRequest.getBody().get("password");
+
+        if ((sessionId = UserService.login(userId, password)) != null ) {
+            httpResponse.addHeader("Set-Cookie", ("sessionId=" + sessionId + "; Path=/"));
+            ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
+        } else {
+            ResponseHandler.makeRedirect(httpResponse, LOGIN_FAILED_PAGE_PATH);
         }
 
-        // 처음 로그인한 유저 (오청 헤더 쿠키에 sessionId 없음) OR 세션이 만료된 경우
-        String userId = requestDto.getBody().get("userId");
-        String password = requestDto.getBody().get("password");
-        // UserService.login 하고 생성한 유저의 sessionId 값을 응답 헤더에 추가해 응답 리턴
-        response.addHeader("Set-Cookie", ("sessionId=" + UserService.login(userId, password) + "; Path=/"));
+        return httpResponse;
+    }
 
-        return response;
+    @GetMapping("/user/logout")
+    public static HttpResponse logout(HttpRequest httpRequest) {
+        HttpResponse httpResponse = new HttpResponse();
+
+        String sessionId = ThreadLocalManager.getSessionId();
+        SessionManager.removeSession(sessionId);
+
+        ResponseHandler.makeRedirect(httpResponse, MAIN_PAGE_PATH);
+        return httpResponse;
     }
 }

@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum FileContentType {
+public enum MimeType {
     TXT (".txt", "text/plain"),
     HTML (".html", "text/html"),
     CSS (".css", "text/css"),
@@ -26,7 +26,7 @@ public enum FileContentType {
     public final String extension;
     public final String contentType;
 
-    FileContentType(String extension, String contentType) {
+    MimeType(String extension, String contentType) {
         this.extension = extension;
         this.contentType = contentType;
     }
@@ -35,11 +35,11 @@ public enum FileContentType {
         return extension;
     }
 
-    private static final Map<String, FileContentType> fileContentTypeMap = Collections.unmodifiableMap(
-            Stream.of(values()).collect(Collectors.toMap(FileContentType::getExtension, Function.identity()))
+    private static final Map<String, MimeType> fileContentTypeMap = Collections.unmodifiableMap(
+            Stream.of(values()).collect(Collectors.toMap(MimeType::getExtension, Function.identity()))
     );
 
-    public static String of(String extension) {
-        return fileContentTypeMap.get(extension).contentType;
+    public static MimeType of(String extension) {
+        return fileContentTypeMap.get(extension);
     }
 }
