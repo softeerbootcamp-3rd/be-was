@@ -47,7 +47,6 @@ public class RequestParser {
 
         while(br.ready()) {
             requestLine = br.readLine();
-            logger.debug(String.valueOf(requestLine.isEmpty()) + br.ready());
 
             if(requestLine.isEmpty()){
                 if(br.ready()) {

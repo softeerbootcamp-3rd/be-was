@@ -22,26 +22,6 @@ public abstract class MethodRequestAdapter implements Adapter{
         return method.invoke(instance, params);
     }
 
-    protected Object[] createParams(Method method, Request request) throws InstantiationException, IllegalAccessException {
-        Parameter[] parameters = method.getParameters();
-
-        Object[] params = new Object[parameters.length];
-        int index = 0;
-
-        for(Parameter parameter: parameters){
-            if(parameter.isAnnotationPresent(RequestParam.class)){
-                RequestParam annotation = parameter.getAnnotation(RequestParam.class);
-                params[index++] = request.getParam(annotation.name());
-            } else if(parameter.isAnnotationPresent(RequestBody.class)){
-                params[index++] = createObjectInstance(parameter.getType(), request);
-            }else{
-                params[index++] = null;
-            }
-        }
-
-        return params;
-    }
-
     protected Method findMethod(Class<? extends Annotation> annotation, String path){
         List<Class<?>> classes = ControllerRegistry.getControllers();
 
@@ -58,7 +38,27 @@ public abstract class MethodRequestAdapter implements Adapter{
         return null;
     }
 
-    private Object createObjectInstance(Class<?> type, Request request) throws InstantiationException, IllegalAccessException {
+    protected Object[] createParams(Method method, Request request) throws InstantiationException, IllegalAccessException {
+        Parameter[] parameters = method.getParameters();
+
+        Object[] params = new Object[parameters.length];
+        int index = 0;
+
+        for(Parameter parameter: parameters){
+            if(parameter.isAnnotationPresent(RequestParam.class)){
+                RequestParam annotation = parameter.getAnnotation(RequestParam.class);
+                params[index++] = request.getParam(annotation.name());
+            } else if(parameter.isAnnotationPresent(RequestBody.class)){
+                params[index++] = createResponseBody(parameter.getType(), request);
+            }else{
+                params[index++] = null;
+            }
+        }
+
+        return params;
+    }
+
+    private Object createResponseBody(Class<?> type, Request request) throws InstantiationException, IllegalAccessException {
         Object o = type.newInstance();
 
         Field[] fields = o.getClass().getDeclaredFields();

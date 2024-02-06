@@ -9,6 +9,10 @@ import webserver.annotation.PostMapping;
 import webserver.annotation.RequestBody;
 import webserver.annotation.RequestParam;
 import webserver.response.Response;
+import webserver.session.Session;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -31,5 +35,13 @@ public class UserController {
         userService.createUser(register);
 
         return Response.redirect("/index.html");
+    }
+
+    @PostMapping(path = "/user/login")
+    public Response login(@RequestBody UserRequest.Login loginInfo){
+        Session session = userService.login(loginInfo);
+
+        logger.debug(session.toString());
+        return Response.redirect("/index.html", session);
     }
 }

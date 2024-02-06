@@ -3,6 +3,7 @@ package webserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.handler.RequestHandler;
+import webserver.session.SessionScheduler;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,6 +22,7 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        SessionScheduler.registerSessionScheduler();
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
