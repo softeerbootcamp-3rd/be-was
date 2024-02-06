@@ -19,7 +19,7 @@ public class UserServiceTest {
     public void createUserTest() {
         // given
         Map<String, String> createUserParams = new HashMap<>();
-        createUserParams.put("userId", "TestUserId");
+        createUserParams.put("userId", "createUserId");
         createUserParams.put("password", "TestPassword");
         createUserParams.put("name", "TestUser");
         createUserParams.put("email", "test@example.com");
@@ -28,7 +28,7 @@ public class UserServiceTest {
         userService.createUser(createUserParams);
 
         // then
-        User user = UserDatabase.findUserById("TestUserId");
+        User user = UserDatabase.findUserById("createUserId");
         Assertions.assertThat(user.getUserId()).isEqualTo(createUserParams.get("userId"));
         Assertions.assertThat(user.getPassword()).isEqualTo(createUserParams.get("password"));
         Assertions.assertThat(user.getEmail()).isEqualTo(createUserParams.get("email"));
@@ -51,8 +51,25 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("loginUser(): 유효한 기존 세션 정보가 없는 유저가 로그인에 성공한 경우 새로운 Session을 저장하고 해당 sessionId를 리턴한다")
-    public void loginNewUserTest() {
+    @DisplayName("createUser(): 중복된 userId를 입력한 경우 IllegalArgumentException이 발생한다.")
+    public void createDuplicateUserTest() {
+        // given
+        UserDatabase.addUser(new User("TestUserId", "1234", "name", "email@example.com"));
+        Map<String, String> createUserParams = new HashMap<>();
+        createUserParams.put("userId", "TestUserId");
+        createUserParams.put("password", "TestPassword");
+        createUserParams.put("name", "TestUser");
+        createUserParams.put("email", "email@example.com");
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> userService.createUser(createUserParams))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Duplicate userId");
+    }
+
+    @Test
+    @DisplayName("loginUser(): 유저가 로그인에 성공한 경우 새로운 Session을 저장하고 해당 sessionId를 리턴한다")
+    public void loginUserTest() {
         // given
         User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
         UserDatabase.addUser(testUser);
@@ -66,25 +83,6 @@ public class UserServiceTest {
         // then
         Session session = SessionDatabase.findSessionById(sessionId);
         Assertions.assertThat(session.getUserId()).isEqualTo(testUser.getUserId());
-    }
-
-    @Test
-    @DisplayName("loginUser(): 유효한 기존 세션 정보가 있는 유저가 로그인에 성공한 경우 기존에 존재하는 sessionId를 리턴한다")
-    public void loginUserTest() {
-        // given
-        User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
-        UserDatabase.addUser(testUser);
-        String existedSessionId = SessionDatabase.addSession(new Session(testUser.getUserId()));
-
-        Map<String, String> loginUserParams = new HashMap<>();
-        loginUserParams.put("userId", testUser.getUserId());
-        loginUserParams.put("password", testUser.getPassword());
-
-        // when
-        String sessionId = userService.loginUser(loginUserParams);
-
-        // then
-        Assertions.assertThat(sessionId).isEqualTo(existedSessionId);
     }
 
     @Test
@@ -116,5 +114,21 @@ public class UserServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Invalid userId and password");
 
+    }
+
+    @Test
+    @DisplayName("logoutUser(): 인자로 전달한 유저Id에 매핑된 세션 정보를 삭제한다")
+    public void logoutUserTest() {
+        // given
+        User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
+        UserDatabase.addUser(testUser);
+        String sessionId = SessionDatabase.addSession(new Session(testUser.getUserId()));
+
+        // when
+        userService.logoutUser(testUser);
+
+        // then
+        Session session = SessionDatabase.findSessionById(sessionId);
+        Assertions.assertThat(session).isNull();
     }
 }

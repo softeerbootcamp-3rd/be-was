@@ -1,12 +1,12 @@
 package db;
 
-import com.google.common.collect.Maps;
 import model.Session;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionDatabase {
-    private static final Map<String, Session> sessions = Maps.newHashMap();
+    private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
     public static String addSession(Session session) {
         sessions.put(session.getSessionId(), session);
@@ -14,15 +14,15 @@ public class SessionDatabase {
     }
 
     public static Session findSessionById(String sessionId) {
+        if (sessionId == null) return null;
         return sessions.get(sessionId);
     }
 
-    public static Session findValidSessionByUserId(String userId) {
-        for (Session session: sessions.values()) {
-            if (session.getUserId().equals(userId) && session.getIsValid()) {
-                return session;
-            }
-        }
-        return null;
+    public static void deleteSessionById(String sessionId) {
+        sessions.remove(sessionId);
+    }
+
+    public static void deleteAllSessionByUserId(String userId) {
+        sessions.values().removeIf(session -> session.getUserId().equals(userId));
     }
 }

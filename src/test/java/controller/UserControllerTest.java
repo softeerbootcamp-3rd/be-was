@@ -1,16 +1,17 @@
 package controller;
 
-import db.SessionDatabase;
+import constant.HttpHeader;
 import db.UserDatabase;
 import dto.HttpRequestDto;
 import dto.HttpRequestDtoBuilder;
 import dto.HttpResponseDto;
-import model.Session;
 import model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import service.UserService;
+import util.SessionUtil;
+import util.WebUtil;
 
 public class UserControllerTest {
     private final UserService userService = new UserService();
@@ -21,28 +22,28 @@ public class UserControllerTest {
     public void createUserTest() {
         // given
         HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/create", "HTTP/1.1")
-                .setBody("userId=testUserId&password=testPassword&name=testName&email=test%40softeer.com")
+                .setBody("userId=createUSerId&password=testPassword&name=testName&email=test%40softeer.com")
                 .build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.createUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
         Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/index.html");
+        Assertions.assertThat(httpResponseDto.getHeaders().get(HttpHeader.LOCATION)).isEqualTo("/index.html");
     }
 
     @Test
     @DisplayName("createUser(): 필요한 파라미터를 모두 입력하지 않아 유저 생성이 실패한 경우 400 Bad Request 응답을 리턴한다")
     public void createUserFailInvalidParamsTest() {
         // given
-        HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/create", "HTTP/1.1")
+        HttpRequestDto request = new HttpRequestDtoBuilder("post", "/user/create", "HTTP/1.1")
                 .setBody("userId=testUserId&password=testPassword&name=testName")
                 .build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.createUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("400");
@@ -53,10 +54,10 @@ public class UserControllerTest {
     @DisplayName("createUser(): Response Body를 입력하지 않아 유저 생성이 실패한 경우 400 Bad Request 응답을 리턴한다")
     public void createUserFailRequireBodyTest() {
         // given
-        HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/create", "HTTP/1.1").build();
+        HttpRequestDto request = new HttpRequestDtoBuilder("Post", "/user/create", "HTTP/1.1").build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.createUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("400");
@@ -64,46 +65,25 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("loginUser(): 유효한 기존 세션 정보가 없는 유저가 로그인에 성공한 경우 /index.html로 리다이렉트하는 응답을 새로운 sessionId와 함께 리턴한다")
-    public void loginNewUserTest() {
-        // given
-        UserDatabase.addUser(new User("testUserId", "testPassword", "testName", "test@example.com"));
-
-        HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/login", "HTTP/1.1")
-                .setBody("userId=testUserId&password=testPassword")
-                .build();
-
-        // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
-
-        // then
-        Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
-        Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/index.html");
-
-        Session session = SessionDatabase.findValidSessionByUserId("testUserId");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Set-Cookie")).isEqualTo("sid=" + session.getSessionId() + "; Path=/");
-    }
-
-    @Test
-    @DisplayName("loginUser(): 유효한 기존 세션 정보가 있는 유저가 로그인에 성공한 경우 /index.html로 리다이렉트하는 응답을 기존에 존재하는 sessionId와 함께 리턴한다")
+    @DisplayName("loginUser(): 유저가 로그인에 성공한 경우 /index.html로 리다이렉트하는 응답을 새로운 sessionId와 함께 리턴한다")
     public void loginUserTest() {
         // given
-        UserDatabase.addUser(new User("testUserId", "testPassword", "testName", "test@example.com"));
-        String sessionId = SessionDatabase.addSession(new Session("testUserId"));
+        User testUser = new User("testUserId", "testPassword", "testName", "test@example.com");
+        UserDatabase.addUser(testUser);
 
         HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/login", "HTTP/1.1")
                 .setBody("userId=testUserId&password=testPassword")
                 .build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.loginUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
         Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/index.html");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Set-Cookie")).isEqualTo("sid=" + sessionId + "; Path=/");
+        Assertions.assertThat(httpResponseDto.getHeaders().get(HttpHeader.LOCATION)).isEqualTo("/index.html");
+        System.out.println(httpResponseDto.getHeaders().get(HttpHeader.SET_COOKIE));
+        Assertions.assertThat(WebUtil.parseCookie(httpResponseDto.getHeaders().get(HttpHeader.SET_COOKIE)).get(SessionUtil.SESSION_ID)).isNotNull();
     }
 
     @Test
@@ -115,12 +95,12 @@ public class UserControllerTest {
                 .build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.loginUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
         Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/user/login_failed.html");
+        Assertions.assertThat(httpResponseDto.getHeaders().get(HttpHeader.LOCATION)).isEqualTo("/user/login_failed.html");
     }
 
     @Test
@@ -133,12 +113,12 @@ public class UserControllerTest {
                 .build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.loginUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
         Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/user/login_failed.html");
+        Assertions.assertThat(httpResponseDto.getHeaders().get(HttpHeader.LOCATION)).isEqualTo("/user/login_failed.html");
     }
 
     @Test
@@ -148,11 +128,11 @@ public class UserControllerTest {
         HttpRequestDto request = new HttpRequestDtoBuilder("POST", "/user/login", "HTTP/1.1").build();
 
         // when
-        HttpResponseDto httpResponseDto = userController.handleRequest(request);
+        HttpResponseDto httpResponseDto = userController.loginUser(request);
 
         // then
         Assertions.assertThat(httpResponseDto.getStatus()).isEqualTo("302");
         Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
-        Assertions.assertThat(httpResponseDto.getHeaders().get("Location")).isEqualTo("/user/login_failed.html");
+        Assertions.assertThat(httpResponseDto.getHeaders().get(HttpHeader.LOCATION)).isEqualTo("/user/login_failed.html");
     }
 }

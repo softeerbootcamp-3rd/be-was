@@ -1,5 +1,6 @@
 package util;
 
+import constant.HttpHeader;
 import dto.HttpRequestDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +33,34 @@ public class WebUtilTest {
         Assertions.assertThat(parsedRequest.getMethod()).isEqualTo("GET");
         Assertions.assertThat(parsedRequest.getUri()).isEqualTo("/index.html");
         Assertions.assertThat(parsedRequest.getHttpVersion()).isEqualTo("HTTP/1.1");
-        Assertions.assertThat(parsedRequest.getHeaders().get("Host")).isEqualTo("localhost:8080");
-        Assertions.assertThat(parsedRequest.getHeaders().get("Connection")).isEqualTo("keep-alive");
-        Assertions.assertThat(parsedRequest.getHeaders().get("Accept")).isEqualTo("*/*");
+        Assertions.assertThat(parsedRequest.getHeaders().get(HttpHeader.HOST)).isEqualTo("localhost:8080");
+        Assertions.assertThat(parsedRequest.getHeaders().get(HttpHeader.CONNECTION)).isEqualTo("keep-alive");
+        Assertions.assertThat(parsedRequest.getHeaders().get(HttpHeader.ACCEPT)).isEqualTo("*/*");
         Assertions.assertThat(parsedRequest.getBody()).isEqualTo("request body");
+        Assertions.assertThat(parsedRequest.getUser()).isNull();
+    }
 
+    @Test
+    @DisplayName("httpRequestParse(): HTTP Request의 case sensitive 특징을 적절하게 처리하여 파싱한다.")
+    public void httpRequestParseCaseSensitiveTest() {
+        // given
+        String testRequest = "GET /index.html HTTP/1.1\n" +
+                "host: localhost:8080\n" +
+                "connection: keep-alive\n" +
+                "aCCept: */*\n" +
+                "Content-length: 12\n";
+        InputStream inputStream = new ByteArrayInputStream(testRequest.getBytes());
+
+        // when
+        HttpRequestDto parsedRequest = WebUtil.httpRequestParse(inputStream);
+        // then
+        Assertions.assertThat(parsedRequest.getMethod()).isEqualTo("GET");
+        Assertions.assertThat(parsedRequest.getUri()).isEqualTo("/index.html");
+        Assertions.assertThat(parsedRequest.getHttpVersion()).isEqualTo("HTTP/1.1");
+        Assertions.assertThat(parsedRequest.getHeaders().get(HttpHeader.HOST)).isEqualTo("localhost:8080");
+        Assertions.assertThat(parsedRequest.getHeaders().get(HttpHeader.CONNECTION)).isEqualTo("keep-alive");
+        Assertions.assertThat(parsedRequest.getHeaders().get(HttpHeader.ACCEPT)).isEqualTo("*/*");
+        Assertions.assertThat(parsedRequest.getUser()).isNull();
     }
 
     @Test()
@@ -99,5 +123,18 @@ public class WebUtilTest {
         Assertions.assertThat(parsedBody.get("password")).isEqualTo("hello");
         Assertions.assertThat(parsedBody.get("name")).isEqualTo("suji");
         Assertions.assertThat(parsedBody.get("email")).isEqualTo("example@softeer.com");
+    }
+
+    @Test
+    @DisplayName("parseCookie(): 헤더의 쿠키 값을 파싱하여 Map 형태로 반환한다.")
+    public void parseCookieTest() {
+        // given
+        String cookie = "Idea-69015365=809ed775-1433-48aa-bb94-f81d467909f8; sid=88ef7daf-c0ef-4723-8b96-04de53f5aab3";
+
+        // when
+        Map<String, String> parsedCookie = WebUtil.parseCookie(cookie);
+
+        // then
+        Assertions.assertThat(parsedCookie.get(SessionUtil.SESSION_ID)).isEqualTo("88ef7daf-c0ef-4723-8b96-04de53f5aab3");
     }
 }

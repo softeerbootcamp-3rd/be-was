@@ -1,6 +1,6 @@
 package dto;
 
-import java.util.Map;
+import model.User;
 
 public class HttpRequestDto {
     private final String method;
@@ -9,16 +9,19 @@ public class HttpRequestDto {
 
     private final String httpVersion;
 
-    private final Map<String, String> headers;
+    private final HttpHeaders headers;
 
     private final String body;
 
-    public HttpRequestDto(String method, String uri, String httpVersion, Map<String, String> headers, String body) {
+    private final User user;
+
+    public HttpRequestDto(String method, String uri, String httpVersion, HttpHeaders headers, String body, User user) {
         this.method = method;
         this.uri = uri;
         this.httpVersion = httpVersion;
         this.headers = headers;
         this.body = body;
+        this.user = user;
     }
 
     public String getMethod() {
@@ -33,12 +36,16 @@ public class HttpRequestDto {
         return this.httpVersion;
     }
 
-    public Map<String, String> getHeaders() {
+    public HttpHeaders getHeaders() {
         return this.headers;
     }
 
     public String getBody() {
         return this.body;
+    }
+
+    public User getUser() {
+        return this.user;
     }
 
     // HTTP Request 로그 출력 용 코드

@@ -4,13 +4,11 @@ import java.io.*;
 import java.net.Socket;
 
 import controller.Controller;
-import controller.DefaultController;
-import controller.UserController;
 import dto.HttpRequestDto;
 import dto.HttpResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.UserService;
+import util.ControllerMapper;
 import util.HttpResponseUtil;
 import util.WebUtil;
 
@@ -32,7 +30,7 @@ public class RequestHandler implements Runnable {
                     "Connected IP: {}, Port: {}", connection.getInetAddress(), connection.getPort() + "\n");
 
             // mapping & executing Controller
-            Controller controller = mappingController(request);
+            Controller controller = ControllerMapper.mappingController(request);
             HttpResponseDto httpResponse = controller.handleRequest(request);
 
             // Send HTTP Response
@@ -43,17 +41,5 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    // mapping Controller by URL
-    public Controller mappingController(HttpRequestDto request) {
-        String uri = request.getUri();
-        Controller controller;
-        if (uri.startsWith("/user")) {
-            controller = new UserController(new UserService());
-        } else {
-            controller = new DefaultController();
-        }
-        return controller;
     }
 }
