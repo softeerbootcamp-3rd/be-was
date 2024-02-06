@@ -5,13 +5,10 @@ import java.util.function.Function;
 public enum ParamType {
     STRING(String.class, String::new),
     INTEGER(Integer.class, Integer::valueOf),
-    PRIMITIVE_INT(int.class, Integer::valueOf),
     LONG(Long.class, Long::valueOf),
-    PRIMITIVE_LONG(long.class, Long::valueOf),
     DOUBLE(Double.class, Double::valueOf),
-    PRIMITIVE_DOUBLE(double.class, Double::valueOf),
     BOOLEAN(Boolean.class, Boolean::valueOf),
-    PRIMITIVE_BOOLEAN(boolean.class, Boolean::valueOf);
+    ;
 
     private final Class<?> clazz;
     private final Function<String, ?> mappingFunction;

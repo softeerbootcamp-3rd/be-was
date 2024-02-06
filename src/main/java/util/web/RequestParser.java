@@ -1,10 +1,13 @@
-package util;
+package util.web;
 
 import constant.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.mapper.MultipartMapper;
+import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -12,6 +15,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RequestParser {
 
@@ -45,22 +49,22 @@ public class RequestParser {
         if (queryString == null || queryString.isEmpty())
             return new HashMap<>();
         queryString = decodeUri(queryString);
-        return extractKeyValue(queryString, "&", "=");
+        return extractKeyValue(queryString, "&");
     }
 
     public static Map<String, String> parseCookie(String cookieString) {
         if (cookieString == null || cookieString.isEmpty())
             return new HashMap<>();
-        return extractKeyValue(cookieString, "; ", "=");
+        return extractKeyValue(cookieString, "; ");
     }
 
-    private static Map<String, String> extractKeyValue(String input, String delimiter1, String delimiter2) {
+    private static Map<String, String> extractKeyValue(String input, String delimiter1) {
         Map<String, String> result = new HashMap<>();
         if (input == null)
             return result;
         String[] entries = input.split(delimiter1);
         for (String entry : entries) {
-            String[] parts = entry.split(delimiter2);
+            String[] parts = entry.split("=");
             if (parts.length == 2) {
                 result.put(parts[0], parts[1]);
             }
@@ -69,7 +73,7 @@ public class RequestParser {
     }
 
     public static <T> T parseBody(HttpRequest request, Class<T> clazz)
-            throws UnsupportedEncodingException, InvocationTargetException,
+            throws IOException, InvocationTargetException,
             IllegalAccessException, NoSuchMethodException, InstantiationException {
 
         Map<String, String> queryMap;
@@ -80,9 +84,11 @@ public class RequestParser {
         if (contentType != null)
             entries = contentType.split("; ");
 
-        if ("application/x-www-form-urlencoded".equals(entries[0])) {
+        if (Objects.equals(entries[0], "application/x-www-form-urlencoded")) {
             queryMap = parseQueryString(new String(request.getBody()));
             return ObjectMapper.mapToClass(queryMap, clazz);
+        } else if (Objects.equals(entries[0], "multipart/form-data")) {
+            return MultipartMapper.mapMultipartFile(entries, clazz);
         }
         return ObjectMapper.jsonToClass(new String(request.getBody()), clazz);
     }

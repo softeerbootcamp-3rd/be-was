@@ -1,7 +1,8 @@
-package util;
+package util.session;
 
 import constant.HttpHeader;
 import model.User;
+import util.web.RequestParser;
 import webserver.HttpRequest;
 
 import java.util.Map;
@@ -25,10 +26,6 @@ public class SessionManager {
 
     public static void addSession(String sessionId, User user) {
         sessionMap.put(sessionId, new SessionInfo(user, System.currentTimeMillis()));
-    }
-
-    public static boolean isLoggedIn(HttpRequest request) {
-        return getLoggedInUser(request) != null;
     }
 
     public static User getLoggedInUser(HttpRequest request) {

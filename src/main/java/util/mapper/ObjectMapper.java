@@ -1,17 +1,12 @@
-package util;
+package util.mapper;
 
 import annotation.NotEmpty;
 import constant.ParamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,9 +21,6 @@ public class ObjectMapper {
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             String fieldValue = mapInfo.get(field.getName());
-            NotEmpty notEmptyAnnotation = field.getDeclaredAnnotation(NotEmpty.class);
-            if (notEmptyAnnotation != null && (fieldValue == null || fieldValue.isEmpty()))
-                throw new IllegalArgumentException("Field '" + field.getName() + "' cannot be null");
             if (fieldValue != null) {
                 ParamType paramType = ParamType.getByClass(field.getType());
                 field.set(result, paramType.map(fieldValue));

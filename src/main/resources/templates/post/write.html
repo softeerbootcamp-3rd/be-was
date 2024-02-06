@@ -32,7 +32,7 @@
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                {{user-name}}
+                <!--user-name-->
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
                     <ul class="dropdown-menu">
@@ -51,8 +51,6 @@
             <a href="#" style="margin-left:15px;" class="navbar-btn btn btn-default btn-plus dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-home" style="color:#dd1111;"></i> Home <small><i class="glyphicon glyphicon-chevron-down"></i></small></a>
             <ul class="nav dropdown-menu">
                 <li><a href="../user/profile.html"><i class="glyphicon glyphicon-user" style="color:#1111dd;"></i> Profile</a></li>
-                <li class="nav-divider"></li>
-                <li><a href="#"><i class="glyphicon glyphicon-cog" style="color:#dd1111;"></i> Settings</a></li>
             </ul>
             
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse2">
@@ -64,11 +62,10 @@
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../index.html">Posts</a></li>
-                {{login-btn}}
-                {{signup-btn}}
-                {{logout-btn}}
-                <li><a href="#" role="button">개인정보수정</a></li>
+                <li class="active"><a href="../index.html">Posts</a></li>
+                <!--login-btn-->
+                <!--signup-btn-->
+                <!--logout-btn-->
             </ul>
         </div>
     </div>
@@ -77,11 +74,7 @@
 <div class="container" id="main">
    <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
       <div class="panel panel-default content-main">
-          <form name="question" method="post" action="">
-              <div class="form-group">
-                  <label for="writer">글쓴이</label>
-                  <input class="form-control" id="writer" name="writer" placeholder="글쓴이"/>
-              </div>
+          <form name="question" method="post" action="/post" enctype="multipart/form-data">
               <div class="form-group">
                   <label for="title">제목</label>
                   <input type="text" class="form-control" id="title" name="title" placeholder="제목"/>
@@ -90,7 +83,11 @@
                   <label for="contents">내용</label>
                   <textarea name="contents" id="contents" rows="5" class="form-control"></textarea>
               </div>
-              <button type="submit" class="btn btn-success clearfix pull-right">질문하기</button>
+              <div class="form-group">
+                  <label for="attachment">이미지 첨부</label>
+                  <input type="file" id="attachment" name="attachment" accept=".jpg, .jpeg, .png, .gif"><br>
+              </div>
+              <button type="submit" class="btn btn-success clearfix pull-right">글쓰기</button>
               <div class="clearfix" />
           </form>
         </div>
