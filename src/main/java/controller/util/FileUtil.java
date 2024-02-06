@@ -1,5 +1,11 @@
 package controller.util;
 
+import model.User;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
+import webserver.http.SessionManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -84,5 +90,37 @@ public class FileUtil {
         }
 
         return result;
+    }
+
+    public static void generateDynamicMenuBar(HttpRequest request, HttpResponse response) {
+        User user = SessionManager.findUserByRequest(request);
+        StringBuilder htmlBuilder = new StringBuilder();
+        String originalBody = new String(response.getBody());
+        String beforeMenuBar = originalBody.substring(0, originalBody.indexOf("{{menu_bar}}"));
+        String afterMenuBar = originalBody.substring(originalBody.indexOf("{{menu_bar}}")
+                + "{{menu_bar}}".length());
+
+        String relativePath = "./";
+        if (request.getUrl().contains("/qna/") || request.getUrl().contains("/user/"))
+            relativePath = "../";
+
+        htmlBuilder.append(beforeMenuBar);
+        if (user != null) {
+            htmlBuilder.append("<li><a href=\"#\">").append(user.getName()).append("</a></li>")
+                    .append("<li><a href=\"").append(relativePath).append("index.html\" role=\"button\">Posts</a></li>\n")
+                    .append("<li><a href=\"#\" role=\"button\">로그아웃</a></li>\n")
+                    .append("<li><a href=\"#\" role=\"button\">개인정보수정</a></li>");
+        } else {
+            htmlBuilder.append("<li><a href=\"../index.html\">Posts</a></li>\n")
+                    .append("<li><a href=\"").append(relativePath).append("user/login.html\" role=\"button\">로그인</a></li>\n")
+                    .append("<li><a href=\"").append(relativePath).append("user/form.html\" role=\"button\">회원가입</a></li>\n");
+        }
+        htmlBuilder.append(afterMenuBar);
+        byte[] htmlBody = htmlBuilder.toString().getBytes();
+
+        response.addHeaderProperty("Content-Length", String.valueOf(htmlBody.length));
+
+        response.setStatusCode(HttpStatus.OK);
+        response.setBody(htmlBody);
     }
 }

@@ -2,6 +2,7 @@ package webserver.http;
 
 import model.User;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class SessionManager {
         return randomKey;
     }
 
-    public static User findUserBySessionKey(String key) {
+    private static User findUserBySessionKey(String key) {
         Session session = sessionMap.getOrDefault(key, null);
         if (session == null)
             return null;
@@ -59,5 +60,14 @@ public class SessionManager {
             return session.getUser();
 
         return null;
+    }
+
+    public static User findUserByRequest(HttpRequest request) {
+        try {
+            String sid = request.getCookie().getOrDefault("sid", "");
+            return findUserBySessionKey(sid);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

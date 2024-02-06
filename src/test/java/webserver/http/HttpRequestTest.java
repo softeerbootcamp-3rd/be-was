@@ -1,8 +1,7 @@
-package http;
+package webserver.http;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.http.HttpRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +13,7 @@ class HttpRequestTest {
 
     @Test
     @DisplayName("BufferedReader를 받아 HttpRequest 반환")
-    void testCreateFromReader() throws IOException {
+    void createFromReaderTest() throws IOException {
         String requestString = "GET /index.html?name=hong&age=26 HTTP/1.1\r\n" +
                 "Accept: text/html,*/*\r\n" +
                 "Accept-Encoding: gzip, deflate, br\r\n" +

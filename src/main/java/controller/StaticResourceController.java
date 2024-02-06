@@ -46,6 +46,13 @@ public class StaticResourceController {
         );
 
         response.addHeaderProperty("Content-Type", contentType);
+
+        if (contentType.equals("text/html")) {
+            response.setBody(body);
+            FileUtil.generateDynamicMenuBar(request, response);
+            return;
+        }
+
         response.addHeaderProperty("Cache-Control", "public, max-age=30");
         response.addHeaderProperty("Content-Length", String.valueOf(body.length));
         response.addHeaderProperty("Date", DateTimeUtil.getGMTDateString(nowDate));
