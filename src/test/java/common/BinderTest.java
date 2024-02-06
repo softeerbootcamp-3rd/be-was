@@ -1,4 +1,4 @@
-package common.binder;
+package common;
 
 import model.User;
 import org.junit.jupiter.api.DisplayName;

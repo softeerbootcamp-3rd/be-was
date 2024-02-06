@@ -1,10 +1,11 @@
-package common.response;
+package http.constants;
 
 public enum Status {
 
     OK("200", "OK"),
     REDIRECT("302", "Found"),
     BAD_REQUEST("400", "Bad Request"),
+    NOT_FOUND("404", "Not Found"),
     CONFLICT("409", "Conflict");
 
     private final String code;
@@ -15,11 +16,8 @@ public enum Status {
         this.msg = msg;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
+    @Override
+    public String toString() {
+        return code + " " + msg;
     }
 }

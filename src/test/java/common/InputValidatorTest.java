@@ -1,14 +1,11 @@
-package common.validate;
+package common;
 
-import common.exception.EmptyFormException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.assertj.core.api.Assertions.assertThat;
 
-
-class InputValidateTest {
+class InputValidatorTest {
 
     @Test
     @DisplayName("입력한 회원가입 정보 유효성 검증 성공 테스트")
@@ -17,9 +14,11 @@ class InputValidateTest {
         //given
         String queryString = "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net";
 
-        //when, then
-        assertDoesNotThrow(()
-                -> InputValidate.validateUserInfo(queryString));
+        //when
+        boolean result = InputValidator.validateForm(queryString);
+
+        //then
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -29,8 +28,10 @@ class InputValidateTest {
         //given
         String noEmailQueryString = "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=";
 
-        //when, then
-        assertThatThrownBy(() -> InputValidate.validateUserInfo(noEmailQueryString))
-                .isInstanceOf(EmptyFormException.class);
+        //when
+        boolean result = InputValidator.validateForm(noEmailQueryString);
+
+        //then
+        assertThat(result).isEqualTo(false);
     }
 }

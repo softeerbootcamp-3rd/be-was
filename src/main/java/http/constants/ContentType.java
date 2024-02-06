@@ -1,4 +1,4 @@
-package webserver;
+package http.constants;
 
 import java.util.Arrays;
 
