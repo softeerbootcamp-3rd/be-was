@@ -1,16 +1,19 @@
 package utils;
 
 import request.HttpRequest;
+import session.SessionManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestUtils {
+    private static final SessionManager sessionManager = new SessionManager();
 
     public static HttpRequest makeHttpRequest(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
@@ -18,9 +21,14 @@ public class HttpRequestUtils {
         parseRequestLine(br, request);
         parseHeader(br, request);
         parseBody(request, br);
+        if(isLogin(request)) {
+            request.setAuth(true);
+        } else {
+            request.setAuth(false);
+        }
 
         // POST Form 방식 처리 구현
-        if (request.getMethod().equals("POST") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
+        if (request.getMethod().equals("POST") && request.getHeaders().get("Content-Type").equals("application/x-www-form-urlencoded") && !request.getUrl().equals("/user/logout")) {
             Map<String, String> params = parseQueryString(request.getBody());
             request.setParams(params);
         }
@@ -71,7 +79,8 @@ public class HttpRequestUtils {
                 totalBytesRead += bytesRead;
             }
         }
-        request.setBody(bodyBuilder.toString());
+        String result = URLDecoder.decode(bodyBuilder.toString());
+        request.setBody(result);
     }
 
 
@@ -102,4 +111,7 @@ public class HttpRequestUtils {
         return params;
     }
 
+    private static boolean isLogin(HttpRequest request) {
+        return sessionManager.getUserBySessionId(request) != null;
+    }
 }

@@ -1,15 +1,16 @@
 package webserver;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Map;
 
-import controller.Controller;
-import controller.ControllerMappingMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import response.HttpResponse;
+import response.HttpResponseStatus;
 import utils.HttpRequestUtils;
 import utils.HttpResponseUtils;
 
@@ -29,15 +30,21 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             HttpRequest request = HttpRequestUtils.makeHttpRequest(in);
-            HttpResponse response = new HttpResponse();
 
-            Controller controller = ControllerMappingMap.getController(request.getMethod(), request.getUrl());
-            controller.process(request, response);
+            MethodHandler methodHandler = new MethodHandler();
+            Object result = methodHandler.process(request);
+            HttpResponse response;
 
+            if(result instanceof String) {
+                response = HttpResponseUtils.makeResponse(result);
+            } else {
+                response = (HttpResponse) result;
+            }
             DataOutputStream dos = new DataOutputStream(out);
             HttpResponseUtils.renderResponse(dos, response);
 
-        } catch (IOException e) {
+        } catch (IOException | NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             logger.error(e.getMessage());
         }
     }

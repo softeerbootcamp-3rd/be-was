@@ -25,6 +25,14 @@ public class HttpResponseUtils {
         return responseStatusLineMap.get(status);
     }
 
+    public static HttpResponse makeResponse(Object result) {
+        HttpResponse response = new HttpResponse();
+        Map<String, String> responseHeaders = new HashMap<>();
+        responseHeaders.put("location", result.toString());
+        response.setResponse(HttpResponseStatus.FOUND, null, responseHeaders);
+        return response;
+    }
+
     public static void renderResponse(DataOutputStream dos, HttpResponse response) {
         try {
             dos.writeBytes(response.getStatusLine() + " \r\n");
@@ -41,4 +49,5 @@ public class HttpResponseUtils {
             logger.error(e.getMessage());
         }
     }
+
 }

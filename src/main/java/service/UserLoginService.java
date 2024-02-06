@@ -3,7 +3,7 @@ package service;
 import db.Database;
 import model.User;
 
-public class MemberLoginService {
+public class UserLoginService {
 
     public User login(String userId, String password) {
 
