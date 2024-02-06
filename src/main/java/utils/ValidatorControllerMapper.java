@@ -1,10 +1,10 @@
 package utils;
 
+import controller.PostController;
 import controller.UserController;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 
-import java.util.Map;
 import java.util.function.Function;
 
 
@@ -15,20 +15,22 @@ import java.util.function.Function;
 public enum ValidatorControllerMapper {
     SIGNUP("POST /user/create", Validator::validateSignUpInfo, UserController::signup),
     LOGIN("POST /user/login", Validator::validateLoginInfo, UserController::login),
+    LOGOUT("GET /user/logout", null, UserController::logout),
+    UPLOAD("POST /post/create", Validator::validatePostInfo, PostController::upload),
     ;
 
     private String path;
-    private Function<Map<String, String>, Boolean> validator;
+    private Function<HttpRequest, Boolean> validator;
     private Function<HttpRequest, HttpResponse> controller;
 
-    ValidatorControllerMapper(String path, Function<Map<String, String>, Boolean> validator,
+    ValidatorControllerMapper(String path, Function<HttpRequest, Boolean> validator,
                               Function<HttpRequest, HttpResponse> controller) {
         this.path = path;
         this.validator = validator;
         this.controller = controller;
     }
 
-    public Function<Map<String, String>, Boolean> getValidator() {
+    public Function<HttpRequest, Boolean> getValidator() {
         return validator;
     }
 

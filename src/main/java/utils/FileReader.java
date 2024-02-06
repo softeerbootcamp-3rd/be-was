@@ -11,10 +11,14 @@ import java.io.IOException;
 
 public class FileReader {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String DATA = "src/main/resources";
     private static final String STATIC = "src/main/resources/static";
     private static final String TEMPLATE = "src/main/resources/templates";
 
     public static String getBasePath(String requestURL) {
+        if (requestURL.startsWith("/data/")) {
+            return DATA;
+        }
         if(requestURL.startsWith("/css/") || requestURL.startsWith("/fonts/") ||requestURL.startsWith("/images/") ||
                 requestURL.startsWith("/js/") || requestURL.contains(".ico"))
             return STATIC;

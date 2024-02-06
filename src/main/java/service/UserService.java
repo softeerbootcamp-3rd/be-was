@@ -20,7 +20,7 @@ public class UserService {
         }
 
         Database.addUser(user);
-        logger.info(Database.findAll().toString());
+        logger.info(Database.findAllUsers().toString());
     }
 
     private boolean validateDuplicated(String userId) {

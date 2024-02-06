@@ -19,7 +19,7 @@ public class UserController {
     private static final UserService userService = new UserService();
 
     public static HttpResponse signup(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+        Map<String, String> body = request.getParams();
         User user = new User(body.get("userId"), body.get("password"), body.get("name"), body.get("email"));
 
         try {
@@ -29,13 +29,14 @@ public class UserController {
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            // 회원가입에 실패할 경우 (중복 아이디) CONFLICT 반환
-            return HttpResponse.of(HttpStatus.CONFLICT);
+            // 회원가입에 실패할 경우 (중복 아이디) 회원가입 실패 페이지 반환
+            Map<String, String> header = Map.of("Location", "/user/signup_failed.html");
+            return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
     }
 
     public static HttpResponse login(HttpRequest request) {
-        Map<String, String> body = request.getBody();
+        Map<String, String> body = request.getParams();
         try {
             String sid = userService.join(body.get("userId"), body.get("password"));
             // 로그인에 성공할 경우 index.html로 리다이렉션 되며 쿠키 값에 sid값 추가
@@ -47,5 +48,11 @@ public class UserController {
             Map<String, String> header = Map.of("Location", "/user/login_failed.html");
             return HttpResponse.of(HttpStatus.REDIRECT, header);
         }
+    }
+
+    public static HttpResponse logout(HttpRequest request) {
+        // 세션 아이디 값을 생성하여 바로 파기되도록 Max-Age=0으로 함
+        Map<String, String> header = Map.of("Location", "/index.html", "Set-Cookie", "sid=1; Max-Age=0; HttpOnly; Path=/");
+        return HttpResponse.of(HttpStatus.REDIRECT, header);
     }
 }

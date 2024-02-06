@@ -1,5 +1,6 @@
 package utils;
 
+import http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,7 +8,8 @@ import java.util.Map;
 
 public class Validator {
     private static final Logger logger = LoggerFactory.getLogger(Validator.class);
-    public static Boolean validateSignUpInfo(Map<String, String> body) {
+    public static Boolean validateSignUpInfo(HttpRequest request) {
+        Map<String, String> body = request.getParams();
         // userId, password, name, email 값이 잘 들어왔는지 확인
         if (!body.containsKey("userId") || !body.containsKey("password")
                 || !body.containsKey("name") || !body.containsKey("email")) {
@@ -32,13 +34,27 @@ public class Validator {
         return true;
     }
 
-    public static Boolean validateLoginInfo(Map<String, String> body) {
+    public static Boolean validateLoginInfo(HttpRequest request) {
+        Map<String, String> body = request.getParams();
         // userId, password 값이 잘 들어왔는지 확인
         if (!body.containsKey("userId") || !body.containsKey("password")) {
             return false;
         }
 
         if (body.get("userId").isEmpty() || body.get("password").isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static Boolean validatePostInfo(HttpRequest request) {
+        Map<String, String> fields = request.getMultiPartForm().getFields();
+        if (!fields.containsKey("writer") || !fields.containsKey("title") || !fields.containsKey("contents")) {
+            return false;
+        }
+
+        if (fields.get("writer").isEmpty() || fields.get("title").isEmpty() || fields.get("contents").isEmpty()) {
             return false;
         }
 

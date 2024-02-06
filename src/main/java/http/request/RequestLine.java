@@ -31,4 +31,8 @@ public class RequestLine {
         String path = Parser.extractPath(uri);
         return this.method + " " + path;
     }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 }

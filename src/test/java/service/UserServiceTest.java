@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +33,7 @@ class UserServiceTest {
         assertEquals(user.getName(), findUser.getName());
         assertEquals(user.getEmail(), findUser.getEmail());
         assertEquals(user.getPassword(), findUser.getPassword());
-        assertEquals(1, Database.findAll().size());
+        assertEquals(1, Database.findAllUsers().size());
     }
 
     @Test
@@ -54,7 +52,7 @@ class UserServiceTest {
         }
 
         // then
-        Collection<User> users = Database.findAll();
+        Collection<User> users = Database.findAllUsers();
         assertEquals(1, users.size());
     }
 }
