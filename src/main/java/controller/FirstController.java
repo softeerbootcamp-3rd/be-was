@@ -1,15 +1,8 @@
 package controller;
 
-import db.Database;
-import httpmessage.HttpSession;
 import httpmessage.request.HttpRequest;
 import httpmessage.response.HttpResponse;
-import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,12 +12,15 @@ public class FirstController {
         initControllerMapping();
     }
 
-    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException, ClassNotFoundException {
         final String requestPath =  httpRequest.getPath();
+
         Controller controller = controllerMap.get(requestPath);
 
-        if(controller == null){
-            controller = new HomeController();
+        if(requestPath.startsWith("/qna/detail?id=")) controller = controllerMap.get("/qna/detail");
+
+        else if(controller == null){
+            controller = controllerMap.get("/");
         }
 
         controller.service(httpRequest,httpResponse);
@@ -34,13 +30,14 @@ public class FirstController {
         }
 
     }
-
     private void initControllerMapping() {
         controllerMap.put("/", new HomeController());
         controllerMap.put("/index.html", new HomeController());
         controllerMap.put("/user/create", new UserCreateController());
         controllerMap.put("/user/login", new UserLoginController());
         controllerMap.put("/user/list", new UserListController());
+        controllerMap.put("/qna/write", new WritingController());
+        controllerMap.put("/qna/detail", new WritingDetailController());
     }
 
 }

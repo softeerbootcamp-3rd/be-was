@@ -24,6 +24,10 @@ public class FilePathContent {
         return map;
     }
     public String getFilePath(String path) {
+        if(path.contains("?")) {
+            path = path.split("\\?")[0];
+        }
+
         String fileExtension = path.split("\\.")[path.split("\\.").length-1];
         return extensionToPathMap.getOrDefault(fileExtension, "404") + path;
     }
