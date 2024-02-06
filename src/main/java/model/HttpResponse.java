@@ -1,6 +1,7 @@
 package model;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import static model.HttpStatus.OK;
 public class HttpResponse {
     private final HttpStatus httpStatus;
     private final Map<String, String> header;
-    private final byte[] body;
+    private byte[] body;
 
     public HttpResponse(HttpStatus httpStatus, Map<String, String> header, byte[] body) {
         this.httpStatus = httpStatus;
@@ -29,6 +30,7 @@ public class HttpResponse {
         try {
             byte[] errorMessageBytes = errorMessage.getBytes("UTF-8");
             Map<String, String> header = new HashMap<>();
+
             header.put(CONTENT_TYPE, "text/plain;charset=utf-8" + CRLF);
             header.put(CONTENT_LENGTH, errorMessageBytes.length + CRLF);
 
@@ -51,6 +53,12 @@ public class HttpResponse {
 
             return new HttpResponse(OK, header, body);
         }
+    }
+    public void setBody(String target, String bodyInfo) throws UnsupportedEncodingException {
+        String currentBody = new String(this.body);
+        byte[] replaceBody = currentBody.replace(target, URLDecoder.decode(bodyInfo, "UTF-8")).getBytes();
+        header.put(CONTENT_LENGTH, replaceBody.length + CRLF);//새로운 바디의 content_length로 바꾸기
+        this.body = replaceBody;
     }
 
     public void addCookie(String cookieHeader) {

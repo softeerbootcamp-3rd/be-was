@@ -4,9 +4,13 @@ import dto.request.UserLoginDto;
 import dto.request.UserSignUpDto;
 import model.HttpRequest;
 import model.HttpResponse;
+import service.SessionManager;
 import service.UserService;
 
+import java.io.IOException;
+
 import static model.HttpStatus.BAD_REQUEST;
+import static model.HttpStatus.INTERNAL_SERVER_ERROR;
 import static service.SessionManager.createSession;
 import static service.SessionManager.existingSession;
 
@@ -38,5 +42,32 @@ public class UserController {
         }catch (IllegalArgumentException | NullPointerException e){
             return HttpResponse.redirect("/user/login_failed.html");
         }
+    }
+
+    public static HttpResponse userList(HttpRequest httpRequest) {
+        try{
+            if(httpRequest.getSessionId() == null){//로그인이 되지 않은 경우 -> 로그인 화면으로
+                return HttpResponse.redirect("/user/login.html");
+            }
+
+            String userList = UserService.userList();
+            HttpResponse httpResponse = HttpResponse.response200(httpRequest.getExtension(), httpRequest.getPath());
+            httpResponse.setBody("{{list}}",userList);
+
+            return httpResponse;
+        }catch (IOException e){
+            return HttpResponse.errorResponse(INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    public static HttpResponse logout(HttpRequest httpRequest) {
+        if(httpRequest.getSessionId() == null){
+            return HttpResponse.redirect("/user/login.html");
+        }
+
+        HttpResponse httpResponse = HttpResponse.redirect("/index.html");
+        SessionManager.expireSession(httpRequest.getSessionId(), httpResponse);
+
+        return httpResponse;
     }
 }

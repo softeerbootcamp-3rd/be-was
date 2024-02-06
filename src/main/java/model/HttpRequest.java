@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static constant.HttpRequestConstant.*;
@@ -24,7 +23,7 @@ public class HttpRequest {
     }
 
     public static HttpRequest from(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line = br.readLine();
         String[] startLine = line.split(PATH_DELIMITER);
 
