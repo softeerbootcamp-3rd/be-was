@@ -3,6 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import controller.BoardController;
+import controller.HomeController;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +40,12 @@ public class RequestHandler implements Runnable {
         if (path.startsWith("/user")) {
             responseEntity = new UserController(httpRequest).run();
         }
+        if (path.startsWith("/board")) {
+            responseEntity = new BoardController(httpRequest).run();
+        }
 
         if (responseEntity == null)
-            responseEntity = ResourceUtils.getStaticResource(httpRequest);
+            responseEntity = new HomeController(httpRequest).run();
 
         HttpResponse.send(dos, responseEntity);
     }

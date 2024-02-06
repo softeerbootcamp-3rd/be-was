@@ -5,12 +5,8 @@ import java.util.*;
 public abstract class MimeTypeUtils {
     public static final MimeType ALL;
     public static final String ALL_VALUE = "*/*";
-    public static final MimeType APPLICATION_GRAPHQL;
-    public static final String APPLICATION_GRAPHQL_VALUE = "application/graphql+json";
     public static final MimeType APPLICATION_JSON;
     public static final String APPLICATION_JSON_VALUE = "application/json";
-    public static final MimeType APPLICATION_OCTET_STREAM;
-    public static final String APPLICATION_OCTET_STREAM_VALUE = "application/octet-stream";
     public static final MimeType APPLICATION_XML;
     public static final String APPLICATION_XML_VALUE = "application/xml";
     public static final MimeType IMAGE_GIF;
@@ -33,9 +29,7 @@ public abstract class MimeTypeUtils {
     static {
         // Not using "parseMimeType" to avoid static init cost
         ALL = new MimeType(MimeType.WILDCARD_TYPE, MimeType.WILDCARD_TYPE);
-        APPLICATION_GRAPHQL = new MimeType("application", "graphql+json");
         APPLICATION_JSON = new MimeType("application", "json");
-        APPLICATION_OCTET_STREAM = new MimeType("application", "octet-stream");
         APPLICATION_XML = new MimeType("application", "xml");
         IMAGE_GIF = new MimeType("image", "gif");
         IMAGE_JPEG = new MimeType("image", "jpeg");

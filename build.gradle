@@ -15,7 +15,6 @@ dependencies {
 
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.google.guava:guava:29.0-jre'
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.github.jknack:handlebars:4.2.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
