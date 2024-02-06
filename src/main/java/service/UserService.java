@@ -8,7 +8,9 @@ import request.user.LoginRequest;
 import java.util.List;
 import java.util.UUID;
 
-import static db.Database.*;
+import static db.Database.addUser;
+import static db.Database.findUserById;
+
 
 public class UserService {
     private volatile static UserService instance;
@@ -24,7 +26,7 @@ public class UserService {
     }
 
     public List<User> findAll() {
-        return Database.findAll();
+        return Database.findAllUsers();
     }
 
     // 회원가입 요청을 처리하는 메소드

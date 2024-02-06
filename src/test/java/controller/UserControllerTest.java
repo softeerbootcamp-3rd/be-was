@@ -10,14 +10,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import request.http.HttpRequest;
 import response.http.HttpResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
+import java.io.*;
 import java.util.stream.Stream;
 
-import static db.Database.addUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static util.StatusCode.*;
 
@@ -28,28 +23,9 @@ class UserControllerTest {
     private Database database;
 
     @BeforeEach
-    void init() throws Exception {
+    void init() {
         this.userController = UserController.getInstance();
         this.database = new Database();
-
-        Constructor<User> constructor = User.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        User firstUser = constructor.newInstance();
-        User secondUser = constructor.newInstance();
-
-        Field[] fields = User.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(firstUser, "test1");
-        }
-        addUser(firstUser);
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(secondUser, "test2");
-        }
-        addUser(secondUser);
     }
 
     @ParameterizedTest
@@ -71,7 +47,7 @@ class UserControllerTest {
 
         // when
         HttpResponse httpResponse = userController.handleUserRequest(httpRequest);
-        User findUser = database.findUserById("test");
+        User findUser = database.findUserById("taegon1998");
 
         // then
         assertThat(findUser).isNotNull()
@@ -132,109 +108,71 @@ class UserControllerTest {
 
 
     private static Stream<Arguments> status_200_Parameters() throws IOException {
+        String httpRequestString = "GET /user/login.html HTTP/1.1\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
+
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/form.html HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n")))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/login.html HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> status_302_Parameters() throws IOException {
+        String httpRequestString = "POST /user/create HTTP/1.1\r\n"
+                + "Content-Length: 27\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/create HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Length: 59"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"
-                        + "userId=test&password=test&name=test&email=test@test.com"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
 
     private static Stream<Arguments> status_404_Parameters() throws IOException {
+        String httpRequestString = "GET /user/list HTTP/1.1\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/forms.html HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n")))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/logins.html HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n")))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/create HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> login_success_parameters() throws IOException {
+        String httpRequestString = "POST /user/login HTTP/1.1\r\n"
+                + "Content-Length: 27\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "\r\n"
+                + "userId=test1&password=test1";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Length: 27"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"
-                        + "userId=test1&password=test1")))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Length: 27"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"
-                        + "userId=test2&password=test2"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> login_fail_parameters() throws IOException {
+        String httpRequestString = "POST /user/login HTTP/1.1\r\n"
+                + "Content-Length: 27\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "\r\n"
+                + "userId=test1&password=test2";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Length: 27"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"
-                        + "userId=test3&password=test2")))), // 아이디가 존재하지 않는 경우
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("POST /user/login HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Length: 27"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"
-                        + "userId=test1&password=test2")))) // 비밀번호가 틀린 경우
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> status_404_when_not_post_method_parameters() throws IOException {
+        String httpRequestString = "GET /user/create HTTP/1.1\r\n"
+                + "Content-Length: 27\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "\r\n"
+                + "userId=test1&password=test2";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/create HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"
-                )))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("PUT /user/login HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 }

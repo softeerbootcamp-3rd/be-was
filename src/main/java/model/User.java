@@ -3,6 +3,7 @@ package model;
 import annotation.Column;
 
 public class User {
+    private Integer id;
     @Column
     private String userId;
     @Column
@@ -12,7 +13,15 @@ public class User {
     @Column
     private String email;
 
-    private User() {
+    public User() {
+    }
+
+    public User(Integer id, String userId, String password, String name, String email) {
+        this.id = id;
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
     public String getUserId() {

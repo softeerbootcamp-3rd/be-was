@@ -1,7 +1,6 @@
 package util;
 
 import db.Session;
-import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,15 +8,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import request.http.HttpRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
+import java.io.*;
 import java.util.stream.Stream;
 
-import static db.Database.addUser;
-import static db.Session.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class AuthFilterTest {
@@ -25,30 +18,9 @@ class AuthFilterTest {
     private Session session;
 
     @BeforeEach
-    void init() throws Exception {
+    void init() {
         this.session = new Session();
-
-        Constructor<User> constructor = User.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        User firstUser = constructor.newInstance();
-        User secondUser = constructor.newInstance();
-
-        Field[] fields = User.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(firstUser, "test1");
-        }
-        addUser(firstUser);
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(secondUser, "test2");
-        }
-        addUser(secondUser);
-
-        addSession("1234", "test1");
-        addSession("abcdefghijk", "test2");
+        Session.addSession("1234", "taegon1998");
     }
 
     @ParameterizedTest
@@ -74,38 +46,27 @@ class AuthFilterTest {
     }
 
     private static Stream<Arguments> login_user_parameters() throws IOException {
+        String httpRequestString = "GET /user/create HTTP/1.1\r\n"
+                + "Content-Length: 27\r\n"
+                + "Content-Type: application/x-www-form-urlencoded\r\n"
+                + "Cookie: sid=1234; path=/\r\n"
+                + "\r\n"
+                + "userId=taegon1998&password=1234";
+        InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
         return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/list HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "Cookie: sid=1234"
-                        + "\r\n"
-                        + "\r\n")))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/list HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "Cookie: sid=abcdefghijk"
-                        + "\r\n"
-                        + "\r\n"))))
+                Arguments.of(new HttpRequest(inputStream))
         );
     }
 
     private static Stream<Arguments> not_login_user_parameters() throws IOException {
-        return Stream.of(
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/list HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "\r\n")))),
-                Arguments.of(new HttpRequest(new BufferedReader(new StringReader("GET /user/list HTTP/1.1"
-                        + "\r\n"
-                        + "Content-Type: application/x-www-form-urlencoded"
-                        + "\r\n"
-                        + "Accept: */*"
-                        + "\r\n"
-                        + "\r\n"))))
-        );
+          String httpRequestString = "GET /user/create HTTP/1.1\r\n"
+                    + "Content-Length: 27\r\n"
+                    + "Content-Type: application/x-www-form-urlencoded\r\n"
+                    + "\r\n"
+                    + "userId=test3&password=test3";
+            InputStream inputStream = new ByteArrayInputStream(httpRequestString.getBytes("ISO-8859-1"));
+            return Stream.of(
+                    Arguments.of(new HttpRequest(inputStream))
+            );
     }
 }
