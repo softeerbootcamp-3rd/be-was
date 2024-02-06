@@ -2,6 +2,8 @@ package service;
 
 import db.Database;
 import model.User;
+
+import java.util.List;
 import java.util.UUID;
 
 public class UserService {
@@ -29,5 +31,8 @@ public class UserService {
 
     public User getUserById(String userId) {
         return Database.findUserById(userId);
+    }
+    public List<User> getAllUsers() {
+        return Database.getAllUsers(); // Database 클래스에서 모든 사용자 정보를 가져오는 메서드
     }
 }

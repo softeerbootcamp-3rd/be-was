@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 
 public class ControllerMethodMapper {
     private final Map<RequestMappingInfo, Method> mappings = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(ControllerMethodMapper.class);
 
     public void scan(Object controller) {
         Class<?> clazz = controller.getClass();
@@ -26,7 +25,6 @@ public class ControllerMethodMapper {
                         .filter(annotationClass -> method.isAnnotationPresent(annotationClass))
                         .map(annotationClass -> createMappingInfo(method, annotationClass)))
                 .forEach(mappingInfo -> {
-                    logger.debug("Mapping method: {} to path: {} and method: {}", mappingInfo.getMethod(), mappingInfo.getRequestMappingInfo().getPath(), mappingInfo.getRequestMappingInfo().getHttpMethod());
                     mappings.put(mappingInfo.getRequestMappingInfo(), mappingInfo.getMethod());
                 });
     }
@@ -53,7 +51,6 @@ public class ControllerMethodMapper {
 
     public Method getMappedMethod(RequestMappingInfo requestMappingInfo) {
         Method method = mappings.get(requestMappingInfo);
-        logger.debug("Retrieved mapped method: {} for path: {} and method: {}", method, requestMappingInfo.getPath(), requestMappingInfo.getHttpMethod());
         return method;
     }
 }

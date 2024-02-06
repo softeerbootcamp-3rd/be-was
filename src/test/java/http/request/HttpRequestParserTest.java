@@ -1,5 +1,6 @@
 package http.request;
 
+import http.request.parser.HttpRequestParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -24,8 +24,6 @@ public class WebServer {
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
         try (ServerSocket listenSocket = new ServerSocket(port)) {
-            logger.info("Web Application Server started {} port.", port);
-
             while (true) {
                 Socket connection = listenSocket.accept();
                 executorService.execute(new RequestHandler(connection));

@@ -19,6 +19,9 @@ public class HttpResponse {
     }
 
     //getter
+    public byte[] getBody() {
+        return body;
+    }
     public int getStatusCode() {
         return statusCode;
     }

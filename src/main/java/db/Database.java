@@ -1,14 +1,13 @@
 //test
 package db;
 
-
-import com.google.common.collect.Maps;
 import model.User;
-import java.util.Collection;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Database {
-    private static Map<String, User> users = Maps.newHashMap();
+    private static ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
@@ -18,7 +17,7 @@ public class Database {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
-        return users.values();
+    public static List<User> getAllUsers() {
+        return new ArrayList<>(users.values());
     }
 }

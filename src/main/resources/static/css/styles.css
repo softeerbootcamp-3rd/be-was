@@ -201,3 +201,8 @@ h3,h4,h5 {
     padding-right: 2.5em;
 }
 
+.welcome-message {
+    line-height: 50px;
+    vertical-align: middle;
+    display: inline-block;
+}
