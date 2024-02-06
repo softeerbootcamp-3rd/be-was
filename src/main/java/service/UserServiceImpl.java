@@ -4,13 +4,12 @@ import db.Database;
 import dto.UserLoginDto;
 import dto.UserSignUpDto;
 import exception.BadRequestException;
-import exception.InvalidLogin;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import session.Session;
 
-import javax.xml.crypto.Data;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,16 +47,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UUID login(UserLoginDto userLoginDto) {
+    public Optional<UUID> login(UserLoginDto userLoginDto) {
+        validateUserLoginDto(userLoginDto);
+
+        Optional<User> userOptional = Database.findUserById(userLoginDto.getId());
+
+        if (userOptional.isPresent() && isUserValid(userOptional.get(), userLoginDto)) {
+            return Optional.of(Session.login(userOptional.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void logout(UUID sessionId) {
+        Session.logout(sessionId);
+    }
+
+    private void validateUserLoginDto(UserLoginDto userLoginDto) {
         validateNotBlank(userLoginDto.getId(), ID_EMPTY_MESSAGE);
         validateNotBlank(userLoginDto.getPassword(), PASSWORD_EMPTY_MESSAGE);
-        Optional<User> userOptional = Database.findUserById(userLoginDto.getId());
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            return Session.login(user);
-        } else {
-            throw new InvalidLogin("Invalid ID and password. Please double check if it's correct.");
-        }
+    }
+
+    private boolean isUserValid(User user, UserLoginDto userLoginDto) {
+        return Objects.equals(user.getPassword(), userLoginDto.getPassword());
     }
 
     private void validateUserSignUpDto(UserSignUpDto userSignUpDto) {
@@ -70,6 +83,7 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException(INVALID_EMAIL_FORMAT_MESSAGE);
         }
     }
+
     private void validateNotBlank(String value, String errorMessage) {
         if (value == null || value.trim().isEmpty()) {
             throw new BadRequestException(errorMessage);

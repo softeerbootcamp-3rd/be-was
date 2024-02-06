@@ -1,35 +1,31 @@
 package webApplicationServer.controller;
 
-import controller.UserController;
 import controller.UserControllerImpl;
-import dto.HttpResponseDto;
-import dto.UserSignUpDto;
 import exception.BadRequestException;
 import model.http.Status;
-import model.http.request.HttpRequest;
-import model.http.request.StartLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import service.UserService;
+import util.FileDetector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserControllerImplTest {
-    private UserController userController;
+    private UserControllerImpl userController;
     private FakeUserService userServiceMock;
+    private FileDetector fileDetector;
     @BeforeEach
     public void setUP(){
         userServiceMock = new FakeUserService();
-        userController = new UserControllerImpl(userServiceMock);
+        userController = new UserControllerImpl(userServiceMock, fileDetector);
     }
 
     @Test
     @DisplayName("UserController 가 Singleton으로 동일한 클래스를 반환한다.")
     void testUserControllerSingleton() {
-        UserController userController1 = UserControllerImpl.getInstance();
-        UserController userController2 = UserControllerImpl.getInstance();
+        UserControllerImpl userController1 = UserControllerImpl.getInstance();
+        UserControllerImpl userController2 = UserControllerImpl.getInstance();
         assertThat(userController1).isSameAs(userController2);
     }
 
@@ -43,7 +39,7 @@ class UserControllerImplTest {
         FakeHttpRequest httpRequestMock = new FakeHttpRequest(fakePathUrl, fakeBody);
         FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
         //when
-        userController.doGet(httpRequestMock, httpResponseDtoMock);
+        userController.handleUserCreateRequest(httpRequestMock, httpResponseDtoMock);
 
         //then
         assertThat(userServiceMock.wasMethodCalled("signUp")).isTrue();
@@ -63,6 +59,6 @@ class UserControllerImplTest {
         FakeHttpResponseDto httpResponseDtoMock = new FakeHttpResponseDto();
 
         //when & then
-        assertThrows(BadRequestException.class, () -> userController.doGet(httpRequestMock, httpResponseDtoMock), "Please fill in all the necessary factors");
+        assertThrows(BadRequestException.class, () -> userController.handleUserCreateRequest(httpRequestMock, httpResponseDtoMock), "Please fill in all the necessary factors");
     }
 }

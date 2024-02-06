@@ -1,20 +1,19 @@
 package config;
 
-import controller.UserController;
+import filter.AuthFilter;
+import filter.Filter;
 import controller.UserControllerImpl;
 import factory.HttpRequestFactory;
 import factory.HttpRequestFactoryImpl;
 import factory.HttpResponseFactory;
 import factory.HttpResponseFactoryImpl;
-import handler.DynamicResponseHandler;
-import handler.DynamicResponseHandlerImpl;
-import handler.StaticResponseHandler;
-import handler.StaticResponseHandlerImpl;
+import handler.*;
 import service.HttpResponseSendService;
 import service.HttpResponseSendServiceImpl;
 import service.UserService;
 import service.UserServiceImpl;
 import util.FileDetector;
+import util.UrlControllerMapper;
 
 public class AppConfig {
     public static HttpResponseSendService httpResponseSendService() {
@@ -33,7 +32,7 @@ public class AppConfig {
         return StaticResponseHandlerImpl.getInstance();
     }
 
-    public static UserController userController() {
+    public static UserControllerImpl userController() {
         return UserControllerImpl.getInstance();
     }
 
@@ -47,5 +46,13 @@ public class AppConfig {
 
     public static FileDetector fileDetector() {
         return FileDetector.getInstance();
+    }
+
+    public static Filter filter(){
+        return AuthFilter.getInstance();
+    }
+
+    public static UrlControllerMapper urlControllerMapper(){
+        return UrlControllerMapper.getInstance();
     }
 }

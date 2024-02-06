@@ -1,7 +1,5 @@
 package service;
 
-import factory.HttpResponseFactory;
-import handler.DynamicResponseHandler;
 import model.http.Status;
 import model.http.response.HttpResponse;
 import org.slf4j.Logger;

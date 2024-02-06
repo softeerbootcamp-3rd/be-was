@@ -1,46 +1,78 @@
 package handler;
 
-import config.AppConfig;
-import controller.UserController;
+import annotation.GetMapping;
+import annotation.PostMapping;
 import dto.HttpResponseDto;
 import exception.BadRequestException;
-import exception.InternalServerError;
-import exception.InvalidLogin;
+import exception.InternalServerException;
 import model.http.ContentType;
+import model.http.HttpMethod;
 import model.http.Status;
 import model.http.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.UrlControllerMapper;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static config.AppConfig.*;
 
 public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
     private static class DynamicResponseHandlerHolder {
-        private static final DynamicResponseHandler INSTANCE = new DynamicResponseHandlerImpl();
+        private static final DynamicResponseHandler INSTANCE = new DynamicResponseHandlerImpl(urlControllerMapper());
     }
+
     private static final Logger logger = LoggerFactory.getLogger(DynamicResponseHandler.class);
-    public static DynamicResponseHandler getInstance(){
+
+    public static DynamicResponseHandler getInstance() {
         return DynamicResponseHandlerHolder.INSTANCE;
     }
+    private final UrlControllerMapper urlControllerMapper;
+
+    public DynamicResponseHandlerImpl(UrlControllerMapper urlControllerMapper) {
+        this.urlControllerMapper = urlControllerMapper;
+    }
+    public void handleRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+        String url = httpRequest.getStartLine().getPathUrl();
+        Method method = urlControllerMapper.getMethod(url);
+        try {
+            if (method != null) {
+                Object controller = urlControllerMapper.getController(method.getDeclaringClass().getName());
+                logger.debug(method.getName() + "호출");
+                if (method.isAnnotationPresent(GetMapping.class) && httpRequest.getStartLine().getMethod() == HttpMethod.GET) {
+                    method.invoke(controller, httpRequest, httpResponseDto);
+                } else if (method.isAnnotationPresent(PostMapping.class) && httpRequest.getStartLine().getMethod() == HttpMethod.POST) {
+                    method.invoke(controller, httpRequest, httpResponseDto);
+                } else {
+                    logger.error("처리할 수 없는 요청이 들어옴");
+                    throw new BadRequestException("해당하는 요청을 처리할 수 없습니다.");
+                }
+            }
+        } catch (InvocationTargetException e) {
+            throw new BadRequestException(e.getCause().getMessage(), e);
+        } catch (IllegalAccessException e) {
+            throw new InternalServerException("서버에서 에러가 발생하였습니다.", e);
+        }
+
+    }
+
     @Override
     public void handle(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
         try {
-            UserController userController = userController();
-            userController.doGet(httpRequest, httpResponseDto);
-        }catch (InvalidLogin e){
-            handleInvalidLoginException(e, httpResponseDto);
+            handleRequest(httpRequest, httpResponseDto);
         } catch (BadRequestException e) {
             handleBadRequestException(e, httpResponseDto);
-        } catch (InternalServerError e){
+        } catch (InternalServerException e) {
             handleInternalServerError(e, httpResponseDto);
         }
     }
 
-    private void handleInvalidLoginException(InvalidLogin e, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setStatus(Status.OK);
+    private void handleInternalServerError(InternalServerException e, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
         httpResponseDto.setContentType(ContentType.PLAIN);
         httpResponseDto.setContent(e.getMessage().getBytes());
-        logger.error("Invalid 로그인 발생", e.getMessage());
+        logger.error("Internal Server Error 발생", e.getMessage());
         e.getStackTrace();
     }
 
@@ -49,12 +81,6 @@ public class DynamicResponseHandlerImpl implements DynamicResponseHandler {
         httpResponseDto.setContentType(ContentType.PLAIN);
         httpResponseDto.setContent(e.getMessage().getBytes());
         logger.error("Bad_Request 발생", e.getMessage());
-        e.getStackTrace();
-    }
-
-    private void handleInternalServerError(InternalServerError e, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setStatus(Status.INTERNAL_SERVER_ERROR);
-        logger.error("InternalServerError 발생", e.getMessage());
         e.getStackTrace();
     }
 }

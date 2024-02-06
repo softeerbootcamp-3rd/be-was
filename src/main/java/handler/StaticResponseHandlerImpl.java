@@ -36,17 +36,15 @@ public class StaticResponseHandlerImpl implements StaticResponseHandler {
             handleNotFound(httpResponseDto, e);
         }
     }
-
+    private void handleStaticFileRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
+        httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
+        httpResponseDto.setStatus(Status.OK);
+        httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept(), httpRequest.getStartLine().getPathUrl()));
+    }
     private static void handleNotFound(HttpResponseDto httpResponseDto, NotFound e) {
         logger.error("파일을 찾을 수 없습니다." + e.getMessage());
         httpResponseDto.setStatus(Status.REDIRECT);
         httpResponseDto.addHeader("Location","/error/not_found.html");
         httpResponseDto.setContentType(ContentType.HTML);
-    }
-
-    private void handleStaticFileRequest(HttpRequest httpRequest, HttpResponseDto httpResponseDto) {
-        httpResponseDto.setContent(fileDetector.getFile(httpRequest.getStartLine().getPathUrl()));
-        httpResponseDto.setStatus(Status.OK);
-        httpResponseDto.setContentType(fileDetector.getContentType(httpRequest.getHeaders().getAccept(), httpRequest.getStartLine().getPathUrl()));
     }
 }

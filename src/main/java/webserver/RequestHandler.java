@@ -3,6 +3,7 @@ package webserver;
 import dto.HttpResponseDto;
 import factory.HttpRequestFactory;
 import factory.HttpResponseFactory;
+import filter.Filter;
 import handler.DynamicResponseHandler;
 import handler.StaticResponseHandler;
 import model.http.request.HttpRequest;
@@ -19,21 +20,18 @@ import static config.AppConfig.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final List<String> dynamicElements = List.of("/user/create", "/user/login");
     private final Socket connection;
     private final HttpResponseFactory httpResponseFactory;
     private final HttpResponseSendService httpResponseSendService;
     private final HttpRequestFactory httpRequestFactory;
-    private final StaticResponseHandler staticResponseHandler;
-    private final DynamicResponseHandler dynamicResponseHandler;
+    private final Filter filter;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpResponseFactory = httpResponseFactory();
         this.httpResponseSendService = httpResponseSendService();
         this.httpRequestFactory = httpRequestFactory();
-        this.staticResponseHandler = staticResponseHandler();
-        this.dynamicResponseHandler = dynamicResponseHandler();
+        this.filter = filter();
     }
 
     public void run() {
@@ -48,14 +46,7 @@ public class RequestHandler implements Runnable {
 
             logger.debug(httpRequest.toString());
 
-            boolean isDynamic = dynamicElements.stream().anyMatch(httpRequest.getStartLine().getPathUrl()::equals);
-            if (isDynamic) {
-                logger.debug("동적인 response 전달");
-                dynamicResponseHandler.handle(httpRequest, httpResponseDto);
-            } else {
-                logger.debug("정적인 response 전달");
-                staticResponseHandler.handle(httpRequest, httpResponseDto);
-            }
+            filter.doFilter(httpRequest, httpResponseDto);
 
             HttpResponse httpResponse = httpResponseFactory.create(httpResponseDto);
             httpResponseSendService.sendHttpResponse(out, httpResponse);
