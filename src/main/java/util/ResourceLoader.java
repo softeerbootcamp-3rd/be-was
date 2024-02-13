@@ -1,12 +1,16 @@
 package util;
 
 import controller.ResourceMapping;
+import data.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.UUID;
 
 import static util.RequestParserUtil.getFileExtension;
 
@@ -14,35 +18,17 @@ public class ResourceLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
 
-    public static final String url = "/Users/admin/Softeer/be-was/src/main/resources";
+    public static final String RESOURCE_URL = "/Users/admin/Softeer/be-was/src/main/resources";
 
-    public static byte[] loadResource(String resourcePath) throws IOException {
-        logger.debug("resourcePath: " + resourcePath);
+    private ResourceLoader() {}
+
+    public static byte[] loadResource(String resourcePath, RequestData requestData) throws IOException {
+        logger.debug("resourcePath: {}", resourcePath);
 
         String extension = getFileExtension(resourcePath);
         String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
 
-        File file = new File(url + directory + resourcePath);
-
-        // 파일을 한번에 읽는 코드
-//        try (InputStream inputStream = new FileInputStream(file);
-//             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream)) {
-//
-//            byte[] buffer = new byte[(int) file.length()];
-//            bufferedInputStream.read(buffer);
-//            return buffer;
-//        }
-
-        // 라인 단위로 읽는 코드
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            StringBuilder content = new StringBuilder();
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                content.append(line).append(System.lineSeparator());
-//            }
-//            content.append("\r\n");
-//            return content.toString().getBytes();
-//        }
+        File file = new File(RESOURCE_URL + directory + resourcePath);
 
         // 바이트 단위로 읽는 코드
         try (InputStream inputStream = new FileInputStream(file)) {
@@ -55,24 +41,45 @@ public class ResourceLoader {
                 bytesRead = inputStream.read(buffer);
             }
 
+            if (extension.equals("html")) {
+                String modifiedContent = DynamicHtml.modifyHtml(new String(buffer), requestData.isLoggedIn(), requestData);
+                return modifiedContent.getBytes();
+            }
+
             return buffer;
         }
     }
 
-    public static String getResourceType(String targetUrl) {
-        String fileOrApi;
+    public static String handleFileUpload(Map<String, String> formData, byte[] file) throws IOException {
+        // 저장할 디렉토리 경로 설정 (원하는 경로로 변경)
+        String uploadDirectory = ResourceMapping.ResourceConstants.UPLOADS_URL;
 
-        try {
-            URI uri = new URI(targetUrl);
-            targetUrl = uri.getPath();
+        // 파일 필드의 이름을 얻음
+        String fileName = formData.get("fileName");
 
-            if (!getFileExtension(targetUrl).isEmpty()) fileOrApi = "FILE";
-            else fileOrApi = "API";
-        } catch (URISyntaxException e) {
-            fileOrApi = "UNKNOWN";
+        // 파일 내용을 얻음
+        byte[] fileContent = file;
+
+        // 파일 아이디 생성 (UUID 사용)
+        String fileId = UUID.randomUUID().toString();
+
+        // 파일 확장자 추출 (확장자가 없을 경우 고려 필요)
+        String fileExtension = getFileExtension(fileName);
+
+        // 파일을 디스크에 저장
+        saveFile(uploadDirectory, fileId, fileExtension, fileContent);
+
+        return fileId;
+    }
+
+    private static void saveFile(String directory, String fileId, String fileExtension, byte[] fileContent) throws IOException {
+        String filePath = ResourceLoader.RESOURCE_URL + directory + "/" + fileId + "." + fileExtension;
+
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(fileContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 파일 저장 실패에 대한 처리
         }
-
-
-        return fileOrApi;
     }
 }

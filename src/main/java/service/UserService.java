@@ -5,15 +5,10 @@ import data.RequestData;
 import db.Database;
 import db.Session;
 import model.User;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.RequestParserUtil;
-import webserver.RequestHandler;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {
@@ -62,10 +57,10 @@ public class UserService {
 
     }
 
-    public static boolean isLoggedIn(RequestData requestData) {
+    public static boolean isLoggedIn(String cookie) {
         logger.debug("isLoggedIn()");
 
-        String[] sid = requestData.getHeaderValue("Cookie").split("=");
+        String[] sid = cookie.split("=");
 
         logger.debug("Cookie");
         logger.debug("\t" + sid[0] + " : " + sid[1]);
@@ -99,6 +94,7 @@ public class UserService {
                 String sid = tokens[1];
 
                 Session.removeSession(sid);
+                requestData.setLoggedOut();
                 logger.debug("[Database]");
                 for (User user: Database.findAll()) {
                     logger.debug(user.toString());

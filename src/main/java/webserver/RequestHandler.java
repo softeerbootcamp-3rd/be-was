@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
 
 import controller.RequestDataController;
 import data.RequestData;
@@ -13,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import util.RequestParserUtil;
 import util.ResponseBuilder;
-
-import javax.xml.crypto.Data;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -33,22 +30,19 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             // HTTP 요청을 파싱한다.
-            RequestData requestData = RequestParserUtil.parseRequest(br);
+            RequestData requestData = RequestParserUtil.parseRequest(in);
 
             // 파싱한 요청의 세부 내용 출력
-            logger.debug(requestData.toString());
-            System.out.println();
-
-//            if (url.equals("/")) {
-//                url = "/index.html";
-//            }
+            logger.debug("RequestData: {}", requestData);
 
             Response response = RequestDataController.routeRequest(requestData);
 
-            DataOutputStream dos = ResponseBuilder.buildResponse(out, response);
+            logger.debug("Response: {}", response);
+
+            DataOutputStream dos = ResponseBuilder.buildResponse(out, response, requestData);
 
             dos.flush();
 

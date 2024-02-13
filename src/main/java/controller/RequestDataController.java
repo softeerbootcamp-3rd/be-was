@@ -2,10 +2,12 @@ package controller;
 
 import data.CookieData;
 import data.RequestData;
+import db.Database;
+import model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
-import util.RequestParserUtil;
+import util.MethodMapper;
 import util.ResourceLoader;
 import data.Response;
 
@@ -20,34 +22,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static util.RequestParserUtil.getFileExtension;
-import static util.ResourceLoader.getResourceType;
 
 public class RequestDataController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestDataController.class);
 
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Route {
-        String value();
-    }
+    // 중복된 문자열 리터럴을 상수로 대체
+    private static final String INDEX_HTML = "/index.html";
+    private static final String ERROR_NOT_FOUND_HTML = "/error/notfound.html";
+    private static final String ERROR_BAD_REQUEST_HTML = "/error/badrequest.html";
+    private static final String USER_LOGIN_HTML = "/user/login.html";
+    private static final String USER_LOGIN_FAILED_HTML = "/user/login_failed.html";
 
-    private static Map<String, Method> routeMap = new HashMap<>();
-
-    static {
-        // 라우팅 메서드 등록
-        registerRoutes();
-    }
-
-    private static void registerRoutes() {
-        Method[] methods = RequestDataController.class.getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(Route.class)) {
-                Route route = method.getAnnotation(Route.class);
-                routeMap.put(route.value(), method);
-            }
-        }
-    }
+    private RequestDataController() {}
 
     public static Response routeRequest(RequestData requestData) {
         String url = requestData.getRequestContent();
@@ -55,76 +42,141 @@ public class RequestDataController {
         String extension = getFileExtension(url);
 
         try {
-            if (routeMap.containsKey(url)) {
-                Method method = routeMap.get(url);
+            Method method = findMethod(requestData.getMethod(), url);
+
+            // 매핑된 메서드가 있으면 호출
+            if (method != null) {
                 return (Response) method.invoke(null, requestData);
-            } else {
-                return handleFileRequest(url, extension, requestData);
             }
+
+            // 매핑된 메서드가 없으면 파일 요청
+            return handleFileRequest(url, extension);
         } catch (IllegalAccessException | InvocationTargetException e) {
             logger.error("Error invoking method: {}", e.getMessage());
-            return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
+            return new Response(HttpStatusCode.NOT_FOUND, ERROR_NOT_FOUND_HTML);
         }
     }
 
-    private static Response handleFileRequest(String url, String extension, RequestData requestData) {
+    private static Method findMethod(HttpMethod httpMethod, String url) {
+        Map<String, Method> routeMap = (httpMethod == HttpMethod.GET) ? MethodMapper.getRouteMap : MethodMapper.postRouteMap;
+        return routeMap.get(url);
+    }
+
+    private static Response handleFileRequest(String url, String extension) {
         try {
-            if (extension.isEmpty()) {
-                throw new UnsupportedOperationException("유효하지 않은 API 접근입니다.");
-            }
+            validateExtension(extension);
 
             String directory = ResourceMapping.valueOf(extension.toUpperCase()).getDirectory();
-            File file = new File(ResourceLoader.url + directory + url);
-            if (file.exists() && !file.isDirectory()) {
-                if (url.equals("/user/login.html")) {
-                    if (requestData.getHeaderValue("Cookie") != null) {
-                        if (UserService.isLoggedIn(requestData)) {
-                            return new Response(HttpStatusCode.FOUND, "/index.html");
-                        }
-                    }
-                }
+            File file = new File(ResourceLoader.RESOURCE_URL + directory + url);
+
+            if (isValidFile(file)) {
                 return new Response(HttpStatusCode.OK, url);
             } else {
                 logger.debug("유효하지 않은 파일 경로입니다.");
-                return new Response(HttpStatusCode.NOT_FOUND, "/error/notfound.html");
+                return new Response(HttpStatusCode.NOT_FOUND, ERROR_NOT_FOUND_HTML);
             }
         } catch (IllegalArgumentException e) {
-            logger.debug("유효하지 않은 확장자로 접근!");
-            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
-        } catch (UnsupportedOperationException e) {
-            logger.error("유효하지 않은 API로 접근!");
-            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+            logger.debug("유효하지 않은 접근: {}", e.getMessage());
+            return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
         }
     }
 
-    @Route("/")
-    public static Response handleApiRedirectToHome(RequestData requestData) {
-        return new Response(HttpStatusCode.FOUND, "/index.html");
+    // 확장자 유효성 검사
+    private static void validateExtension(String extension) {
+        if (extension.isEmpty()) {
+            throw new IllegalArgumentException("유효하지 않은 API 접근입니다.");
+        }
     }
 
-    @Route("/user/create")
+    // 파일의 유효성 검사
+    private static boolean isValidFile(File file) {
+        return file.exists() && !file.isDirectory();
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/")
+    public static Response handleApiRedirectToHome(RequestData requestData) {
+        return new Response(HttpStatusCode.FOUND, INDEX_HTML);
+    }
+
+    @Route(method = HttpMethod.POST, uri = "/user/create")
     public static Response handleApiSignup(RequestData requestData) {
         try {
             UserService.registerUser(requestData);
-            return new Response(HttpStatusCode.FOUND, "/index.html");
+            return new Response(HttpStatusCode.FOUND, INDEX_HTML);
         } catch (IllegalArgumentException e) {
             logger.debug("회원가입을 위한 파라미터의 수가 부족합니다.");
-            return new Response(HttpStatusCode.BAD_REQUEST, "/error/badrequest.html");
+            return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
         }
     }
 
-    @Route("/user/login")
+    @Route(method = HttpMethod.POST, uri = "/user/login")
     private static Response handleApiLogin(RequestData requestData) {
         CookieData cookieData = UserService.login(requestData);
         if (cookieData != null) {
-            return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
+            return new Response(HttpStatusCode.FOUND, INDEX_HTML, cookieData);
         }
-        return new Response(HttpStatusCode.FOUND, "/user/login_failed.html");
+        return new Response(HttpStatusCode.FOUND, USER_LOGIN_FAILED_HTML);
     }
 
-    @Route("/user/logout")
+    @Route(method = HttpMethod.GET, uri = "/user/logout")
     private static Response handleApiLogout(RequestData requestData) {
         CookieData cookieData = UserService.logout(requestData);
-        return new Response(HttpStatusCode.FOUND, "/index.html", cookieData);
+        return new Response(HttpStatusCode.FOUND, INDEX_HTML, cookieData);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/user/list.html")
+    private static Response handleFileList(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+        }
+        return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/user/login.html")
+    private static Response handleFileLogin(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.FOUND, INDEX_HTML);
+        }
+        return new Response(HttpStatusCode.OK, USER_LOGIN_HTML);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/qna/form.html")
+    private static Response handleFileWrite(RequestData requestData) {
+        if (!requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+        }
+        return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+    }
+
+    @Route(method = HttpMethod.POST, uri = "/qna/form.html")
+    private static Response handleApiWrite(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            try {
+                // 글 작성자, 제목, 내용 추출
+                Post postData = requestData.getPostData();
+
+                // 데이터베이스에 글 추가
+                Database.addPost(postData);
+
+                // 글 추가 후 리다이렉션
+                return new Response(HttpStatusCode.FOUND, INDEX_HTML);
+            } catch (IllegalArgumentException e) {
+                logger.debug("글 작성을 위한 파라미터의 수가 부족합니다.");
+                return new Response(HttpStatusCode.BAD_REQUEST, ERROR_BAD_REQUEST_HTML);
+            }
+        } else {
+            // 로그인되지 않은 사용자는 글 작성 권한이 없음
+            return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+        }
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/qna/show.html")
+    private static Response handleFileShow(RequestData requestData) {
+        if (requestData.isLoggedIn()) {
+            return new Response(HttpStatusCode.OK, requestData.getRequestContent());
+        } else {
+            // 로그인되지 않은 사용자는 글 작성 권한이 없음
+            return new Response(HttpStatusCode.FOUND, USER_LOGIN_HTML);
+        }
     }
 }

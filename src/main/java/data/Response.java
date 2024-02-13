@@ -1,7 +1,6 @@
 package data;
 
 import controller.HttpStatusCode;
-import controller.RequestDataController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,19 @@ public class Response {
     public CookieData getCookie() { return cookie; }
     @Override
     public String toString() {
-        return "Response : " + status + "\n" +
-                "Cookie : " + cookie + "\n";
+        StringBuilder result = new StringBuilder();
+        result.append("=== Response Data ===\n");
+        result.append("HTTP Version: ").append(httpVer).append("\n");
+        result.append("Status: ").append(status).append("\n");
+        result.append("Path: ").append(path).append("\n");
+
+        if (cookie != null) {
+            result.append("Cookie: ").append(cookie).append("\n");
+        } else {
+            result.append("Cookie: Empty\n");
+        }
+
+        result.append("=====================\n");
+        return result.toString();
     }
 }
