@@ -33,6 +33,7 @@ public class ViewResolver {
     public static Boolean isTemplate(String url){
         return url.endsWith(".html");
     }
+
     public static Boolean isStatic(String url){
 
         return url.matches(".*/(?:css|fonts|images|js)/.*|.*\\.(?:ico|png|jpg)");

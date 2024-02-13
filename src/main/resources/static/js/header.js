@@ -8,7 +8,7 @@
                 navbar.insertAdjacentHTML("afterbegin", "<li><p id='welcome'>안녕하세요 " + userName + "님</p></li>>");
 
                 navbar = document.querySelector("#navbar-collapse2 > ul");
-                navbar.insertAdjacentHTML("beforeend", "<li class='active'><a href='/'>Posts</a></li><li><a href='/user/logout' role='button'>로그아웃</a></li><li><a href='#' role='button'>개인정보수정</a></li>");
+                navbar.insertAdjacentHTML("beforeend", "<li class='active'><a href='/'>Posts</a></li><li><a href='/user/logout' role='button'>로그아웃</a></li>");
             }
             else{
                 navbar = document.querySelector("#navbar-collapse2 > ul");

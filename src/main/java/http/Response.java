@@ -88,7 +88,7 @@ public class Response {
         return "";
     }
 
-    private String getCookieString(){
+    public String getCookieString(){
         StringBuilder cookieStringBuilder = new StringBuilder();
 
         for (Cookie c : cookie) {

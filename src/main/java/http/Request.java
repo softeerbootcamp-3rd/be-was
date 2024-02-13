@@ -32,7 +32,6 @@ public class Request {
             String[] data = field.split("=");
             String key = field.split("=")[0];
             String value = (data.length == 2) ? decodeValue(data[1]) : "";
-
             this.body.put(key, value);
         }
     }
@@ -72,14 +71,17 @@ public class Request {
             }
 
             String bodyString = byteArrayOutputStream.toString("UTF-8");
+            logger.debug("bodyString = {}",bodyString);
             this.setBody(bodyString);
         }
 
     }
 
-    public Request(String method, String url) throws UnsupportedEncodingException {
+    public Request(String method, String url, String sid,String body) throws UnsupportedEncodingException {
         this.method = method;
         this.setUrl(url);
+        this.setCookies(sid);
+        this.setBody(body);
     }
     //메서드
     public String getUrl() {

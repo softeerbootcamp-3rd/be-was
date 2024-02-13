@@ -55,6 +55,8 @@ public class RequestHandlerAdapter implements HandlerAdapter {
                 String subPath = req.getUrl().replace(prefix, "");
                 Method[] methods = clazz.getMethods();
                 Method target = null;
+                logger.debug("clazz = {}",clazz);
+                logger.debug("subPath= {}",subPath);
                 for (Method method : methods) {
                     if (req.getMethod().equals("GET") && method.isAnnotationPresent(GetMapping.class)) {
 

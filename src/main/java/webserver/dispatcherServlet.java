@@ -70,7 +70,6 @@ public class dispatcherServlet implements Runnable {
             ModelAndView mv = adapter.handle(req, res, handler);
 
             View view = ViewResolver.resolve(mv.getViewName());
-            logger.debug("view = {}",view);
             view.render(req, res, mv.getModel());
 
         }
