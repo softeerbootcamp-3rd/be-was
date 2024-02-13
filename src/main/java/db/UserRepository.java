@@ -7,23 +7,20 @@ import model.User;
 import java.util.Collection;
 import java.util.Map;
 
-public class Database {
-    private static Database instance = new Database();
+public class UserRepository {
+    private static UserRepository instance = new UserRepository();
 
     private static Map<String, User> users = Maps.newHashMap();
 
-    public static Database getInstance() {
+    public static UserRepository getInstance() {
         return instance;
     }
 
     public static void addUser(User user) {
-        System.out.println(user.getUserId());
         users.put(user.getUserId(), user);
     }
 
-    public static User findUserById(String userId) {
-        return users.get(userId);
-    }
+    public static User findUserById(String userId) { return users.get(userId); }
 
     public static Collection<User> findAll() {
         return users.values();

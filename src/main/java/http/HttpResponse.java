@@ -13,19 +13,19 @@ import java.util.Set;
 public class HttpResponse {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private DataOutputStream dos;
+    private final DataOutputStream dos;
     private HttpStatus httpStatus;
-    private Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers;
     private byte[] body;
-
     private String path;
+
+    public HttpResponse(DataOutputStream dos) {
+        headers = new HashMap<>();
+        this.dos = dos;
+    }
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public HttpResponse(DataOutputStream dos) {
-        this.dos = dos;
     }
 
     public void setHeader(String header, String content) {
@@ -40,7 +40,7 @@ public class HttpResponse {
         return path;
     }
 
-    public void sendResponse() throws IOException {
+    public void send() throws IOException {
         dos.writeBytes("HTTP/1.1 " + httpStatus.getCode() + " " + httpStatus.getMessage() + "\r\n");
         Set<String> keySet = headers.keySet();
         for (String key : keySet) {
@@ -51,7 +51,7 @@ public class HttpResponse {
             }
         }
         dos.writeBytes("\r\n");
-        readFile();
+        if(!path.endsWith("html"))readFile();
         if (body != null) {
             dos.write(body, 0, body.length);
         }
@@ -66,11 +66,19 @@ public class HttpResponse {
 
     private void readFile() throws IOException {
         File file = new File(path);
-        if (file != null && file.exists()) {
+        if (file.exists()) {
             FileInputStream fis = new FileInputStream(file);
             body = new byte[(int) file.length()];
             fis.read(body);
             fis.close();
+        }
+    }
+
+    public void readString(String string) {
+        try {
+            body = string.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 }

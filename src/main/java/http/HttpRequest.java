@@ -20,8 +20,10 @@ public class HttpRequest {
     private String connection;
     private String accept;
     private Integer contentLength;
-    private Map<String, String> requestParam = new HashMap<>();
-    private Map<String, String> formData = new HashMap<>();
+    private String sessionId;
+    private String userId;
+    private final Map<String, String> requestParam;
+    private final Map<String, String> formData;
 
     public String getMethod() {
         return method;
@@ -29,10 +31,19 @@ public class HttpRequest {
     public String getUrl() {
         return url;
     }
+    public String getSessionId() {
+        if(sessionId==null)
+            return null;
+        return sessionId;
+    }
+    public void setUserId(String userId) { this.userId = userId; }
+    public String getUserId() { return userId; }
     public Map<String, String> getRequestParam() { return requestParam; }
     public Map<String, String> getFormData() { return formData; }
 
     public HttpRequest(InputStream inputStream) throws IOException {
+        requestParam = new HashMap<>();
+        formData = new HashMap<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         getRequestInfo(br);
     }
@@ -51,7 +62,7 @@ public class HttpRequest {
         method = lines[0];
         if (lines[1].contains("?")) {
             getQueryParam(lines[1]);
-            lines[1] = lines[1].substring(0, line.indexOf('?'));
+            lines[1] = lines[1].substring(0, lines[1].indexOf('?'));
         }
         url = lines[1];
         httpVersion = lines[2];
@@ -68,6 +79,13 @@ public class HttpRequest {
                 host = line.substring("Host: ".length());
             } else if (line.startsWith("Content-Length: ")) {
                 contentLength = Integer.parseInt(line.substring("Content-Length: ".length()));
+            } else if (line.startsWith("Cookie:")) {
+                line = line.substring("Cookie: ".length());
+                int startIndex = line.indexOf("sid=");
+                if (startIndex != -1) {
+                    line = line.substring(startIndex + 4);
+                }
+                sessionId = line;
             }
             line = br.readLine();
         }
@@ -104,7 +122,7 @@ public class HttpRequest {
         StringBuilder bodyBuilder = new StringBuilder();
         int read;
         int totalRead = 0;
-        char[] buffer = new char[1024];
+        char[] buffer = new char[contentLength];
 
         // 읽을 바이트 수가 Content-Length와 일치할 때까지 읽기
         while (totalRead < contentLength && (read = br.read(buffer, 0, Math.min(buffer.length, contentLength - totalRead))) != -1) {
