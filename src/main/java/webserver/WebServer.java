@@ -2,9 +2,12 @@ package webserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import db.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +27,18 @@ public class WebServer {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
-            ExecutorService executorService = Executors.newFixedThreadPool(5);     // 고정 크키 5의 쓰레드 풀 생성
+            // 세션 저장소 가비지 컬렉터 실행
+            Timer scheduler = new Timer();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    Database.sessionGC();
+                    logger.debug("가비지 컬렉터 실행! 유효 세션 개수: {}", Database.findAllSession().size());
+                }
+            };
+            scheduler.scheduleAtFixedRate(task, 60*60*1000, 60*60*1000);        // 1시간 후 1시간 간격으로 세션 저장소 청소
+
+            ExecutorService executorService = Executors.newFixedThreadPool(10);     // 고정 크키 5의 쓰레드 풀 생성
 
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
@@ -33,6 +47,7 @@ public class WebServer {
                 executorService.submit(new RequestHandler(connection));
             }
             executorService.shutdown();     // 작업 종료
+            scheduler.cancel();             // 세션 저장소 가비지 컬렉터 종료
         }
     }
 }

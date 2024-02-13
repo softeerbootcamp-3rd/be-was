@@ -1,6 +1,7 @@
 package service;
 
 import config.Config;
+import controller.Controller;
 import db.Database;
 import dto.request.HTTPRequestDto;
 import dto.response.HTTPResponseDto;
@@ -10,7 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PostServiceTest {
 
@@ -26,13 +31,19 @@ class PostServiceTest {
     @Test
     void testSignUpBadKeys() {
         // given
-        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "Bad Request".getBytes());
-        // when
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", null);
-        String body = "userid=hello&password=1111&name=hello&email=hello@gmail.com";        // userid -> userId
+        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "Bad Request".getBytes());
+        HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/create");
+        httpRequestDto.setHeader(new HashMap<>());
+        Map<String, String> body = new HashMap<>();
+        body.put("userid", "hello");                    // userid -> userId
+        body.put("password", "1111");
+        body.put("name", "world");
+        body.put("email", "hello@gmail.com");
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
+        // when
+        HTTPResponseDto actual = Controller.doRequest(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -41,13 +52,19 @@ class PostServiceTest {
     @Test
     void testSignUpBadValues() {
         // given
-        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
-        // when
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", null);
-        String body = "userId=hello&password=1111&name=hello&email=";       // email이 빈 문자열로 들어온 상황
+        HTTPResponseDto expected = new HTTPResponseDto(400, "text/plain", "모든 정보를 기입해주세요.".getBytes());
+        HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/create");
+        httpRequestDto.setHeader(new HashMap<>());
+        Map<String, String> body = new HashMap<>();
+        body.put("userId", "hello");
+        body.put("password", "1111");
+        body.put("name", "world");
+        body.put("email", "");
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
+        // when
+        HTTPResponseDto actual = Controller.doRequest(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -56,20 +73,31 @@ class PostServiceTest {
     @Test
     void testSignUpAlreadyExists() {
         // given
-        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
-        // when
+        HTTPResponseDto expected = new HTTPResponseDto(200, "text/plain", "이미 존재하는 아이디입니다. 다시 시도해주세요.".getBytes());
         // 첫 번째 유저 회원가입 처리
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", null);
-        String body = "userId=hello&password=1111&name=hello&email=hello@gmail.com";
+        HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/create");
+        httpRequestDto.setHeader(new HashMap<>());
+        Map<String, String> body = new HashMap<>();
+        body.put("userId", "hello");
+        body.put("password", "1111");
+        body.put("name", "world");
+        body.put("email", "hello@gmail.com");
         httpRequestDto.setBody(body);
-        Config.httpPostService.signup(httpRequestDto);
+        Controller.doRequest(httpRequestDto);
         // 두 번째 유저 회원가입 처리
-        httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1", null);
-        body = "userId=hello&password=2222&name=hello2&email=hello2@gmail.com";
+        httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/create");
+        httpRequestDto.setHeader(new HashMap<>());
+        body.put("userId", "hello");
+        body.put("password", "2222");
+        body.put("name", "world2");
+        body.put("email", "hello2@gmail.com");
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
+        // when
+        HTTPResponseDto actual = Controller.doRequest(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -78,14 +106,19 @@ class PostServiceTest {
     @Test
     void testSignUpSuccess() {
         // given
-        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
-        expected.addHeader("Location", "/index.html");
-        // when
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/create",
-                "HTTP/1.1",null);
-        String body = "userId=hello&password=1111&name=hello&email=hello@gmail.com";
+        HTTPResponseDto expected = new HTTPResponseDto("/index.html");
+        HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/create");
+        httpRequestDto.setHeader(new HashMap<>());
+        Map<String, String> body = new HashMap<>();
+        body.put("userId", "hello");
+        body.put("password", "1111");
+        body.put("name", "world");
+        body.put("email", "hello@gmail.com");
         httpRequestDto.setBody(body);
-        HTTPResponseDto actual = Config.httpPostService.signup(httpRequestDto);
+        // when
+        HTTPResponseDto actual = Controller.doRequest(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -94,13 +127,17 @@ class PostServiceTest {
     @Test
     void testLoginFail() {
         // given
-        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
-        expected.addHeader("Location", "/user/login_failed.html");
+        HTTPResponseDto expected = new HTTPResponseDto("/user/login_failed.html");
+        HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/login");
+        httpRequestDto.setHeader(new HashMap<>());
+        Map<String, String> body = new HashMap<>();
+        body.put("userId", "login");
+        body.put("password", "fail");
+        httpRequestDto.setBody(body);
         // when
-        String body = "userId=login&password=fail";
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
-                "HTTP/1.1", body);
-        HTTPResponseDto actual = Config.httpPostService.login(httpRequestDto);
+        HTTPResponseDto actual = Controller.doRequest(httpRequestDto);
         // then
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -109,15 +146,19 @@ class PostServiceTest {
     @Test
     void testLoginSuccess() {
         // given
-        HTTPResponseDto expected = HTTPResponseDto.createResponseDto(302, null, null);
-        expected.addHeader("Location", "/index.html");
-        // when
         Database.addUser(new User("hello", "world", "hello", "world"));
-        String body = "userId=hello&password=world";
-        HTTPRequestDto httpRequestDto = new HTTPRequestDto("POST", "/user/login",
-                "HTTP/1.1", body);
-        HTTPResponseDto actual = Config.httpPostService.login(httpRequestDto);
+        HTTPRequestDto httpRequestDto = new HTTPRequestDto();
+        httpRequestDto.setHTTPMethod("POST");
+        httpRequestDto.setRequestTarget("/user/login");
+        httpRequestDto.setHeader(new HashMap<>());
+        Map<String, String> body = new HashMap<>();
+        body.put("userId", "hello");
+        body.put("password", "world");
+        httpRequestDto.setBody(body);
+        // when
+        HTTPResponseDto actual = Controller.doRequest(httpRequestDto);
+        String location = actual.getHeader().get("Location");
         // then
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        assertTrue(location.equals("/index.html"));
     }
 }

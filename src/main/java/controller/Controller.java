@@ -12,8 +12,7 @@ import java.io.IOException;
 public class Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
-    public static HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) throws IOException {
-        HTTPResponseDto response = new HTTPResponseDto();
+    public static HTTPResponseDto doRequest(HTTPRequestDto httpRequestDto) {
         // 1. GET 요청
         if(httpRequestDto.getHTTPMethod().equals("GET")) {
             GetRequestEnum getRequestEnum = GetRequestEnum.getRequest(httpRequestDto.getRequestTarget());
@@ -27,7 +26,7 @@ public class Controller {
             return postRequestEnum.doRequest(httpRequestDto);
         }
 
-        return response;
+        return null;
     }
 }
 

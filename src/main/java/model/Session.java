@@ -1,4 +1,4 @@
-package dto.session;
+package model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,8 +28,12 @@ public class Session {
     public String getUserId() {
         return this.userId;
     }
+
+    public LocalDateTime getExpires() {
+        return this.expires;
+    }
     // 만료기간을 GMT 형식에 맞춰 반환
-    public String getExpires() {
+    public String getExpiresWithFormat() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
         return expires.format(formatter);
     }
@@ -45,13 +49,22 @@ public class Session {
     public void setExpires() {
         this.expires = lastAccessTime.plusHours(1);
     }
+    // 세션 종료
+    public void invalidate() {
+        this.expires = LocalDateTime.now().minusDays(1);
+    }
+
 
     // 세션 ID 생성
     public String createSessionID() {
         // randomUUID 메서드를 사용하여 랜덤한 UUID 생성
         UUID uuid = UUID.randomUUID();
         // UUID를 문자열로 변환하여 세션 ID로 반환
-        System.out.println("create session id: " + uuid.toString());
         return uuid.toString();
+    }
+
+    // 세션이 유효할 경우 true 반환, 만료되었을 경우 false 반환
+    public boolean isValid() {
+        return LocalDateTime.now().isBefore(expires);
     }
 }
