@@ -1,13 +1,12 @@
 package http.response.handler;
 
+import db.Database;
 import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.session.SessionHandler;
 import model.User;
 import http.response.renderer.HtmlResponseRenderer;
-import utils.FileUtils;
 
-import java.io.IOException;
 
 public class LoginResponseHandler {
 
@@ -19,31 +18,21 @@ public class LoginResponseHandler {
 
     public void handle(HttpRequest request, HttpResponse response) {
         User loggedInUser = sessionHandler.checkSession(request);
-
-        if (request.getPath().equals("/index.html") || request.getPath().equals("/")) {
-            handleIndexRequest(request, response, loggedInUser);
-            if (loggedInUser != null) {
-                //logger.debug("로그인시 바디 : {}", responseBody);
-            }
-        }
+        handleIndexRequest(request, response, loggedInUser);
     }
 
     private void handleIndexRequest(HttpRequest request, HttpResponse response, User loggedInUser) {
-        try {
-            byte[] responseBody;
-            if (loggedInUser != null) {
-                // 로그인 상태일 때 사용자 이름을 포함한 HTML 생성
-                String htmlWithUserName = HtmlResponseRenderer.renderHtmlWithUserName("templates/index.html", loggedInUser.getName());
-                responseBody = htmlWithUserName.getBytes();
-            } else {
-                // 로그인 버튼만 있는 기본 HTML 응답
-                String htmlContent = FileUtils.readFileAsString("templates/index.html");
-                responseBody = htmlContent.getBytes();
-            }
-            response.setBody(responseBody);
-            response.setHeader("Content-Type", "text/html");
-        } catch (IOException e) {
-            response.setBody("Error loading page".getBytes());
+        String htmlContent = Database.getHomePageHtml(); // 데이터베이스에서 현재 저장된 HTML 가져오기
+
+        if (loggedInUser != null) {
+            // 로그인한 사용자의 이름을 포함시켜 HTML 수정
+            htmlContent = HtmlResponseRenderer.renderHtmlWithUserName(htmlContent, loggedInUser.getName());
+        } else {
+            // 로그아웃 상태에 맞는 HTML 수정
+            htmlContent = HtmlResponseRenderer.renderHtmlForLoggedOutState(htmlContent);
         }
+
+        // 데이터베이스에 업데이트된 HTML 저장
+        Database.setHomePageHtml(htmlContent);
     }
 }

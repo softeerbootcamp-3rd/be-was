@@ -6,6 +6,7 @@ import http.annotation.PostMapping;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
 
 public class ControllerMethodMapper {
     private final Map<RequestMappingInfo, Method> mappings = new HashMap<>();
-
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     public void scan(Object controller) {
         Class<?> clazz = controller.getClass();
         Arrays.stream(clazz.getDeclaredMethods())
@@ -50,7 +51,6 @@ public class ControllerMethodMapper {
     }
 
     public Method getMappedMethod(RequestMappingInfo requestMappingInfo) {
-        Method method = mappings.get(requestMappingInfo);
-        return method;
+        return mappings.get(requestMappingInfo);
     }
 }
