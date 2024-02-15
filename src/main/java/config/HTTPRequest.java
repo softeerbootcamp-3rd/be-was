@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,8 +76,8 @@ public class HTTPRequest{
 
             //char형 배열에 저장 후 String형으로 변환
             br.read(bodyChars, 0, length);
-            String bodyString = String.valueOf(bodyChars);
-
+            String rawBodyString = String.valueOf(bodyChars);
+            String bodyString = URLDecoder.decode(rawBodyString, StandardCharsets.UTF_8.toString());
             // body에서 받은 정보는 key - value 값으로 저장
             // Content-Type 별로 파싱하는 방식이 다르다, 명시를 하지 않았을 경우 text/plain으로 가정
             String contentType = head.get("Content-Type");
