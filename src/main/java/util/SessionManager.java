@@ -6,7 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
-    private static final int SESSION_TIMEOUT_SECONDS = 1 * 60; // 30분
+    private static final int SESSION_TIMEOUT_SECONDS = 30 * 60; // 30분
     private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
 

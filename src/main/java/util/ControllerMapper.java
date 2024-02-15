@@ -32,7 +32,7 @@ public class ControllerMapper {
 
     public static Class<?> getController(String path) {
         String mappingPath = "/" + path.split("/")[1];
-        return CONTROLLER_MAP.get(mappingPath);
+        return CONTROLLER_MAP.containsKey(mappingPath) ? CONTROLLER_MAP.get(mappingPath) : null;
     }
 
 }

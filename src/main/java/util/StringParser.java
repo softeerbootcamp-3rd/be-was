@@ -3,6 +3,8 @@ package util;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -10,8 +12,15 @@ import java.util.regex.Pattern;
 
 public class StringParser {
 
+    public static String parsePurePath(String path) {
+        if (!path.contains("?"))
+            return path;
+
+        return path.split("\\?")[0];
+    }
+
     public static Map<String, String> parseQueryString(String query) throws UnsupportedEncodingException {
-        if (!query.contains("\\?"))
+        if (!query.contains("?"))
             return null;
 
         String[] uri = query.split("\\?");

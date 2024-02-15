@@ -2,16 +2,24 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.JdbcUtil;
 import util.SessionManager;
 import util.StringParser;
 import webserver.http.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final List<String> AUTHORIZED_URI = Arrays.asList(
+            "/user/list.html", "/post/write.html", "/post/post_detail.html"
+    );
+
     private Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
@@ -59,7 +67,7 @@ public class RequestHandler implements Runnable {
 
             // 2. 권한이 없는 페이지에 접근을 하면
             // 로그인 페이지로 redirect
-            if (httpRequest.getPath().equals("/user/list.html")) {
+            if (AUTHORIZED_URI.contains(StringParser.parsePurePath(httpRequest.getPath()))) {
                 if (SID == null || !SessionManager.isSessionExist(SID)) {
                     Map<String, List<String>> headerMap = new HashMap<>();
                     headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login.html"));
@@ -78,9 +86,14 @@ public class RequestHandler implements Runnable {
             HttpResponse.send(dos, response);
 
         } catch (IndexOutOfBoundsException e) {
-            HttpResponse.send(dos, new ResponseEntity(HttpStatus.BAD_REQUEST));
+            Map<String, List<String>> headerMap = new HashMap<>();
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/error/400.html"));
+            HttpResponse.send(dos, new ResponseEntity(HttpStatus.FOUND, headerMap));
         } catch (Exception e) {
-            HttpResponse.send(dos, new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR));
+            e.printStackTrace();
+            Map<String, List<String>> headerMap = new HashMap<>();
+            headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/error/500.html"));
+            HttpResponse.send(dos, new ResponseEntity(HttpStatus.FOUND, headerMap));
         }
     }
 

@@ -1,6 +1,7 @@
 package controller;
 
 import annotation.*;
+import dao.UserDao;
 import db.Database;
 import model.User;
 import util.SessionManager;
@@ -26,7 +27,7 @@ public class UserController {
         Map<String, List<String>> headerMap = new HashMap<>();
 
         // input data 하나라도 없을 때
-        if (!validateInput(userId, password, name, email)) {
+        if (!checkInputsExistence(userId, password, name, email)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -35,7 +36,7 @@ public class UserController {
         }
 
         // user id 나 email이 db에 이미 존재할 때
-        if (Database.isUserIdExist(userId) || Database.isEmailExist(email)) {
+        if (UserDao.isUserIdExist(userId) || UserDao.isEmailExist(email)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/form_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -43,8 +44,8 @@ public class UserController {
             );
         }
 
-        User user = new User(userId, password, name, email);
-        Database.addUser(user);
+        User user = new User(userId, name, password, email);
+        UserDao.insertUser(user);
 
         headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
 
@@ -57,10 +58,10 @@ public class UserController {
     @PostMapping(path = "/login")
     public static ResponseEntity login(@RequestParam(name = "userId") String userId,
                                  @RequestParam(name = "password") String password) {
-        User user = Database.findUserById(userId);
-        Map<String, List<String>> headerMap = new HashMap<>();
 
-        if (!validateInput(userId, password) || !user.getPassword().equals(password)) {
+        User user = UserDao.findUserByUserId(userId);;
+        Map<String, List<String>> headerMap = new HashMap<>();
+        if (!checkInputsExistence(userId, password) || user == null || !user.getPassword().equals(password)) {
             headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/user/login_failed.html"));
             return new ResponseEntity<>(
                     HttpStatus.FOUND,
@@ -72,7 +73,6 @@ public class UserController {
         SessionManager.setAttribute(SID, "user", userId);
         List<String> cookies = new ArrayList<>();
         cookies.add("SID=" + SID);
-//        cookies.add("Max-Age=" + SessionManager.getSessionTimeoutSeconds());
         cookies.add("Path=" + "/");
         headerMap.put(HttpHeader.SET_COOKIE, cookies);
         headerMap.put(HttpHeader.LOCATION, Collections.singletonList("/index.html"));
@@ -83,7 +83,7 @@ public class UserController {
         );
     }
 
-    @GetMapping(path = "/logout")
+    @PostMapping(path = "/logout")
     @ResponseBody
     public static ResponseEntity logout(HttpRequest httpRequest) {
 
@@ -105,7 +105,7 @@ public class UserController {
         );
     }
 
-    private static boolean validateInput(Object... objects) {
+    private static boolean checkInputsExistence(Object... objects) {
         for (Object o : objects) {
             if (o == null)
                 return false;

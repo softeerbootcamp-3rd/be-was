@@ -1,5 +1,6 @@
 package util;
 
+import dao.UserDao;
 import db.Database;
 import model.User;
 import type.MimeType;
@@ -20,6 +21,7 @@ public class ResourceManager {
 
     public static ResponseEntity handleStaticResource(HttpRequest request) throws IOException {
         String path = request.getPath().equals("/") ? "/index.html" : request.getPath();
+        path = StringParser.parsePurePath(path);
         MimeType mimeType = MimeType.getMimeTypeByExtension(StringParser.extractFileExtension(path));
 
         StringBuilder pathBuilder = new StringBuilder(DEFAULT_PATH);
@@ -46,7 +48,7 @@ public class ResourceManager {
                 // 사용자 이름 표시
                 html = changeHTMLButtonStatus(html, SIGNUP_BUTTON, true);
                 html = changeHTMLButtonStatus(html, LOGIN_BUTTON, true);
-                html = changeHTMLIncludeUserName(html, Database.findUserNameById(userId));
+                html = changeHTMLIncludeUserName(html, UserDao.findUserNameByUserId(userId));
 
                 if (path.equals("/user/list.html")) {
                     html = changeHTMLGetUserList(html);
@@ -100,7 +102,7 @@ public class ResourceManager {
     public static String changeHTMLGetUserList(String original) {
         StringBuilder listBuilder = new StringBuilder("<tbody>").append(System.lineSeparator());
         int id = 1;
-        for (User user : Database.findAll()) {
+        for (User user : UserDao.findAll()) {
             listBuilder.append("<tr>").append(System.lineSeparator());
             listBuilder.append("<th scope=\"row\">").append(id).append("</th> ");
             listBuilder.append("<td>").append(user.getUserId()).append("</td> ");

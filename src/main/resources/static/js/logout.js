@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutButton.addEventListener("click", function () {
             // 로그아웃 요청을 서버에 보냄
             fetch("/user/logout", {
-                method: "GET",
+                method: "POST",
                 credentials: "same-origin" // 브라우저의 쿠키를 request에 포함하기 위해
             })
                 .then(response => {
