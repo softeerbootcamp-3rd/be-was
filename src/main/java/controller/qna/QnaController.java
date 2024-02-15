@@ -1,9 +1,10 @@
-package controller.user;
+package controller.qna;
 
 import controller.ModelView;
 import model.HttpRequest;
 import model.HttpResponse;
 
-public interface UserController {
+public interface QnaController {
     ModelView process(HttpRequest httpRequest, HttpResponse httpResponse);
+
 }

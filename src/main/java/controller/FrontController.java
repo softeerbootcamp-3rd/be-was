@@ -1,15 +1,17 @@
 package controller;
 
+import config.AppConfig;
 import controller.adapter.HandlerAdapter;
+import controller.adapter.QnaControllerHandlerAdapter;
 import controller.adapter.ResourceHandlerAdapter;
 import controller.adapter.UserControllerHandlerAdapter;
-import controller.user.UserCreateController;
-import controller.user.UserListController;
-import controller.user.UserLoginController;
-import model.Request;
-import model.Response;
+import exception.NoHandlerAdapterFoundException;
+import exception.NoHandlerFoundException;
+import model.HttpRequest;
+import model.HttpResponse;
+import util.ResponseSender;
+import util.URIParser;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -20,7 +22,6 @@ import java.util.Map;
 public class FrontController {
     private final Map<String, Object> handlerMappingMap = new HashMap<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-    static String DEFAULT_PAGE = "/templates/index.html";
 
     public FrontController() {
         initHandlerMappingMap();
@@ -28,51 +29,42 @@ public class FrontController {
     }
 
     private void initHandlerMappingMap() {
-        handlerMappingMap.put("css", new ResourceController("css"));
-        handlerMappingMap.put("fonts", new ResourceController("fonts"));
-        handlerMappingMap.put("images", new ResourceController("images"));
-        handlerMappingMap.put("js", new ResourceController("js"));
-        handlerMappingMap.put("ico", new ResourceController("ico"));
-        handlerMappingMap.put("html", new ResourceController("html"));
+        handlerMappingMap.put("resource", new ResourceController());
 
-        handlerMappingMap.put("/user/create", new UserCreateController());
-        handlerMappingMap.put("/user/login", new UserLoginController());
-        handlerMappingMap.put("/user/list", new UserListController());
+        handlerMappingMap.put("/user/create", AppConfig.userCreateController());
+        handlerMappingMap.put("/user/login", AppConfig.userLoginController());
+        handlerMappingMap.put("/user/list", AppConfig.userListController());
 
-        // qna 추가
+        handlerMappingMap.put("/qna/form", AppConfig.qnaFormController());
+        handlerMappingMap.put("/qna/create", AppConfig.qnaCreateController());
     }
 
     private void initHandlerAdapters() {
         handlerAdapters.add(new ResourceHandlerAdapter());
         handlerAdapters.add(new UserControllerHandlerAdapter());
-
-        //qna 추가
+        handlerAdapters.add(new QnaControllerHandlerAdapter());
     }
 
-    public void service(Request request, OutputStream out) throws IOException {
-        Object handler = getHandler(request);
-        Response response = new Response();
+    public void service(HttpRequest httpRequest, OutputStream out) throws IOException {
+        HttpResponse httpResponse = HttpResponse.newEmptyInstance();
+        ModelView mv = null;
+        try {
+            Object handler = getHandler(httpRequest);
 
-        HandlerAdapter adapter = getHandlerAdapter(handler);
-        ModelView mv = adapter.handle(request, response, handler);
-
-        String viewName = mv.getViewName();
-        View view = viewResolver(viewName);
-
-        if (adapter instanceof ResourceHandlerAdapter) {
-            ResourceController resourceController = (ResourceController) handler;
-            view.render(request, response, mv, resourceController.getType());
-            response.send(out);
-            return;
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            mv = adapter.handle(httpRequest, httpResponse, handler);
+        } catch (NoHandlerFoundException | NoHandlerAdapterFoundException e) {
+            e.printStackTrace();
+            mv = ModelView.errorInstance();
         }
 
-        view.render(request, response, mv);
+        String viewName = mv.getViewName();
+        View view = ViewResolver.resolveViewName(viewName);
 
-        response.send(out);
-    }
+        DynamicPageLoader.beforeRender(httpRequest, mv);
+        view.render(httpRequest, httpResponse, mv);
 
-    private View viewResolver(String viewName) {
-        return new View("./src/main/resources" + viewName);
+        ResponseSender.send(httpResponse, out);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
@@ -81,41 +73,20 @@ public class FrontController {
                 return adapter;
             }
         }
-        throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler=" + handler);
+        throw new NoHandlerAdapterFoundException(handler + "에 해당하는 handler를 찾을 수 없습니다.");
     }
 
-    private Object getHandler(Request request) {
-        String requestURI = request.getURI();
-        if (isResourceURI(requestURI)) {
-            return handlerMappingMap.get(extractResourceType(requestURI));
+    private Object getHandler(HttpRequest httpRequest) {
+        String requestURI = httpRequest.getURI();
+        if (URIParser.isResourceURI(requestURI)) {
+            return handlerMappingMap.get("resource");
         }
-        return handlerMappingMap.get(requestURI);
+
+        Object handler = handlerMappingMap.get(requestURI);
+        if (handler != null) {
+            return handler;
+        }
+
+        throw new NoHandlerFoundException(httpRequest.getURI() + "에 해당하는 handler를 찾을 수 없습니다.");
     }
-
-    private String extractResourceType(String requestURI) {
-        if (requestURI.contains("css"))
-            return "css";
-        if (requestURI.contains("fonts"))
-            return "fonts";
-        if (requestURI.contains("images"))
-            return "images";
-        if (requestURI.contains("js"))
-            return "js";
-        if (requestURI.contains("ico"))
-            return "ico";
-        if (requestURI.contains("html"))
-            return "html";
-
-        return "";
-    }
-
-    private boolean isResourceURI(String uri) {
-        return uri.contains(".css")
-                || uri.contains("fonts")
-                || uri.contains(".images")
-                || uri.contains(".js")
-                || uri.contains(".ico")
-                || uri.contains(".html");
-    }
-
 }

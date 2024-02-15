@@ -1,35 +1,48 @@
 package controller.user;
 
+import constant.HeaderType;
+import constant.HttpStatus;
 import controller.ModelView;
 import exception.LoginFailedException;
-import model.Request;
-import model.Response;
+import model.HttpRequest;
+import model.HttpResponse;
+import model.User;
+import service.UserService;
+import util.SessionManager;
 
-public class UserLoginController implements UserController{
+public class UserLoginController implements UserController {
+    private final UserService userService;
+
+    public UserLoginController(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
-    public ModelView process(Request request, Response response) {
-        String userId = request.getParameter("userId");
-        String password = request.getParameter("password");
+    public ModelView process(HttpRequest httpRequest, HttpResponse httpResponse) {
+        String userId = httpRequest.getParameter("userId");
+        String password = httpRequest.getParameter("password");
 
-        response.set302Redirect();
         String path = "";
-
+        User loginUser = null;
         try {
-            userService.login(userId, password);
+            loginUser = userService.login(userId, password);
         } catch (LoginFailedException e) {
             path = "/user/login_failed.html";
-            response.putToHeaderMap("Location", path);
+            httpResponse.addHeader(HeaderType.LOCATION, path);
 
             e.printStackTrace();
 
-            return new ModelView(path);
+            return new ModelView(path, HttpStatus.FOUND);
         }
 
         // 로그인 성공
-        path = "/index.html";
-        response.putToHeaderMap("Location", path);
-        response.putToHeaderMap("Set-Cookie", "sid=" + userId + "; Path=/; Max-Age=1800");
+        String sid = SessionManager.generateSID();
+        SessionManager.addSession(sid, loginUser);
 
-        return new ModelView(path);
+        path = "/index.html";
+        httpResponse.addHeader(HeaderType.LOCATION, path);
+        httpResponse.addHeader(HeaderType.SET_COOKIE, "sid=" + sid + "; Path=/; Max-Age=1800" + SessionManager.EXPIRED_TIME);
+
+        return new ModelView(path, HttpStatus.FOUND);
     }
 }
