@@ -49,16 +49,6 @@ public class HttpResponseDtoBuilder {
         return this;
     }
 
-    public HttpResponseDtoBuilder response400Header() {
-        setStatus("400").setMessage("Bad Request");
-        return this;
-    }
-
-    public HttpResponseDtoBuilder response404Header() {
-        setStatus("404").setMessage("Not Found");
-        return this;
-    }
-
     public HttpResponseDtoBuilder setCookie(String key, String value, String[] attributes) {
         StringBuilder cookies = new StringBuilder().append(key).append("=").append(value);
         for (String attribute : attributes) {

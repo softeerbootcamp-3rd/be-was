@@ -11,7 +11,7 @@ public class HttpRequestDtoBuilder {
 
     private HttpHeaders headers;
 
-    private String body;
+    private byte[] body;
 
     private User user;
 
@@ -26,8 +26,13 @@ public class HttpRequestDtoBuilder {
         return this;
     }
 
-    public HttpRequestDtoBuilder setBody(String body) {
+    public HttpRequestDtoBuilder setBody(byte[] body) {
         this.body = body;
+        return this;
+    }
+
+    public HttpRequestDtoBuilder setBody(String body) {
+        this.body = body.getBytes();
         return this;
     }
 

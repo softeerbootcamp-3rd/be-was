@@ -11,11 +11,11 @@ public class HttpRequestDto {
 
     private final HttpHeaders headers;
 
-    private final String body;
+    private final byte[] body;
 
     private final User user;
 
-    public HttpRequestDto(String method, String uri, String httpVersion, HttpHeaders headers, String body, User user) {
+    public HttpRequestDto(String method, String uri, String httpVersion, HttpHeaders headers, byte[] body, User user) {
         this.method = method;
         this.uri = uri;
         this.httpVersion = httpVersion;
@@ -41,6 +41,11 @@ public class HttpRequestDto {
     }
 
     public String getBody() {
+        if (this.body == null) return "";
+        return new String(this.body);
+    }
+
+    public byte[] getBodyByte() {
         return this.body;
     }
 

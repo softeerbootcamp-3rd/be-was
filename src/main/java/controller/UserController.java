@@ -10,7 +10,7 @@ import service.UserService;
 import util.HtmlBuilder;
 import util.HttpResponseUtil;
 import util.SessionUtil;
-import util.WebUtil;
+import util.HttpRequestParser;
 
 import java.util.Map;
 
@@ -38,6 +38,9 @@ public class UserController implements Controller {
         if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/user/logout")) {
             return logoutUser(request);
         }
+        if (request.getMethod().equalsIgnoreCase("GET") && request.getUri().startsWith("/user/profile")) {
+            return printProfile(request);
+        }
 
         return HttpResponseUtil.loadResource(request, logger);
     }
@@ -46,7 +49,7 @@ public class UserController implements Controller {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
 
         try {
-            Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
+            Map<String, String> parameters = HttpRequestParser.parseRequestBody(request.getBody());
             userService.createUser(parameters);
 
             return responseDtoBuilder.response302Header()
@@ -54,7 +57,7 @@ public class UserController implements Controller {
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
 
-            return responseDtoBuilder.response400Header().build();
+            return HttpResponseUtil.buildErrorResponse("400", "Bad Request", e.getMessage());
         }
     }
 
@@ -62,7 +65,7 @@ public class UserController implements Controller {
         HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
 
         try {
-            Map<String, String> parameters = WebUtil.parseRequestBody(request.getBody());
+            Map<String, String> parameters = HttpRequestParser.parseRequestBody(request.getBody());
             String sessionId = userService.loginUser(parameters);
 
             return responseDtoBuilder.response302Header()
@@ -95,7 +98,7 @@ public class UserController implements Controller {
             byte[] body = HtmlBuilder.buildUserListPage(request);
 
             return responseDtoBuilder.response200Header()
-                    .setHeaders(HttpHeader.CONTENT_TYPE, WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                    .setHeaders(HttpHeader.CONTENT_TYPE, HttpRequestParser.getContentType(request.getUri()) + ";charset=utf-8")
                     .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
                     .setBody(body)
                     .build();
@@ -104,5 +107,29 @@ public class UserController implements Controller {
         // 로그인하지 않은 경우
         return responseDtoBuilder.response302Header()
                 .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
+    }
+
+    public HttpResponseDto printProfile(HttpRequestDto request) {
+        HttpResponseDtoBuilder responseDtoBuilder = new HttpResponseDtoBuilder();
+        Map<String, String> queryString = HttpRequestParser.parseQueryString(request.getUri());
+        if (request.getUser() == null) {
+            // 로그인하지 않은 경우
+            return responseDtoBuilder.response302Header()
+                    .setHeaders(HttpHeader.LOCATION, "/user/login.html").build();
+        }
+
+        try {
+            byte[] body = userService.printUserProfile(queryString, request.getUser());
+
+            return responseDtoBuilder.response200Header()
+                    .setHeaders(HttpHeader.CONTENT_TYPE, "text/html;charset=utf-8")
+                    .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
+                    .setBody(body)
+                    .build();
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+
+            return HttpResponseUtil.buildErrorResponse("400", "Bad Request", e.getMessage());
+        }
     }
 }

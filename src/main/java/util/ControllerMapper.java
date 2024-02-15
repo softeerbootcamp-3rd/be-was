@@ -1,9 +1,8 @@
 package util;
 
-import controller.Controller;
-import controller.DefaultController;
-import controller.UserController;
+import controller.*;
 import dto.HttpRequestDto;
+import service.QnaService;
 import service.UserService;
 
 import java.util.HashMap;
@@ -15,6 +14,8 @@ public class ControllerMapper {
     static {
         CONTROLLER_MAP.put("user", new UserController(new UserService()));
         CONTROLLER_MAP.put("default", new DefaultController());
+        CONTROLLER_MAP.put("qna", new QnaController(new QnaService()));
+        CONTROLLER_MAP.put("download", new FileController());
     }
 
     public static Controller mappingController(HttpRequestDto request) {
@@ -22,6 +23,12 @@ public class ControllerMapper {
         Controller controller;
         if (uri.startsWith("/user")) {
             return CONTROLLER_MAP.get("user");
+        }
+        if (uri.startsWith("/qna")) {
+            return CONTROLLER_MAP.get("qna");
+        }
+        if (uri.startsWith("/download")) {
+            return CONTROLLER_MAP.get("download");
         }
         return CONTROLLER_MAP.get("default");
     }

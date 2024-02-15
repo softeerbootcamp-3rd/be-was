@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HtmlBuilder;
 import util.HttpResponseUtil;
-import util.WebUtil;
+import util.HttpRequestParser;
 
 public class DefaultController implements Controller {
     private static final Logger logger = LoggerFactory.getLogger(DefaultController.class);
@@ -33,7 +33,7 @@ public class DefaultController implements Controller {
         byte[] body = HtmlBuilder.buildIndexPage(request);
 
         return responseDtoBuilder.response200Header()
-                .setHeaders(HttpHeader.CONTENT_TYPE, WebUtil.getContentType(request.getUri()) + ";charset=utf-8")
+                .setHeaders(HttpHeader.CONTENT_TYPE, HttpRequestParser.getContentType(request.getUri()) + ";charset=utf-8")
                 .setHeaders(HttpHeader.CONTENT_LENGTH, Integer.toString(body.length))
                 .setBody(body)
                 .build();

@@ -4,6 +4,7 @@ import db.SessionDatabase;
 import db.UserDatabase;
 import model.Session;
 import model.User;
+import util.HtmlBuilder;
 
 import java.util.Map;
 
@@ -49,6 +50,17 @@ public class UserService {
 
     public void logoutUser(User user) {
         SessionDatabase.deleteAllSessionByUserId(user.getUserId());
+    }
+
+    public byte[] printUserProfile(Map<String, String> queryString, User loginUser) {
+        String userId = queryString.get("userId");
+        if (userId != null) {
+            // 특정 유저의 프로파일을 확인하는 경우
+            User user = UserDatabase.findUserById(userId);
+            return HtmlBuilder.buildProfile(user, loginUser);
+        }
+        // 자신의 프로파일을 확인하는 경우 (로그인 되어있는 상태여야함)
+        return HtmlBuilder.buildProfile(loginUser);
     }
 
     // 사용자가 입력한 로그인 정보가 유효한지 확인

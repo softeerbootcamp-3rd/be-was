@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 import util.SessionUtil;
-import util.WebUtil;
+import util.HttpRequestParser;
 
 public class UserControllerTest {
     private final UserService userService = new UserService();
@@ -83,7 +83,7 @@ public class UserControllerTest {
         Assertions.assertThat(httpResponseDto.getMessage()).isEqualTo("Found");
         Assertions.assertThat(httpResponseDto.getHeaders().get(HttpHeader.LOCATION)).isEqualTo("/index.html");
         System.out.println(httpResponseDto.getHeaders().get(HttpHeader.SET_COOKIE));
-        Assertions.assertThat(WebUtil.parseCookie(httpResponseDto.getHeaders().get(HttpHeader.SET_COOKIE)).get(SessionUtil.SESSION_ID)).isNotNull();
+        Assertions.assertThat(HttpRequestParser.parseCookie(httpResponseDto.getHeaders().get(HttpHeader.SET_COOKIE)).get(SessionUtil.SESSION_ID)).isNotNull();
     }
 
     @Test

@@ -12,22 +12,23 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class WebUtilTest {
+public class HttpRequestParserTest {
 
     @Test
     @DisplayName("httpRequestParser(): HTTP Request 요청을 HttpRequestDto로 적절하게 파싱한다.")
     public void httpRequestParseTest() {
         // given
-        String testRequest = "GET /index.html HTTP/1.1\n" +
-                "Host: localhost:8080\n" +
-                "Connection: keep-alive\n" +
-                "Accept: */*\n" +
-                "Content-Length: 12\n\n" +
+        String testRequest = "GET /index.html HTTP/1.1\r\n" +
+                "Host: localhost:8080\r\n" +
+                "Connection: keep-alive\r\n" +
+                "Accept: */*\r\n" +
+                "Content-Length: 12\r\n\r\n" +
                 "request body";
         InputStream inputStream = new ByteArrayInputStream(testRequest.getBytes());
 
         // when
-        HttpRequestDto parsedRequest = WebUtil.httpRequestParse(inputStream);
+        HttpRequestDto parsedRequest = HttpRequestParser.httpRequestParse(inputStream);
+        System.out.println(new String(parsedRequest.getBody()));
 
         // then
         Assertions.assertThat(parsedRequest.getMethod()).isEqualTo("GET");
@@ -44,15 +45,15 @@ public class WebUtilTest {
     @DisplayName("httpRequestParse(): HTTP Request의 case sensitive 특징을 적절하게 처리하여 파싱한다.")
     public void httpRequestParseCaseSensitiveTest() {
         // given
-        String testRequest = "GET /index.html HTTP/1.1\n" +
-                "host: localhost:8080\n" +
-                "connection: keep-alive\n" +
-                "aCCept: */*\n" +
-                "Content-length: 12\n";
+        String testRequest = "GET /index.html HTTP/1.1\r\n" +
+                "host: localhost:8080\r\n" +
+                "connection: keep-alive\r\n" +
+                "aCCept: */*\r\n" +
+                "Content-length: 12\r\n";
         InputStream inputStream = new ByteArrayInputStream(testRequest.getBytes());
 
         // when
-        HttpRequestDto parsedRequest = WebUtil.httpRequestParse(inputStream);
+        HttpRequestDto parsedRequest = HttpRequestParser.httpRequestParse(inputStream);
         // then
         Assertions.assertThat(parsedRequest.getMethod()).isEqualTo("GET");
         Assertions.assertThat(parsedRequest.getUri()).isEqualTo("/index.html");
@@ -70,7 +71,7 @@ public class WebUtilTest {
         String testUri = "/index.html";
 
         // when
-        String contentType = WebUtil.getContentType(testUri);
+        String contentType = HttpRequestParser.getContentType(testUri);
 
         // then
         Assertions.assertThat(contentType).isEqualTo("text/html");
@@ -84,8 +85,8 @@ public class WebUtilTest {
         String testUri2 = "/css/bootstrap.min.css";
 
         // when
-        String path = WebUtil.getPath(testUri);
-        String path2 = WebUtil.getPath(testUri2);
+        String path = HttpRequestParser.getPath(testUri);
+        String path2 = HttpRequestParser.getPath(testUri2);
 
         // then
         Assertions.assertThat(path).isEqualTo("./src/main/resources/templates" + testUri);
@@ -100,7 +101,7 @@ public class WebUtilTest {
         String encodedUri = URLEncoder.encode(uri, StandardCharsets.UTF_8);
 
         // when
-        Map<String, String> parsedUri = WebUtil.parseQueryString(encodedUri);
+        Map<String, String> parsedUri = HttpRequestParser.parseQueryString(encodedUri);
 
         // then
         Assertions.assertThat(parsedUri.get("userId")).isEqualTo("userId");
@@ -116,7 +117,7 @@ public class WebUtilTest {
         String body = "userId=1&password=hello&name=suji&email=example%40softeer.com";
 
         // when
-        Map<String, String> parsedBody = WebUtil.parseRequestBody(body);
+        Map<String, String> parsedBody = HttpRequestParser.parseRequestBody(body);
 
         // then
         Assertions.assertThat(parsedBody.get("userId")).isEqualTo("1");
@@ -132,7 +133,7 @@ public class WebUtilTest {
         String cookie = "Idea-69015365=809ed775-1433-48aa-bb94-f81d467909f8; sid=88ef7daf-c0ef-4723-8b96-04de53f5aab3";
 
         // when
-        Map<String, String> parsedCookie = WebUtil.parseCookie(cookie);
+        Map<String, String> parsedCookie = HttpRequestParser.parseCookie(cookie);
 
         // then
         Assertions.assertThat(parsedCookie.get(SessionUtil.SESSION_ID)).isEqualTo("88ef7daf-c0ef-4723-8b96-04de53f5aab3");

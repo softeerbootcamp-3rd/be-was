@@ -14,8 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WebUtil {
-    private static final Logger logger = LoggerFactory.getLogger(WebUtil.class);
+public class HttpRequestParser {
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
 
     private static final Map<String, String> MIME_CONTENT_TYPE = new HashMap<>();
 
@@ -40,38 +40,66 @@ public class WebUtil {
         MIME_CONTENT_TYPE.put("woff2", "font/woff2");
     }
 
+    private static final int BYTE_READ_SIZE = 1024;
+
     // Parsing HTTP Request message into HttpRequestParams
     public static HttpRequestDto httpRequestParse(InputStream request) {
-        BufferedReader br = new BufferedReader(new InputStreamReader(request));
         HttpRequestDto parsedRequest = null;
-
         try {
-            // Parsing Request Line
-            String[] requestLines = br.readLine().split(" ");
+            // InputStream 전체를 byte[] 로 읽어서 targetArray에 저장
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[BYTE_READ_SIZE];
+            int bytesRead;
 
-            // Parsing Request Headers
+            while ((bytesRead = request.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+                // 무한 루프 막기 위함
+                if (bytesRead < BYTE_READ_SIZE) break;
+            }
+
+            byte[] targetArray = byteArrayOutputStream.toByteArray();
+
+            // Parsing Request Line: HTTP Request의 첫 줄 파싱
+            int index = 0;
+            StringBuilder requestLineBuilder = new StringBuilder();
+            while (index < targetArray.length && targetArray[index] != '\r' && targetArray[index + 1] != '\n') {
+                requestLineBuilder.append((char) targetArray[index]);
+                index++;
+            }
+            index += 2; // Skip '\r\n'
+            String[] requestLines = requestLineBuilder.toString().split(" ");
+
+            // Parsing Request Headers: '\r\n\r\n'을 만나기 전까지 파싱
             Map<HttpHeader, String> requestHeaders = new HashMap<>();
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if (line.isEmpty()) break;
-                String[] requestHeader = line.split(": ");
+
+            while (index < targetArray.length && targetArray[index] != '\r' && targetArray[index + 1] != '\n') {
+                StringBuilder headerLineBuilder = new StringBuilder();
+                while (index < targetArray.length && targetArray[index] != '\r' && targetArray[index + 1] != '\n') {
+                    headerLineBuilder.append((char) targetArray[index]);
+                    index++;
+                }
+                index += 2; // Skip '\r\n'
+
+                String headerLine = headerLineBuilder.toString();
+                String[] requestHeader = headerLine.split(": ");
                 try {
                     requestHeaders.put(HttpHeader.fromHeaderName(requestHeader[0]), requestHeader[1]);
                 } catch (IllegalArgumentException e) {
                     logger.error(e.getMessage());
                 }
             }
+            index += 2; // Skip '\r\n'
 
             // 헤더의 쿠키 값을 이용해 유저 로그인 여부 확인
             User user = SessionUtil.getUserByCookie(requestHeaders);
 
-            // Parsing Request Body
-            StringBuilder stringBuilder = new StringBuilder();
-            int contentLength = Integer.parseInt(requestHeaders.getOrDefault(HttpHeader.CONTENT_LENGTH, DEFAULT_CONTENT_LENGTH));
-            char[] charBuffer = new char[contentLength];
-            br.read(charBuffer);
-            stringBuilder.append(charBuffer, 0, contentLength);
-            String requestBody = stringBuilder.toString();
+            // Parsing Request Body: 현재 index부더 끝까지 byte[]로 읽어와서 requestBody에 저장
+            ByteArrayOutputStream requestBodyStream = new ByteArrayOutputStream();
+            while (index < targetArray.length) {
+                requestBodyStream.write(targetArray[index]);
+                index++;
+            }
+            byte[] requestBody = requestBodyStream.toByteArray();
 
             // Create HttpRequestDto
             parsedRequest = new HttpRequestDtoBuilder(requestLines[0], requestLines[1], requestLines[2])
@@ -114,7 +142,7 @@ public class WebUtil {
         try {
             String queryString = encodedUri.split("\\?")[1];
             String[] pairs = queryString.split("&");
-            for (String pair: pairs) {
+            for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
                 if (keyValue.length == 2) {
                     parameters.put(keyValue[0], keyValue[1]);
@@ -136,7 +164,7 @@ public class WebUtil {
         String encodedBody = URLDecoder.decode(body, StandardCharsets.UTF_8);
         String[] pairs = encodedBody.split("&");
 
-        for (String pair: pairs) {
+        for (String pair : pairs) {
             String[] keyValue = pair.split("=");
             if (keyValue.length == 2) {
                 parameters.put(keyValue[0], keyValue[1]);
@@ -154,7 +182,7 @@ public class WebUtil {
         }
 
         String[] pairs = cookie.split("; ");
-        for (String pair: pairs) {
+        for (String pair : pairs) {
             String[] keyValue = pair.split("=");
             if (keyValue.length == 2) {
                 parameters.put(keyValue[0], keyValue[1]);

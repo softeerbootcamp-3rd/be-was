@@ -20,7 +20,9 @@ Java Web Application Server 2023
 ### [TEST 코드 작성 방법](./docs/Test)
 
 ***
-
+## Architecture
+![architecture](https://github.com/Yoon-Suji/be-was/assets/70956926/99e83bd4-eb9d-4768-b5f0-8f58f53c4715)
+***
 ## Trouble Shooting
 🚨 `.css`, `.js` 파일을 제대로 불러오지 못하고 적용이 안되는 문제
 > `.html` 파일이 위치한 경로와 `.css`, `.js` 파일이 위치한 경로가 달라서 발생하는 문제였고, 파일을 불러온 후에도 적용이 안되는 것은 content-type의 문제였다. Step3 요구사항에 있는 걸 모르고 열심히 찾았는데.. 그래도 스스로 문제 원인을 파악하고 해결 할 수 있어서 뿌듯했다.
