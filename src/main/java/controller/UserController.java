@@ -2,6 +2,7 @@ package controller;
 
 import constants.ContentType;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import model.Request;
 import model.Response;
 import java.util.Map;
@@ -50,7 +51,12 @@ public class UserController implements Controller {
      * @param response 응답 메시지
      */
     private void loginUser(Request request, Response response) {
-        Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
+        Map<String, String> params;
+        try {
+            params = ParamBuilder.getParamFromBody(new String(request.getBody(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             User user = userService.findUser(params);
@@ -87,8 +93,8 @@ public class UserController implements Controller {
             response.addHeader("Content-Type", ContentType.findContentType(filePath));
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
-            response.setCode(404);
-            response.setBody(e.getMessage());
+            response.setCode(302);
+            response.addHeader("Location", "/404.html");
         }
     }
 
@@ -102,15 +108,23 @@ public class UserController implements Controller {
      * @param response 응답 메시지
      */
     private void createUser(Request request, Response response) {
-        Map<String, String> params = ParamBuilder.getParamFromBody(request.getBody());
+        Map<String, String> params;
+        try {
+            params = ParamBuilder.getParamFromBody(new String(request.getBody(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             userService.createUser(params);
             response.setCode(302);
             response.addHeader("Location", "/index.html");
-        } catch (NullPointerException | IllegalArgumentException e) {
-            response.setCode(400);
-            response.setBody(e.getMessage());
+        } catch (NullPointerException e) {
+            response.setCode(302);
+            response.addHeader("location", "/user/form_failed.html");
+        } catch (IllegalArgumentException e) {
+            response.setCode(302);
+            response.addHeader("location", "/user/form_dup.html");
         }
     }
 }

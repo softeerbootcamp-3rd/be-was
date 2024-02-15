@@ -1,7 +1,12 @@
 package utils;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import model.Request;
 
 public class ParamBuilder {
 
@@ -46,6 +51,46 @@ public class ParamBuilder {
             params.put(split[0], split[1]);
         }
 
+        return params;
+    }
+
+    public static Map<String, String> getParamFromMultipart(byte[] body, Request request) {
+        Map<String, String> params = new HashMap<>();
+        String header = request.getHeader("Content-Type");
+        String boundary = header.split("boundary=")[1];
+
+        try {
+            String bodyString = new String(body, "ISO-8859-1");
+            String[] parts = bodyString.split("--" + boundary);
+
+            for (int i = 1; i < parts.length - 1; i++) {
+                String part = parts[i].trim();
+
+                String[] headersAndBody = part.split("\r\n\r\n", 2);
+                if (headersAndBody.length == 1) continue;
+                String headers = headersAndBody[0];
+                String bodyPart = headersAndBody[1];
+
+                String[] disposition = headers.split("Content-Disposition:")[1].trim().split(";");
+                String paramName = disposition[1].split("=")[1].replaceAll("\"", "");
+
+                if (headers.contains("Content-Type: image")) {
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String imageName = timeStamp + ".png";
+                    String imagePath = "src/main/resources/images/" + imageName;
+                    try (FileOutputStream fos = new FileOutputStream(imagePath)) {
+                        fos.write(bodyPart.getBytes("ISO-8859-1"));
+                    } catch (IOException e) {
+                        throw new IOException(e);
+                    }
+                    params.put(paramName + "_image", imageName);
+                } else {
+                    params.put(paramName, bodyPart);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return params;
     }
 }

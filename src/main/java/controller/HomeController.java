@@ -20,8 +20,8 @@ public class HomeController implements Controller {
             redirectIndex(response);
             return;
         }
-        if (request.getUrl().equals("/index.html")) {
-            getIndex(request, response);
+        if (request.getUrl().endsWith(".html")) {
+            getPage(request, response);
             return;
         }
         getStatic(request.getUrl(), response);
@@ -38,7 +38,7 @@ public class HomeController implements Controller {
     }
 
     /**
-     * index.html 페이지 파일을 찾아 응답 메시지를 설정합니다.
+     * 페이지 파일을 찾아 응답 메시지를 설정합니다.
      *
      * <p> 요청한 파일을 찾을 수 있는 경우 200 응답으로, 찾을 수 없는 경우 404 응답으로 설정합니다.
      * 페이지를 동적으로 변경합니다.
@@ -46,8 +46,8 @@ public class HomeController implements Controller {
      * @param request 요청 정보
      * @param response 응답 메시지
      */
-    private void getIndex(Request request, Response response) {
-        String filePath = "src/main/resources/templates/index.html";
+    private void getPage(Request request, Response response) {
+        String filePath = "src/main/resources/templates" + request.getUrl();
 
         try{
             byte[] body = PageReader.getPage(filePath);
@@ -58,8 +58,8 @@ public class HomeController implements Controller {
             response.addHeader("Content-Type", ContentType.findContentType(filePath));
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
-            response.setCode(404);
-            response.setBody(e.getMessage());
+            response.setCode(302);
+            response.addHeader("Location", "/404.html");
         }
     }
 
@@ -72,7 +72,12 @@ public class HomeController implements Controller {
      * @param response 응답 메시지
      */
     private void getStatic(String url, Response response) {
-        String filePath = "src/main/resources/static" + url;
+        String filePath;
+        if (url.startsWith("/images")) {
+            filePath = "src/main/resources" + url;
+        } else {
+            filePath = "src/main/resources/static" + url;
+        }
 
         try{
             byte[] body = PageReader.getPage(filePath);
@@ -83,7 +88,6 @@ public class HomeController implements Controller {
             response.addHeader("Content-Length: ", String.valueOf(body.length));
         } catch (IOException e) {
             response.setCode(404);
-            response.setBody(e.getMessage());
         }
     }
 }

@@ -2,12 +2,34 @@ package utils;
 
 import constants.HtmlContent;
 import db.Database;
+import db.PostDatabase;
 import java.util.Collection;
+import model.Post;
 import model.Request;
 import model.User;
 import webserver.Session;
 
 public class HtmlBuilder {
+
+    private static final String postContentHtml = "<li>"
+            + "<div class=\"wrap\">"
+            + "<div class=\"main\">"
+            + "<strong class=\"subject\">"
+            + "<a href=\"post/{{post-id}}/show.html\">{{title}}</a>"
+            + "</strong>"
+            + "<div class=\"auth-info\">"
+            + "<i class=\"icon-add-comment\"></i>"
+            + "<span class=\"time\">{{post-time}} </span>"
+            + "<a href=\"./user/profile.html\" class=\"author\">{{writer}}</a>"
+            + "</div>"
+            + "<div class=\"reply\" title=\"댓글\">\n"
+            + "{{image}}"
+            + "</div>"
+            + "</div>"
+            + "</div>"
+            + "</li>\n";
+    private static final String imageContentHtml = "<img src=\"../../images/{{image-name}}\" class=\"article-author-thumb\" alt=\"image\">\n";
+    private static final String imageDetailHtml = "<img src=\"../../images/{{image-name}}\" alt=\"image\" width=\"300\" height=\"300\">";
 
     /**
      * 페이지 내용을 동적으로 변경합니다.
@@ -26,7 +48,76 @@ public class HtmlBuilder {
         if (url.startsWith("/user/list")) {
             bodyString = buildUserList(bodyString);
         }
+        if (url.equals("/index.html")) {
+            bodyString = buildPostList(bodyString);
+        }
+        if (url.endsWith("show.html")) {
+            bodyString = buildPostContent(request, bodyString);
+        }
         return bodyString;
+    }
+
+    /**
+     * 글의 세부내용을 수정합니다.
+     *
+     * <p> url을 통해 얻은 글의 id를 조회하고 해당 글의 세부내용으로 html 파일을 수정합니다.
+     *
+     * @param request 요청 정보
+     * @param bodyString 본문 페이지
+     * @return 수정된 페이지
+     */
+    private static String buildPostContent(Request request, String bodyString) {
+        long postId = Long.parseLong(request.getUrl().split("/")[2]);
+        Post post = PostDatabase.findPostById(postId);
+
+        if (post.getImageName() == null) {
+            return bodyString.replace("{{title}}", post.getTitle())
+                    .replace("{{writer}}", post.getWriter())
+                    .replace("{{post-time}}", post.getPostTime())
+                    .replace("{{contents}}", post.getContents())
+                    .replace("{{image}}", "");
+        } else {
+            String imageContent = imageDetailHtml.replace("{{image-name}}", post.getImageName());
+            return bodyString.replace("{{title}}", post.getTitle())
+                    .replace("{{writer}}", post.getWriter())
+                    .replace("{{post-time}}", post.getPostTime())
+                    .replace("{{contents}}", post.getContents())
+                    .replace("{{image}}", imageContent);
+        }
+    }
+
+    /**
+     * 포스팅 목록을 생성합니다.
+     *
+     * <p> 모든 작성글을 가져와 제목, 작성자, 작성시간, 댓글 수를 각각 알맞는 키워드에 대체하고, 본문에 추가합니다.
+     *
+     * @param bodyString 본문 페이지
+     * @return 수정된 페이지
+     */
+    private static String buildPostList(String bodyString) {
+        Collection<Post> allPost = PostDatabase.findAll();
+        StringBuilder sb = new StringBuilder();
+
+        for (Post post : allPost) {
+            String postContent;
+            if (post.getImageName() == null) {
+                postContent = postContentHtml.replace("{{title}}", post.getTitle())
+                        .replace("{{post-id}}", String.valueOf(post.getPostId()))
+                        .replace("{{writer}}", post.getWriter())
+                        .replace("{{post-time}}", post.getPostTime())
+                        .replace("{{image}}", "");
+            } else {
+                String imageContent = imageContentHtml.replace("{{image-name}}", post.getImageName());
+                postContent = postContentHtml.replace("{{title}}", post.getTitle())
+                        .replace("{{post-id}}", String.valueOf(post.getPostId()))
+                        .replace("{{writer}}", post.getWriter())
+                        .replace("{{post-time}}", post.getPostTime())
+                        .replace("{{image}}", imageContent);
+            }
+            sb.append(postContent);
+        }
+
+        return bodyString.replace("{{post-list}}", sb);
     }
 
     /**
@@ -35,7 +126,7 @@ public class HtmlBuilder {
      * <p> 로그인 여부를 확인하고 로그인이 되어있다면 로그아웃, 개인정보수정 버튼을 보여주며, 사용자 이름을 표시합니다.
      * 로그인이 안되어있다면 로그인, 회원가입 버튼을 보여줍니다.
      *
-     * @param request 요청 정보
+     * @param request    요청 정보
      * @param bodyString 본문 페이지
      * @return 수정된 페이지
      */
@@ -64,12 +155,12 @@ public class HtmlBuilder {
         String navHtml = HtmlContent.NAV_LOGOUT.getText();
         String navString;
 
-        if (request.getUrl().startsWith("/user")) {
-            navString = navHtml.replace("{{location-login}}", "../user/login.html")
-                    .replace("{{location-join}}", "../user/form.html");
-        } else {
+        if (request.getUrl().equals("/index.html")) {
             navString = navHtml.replace("{{location-login}}", "user/login.html")
                     .replace("{{location-join}}", "user/form.html");
+        } else {
+            navString = navHtml.replace("{{location-login}}", "../user/login.html")
+                    .replace("{{location-join}}", "../user/form.html");
         }
 
         return navString;

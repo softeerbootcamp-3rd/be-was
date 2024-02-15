@@ -12,7 +12,6 @@ public enum HtmlContent {
             + "<td>{{userId}}</td> "
             + "<td>{{userName}}</td> "
             + "<td>{{userEmail}}</td>"
-            + "<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>\n"
             + "</tr>\n");
 
     private final String text;
