@@ -1,8 +1,10 @@
 package util.web;
 
 import constant.HttpHeader;
+import model.SharedData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ByteReader;
 import util.mapper.MultipartMapper;
 import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
@@ -58,6 +60,20 @@ public class RequestParser {
         return extractKeyValue(cookieString, "; ");
     }
 
+    public static Map<HttpHeader, String> extractHeader(ByteReader reader) throws IOException {
+        Map<HttpHeader, String> header = new HashMap<>();
+        String s;
+        while ((s = reader.readLine()) != null && !s.isEmpty()) {
+            String[] requestParts = s.split(":\\s*", 2);
+            if (requestParts.length == 2) {
+                try {
+                    header.put(HttpHeader.of(requestParts[0]), requestParts[1]);
+                } catch (IllegalArgumentException ignored) {}
+            }
+        }
+        return header;
+    }
+
     private static Map<String, String> extractKeyValue(String input, String delimiter1) {
         Map<String, String> result = new HashMap<>();
         if (input == null)
@@ -72,10 +88,11 @@ public class RequestParser {
         return result;
     }
 
-    public static <T> T parseBody(HttpRequest request, Class<T> clazz)
+    public static <T> T parseBody(Class<T> clazz)
             throws IOException, InvocationTargetException,
             IllegalAccessException, NoSuchMethodException, InstantiationException {
 
+        HttpRequest request = SharedData.request.get();
         Map<String, String> queryMap;
         String contentType = request.getHeader().get(HttpHeader.CONTENT_TYPE);
         String[] entries = new String[1];

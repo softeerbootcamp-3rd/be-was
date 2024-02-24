@@ -11,7 +11,7 @@ public class CommentDto {
     }
 
     public String getContent() {
-        return this.content;
+        return content;
     }
 
     public void setContent(String content) {

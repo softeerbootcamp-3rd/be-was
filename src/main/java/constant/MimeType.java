@@ -27,7 +27,7 @@ public enum MimeType {
     }
 
     public String getMimeType() {
-        return this.mimeType;
+        return mimeType;
     }
 
     public static MimeType getByExtension(String extension) {

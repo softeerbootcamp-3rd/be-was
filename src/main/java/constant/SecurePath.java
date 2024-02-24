@@ -5,8 +5,8 @@ import util.web.SecureChecker;
 import java.util.function.Supplier;
 
 public enum SecurePath {
-    POST_WRITE("^/post/write\\.html.*", SecureChecker::isLoggedIn, "/user/login.html"),
-    POST_SHOW("^/post/show\\.html.*", SecureChecker::isLoggedIn, "/user/login.html"),
+    BOARD_WRITE("^/board/write\\.html.*", SecureChecker::isLoggedIn, "/user/login.html"),
+    BOARD_SHOW("^/board/show\\.html.*", SecureChecker::isLoggedIn, "/user/login.html"),
     ATTACHMENT("^/attachment.*", SecureChecker::isLoggedIn, "/user/login.html"),
     ;
 

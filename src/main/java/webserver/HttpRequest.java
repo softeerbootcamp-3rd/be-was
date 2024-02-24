@@ -27,17 +27,8 @@ public class HttpRequest {
         this.method = requestParts[0].toUpperCase();
         this.path = RequestParser.extractPath(requestParts[1]);
         this.paramMap = RequestParser.parseQueryString(RequestParser.extractQuery(requestParts[1]));
-        this.header = new HashMap<>();
+        this.header = RequestParser.extractHeader(reader);
 
-        String s;
-        while ((s = reader.readLine()) != null && !s.isEmpty()) {
-            requestParts = s.split(":\\s*", 2);
-            if (requestParts.length == 2) {
-                try {
-                    this.header.put(HttpHeader.of(requestParts[0]), requestParts[1]);
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
         if (header.get(HttpHeader.CONTENT_LENGTH) != null) {
             body = new byte[Integer.parseInt(header.get(HttpHeader.CONTENT_LENGTH))];
             reader.read(body);
@@ -46,23 +37,23 @@ public class HttpRequest {
     }
 
     public String getMethod() {
-        return this.method;
+        return method;
     }
 
     public String getPath() {
-        return this.path;
+        return path;
     }
 
     public Map<String, String> getParamMap() {
-        return this.paramMap;
+        return paramMap;
     }
 
     public Map<HttpHeader, String> getHeader() {
-        return this.header;
+        return header;
     }
 
     public byte[] getBody() {
-        return this.body;
+        return body;
     }
 
     @Override

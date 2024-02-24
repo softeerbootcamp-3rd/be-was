@@ -5,15 +5,13 @@ import annotation.RequestBody;
 import annotation.RequestMapping;
 import annotation.RequestParam;
 import constant.HttpStatus;
-import constant.ParamType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.SharedData;
 import util.ClassScanner;
+import util.mapper.ObjectMapper;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -22,12 +20,12 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class RequestMapper {
-    private static final Logger logger = LoggerFactory.getLogger(RequestMapper.class);
     public static final Map<String, Method> REQUEST_MAP;
 
     static {
@@ -71,15 +69,15 @@ public class RequestMapper {
         Matcher matcher = pattern.matcher(requestPath);
 
         Map<String, String> pathParams = new HashMap<>();
-        if (matcher.matches()) {
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                String paramName = extractParamName(mappedPath, i);
-                String paramValue = matcher.group(i);
-                pathParams.put(paramName, paramValue);
-            }
-            return pathParams;
+        if (!matcher.matches())
+            return null;
+
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            String paramName = extractParamName(mappedPath, i);
+            String paramValue = matcher.group(i);
+            pathParams.put(paramName, paramValue);
         }
-        return null;
+        return pathParams;
     }
 
     private static String extractParamName(String mappedPath, int groupIndex) {
@@ -108,29 +106,21 @@ public class RequestMapper {
     }
 
     private static Object[] mapParams(Method method) {
-        HttpRequest request = SharedData.request.get();
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
 
         IntStream.range(0, parameters.length)
                 .forEach(i -> {
                     Parameter parameter = parameters[i];
-                    if (parameter.getType().equals(HttpRequest.class)) {
-                        params[i] = request;
-                    } else if (parameter.isAnnotationPresent(RequestParam.class)){
-                        ParamType paramType = ParamType.getByClass(parameter.getType());
+                    if (parameter.isAnnotationPresent(RequestParam.class)){
+                        // RequestParam - URI의 queryString으로 받는 파라미터
                         RequestParam annotation = parameter.getAnnotation(RequestParam.class);
-                        String requestParam = request.getParamMap().get(annotation.value());
-                        if (requestParam != null) {
-                            params[i] = paramType.map(requestParam);
-                        } else if (!annotation.required()) {
-                            params[i] = null;
-                        } else {
-                            throw new IllegalArgumentException("Parameter '" + annotation.value() + "' cannot be null");
-                        }
+                        params[i] = ObjectMapper.mapRequestParam(annotation.value(), parameter.getType());
+                        checkRequired(params[i], annotation);
                     } else if (parameter.isAnnotationPresent(RequestBody.class)) {
+                        // RequestBody - body로 받는 파라미터
                         try {
-                            params[i] = RequestParser.parseBody(request, parameter.getType());
+                            params[i] = RequestParser.parseBody(parameter.getType());
                             checkNotEmpty(params[i], parameter.getType());
                         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException |
                                  InstantiationException | IOException e) {
@@ -141,6 +131,11 @@ public class RequestMapper {
         return params;
     }
 
+    private static void checkRequired(Object instance, RequestParam annotation) {
+        if (annotation.required() && Objects.isNull(instance))
+            throw new RuntimeException("Parameter '" + annotation.value() + "' is null.");
+    }
+
     private static void checkNotEmpty(Object instance, Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(NotEmpty.class)) {
@@ -148,7 +143,7 @@ public class RequestMapper {
                 try {
                     Object value = field.get(instance);
                     if (value == null || value.toString().isEmpty()) {
-                        throw new RuntimeException("Field '" + field.getName() + "' is annotated with @NotEmpty, but its value is empty.");
+                        throw new RuntimeException("Field '" + field.getName() + "' is empty.");
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Error accessing field '" + field.getName() + "'.", e);

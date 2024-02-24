@@ -18,18 +18,18 @@ public class ByteReader {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         int currentByte;
-        boolean wasCarriageReturn = false;
         while ((currentByte = is.read()) != -1) {
-            if (wasCarriageReturn && currentByte == '\n') {
+            if (currentByte == '\n') {
                 break;
             }
             byteArrayOutputStream.write(currentByte);
-            wasCarriageReturn = (currentByte == '\r');
         }
         String result = byteArrayOutputStream.toString();
         if (Strings.isNullOrEmpty(result))
             return "";
-        return result.substring(0, result.length() - 1);
+        if (result.getBytes()[result.length() - 1] == '\r')
+            return result.substring(0, result.length() - 1);
+        return result;
     }
 
     public int read(byte[] bytes) throws IOException {

@@ -3,9 +3,11 @@ package util.mapper;
 import com.google.common.base.Strings;
 import constant.HttpHeader;
 import constant.ParamType;
+import model.MultipartFile;
 import util.ByteArrayUtils;
 import util.ByteReader;
-import util.web.SharedData;
+import util.web.RequestParser;
+import model.SharedData;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -50,16 +52,7 @@ public class MultipartMapper {
         if (isFile && Strings.isNullOrEmpty(extractEntry(contentDisposition, "filename")))
             return;
 
-        String s;
-        Map<HttpHeader, String> partValues = new HashMap<>();
-        while ((s = reader.readLine()) != null && !s.isEmpty()) {
-            String[] splitParts = s.split(":\\s*", 2);
-            if (splitParts.length == 2) {
-                try {
-                    partValues.put(HttpHeader.of(splitParts[0]), splitParts[1]);
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
+        Map<HttpHeader, String> partValues = RequestParser.extractHeader(reader);
         byte[] data = new byte[part.length];
         int readLength = reader.read(data);
         data = Arrays.copyOfRange(data, 0, readLength);

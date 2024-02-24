@@ -8,8 +8,9 @@ import constant.HttpStatus;
 import database.UserRepository;
 import dto.LoginDto;
 import dto.UserCreateDto;
-import model.User;
-import util.session.SessionManager;
+import entity.User;
+import model.SharedData;
+import util.web.SessionManager;
 import util.web.RequestParser;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
@@ -48,7 +49,8 @@ public class UserController {
     }
 
     @RequestMapping(method = "GET", path = "/user/logout")
-    public static HttpResponse logout(HttpRequest request) {
+    public static HttpResponse logout() {
+        HttpRequest request = SharedData.request.get();
         Map<String, String> cookies = RequestParser.parseCookie(request.getHeader().get(HttpHeader.COOKIE));
         String sessionId = cookies.get("SID");
         SessionManager.removeSession(sessionId);

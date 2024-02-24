@@ -16,10 +16,10 @@ public class LoginDto {
     }
 
     public String getUserId() {
-        return this.userId;
+        return userId;
     }
 
     public String getPassword() {
-        return this.password;
+        return password;
     }
 }

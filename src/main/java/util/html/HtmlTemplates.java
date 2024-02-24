@@ -24,32 +24,34 @@ public class HtmlTemplates {
                 new HtmlTemplate("common/signup_btn_active.html", HtmlBuilder::empty, HtmlBuilder::getRaw));
 
         // user
+        builder.put("<!--profile-->",
+                new HtmlTemplate("user/profile.html", UserHtml::profile, HtmlBuilder::empty));
         builder.put("<!--user-name-->",
-                new HtmlTemplate("user/user_name.html", UserHtml::replaceUser, HtmlBuilder::empty));
+                new HtmlTemplate("user/user_name.html", UserHtml::userName, HtmlBuilder::empty));
         builder.put("<!--user-list-->",
-                new HtmlTemplate("user/user_list.html", UserHtml::replaceUserList, HtmlBuilder::empty));
+                new HtmlTemplate("user/user_list.html", UserHtml::userList, HtmlBuilder::empty));
 
-        // post
-        builder.put("<!--post-list-->",
-                new HtmlTemplate("post/list.html", PostHtml::postList, PostHtml::postList));
-        builder.put("<!--post-pagination-->",
-                new HtmlTemplate("post/pagination.html", PostHtml::pagination, PostHtml::pagination));
-        builder.put("<!--post-btn-->",
-                new HtmlTemplate("post/post_btn.html", HtmlBuilder::getRaw, HtmlBuilder::getRaw));
-        builder.put("<!--post-->",
-                new HtmlTemplate("post/post.html", PostHtml::postContent, PostHtml::postContent));
+        // board
+        builder.put("<!--board-list-->",
+                new HtmlTemplate("board/list.html", BoardHtml::boardList, BoardHtml::boardList));
+        builder.put("<!--board-pagination-->",
+                new HtmlTemplate("board/pagination.html", BoardHtml::pagination, BoardHtml::pagination));
+        builder.put("<!--board-btn-->",
+                new HtmlTemplate("board/post_btn.html", HtmlBuilder::getRaw, HtmlBuilder::getRaw));
+        builder.put("<!--board-->",
+                new HtmlTemplate("board/board.html", BoardHtml::boardContent, BoardHtml::boardContent));
         builder.put("<!--attachment-->",
-                new HtmlTemplate("post/attachment.html", PostHtml::attachment, PostHtml::attachment));
+                new HtmlTemplate("board/attachment.html", BoardHtml::attachment, BoardHtml::attachment));
         builder.put("<!--preview-->",
-                new HtmlTemplate("post/preview.html", PostHtml::preview, HtmlBuilder::empty));
-        builder.put("<!--post-btn-group-->",
-                new HtmlTemplate("post/btn_group.html", PostHtml::postBtnGroup, HtmlBuilder::empty));
+                new HtmlTemplate("board/preview.html", BoardHtml::preview, HtmlBuilder::empty));
+        builder.put("<!--board-btn-group-->",
+                new HtmlTemplate("board/btn_group.html", BoardHtml::boardBtnGroup, HtmlBuilder::empty));
         builder.put("<!--comments-->",
-                new HtmlTemplate("post/comments.html", PostHtml::comments, PostHtml::comments));
+                new HtmlTemplate("board/comments.html", BoardHtml::comments, BoardHtml::comments));
         builder.put("<!--comment-btn-group-->",
-                new HtmlTemplate("post/comment_btn_group.html", null, null));
+                new HtmlTemplate("board/comment_btn_group.html", null, null));
         builder.put("<!--comment-form-->",
-                new HtmlTemplate("post/comment_form.html", PostHtml::commentForm, HtmlBuilder::empty));
+                new HtmlTemplate("board/comment_form.html", BoardHtml::commentForm, HtmlBuilder::empty));
 
         HTML_TEMPLATES = builder.build();
     }

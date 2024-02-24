@@ -1,18 +1,17 @@
 package database;
 
-import model.User;
+import entity.User;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserRepository {
     public static void add(User user) {
-        String query = "INSERT INTO users (userId, password, name, email) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "insert: users: userId, password, name, email: ?, ?, ?, ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setString(1, user.getUserId());
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getName());
@@ -24,8 +23,8 @@ public class UserRepository {
     }
 
     public static User findByUserId(String userId) {
-        String query = "SELECT * FROM users WHERE userId = ?";
-        try (PreparedStatement statement = H2Database.getConnection().prepareStatement(query)) {
+        String query = "select: users: userId: ?";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
             statement.setString(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -47,10 +46,9 @@ public class UserRepository {
     }
 
     public static Collection<User> findAll() {
-        String query = "SELECT * FROM users";
-        try (Statement statement = H2Database.getConnection().createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-
+        String query = "select: users";
+        try (PreparedStatement statement = CsvDatabase.getConnection().prepareStatement(query)) {
+            ResultSet resultSet = statement.executeQuery();
             Collection<User> users = new ArrayList<>();
             while (resultSet.next()) {
                 users.add(User.of(resultSet));

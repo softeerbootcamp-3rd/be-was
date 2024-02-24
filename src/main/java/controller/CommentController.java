@@ -5,9 +5,9 @@ import annotation.RequestMapping;
 import com.google.common.base.Strings;
 import constant.HttpStatus;
 import database.CommentRepository;
-import model.Comment;
-import model.User;
-import util.web.SharedData;
+import entity.Comment;
+import entity.User;
+import model.SharedData;
 import webserver.HttpResponse;
 
 import java.util.Objects;
@@ -28,6 +28,6 @@ public class CommentController {
             return HttpResponse.of(HttpStatus.FORBIDDEN);
 
         CommentRepository.deleteById(commentId);
-        return HttpResponse.redirect("/post/show.html?postId=" + comment.getPostId());
+        return HttpResponse.redirect("/board/show.html?boardId=" + comment.getBoardId());
     }
 }

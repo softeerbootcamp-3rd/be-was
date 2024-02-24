@@ -1,9 +1,9 @@
 package util.mapper;
 
-import annotation.NotEmpty;
+import com.google.common.base.Strings;
 import constant.ParamType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.SharedData;
+import webserver.HttpRequest;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +13,15 @@ import java.util.regex.Pattern;
 
 public class ObjectMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ObjectMapper.class);
+    public static <T> T mapRequestParam(String paramName, Class<T> clazz) {
+        HttpRequest request = SharedData.request.get();
+        String requestParam = request.getParamMap().get(paramName);
+        if (Strings.isNullOrEmpty(requestParam))
+            return null;
+        ParamType paramType = ParamType.getByClass(clazz);
+        Object result = paramType.map(requestParam);
+        return clazz.cast(result);
+    }
 
     public static <T> T mapToClass(Map<String, String> mapInfo, Class<T> clazz)
             throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
@@ -71,22 +79,22 @@ public class ObjectMapper {
         }
     }
 
-    private static Object[] parseJsonArray(String jsonArray, Class<?> componentType)
+    private static Object[] parseJsonArray(String jsonArray, Class<?> clazz)
             throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         String[] elements = jsonArray.substring(1, jsonArray.length() - 1).split(",");
-        Object[] array = (Object[]) java.lang.reflect.Array.newInstance(componentType, elements.length);
+        Object[] array = (Object[]) java.lang.reflect.Array.newInstance(clazz, elements.length);
 
         for (int i = 0; i < elements.length; i++) {
             elements[i] = elements[i].trim();
             if (elements[i].startsWith("{")) {
                 // 객체
-                Object nestedObj = componentType.getDeclaredConstructor().newInstance();
+                Object nestedObj = clazz.getDeclaredConstructor().newInstance();
                 parseJsonObject(elements[i], nestedObj);
                 array[i] = nestedObj;
             } else {
                 String elementString = elements[i].replaceAll("(?<!\\\\)\"", "")
                         .replaceAll("\\\\\"", "\"");
-                ParamType paramType = ParamType.getByClass(componentType);
+                ParamType paramType = ParamType.getByClass(clazz);
                 array[i] = paramType.map(elementString);
             }
         }
