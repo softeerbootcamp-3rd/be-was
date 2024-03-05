@@ -8,11 +8,8 @@ import java.io.*;
 
 public class PageController {
 
-//    static final String TEMPLATE_FILE_PATH = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/templates";
-//    static final String STATIC_FILE_PATH = "/Users/qkreh/IdeaProjects/be-was/src/main/resources/static";
-
-    static final String TEMPLATE_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/templates";
-    static final String STATIC_FILE_PATH = "/Users/user/IdeaProjects/be-was/src/main/resources/static";
+    static final String TEMPLATE_FILE_PATH = "src/main/resources/templates";
+    static final String STATIC_FILE_PATH = "src/main/resources/static";
 
     //정적 페이지 로드
     static public HTTPResponse getPageStatic(HTTPRequest request){
