@@ -12,9 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHandler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -35,10 +33,10 @@ public class RequestParserUtilTest {
                 "Host: localhost:8080\r\n" +
                 "Connection: keep-alive\r\n" +
                 "Accept: */*\r\n\r\n";
-        BufferedReader br = new BufferedReader(new StringReader(requestString));
+        InputStream in = new ByteArrayInputStream(requestString.getBytes());
 
         // When
-        RequestData requestData = RequestParserUtil.parseRequest(br);
+        RequestData requestData = RequestParserUtil.parseRequest(in);
 
         // Then
         assertEquals(HttpMethod.GET, requestData.getMethod());
@@ -51,10 +49,10 @@ public class RequestParserUtilTest {
     void parseRequest_InvalidInput_ReturnRequestData() {
         // Given
         String invalidRequestString = "Invalid Request\r\n";
-        BufferedReader br = new BufferedReader(new StringReader(invalidRequestString));
+        InputStream in = new ByteArrayInputStream(invalidRequestString.getBytes());
 
         // When, Then
-        assertThrows(Exception.class, () -> RequestParserUtil.parseRequest(br)); // 예외타입을 IOException으로 하면 해당 오류에만 test를 검증하게 됨. 전체적으로 보기 위해 Exception으로 검증
+        assertThrows(Exception.class, () -> RequestParserUtil.parseRequest(in)); // 예외타입을 IOException으로 하면 해당 오류에만 test를 검증하게 됨. 전체적으로 보기 위해 Exception으로 검증
     }
 
     @Test
@@ -81,10 +79,10 @@ public class RequestParserUtilTest {
                 "Host : localhost:8080\r\n" + // 헤더에 trailing white space 추가
                 "Connection: keep-alive  \r\n" + // 헤더 값에 trailing white space 추가
                 "Accept: */*\r\n\r\n";
-        BufferedReader br = new BufferedReader(new StringReader(requestString));
+        InputStream in = new ByteArrayInputStream(requestString.getBytes());
 
         // When
-        RequestData requestData = RequestParserUtil.parseRequest(br);
+        RequestData requestData = RequestParserUtil.parseRequest(in);
 
         // Then
         assertEquals(HttpMethod.GET, requestData.getMethod());

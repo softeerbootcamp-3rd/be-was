@@ -18,7 +18,7 @@ public class ResourceLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
 
-    public static final String RESOURCE_URL = "/Users/admin/Softeer/be-was/src/main/resources";
+    public static final String RESOURCE_URL = "src/main/resources";
 
     private ResourceLoader() {}
 
