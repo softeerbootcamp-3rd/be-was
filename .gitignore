@@ -3,9 +3,11 @@
 
 ### Tin9oo defined
 # /uploads
-/src/main/resources/uploads/
+src/main/resources/uploads/*.jpeg
+src/main/resources/uploads/*.jpg
+src/main/resources/uploads/*.png
 # h2
-/data/
+data/*.db
 
 ### Intellij+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
