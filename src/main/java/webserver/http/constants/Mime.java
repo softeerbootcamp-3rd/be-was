@@ -1,4 +1,4 @@
-package webserver.http;
+package webserver.http.constants;
 
 public enum Mime {
     TEXT_HTML("text/html", "html"),

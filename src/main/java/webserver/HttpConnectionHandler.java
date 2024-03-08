@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.Mime;
 import webserver.http.Request;
 import webserver.http.Response;
 
@@ -30,13 +29,13 @@ public class HttpConnectionHandler implements Runnable {
             request.print();
             DataOutputStream dos = new DataOutputStream(out);
             Response response = new Response(request);
-            sendResponse(dos,request, response);
+            sendResponse(dos, response);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void sendResponse(DataOutputStream dos,Request request, Response response) {
+    private void sendResponse(DataOutputStream dos, Response response) {
         try{
             dos.writeBytes(response.getHttpVersion() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n");
             for (Map.Entry<String, String> entry : response.getResponseHeader().entrySet()) {

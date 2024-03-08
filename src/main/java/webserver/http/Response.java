@@ -1,5 +1,7 @@
 package webserver.http;
 
+import webserver.http.constants.StatusCode;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -40,8 +42,20 @@ public class Response {
             return;
         }
 
+        if(request.getRequestHeader().get("Error")!=null){
+            StatusCode errorStatusCode = StatusCode.fromString(request.getRequestHeader().get("Error"));
+            this.statusCode = errorStatusCode.getCode();
+            this.statusText = errorStatusCode.name();
+            return;
+        }
+
         this.statusCode = StatusCode.OK.getCode();
         this.statusText = StatusCode.OK.name();
+    }
+
+    public void setStatusCode(StatusCode statusCode){
+        this.statusCode = statusCode.getCode();
+        this.statusText = statusCode.name();
     }
 
     public String getHttpVersion() {
@@ -60,8 +74,9 @@ public class Response {
         return responseHeader;
     }
 
-    void setBody(Request request){
-        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), request.getRequestTarget());
+    private void setBody(Request request){
+        String requestTarget = request.getRequestTarget().split("\\?")[0];
+        responseBody = responseHandler.setResponseBody(request.getResponseMimeType(), requestTarget, this);
         dynamicResourceHandler.handle(request, this);
     }
 

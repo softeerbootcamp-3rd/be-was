@@ -3,6 +3,8 @@ package webserver.http;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webserver.http.constants.Mime;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;

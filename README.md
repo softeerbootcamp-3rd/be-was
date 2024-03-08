@@ -3,9 +3,59 @@
 Java Web Application Server 2023
 
 ## 프로젝트 정보 
+https://github.com/sjmjys954646/be-was/tree/feat7
 
-이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
-를 참고하여 작성되었습니다.
+## 목표
+처음에 설계에 노력을 들여 구상한 나만의 WAS 구조 방식을 크게 변경하지 않고 완성시켜보자
+
+## 프로젝트 구조도
+```
+.
+├── main
+│   ├── java
+│   │   ├── db
+│   │   │   ├── Database.java
+│   │   │   ├── H2Database.java
+│   │   │   ├── PostRepository.java
+│   │   │   ├── SessionManager.java
+│   │   │   ├── UserRepository.java
+│   │   │   └── dto
+│   │   ├── model
+│   │   │   ├── Post.java
+│   │   │   └── User.java
+│   │   ├── utils
+│   │   │   ├── LoginChecker.java
+│   │   │   ├── RequestBodyParse
+│   │   │   └── UserFormDataParser.java
+│   │   └── webserver
+│   │       ├── HttpConnectionHandler.java
+│   │       ├── WebServer.java
+│   │       └── http
+│   └── resources
+│       ├── logback.xml
+│       ├── static
+│       │   ├── css
+│       │   ├── favicon.ico
+│       │   ├── fonts
+│       │   ├── images
+│       │   └── js
+│       └── templates
+│           ├── error
+│           ├── index.html
+│           ├── post
+│           ├── qna
+│           └── user
+└── test
+    ├── java
+    │   │
+    │   └── webserver
+    │       ├── LoginTest.java
+    │       └── http
+    └── resources
+        └── logback-test.xml
+
+```
+
 
 ## 1주차 개발과정 및 학습과정 
 ### 웹 서버 1단계 - index.html 응답 
@@ -61,8 +111,29 @@ Java Web Application Server 2023
 #### 개발과정
 ##### 10. 쿠키와 세션이란?
 
+### 웹 서버 6단계 - 동적인 HTML
+#### 요구사항
+- 사용자가 로그인 상태일 경우 아닐 경우 표시
+- 사용자가 로그인 상태일 경우 사용자 목록을 출력 아닐 경우 redirect
 
+#### 개발과정
+##### 11. HTML동적핸들러 생성
+##### 12. 데이터베이스 학습
 
+## 3주차 개발과정 및 학습과정
+### 웹 서버 7단계 - 동적인 HTML
+#### 요구사항
+- 글쓰기 기능 구현
+- 세부 글 표시
+- 에러 페이지 구현
+- db 연결
 
+#### 개발과정
+##### 13. H2 데이터베이스 연결
+##### 14. 글씨기 POST 요청 및 세부 페이지 GET 요청 구현 
+##### 15. 에러페이지 구현
 
-
+#### 회고 
+- [IO와 NIO](https://b1ackhand.tistory.com/268)
+- [자바의 이모저모 : static, final, 캐스팅](https://b1ackhand.tistory.com/269)
+- [나의 WAS 변경점, 한계 그리고 개선사항](https://b1ackhand.tistory.com/267)
