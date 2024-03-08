@@ -34,7 +34,7 @@ public class CsvResultSet implements ResultSet {
         try (BufferedReader br = new BufferedReader(fileReader)) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] values = line.split(","); // CSV 파일에서 각 열을 구분하는 방법에 따라 수정
+                String[] values = line.split(","); // CSV 파일에서 각 열을 구분
                 rows.add(values);
             }
         }
@@ -87,8 +87,7 @@ public class CsvResultSet implements ResultSet {
     }
 
     private boolean evaluateSingleCondition(String actualValue, String operator, String expectedValue) {
-        // 실제 WHERE 조건을 평가하는 로직을 작성합니다.
-        // 여기에서는 간단한 비교 연산만을 다루는 예시 코드로, 실제 사용하는 데이터 타입에 맞게 수정이 필요합니다.
+        // WHERE 조건을 평가하는 로직을 작성합니다.
         switch (operator) {
             case "=":
                 return actualValue.equals(expectedValue);
@@ -1092,6 +1091,4 @@ public class CsvResultSet implements ResultSet {
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
     }
-    // CSV 파일에서 읽은 데이터를 처리하는 코드 작성
-    // 이 예제에서는 FileReader를 통해 CSV 파일을 읽어와서 처리하는 형태로 작성
 }
